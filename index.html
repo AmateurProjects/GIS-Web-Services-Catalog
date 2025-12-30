@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Database Object Catalog: BLM GIS of the United States</title>
+  <meta name="description" content="Enterprise Geodatabase schema browser and documentation catalog for BLM GIS feature classes of the United States.">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header>
+    <h1>Database Object Catalog: BLM GIS of the United States</h1>
+    <nav>
+      <button id="datasetsTab" class="tab-button active">Datasets</button>
+      <button id="attributesTab" class="tab-button">Attributes</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- DATASETS VIEW -->
+    <section id="datasetsView">
+      <div class="sidebar">
+        <div class="toolbar">
+          <input id="datasetSearchInput" type="search" placeholder="Search datasets..." />
+          <div class="toolbar-actions">
+            <button id="newDatasetBtn" type="button" class="primary-button">
+              + Submit new dataset
+            </button>
+          </div>
+        </div>
+        <div id="datasetList"></div>
+      </div>
+      <div id="datasetDetail" class="detail-panel hidden"></div>
+    </section>
+    <!-- ATTRIBUTES VIEW -->
+    <section id="attributesView" class="hidden">
+      <div class="sidebar">
+        <div class="toolbar">
+          <input id="attributeSearchInput" type="search" placeholder="Search attributes..." />
+          <div class="toolbar-actions">
+            <button id="newAttributeBtn" type="button" class="primary-button">
+              + Add attribute(s)
+            </button>
+          </div>
+        </div>
+        <div id="attributeList"></div>
+      </div>
+      <div id="attributeDetail" class="detail-panel hidden"></div>
+    </section>
+  </main>
+
+  <!-- NEW DATASET SUBMISSION DIALOG -->
+  <dialog id="newDatasetDialog" class="modal">
+    <form id="newDatasetForm" method="dialog" class="modal-card">
+      <div class="modal-header">
+        <h2>Submit a new dataset</h2>
+        <button type="button" class="icon-button" id="newDatasetCloseBtn" aria-label="Close">✕</button>
+      </div>
+
+      <p class="modal-help">
+        This form will open a pre-filled GitHub Issue for review/approval by the catalog owner.
+      </p>
+
+      <div class="form-grid">
+        <label>
+          <span>Dataset ID (required)</span>
+          <input name="id" required placeholder="e.g., blm_rmp_boundaries" />
+        </label>
+
+        <label>
+          <span>Title</span>
+          <input name="title" placeholder="Human-friendly dataset title" />
+        </label>
+
+        <label class="span-2">
+          <span>Description</span>
+          <textarea name="description" rows="3" placeholder="Short description of the dataset"></textarea>
+        </label>
+
+        <label>
+          <span>Database Object Name</span>
+          <input name="objname" placeholder="e.g., SDE.ADMIN.RMP_BOUNDARIES" />
+        </label>
+
+        <label>
+          <span>Geometry Type</span>
+          <select name="geometry_type">
+            <option value="">(select)</option>
+            <option value="POINT">POINT</option>
+            <option value="POLYLINE">POLYLINE</option>
+            <option value="POLYGON">POLYGON</option>
+            <option value="TABLE">TABLE</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Agency Owner</span>
+          <input name="agency_owner" placeholder="e.g., BLM" />
+        </label>
+
+        <label>
+          <span>Office Owner</span>
+          <input name="office_owner" placeholder="e.g., HQ / State / Field Office" />
+        </label>
+
+        <label>
+          <span>Contact Email</span>
+          <input name="contact_email" type="email" placeholder="name@agency.gov" />
+        </label>
+
+        <label>
+          <span>Topics (comma-separated)</span>
+          <input name="topics" placeholder="e.g., planning, NEPA, boundaries" />
+        </label>
+
+        <label>
+          <span>Update Frequency</span>
+          <input name="update_frequency" placeholder="e.g., Quarterly / Annually / Ad hoc" />
+        </label>
+
+        <label>
+          <span>Status</span>
+          <input name="status" placeholder="e.g., Authoritative / Draft" />
+        </label>
+
+        <label>
+          <span>Access Level</span>
+          <input name="access_level" placeholder="e.g., Public / Internal" />
+        </label>
+
+        <label class="span-2">
+          <span>Public Web Service URL</span>
+          <input name="public_web_service" placeholder="https://..." />
+        </label>
+
+        <label class="span-2">
+          <span>Internal Web Service URL</span>
+          <input name="internal_web_service" placeholder="https://..." />
+        </label>
+
+        <label class="span-2">
+          <span>Data Standard URL</span>
+          <input name="data_standard" placeholder="https://..." />
+        </label>
+
+        <label class="span-2">
+          <span>Projection</span>
+          <input name="projection" placeholder="e.g., EPSG:3857 / EPSG:4269" />
+        </label>
+
+        <label class="span-2">
+          <span>Notes</span>
+          <textarea name="notes" rows="3" placeholder="Any special notes, caveats, lineage, etc."></textarea>
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-button" id="newDatasetCancelBtn">Cancel</button>
+        <button type="submit" class="primary-button">Open GitHub Issue</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="newAttributeDialog" class="modal">
+    <form id="newAttributeForm" method="dialog" class="modal-card">
+      <div class="modal-header">
+        <h2>Submit new attribute(s)</h2>
+        <button type="button" class="icon-button" id="newAttributeCloseBtn" aria-label="Close">✕</button>
+      </div>
+
+      <p class="modal-help">
+        Submit a single attribute using the form, or submit multiple using Bulk JSON. This will open a pre-filled GitHub
+        Issue for review/approval.
+      </p>
+
+      <div class="modal-tabs">
+        <button type="button" class="tab-pill active" data-attr-tab="single">Single</button>
+        <button type="button" class="tab-pill" data-attr-tab="bulk">Bulk JSON</button>
+      </div>
+
+      <!-- SINGLE -->
+      <div class="attr-tab-panel" data-attr-panel="single">
+        <div class="form-grid">
+          <label>
+            <span>Attribute ID (required)</span>
+            <input name="attr_id" required placeholder="e.g., rmp_name" />
+          </label>
+
+          <label>
+            <span>Label</span>
+            <input name="attr_label" placeholder="Human-friendly label" />
+          </label>
+
+          <label>
+            <span>Type</span>
+            <select name="attr_type">
+              <option value="">(select)</option>
+              <option value="string">string</option>
+              <option value="integer">integer</option>
+              <option value="float">float</option>
+              <option value="boolean">boolean</option>
+              <option value="date">date</option>
+              <option value="enumerated">enumerated</option>
+            </select>
+          </label>
+
+          <label>
+            <span>Example expected value</span>
+            <input name="attr_expected_value" placeholder="Optional example" />
+          </label>
+
+          <label class="span-2">
+            <span>Definition</span>
+            <textarea name="attr_definition" rows="3"
+              placeholder="What this attribute means and how it is used"></textarea>
+          </label>
+
+          <label class="span-2">
+            <span>Enumerated values (JSON array) — only if type = enumerated</span>
+            <textarea name="attr_values_json" rows="5"
+              placeholder='Example: [{"code":1,"label":"Yes","description":"..."},{"code":0,"label":"No"}]'></textarea>
+          </label>
+
+          <label class="span-2">
+            <span>Context / notes (optional)</span>
+            <textarea name="attr_notes" rows="3"
+              placeholder="Any context for reviewers (what dataset(s) need this, why now, etc.)"></textarea>
+          </label>
+        </div>
+      </div>
+
+      <!-- BULK -->
+      <div class="attr-tab-panel hidden" data-attr-panel="bulk">
+        <div class="form-grid">
+          <label class="span-2">
+            <span>Attributes JSON (required)</span>
+            <textarea name="bulk_attributes_json" rows="12"
+              placeholder='Paste a JSON array of attribute objects. Example: [{"id":"a","label":"A","type":"string","definition":"..."}, {...}]'></textarea>
+          </label>
+
+          <label class="span-2">
+            <span>Context / notes (optional)</span>
+            <textarea name="bulk_notes" rows="3" placeholder="Any context for reviewers"></textarea>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="secondary-button" id="newAttributeCancelBtn">Cancel</button>
+        <button type="submit" class="primary-button">Open GitHub Issue</button>
+      </div>
+    </form>
+  </dialog>
+
+
+  <script src="app.js?v=7"></script>
+</body>
+
+</html>

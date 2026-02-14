@@ -757,27 +757,48 @@ code {
 }
 
 /* ================================================================
-   GEOMETRY ICONS
+   GEOMETRY / LAYER TYPE ICONS
+   Color-coded following ArcGIS Online conventions:
+     Point      = cyan/teal    (location markers)
+     Multipoint = teal         (clustered locations)
+     Polyline   = green        (routes/paths)
+     Polygon    = blue         (areas/boundaries)
+     Table      = amber/orange (non-spatial tabular)
+     Raster     = purple       (imagery/grid data)
+     Unknown    = muted gray
    ================================================================ */
 
 .geom-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-right: 0.35rem;
-  width: 1.2rem;
-  height: 1.2rem;
-  color: var(--geom-purple);
+  margin-right: 0.4rem;
+  width: 1.25rem;
+  height: 1.25rem;
   flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 180ms var(--ease-spring);
 }
+
+.geom-icon:hover { transform: scale(1.15); }
 
 .geom-icon svg {
   display: block;
-  filter: drop-shadow(0 0 3px rgba(192,132,252,0.35));
+  width: 100%;
+  height: 100%;
 }
 
-.geom-icon-list  { width: 1.3rem; height: 1.3rem; margin-right: 0.4rem; }
-.geom-icon-inline { width: 1.1rem; height: 1.1rem; }
+.geom-icon-list  { width: 1.35rem; height: 1.35rem; margin-right: 0.45rem; }
+.geom-icon-inline { width: 1.15rem; height: 1.15rem; }
+
+/* ── Per-type colors ── */
+.geom-type-point      { color: #22d3ee; filter: drop-shadow(0 0 4px rgba(34,211,238,0.3)); }
+.geom-type-multipoint { color: #2dd4bf; filter: drop-shadow(0 0 4px rgba(45,212,191,0.3)); }
+.geom-type-line       { color: #4ade80; filter: drop-shadow(0 0 4px rgba(74,222,128,0.3)); }
+.geom-type-polygon    { color: #60a5fa; filter: drop-shadow(0 0 4px rgba(96,165,250,0.3)); }
+.geom-type-table      { color: #fbbf24; filter: drop-shadow(0 0 4px rgba(251,191,36,0.25)); }
+.geom-type-raster     { color: #c084fc; filter: drop-shadow(0 0 4px rgba(192,132,252,0.3)); }
+.geom-type-unknown    { color: var(--text-muted); opacity: 0.6; }
 
 /* ================================================================
    CARD ROW LAYOUT

@@ -372,6 +372,85 @@ function isUrlStatusOk(hostEl, url) {
   return status === 'ok';
 }
 
+// Initialize interactive ArcGIS map for dataset preview
+let currentMapView = null;
+function initializeArcGISMap(serviceUrl, layerId) {
+  const mapContainer = document.getElementById('arcgisMapContainer');
+  if (!mapContainer) return;
+
+  // Destroy previous map view if exists
+  if (currentMapView) {
+    currentMapView.destroy();
+    currentMapView = null;
+  }
+
+  // Check if ArcGIS API is loaded
+  if (typeof require === 'undefined') {
+    mapContainer.innerHTML = '<p style="padding:1rem; color:var(--text-muted);">ArcGIS API not available</p>';
+    return;
+  }
+
+  mapContainer.innerHTML = '<p style="padding:1rem; color:var(--text-muted);">Loading map...</p>';
+
+  require([
+    "esri/Map",
+    "esri/views/MapView",
+    "esri/layers/MapImageLayer",
+    "esri/layers/FeatureLayer"
+  ], function(Map, MapView, MapImageLayer, FeatureLayer) {
+    try {
+      const upper = serviceUrl.toUpperCase();
+      let layer;
+
+      if (upper.includes('/MAPSERVER')) {
+        // Use MapImageLayer for MapServer
+        layer = new MapImageLayer({
+          url: serviceUrl
+        });
+      } else if (upper.includes('/FEATURESERVER')) {
+        // Use FeatureLayer for FeatureServer
+        const layerUrl = serviceUrl.replace(/\/FeatureServer\/?$/i, `/FeatureServer/${layerId}`);
+        layer = new FeatureLayer({
+          url: layerUrl
+        });
+      } else {
+        mapContainer.innerHTML = '<p style="padding:1rem; color:var(--text-muted);">Unsupported service type for interactive map</p>';
+        return;
+      }
+
+      const map = new Map({
+        basemap: "topo-vector",
+        layers: [layer]
+      });
+
+      mapContainer.innerHTML = ''; // Clear loading text
+      
+      currentMapView = new MapView({
+        container: mapContainer,
+        map: map,
+        zoom: 4,
+        center: [-98.5795, 39.8283] // Center of US
+      });
+
+      // Zoom to layer extent when loaded
+      layer.when(function() {
+        if (layer.fullExtent) {
+          currentMapView.goTo(layer.fullExtent).catch(function(err) {
+            console.warn('Could not zoom to layer extent:', err);
+          });
+        }
+      }).catch(function(err) {
+        console.warn('Layer failed to load:', err);
+        mapContainer.innerHTML = '<p style="padding:1rem; color:var(--text-muted);">Could not load layer in map</p>';
+      });
+
+    } catch (err) {
+      console.error('Error initializing ArcGIS map:', err);
+      mapContainer.innerHTML = '<p style="padding:1rem; color:var(--text-muted);">Error loading map</p>';
+    }
+  });
+}
+
 async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
   if (!hostEl) return;
 
@@ -431,7 +510,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
     let layerJson = null;
     let sampleJson = null;
     try { layerJson = await fetchLayerJson(url, layerId); } catch {}
-    try { sampleJson = await fetchSampleRows(url, layerId, 8); } catch {}
+    try { sampleJson = await fetchSampleRows(url, layerId, 10); } catch {}
 
     // Build content
     const meta = {
@@ -492,6 +571,20 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
       `;
     }
 
+    // Interactive ArcGIS Map View
+    const mapServiceUrl = url;
+    const mapLayerId = layerId;
+    html += `
+      <div class="card" style="margin-top:0.75rem;">
+        <div style="font-weight:600; margin-bottom:0.5rem;">Interactive Map</div>
+        <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset</div>
+        <div id="arcgisMapContainer" 
+             data-service-url="${escapeHtml(mapServiceUrl)}" 
+             data-layer-id="${mapLayerId}"
+             style="width:100%; height:400px; border-radius:12px; overflow:hidden; background:#e0e0e0;"></div>
+      </div>
+    `;
+
     // Metadata
     html += `
       <div class="card" style="margin-top:0.75rem;">
@@ -519,8 +612,8 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
 
     // Sample table
     if (sampleJson && Array.isArray(sampleJson.features) && sampleJson.features.length) {
-      const rows = sampleJson.features.map(ft => ft.attributes || {}).slice(0, 8);
-      const cols = Object.keys(rows[0] || {}).slice(0, 8); // keep table compact
+      const rows = sampleJson.features.map(ft => ft.attributes || {}).slice(0, 10);
+      const cols = Object.keys(rows[0] || {}).slice(0, 10); // keep table compact
       if (cols.length) {
         html += `
           <div class="card" style="margin-top:0.75rem;">
@@ -558,6 +651,9 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
 
     contentEl.innerHTML = html;
     statusEl.textContent = 'Preview loaded.';
+
+    // Initialize interactive ArcGIS map
+    initializeArcGISMap(url, layerId);
 
     // Wire up the field statistics loader
     const fieldSelect = contentEl.querySelector('#fieldStatsSelect');
@@ -2540,38 +2636,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     html += `<p><strong>Documentation:</strong> ${escapeHtml(docLabel)}</p>`;
-    html += '</div>';
 
-    // Attributes + inline attribute details
-    html += `
-      <div class="card-row">
-        <div class="card card-attributes">
-          <h3>Attributes</h3>
-    `;
-
-    if (!attrs.length) {
-      html += '<p>No attributes defined for this dataset.</p>';
-    } else {
-      html += '<ul>';
-      attrs.forEach((attr) => {
-        html += `
-          <li>
-            <button type="button" class="link-button" data-attr-id="${escapeHtml(attr.id)}">
-              ${escapeHtml(attr.id)} – ${escapeHtml(attr.label || '')}
-            </button>
-          </li>`;
+    // Improvement suggestions based on current tier
+    const improvementSuggestions = getMaturityImprovementSuggestions(tier, completeness, docLevel);
+    if (improvementSuggestions.length > 0) {
+      html += `<div class="maturity-suggestions">`;
+      html += `<div class="suggestions-header"><strong>Suggestions to reach the next tier:</strong></div>`;
+      html += `<ul class="suggestions-list">`;
+      improvementSuggestions.forEach(suggestion => {
+        html += `<li>${escapeHtml(suggestion)}</li>`;
       });
-      html += '</ul>';
+      html += `</ul></div>`;
     }
 
-    html += `
+    html += '</div>';
+
+    // Attributes + inline attribute details - only show if dataset has attributes
+    if (attrs.length > 0) {
+      html += `
+        <div class="card-row">
+          <div class="card card-attributes">
+            <h3>Attributes</h3>
+            <ul>
+      `;
+      attrs.forEach((attr) => {
+        html += `
+            <li>
+              <button type="button" class="link-button" data-attr-id="${escapeHtml(attr.id)}">
+                ${escapeHtml(attr.id)} – ${escapeHtml(attr.label || '')}
+              </button>
+            </li>`;
+      });
+      html += `
+            </ul>
+          </div>
+          <div class="card card-inline-attribute" id="inlineAttributeDetail">
+            <h3>Attribute details</h3>
+            <p>Select an attribute from the list to see its properties here without leaving this dataset.</p>
+          </div>
         </div>
-        <div class="card card-inline-attribute" id="inlineAttributeDetail">
-          <h3>Attribute details</h3>
-          <p>Select an attribute from the list to see its properties here without leaving this dataset.</p>
-        </div>
-      </div>
-    `;
+      `;
+    }
 
     html += `
   <div class="card card-actions">
@@ -2897,6 +3002,50 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+// Generate improvement suggestions based on current maturity tier and metrics
+function getMaturityImprovementSuggestions(tier, completeness, docLevel) {
+  const suggestions = [];
+  const comp = Number(completeness) || 0;
+  
+  if (tier === 'gold') {
+    // Already at highest tier - no suggestions
+    return [];
+  }
+  
+  if (tier === 'bronze') {
+    // Bronze → Silver suggestions
+    if (comp < 80) {
+      suggestions.push(`Increase completeness from ${comp}% to at least 80% by filling in missing attribute values`);
+    }
+    if (!docLevel || docLevel === 'none' || docLevel === 'minimal') {
+      suggestions.push('Improve documentation level to at least "Partial" by adding field descriptions and metadata');
+    }
+    suggestions.push('Ensure consistent attribute naming conventions across the dataset');
+    suggestions.push('Add or verify contact information and data steward assignment');
+  } else if (tier === 'silver') {
+    // Silver → Gold suggestions
+    if (comp < 90) {
+      suggestions.push(`Increase completeness from ${comp}% to at least 90% by addressing remaining data gaps`);
+    }
+    if (docLevel !== 'complete') {
+      suggestions.push('Achieve "Complete" documentation with full field definitions, lineage, and usage notes');
+    }
+    suggestions.push('Implement automated data quality checks and validation rules');
+    suggestions.push('Establish a regular update schedule and document the update frequency');
+  } else {
+    // Unknown or no tier - general suggestions
+    if (comp < 70) {
+      suggestions.push('Improve data completeness by filling in missing values');
+    }
+    if (!docLevel || docLevel === 'none') {
+      suggestions.push('Add basic documentation including field descriptions');
+    }
+    suggestions.push('Assign a quality tier (bronze/silver/gold) to track maturity');
+  }
+  
+  return suggestions;
 }
 
 // Return HTML snippet for a geometry icon based on geometry_type

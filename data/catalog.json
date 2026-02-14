@@ -46,14 +46,17 @@
   "attributes": [],
   "datasets": [
     {
-      "id": "blm_admin_units",
-      "title": "BLM Administrative Units",
-      "description": "BLM administrative boundary polygons including state, district, and field office boundaries.",
+      "id": "blm_admin_units_blm_administrative_unit_office_points",
+      "title": "BLM Administrative Units – BLM Administrative Unit Office Points",
+      "description": "This feature class is the Office Point level data from the feature level Dataset for the BLM Administrative Unit Boundaries Data Standard. The feature dataset includes both BLM administrative land areas and office locations. Land areas are depicted with polygons for the smallest administrative unit (field offices). Larger administrative units, such as district offices, and administrative states may be derived from these polygons. Office locations at each level are depicted with points.\n\nThis dataset is a subset of the official national dataset, containing features and attributes intended for public release and has been optimized for online map service performance. The Schema Workbook represents the official national dataset from which this dataset was derived.",
       "agency_owner": "BLM",
       "office_owner": "NOC",
-      "topics": ["admin boundaries", "jurisdiction"],
-      "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer",
+      "topics": [
+        "admin boundaries",
+        "jurisdiction"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -62,7 +65,115 @@
         "completeness": 95,
         "documentation": "complete",
         "quality_tier": "gold"
-      }
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer",
+      "_parent_dataset_id": "blm_admin_units",
+      "_layer_id": 0,
+      "_layer_name": "BLM Administrative Unit Office Points"
+    },
+    {
+      "id": "blm_admin_units_blm_administrative_unit_state_boundary_generalized",
+      "title": "BLM Administrative Units – BLM Administrative Unit State Boundary Generalized",
+      "description": "Many of the BLM National Datasets cannot be taken offline due to the number of vertices in the dataset. In addition, displaying the data using a Feature Service crashes ArcGIS Server due to complex geometries (ie Godzilla polygons). As a result, it became imperative to generalize the Feature Classes so that they can be used in a Feature Service as well as being taken offline.\nUsing configuration settings, the user may choose between using a Smoothing algorithm or Simplification algorithm to perform generalization. \nDocumentation on the Smoothing algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/smooth-polygon.htm\nDocumentation on the Simplification algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/simplify-polygon.htm\nNote: At the time of this writing, only polygon smoothing/simplification is tested. However, Linear datasets are also supported (FEATURE_TYPE)\n*Each of the features were generalized except for the labels (anno) and the point feature class in the admu blm webpub dataset. To keep the naming convention the same, we added the _gen after each feature class so this service and the data layers won’t get confused with the other admu services. This service and the underlying data will be kept “in-sync” with national replication. \n\nThis feature class is the State Office level data from the feature level Dataset for the BLM Administrative Unit Boundaries Data Standard. The feature dataset includes both BLM administrative land areas and office locations. Land areas are depicted with polygons for the smallest administrative unit (field offices). Larger administrative units, such as district offices, and administrative states may be derived from these polygons. Office locations at each level are depicted with points.\n\nThis dataset is a subset of the official national dataset, containing features and attributes intended for public release and has been optimized for online map service performance. The Schema Workbook represents the official national dataset from which this dataset was derived.",
+      "agency_owner": "BLM",
+      "office_owner": "NOC",
+      "topics": [
+        "admin boundaries",
+        "jurisdiction"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer",
+      "_parent_dataset_id": "blm_admin_units",
+      "_layer_id": 1,
+      "_layer_name": "BLM Administrative Unit State Boundary Generalized"
+    },
+    {
+      "id": "blm_admin_units_blm_administrative_unit_district_boundary_generalized",
+      "title": "BLM Administrative Units – BLM Administrative Unit District Boundary Generalized",
+      "description": "Many of the BLM National Datasets cannot be taken offline due to the number of vertices in the dataset. In addition, displaying the data using a Feature Service crashes ArcGIS Server due to complex geometries (ie Godzilla polygons). As a result, it became imperative to generalize the Feature Classes so that they can be used in a Feature Service as well as being taken offline.\nUsing configuration settings, the user may choose between using a Smoothing algorithm or Simplification algorithm to perform generalization. \nDocumentation on the Smoothing algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/smooth-polygon.htm\nDocumentation on the Simplification algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/simplify-polygon.htm\nNote: At the time of this writing, only polygon smoothing/simplification is tested. However, Linear datasets are also supported (FEATURE_TYPE)\n*Each of the features were generalized except for the labels (anno) and the point feature class in the admu blm webpub dataset. To keep the naming convention the same, we added the _gen after each feature class so this service and the data layers won’t get confused with the other admu services. This service and the underlying data will be kept “in-sync” with national replication. \n\nThis feature class is the District Office level data from the feature level Dataset for the BLM Administrative Unit Boundaries Data Standard. The feature dataset includes both BLM administrative land areas and office locations. Land areas are depicted with polygons for the smallest administrative unit (field offices). Larger administrative units, such as district offices, and administrative states may be derived from these polygons. Office locations at each level are depicted with points.\n\nThis dataset is a subset of the official national dataset, containing features and attributes intended for public release and has been optimized for online map service performance. The Schema Workbook represents the official national dataset from which this dataset was derived.",
+      "agency_owner": "BLM",
+      "office_owner": "NOC",
+      "topics": [
+        "admin boundaries",
+        "jurisdiction"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer/2",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer",
+      "_parent_dataset_id": "blm_admin_units",
+      "_layer_id": 2,
+      "_layer_name": "BLM Administrative Unit District Boundary Generalized"
+    },
+    {
+      "id": "blm_admin_units_blm_administrative_unit_field_boundary_generalized",
+      "title": "BLM Administrative Units – BLM Administrative Unit Field Boundary Generalized",
+      "description": "Many of the BLM National Datasets cannot be taken offline due to the number of vertices in the dataset. In addition, displaying the data using a Feature Service crashes ArcGIS Server due to complex geometries (ie Godzilla polygons). As a result, it became imperative to generalize the Feature Classes so that they can be used in a Feature Service as well as being taken offline.\nUsing configuration settings, the user may choose between using a Smoothing algorithm or Simplification algorithm to perform generalization. \nDocumentation on the Smoothing algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/smooth-polygon.htm\nDocumentation on the Simplification algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/simplify-polygon.htm\nNote: At the time of this writing, only polygon smoothing/simplification is tested. However, Linear datasets are also supported (FEATURE_TYPE)\n*Each of the features were generalized except for the labels (anno) and the point feature class in the admu blm webpub dataset. To keep the naming convention the same, we added the _gen after each feature class so this service and the data layers won’t get confused with the other admu services. This service and the underlying data will be kept “in-sync” with national replication. \n\nThis feature class is the Field Office level data from the feature level Dataset for the BLM Administrative Unit Boundaries Data Standard. The feature dataset includes both BLM administrative land areas and office locations. Land areas are depicted with polygons for the smallest administrative unit (field offices). Larger administrative units, such as district offices, and administrative states may be derived from these polygons. Office locations at each level are depicted with points..\n\nThis dataset is a subset of the official national dataset, containing features and attributes intended for public release and has been optimized for online map service performance. The Schema Workbook represents the official national dataset from which this dataset was derived.",
+      "agency_owner": "BLM",
+      "office_owner": "NOC",
+      "topics": [
+        "admin boundaries",
+        "jurisdiction"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer/3",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer",
+      "_parent_dataset_id": "blm_admin_units",
+      "_layer_id": 3,
+      "_layer_name": "BLM Administrative Unit Field Boundary Generalized"
+    },
+    {
+      "id": "blm_admin_units_blm_administrative_unit_other_boundary_generalized",
+      "title": "BLM Administrative Units – BLM Administrative Unit Other Boundary Generalized",
+      "description": "Many of the BLM National Datasets cannot be taken offline due to the number of vertices in the dataset. In addition, displaying the data using a Feature Service crashes ArcGIS Server due to complex geometries (ie Godzilla polygons). As a result, it became imperative to generalize the Feature Classes so that they can be used in a Feature Service as well as being taken offline.\nUsing configuration settings, the user may choose between using a Smoothing algorithm or Simplification algorithm to perform generalization. \nDocumentation on the Smoothing algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/smooth-polygon.htm\nDocumentation on the Simplification algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/simplify-polygon.htm\nNote: At the time of this writing, only polygon smoothing/simplification is tested. However, Linear datasets are also supported (FEATURE_TYPE)\n*Each of the features were generalized except for the labels (anno) and the point feature class in the admu blm webpub dataset. To keep the naming convention the same, we added the _gen after each feature class so this service and the data layers won’t get confused with the other admu services. This service and the underlying data will be kept “in-sync” with national replication. \n\nThis feature class is the Other Office level data from the feature level Dataset for the BLM Administrative Unit Boundaries Data Standard. The feature dataset includes both BLM administrative land areas and office locations. Land areas are depicted with polygons for the smallest administrative unit (field offices). Larger administrative units, such as district offices, and administrative states may be derived from these polygons. Office locations at each level are depicted with points.\n\nThis dataset is a subset of the official national dataset, containing features and attributes intended for public release and has been optimized for online map service performance. The Schema Workbook represents the official national dataset from which this dataset was derived.",
+      "agency_owner": "BLM",
+      "office_owner": "NOC",
+      "topics": [
+        "admin boundaries",
+        "jurisdiction"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer/4",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer",
+      "_parent_dataset_id": "blm_admin_units",
+      "_layer_id": 4,
+      "_layer_name": "BLM Administrative Unit Other Boundary Generalized"
     },
     {
       "id": "blm_acec",
@@ -70,7 +181,11 @@
       "description": "Polygon boundaries of designated Areas of Critical Environmental Concern (ACECs) on BLM-administered lands.",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands",
-      "topics": ["planning", "special designations", "ACEC"],
+      "topics": [
+        "planning",
+        "special designations",
+        "ACEC"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_ACEC/MapServer/0",
       "development_stage": "production",
@@ -89,7 +204,11 @@
       "description": "National Conservation Lands System - National Monuments and National Conservation Areas.",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands",
-      "topics": ["NLCS", "special designations", "conservation"],
+      "topics": [
+        "NLCS",
+        "special designations",
+        "conservation"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_NM_NCA/MapServer/0",
       "development_stage": "production",
@@ -108,7 +227,11 @@
       "description": "Congressionally designated Wilderness Areas on BLM-administered lands.",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands",
-      "topics": ["NLCS", "wilderness", "special designations"],
+      "topics": [
+        "NLCS",
+        "wilderness",
+        "special designations"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WLD_WSA/MapServer/0",
       "development_stage": "production",
@@ -127,7 +250,11 @@
       "description": "Wilderness Study Areas on BLM-administered lands awaiting Congressional determination.",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands",
-      "topics": ["NLCS", "wilderness", "special designations"],
+      "topics": [
+        "NLCS",
+        "wilderness",
+        "special designations"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WLD_WSA/MapServer/1",
       "development_stage": "production",
@@ -146,7 +273,11 @@
       "description": "Wild and Scenic Rivers on or adjacent to BLM-administered lands.",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands",
-      "topics": ["NLCS", "rivers", "special designations"],
+      "topics": [
+        "NLCS",
+        "rivers",
+        "special designations"
+      ],
       "geometry_type": "POLYLINE",
       "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WSR/MapServer/0",
       "development_stage": "production",
@@ -165,9 +296,13 @@
       "description": "Resource Management Plan (RMP) boundaries for BLM planning areas.",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands",
-      "topics": ["planning", "RMP", "boundaries"],
+      "topics": [
+        "planning",
+        "RMP",
+        "boundaries"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_LandUsePlanningBoundaries/MapServer",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_LandUsePlanningBoundaries/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -184,7 +319,10 @@
       "description": "Approved Land Use Plans as of 2022.",
       "agency_owner": "BLM",
       "office_owner": "Division of Planning",
-      "topics": ["planning", "RMP"],
+      "topics": [
+        "planning",
+        "RMP"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_Use_Plans_Approved_2022/FeatureServer/1",
       "development_stage": "production",
@@ -203,7 +341,11 @@
       "description": "Land Use Plans currently under revision or development.",
       "agency_owner": "BLM",
       "office_owner": "Division of Planning",
-      "topics": ["planning", "RMP", "revision"],
+      "topics": [
+        "planning",
+        "RMP",
+        "revision"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Revision_Development_Land_Use_Plans/FeatureServer/0",
       "development_stage": "production",
@@ -222,7 +364,10 @@
       "description": "Visual Resource Inventory (VRI) class polygons.",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands",
-      "topics": ["visual resources", "planning"],
+      "topics": [
+        "visual resources",
+        "planning"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Visual_Resource_Inventory_Classes_Polygon/FeatureServer/0",
       "development_stage": "production",
@@ -241,7 +386,11 @@
       "description": "National grazing allotment polygon boundaries.",
       "agency_owner": "BLM",
       "office_owner": "Division of Rangeland Resources",
-      "topics": ["range", "grazing", "permits"],
+      "topics": [
+        "range",
+        "grazing",
+        "permits"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Grazing_Allotment_Polygons/FeatureServer/1",
       "development_stage": "production",
@@ -260,9 +409,13 @@
       "description": "National grazing pasture polygon boundaries within allotments.",
       "agency_owner": "BLM",
       "office_owner": "Division of Rangeland Resources",
-      "topics": ["range", "grazing", "pastures"],
+      "topics": [
+        "range",
+        "grazing",
+        "pastures"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Grazing_Pasture_Polygons/FeatureServer",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Grazing_Pasture_Polygons/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -279,9 +432,14 @@
       "description": "Oil and gas lease polygons from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["energy", "oil and gas", "leases", "MLRS"],
+      "topics": [
+        "energy",
+        "oil and gas",
+        "leases",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Leases/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Leases/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -298,9 +456,14 @@
       "description": "Oil and gas agreements from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["energy", "oil and gas", "agreements", "MLRS"],
+      "topics": [
+        "energy",
+        "oil and gas",
+        "agreements",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Agreements/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Agreements/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -317,9 +480,13 @@
       "description": "Oil and gas participating areas from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["energy", "oil and gas", "MLRS"],
+      "topics": [
+        "energy",
+        "oil and gas",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Participating_Areas/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Participating_Areas/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -336,9 +503,14 @@
       "description": "Oil shale lease polygons from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["energy", "oil shale", "leases", "MLRS"],
+      "topics": [
+        "energy",
+        "oil shale",
+        "leases",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_Shale_Leases/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_Shale_Leases/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "multi_state",
@@ -355,9 +527,14 @@
       "description": "Geothermal lease polygons from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["energy", "geothermal", "leases", "MLRS"],
+      "topics": [
+        "energy",
+        "geothermal",
+        "leases",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Geothermal_Leases/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Geothermal_Leases/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "multi_state",
@@ -374,9 +551,14 @@
       "description": "Coal leases and cases from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["energy", "coal", "leases", "MLRS"],
+      "topics": [
+        "energy",
+        "coal",
+        "leases",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Coal_Cases/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Coal_Cases/FeatureServer/1",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "multi_state",
@@ -393,9 +575,13 @@
       "description": "Active (not closed) mining claims from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["minerals", "mining claims", "MLRS"],
+      "topics": [
+        "minerals",
+        "mining claims",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mining_Claims_Not_Closed/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mining_Claims_Not_Closed/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -413,9 +599,14 @@
       "description": "Closed mining claims from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["minerals", "mining claims", "MLRS", "historical"],
+      "topics": [
+        "minerals",
+        "mining claims",
+        "MLRS",
+        "historical"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mining_Claims_Closed/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mining_Claims_Closed/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "regional",
       "coverage": "nationwide",
@@ -433,9 +624,13 @@
       "description": "Non-energy leasable mineral cases from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["minerals", "leasables", "MLRS"],
+      "topics": [
+        "minerals",
+        "leasables",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Non_Energy_Leasables/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Non_Energy_Leasables/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -452,9 +647,13 @@
       "description": "Mineral materials sites from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["minerals", "materials", "MLRS"],
+      "topics": [
+        "minerals",
+        "materials",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mineral_Materials/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mineral_Materials/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -471,9 +670,14 @@
       "description": "Locatable mineral notices from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["minerals", "locatable", "notices", "MLRS"],
+      "topics": [
+        "minerals",
+        "locatable",
+        "notices",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Locatable_Notices/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Locatable_Notices/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -490,9 +694,14 @@
       "description": "Locatable mineral plans of operations from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["minerals", "locatable", "plans", "MLRS"],
+      "topics": [
+        "minerals",
+        "locatable",
+        "plans",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Locatable_Plans_Of_Operations/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Locatable_Plans_Of_Operations/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -509,14 +718,21 @@
       "description": "Locatable mineral allocations for Resource Use Decision Documents (RUDD).",
       "agency_owner": "BLM",
       "office_owner": "Division of Energy and Minerals",
-      "topics": ["minerals", "locatable", "allocations", "RUDD"],
+      "topics": [
+        "minerals",
+        "locatable",
+        "allocations",
+        "RUDD"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/Locatables_RUDD_ProofOfConcept/FeatureServer",
       "development_stage": "in_development",
       "scale_suitability": "national",
       "coverage": "partial",
       "web_mercator_compatible": true,
-      "blockers": ["Proof of concept - not production ready"],
+      "blockers": [
+        "Proof of concept - not production ready"
+      ],
       "maturity": {
         "completeness": 50,
         "documentation": "minimal",
@@ -529,14 +745,21 @@
       "description": "Timber allocations for Resource Use Decision Documents (RUDD).",
       "agency_owner": "BLM",
       "office_owner": "Division of Forestry",
-      "topics": ["forestry", "timber", "allocations", "RUDD"],
+      "topics": [
+        "forestry",
+        "timber",
+        "allocations",
+        "RUDD"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/Timber_RUDD_ProofOfConcept/FeatureServer",
       "development_stage": "in_development",
       "scale_suitability": "regional",
       "coverage": "partial",
       "web_mercator_compatible": true,
-      "blockers": ["Proof of concept - not production ready"],
+      "blockers": [
+        "Proof of concept - not production ready"
+      ],
       "maturity": {
         "completeness": 50,
         "documentation": "minimal",
@@ -549,7 +772,12 @@
       "description": "Rights-of-way authorizations from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands and Realty",
-      "topics": ["lands", "rights of way", "ROW", "MLRS"],
+      "topics": [
+        "lands",
+        "rights of way",
+        "ROW",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_LUA_ROW/FeatureServer/0",
       "development_stage": "production",
@@ -568,9 +796,15 @@
       "description": "Land Use Authorization leases, permits, and easements from the Mining and Lands Records System (MLRS).",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands and Realty",
-      "topics": ["lands", "leases", "permits", "easements", "MLRS"],
+      "topics": [
+        "lands",
+        "leases",
+        "permits",
+        "easements",
+        "MLRS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_LUA_Leases_Permits_Esmts/FeatureServer",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_LUA_Leases_Permits_Esmts/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -587,7 +821,11 @@
       "description": "Wild horse and burro herd area boundaries.",
       "agency_owner": "BLM",
       "office_owner": "Division of Wild Horse and Burro",
-      "topics": ["wild horses", "wildlife", "herd areas"],
+      "topics": [
+        "wild horses",
+        "wildlife",
+        "herd areas"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Wild_Horse_and_Burro_Heard_Area_Polygons/FeatureServer/4",
       "development_stage": "production",
@@ -606,7 +844,11 @@
       "description": "Wild horse and burro herd management area boundaries.",
       "agency_owner": "BLM",
       "office_owner": "Division of Wild Horse and Burro",
-      "topics": ["wild horses", "wildlife", "HMA"],
+      "topics": [
+        "wild horses",
+        "wildlife",
+        "HMA"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Wild_Horse_and_Burro_Heard_Mgmt_Area_Polygons/FeatureServer/5",
       "development_stage": "production",
@@ -620,14 +862,19 @@
       }
     },
     {
-      "id": "blm_eplanning_projects",
-      "title": "BLM ePlanning Projects",
-      "description": "NEPA projects and comment periods from the ePlanning system.",
+      "id": "blm_eplanning_projects_eplanning_comment_point",
+      "title": "BLM ePlanning Projects – ePlanning Comment Point",
+      "description": "NEPA projects and comment periods from the ePlanning system. (sublayer: ePlanning Comment Point)",
       "agency_owner": "BLM",
       "office_owner": "Division of Planning",
-      "topics": ["NEPA", "planning", "ePlanning", "projects"],
-      "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer",
+      "topics": [
+        "NEPA",
+        "planning",
+        "ePlanning",
+        "projects"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -636,7 +883,95 @@
         "completeness": 85,
         "documentation": "partial",
         "quality_tier": "silver"
-      }
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer",
+      "_parent_dataset_id": "blm_eplanning_projects",
+      "_layer_id": 0,
+      "_layer_name": "ePlanning Comment Point"
+    },
+    {
+      "id": "blm_eplanning_projects_eplanning_comment_map_polyline",
+      "title": "BLM ePlanning Projects – ePlanning Comment Map Polyline",
+      "description": "NEPA projects and comment periods from the ePlanning system. (sublayer: ePlanning Comment Map Polyline)",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Planning",
+      "topics": [
+        "NEPA",
+        "planning",
+        "ePlanning",
+        "projects"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer",
+      "_parent_dataset_id": "blm_eplanning_projects",
+      "_layer_id": 1,
+      "_layer_name": "ePlanning Comment Map Polyline"
+    },
+    {
+      "id": "blm_eplanning_projects_epl_cmt_map_poly",
+      "title": "BLM ePlanning Projects – EPL_CMT_MAP_POLY",
+      "description": "NEPA projects and comment periods from the ePlanning system. (sublayer: EPL_CMT_MAP_POLY)",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Planning",
+      "topics": [
+        "NEPA",
+        "planning",
+        "ePlanning",
+        "projects"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer/2",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer",
+      "_parent_dataset_id": "blm_eplanning_projects",
+      "_layer_id": 2,
+      "_layer_name": "EPL_CMT_MAP_POLY"
+    },
+    {
+      "id": "blm_eplanning_projects_eplanning_comment",
+      "title": "BLM ePlanning Projects – ePlanning Comment",
+      "description": "NEPA projects and comment periods from the ePlanning system. (sublayer: ePlanning Comment)",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Planning",
+      "topics": [
+        "NEPA",
+        "planning",
+        "ePlanning",
+        "projects"
+      ],
+      "geometry_type": "TABLE",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer/3",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer",
+      "_parent_dataset_id": "blm_eplanning_projects",
+      "_layer_id": 3,
+      "_layer_name": "ePlanning Comment"
     },
     {
       "id": "blm_fire_perimeters",
@@ -644,7 +979,11 @@
       "description": "Final fire perimeter polygons on or near BLM-administered lands.",
       "agency_owner": "BLM",
       "office_owner": "Division of Fire and Aviation",
-      "topics": ["fire", "perimeters", "wildfire"],
+      "topics": [
+        "fire",
+        "perimeters",
+        "wildfire"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://gis.blm.gov/arcgis/rest/services/fire/BLM_Natl_FirePerimeter/MapServer/0",
       "development_stage": "production",
@@ -663,7 +1002,11 @@
       "description": "Point locations of BLM recreation sites.",
       "agency_owner": "BLM",
       "office_owner": "Division of Recreation",
-      "topics": ["recreation", "sites", "points"],
+      "topics": [
+        "recreation",
+        "sites",
+        "points"
+      ],
       "geometry_type": "POINT",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_National_Recreation_Site_Points/FeatureServer/1",
       "development_stage": "production",
@@ -682,7 +1025,11 @@
       "description": "Land and Water Conservation Fund acquisition boundaries.",
       "agency_owner": "BLM",
       "office_owner": "Division of Lands",
-      "topics": ["LWCF", "acquisition", "boundaries"],
+      "topics": [
+        "LWCF",
+        "acquisition",
+        "boundaries"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_and_Water_Conservation_Fund_LWCF_Polygons/FeatureServer/2",
       "development_stage": "production",
@@ -701,9 +1048,14 @@
       "description": "Ground Transportation Linear Features - roads and trails on BLM-administered lands.",
       "agency_owner": "BLM",
       "office_owner": "Division of Transportation",
-      "topics": ["transportation", "roads", "trails", "GTLF"],
+      "topics": [
+        "transportation",
+        "roads",
+        "trails",
+        "GTLF"
+      ],
       "geometry_type": "POLYLINE",
-      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/transportation/BLM_Natl_GTLF/MapServer",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/transportation/BLM_Natl_GTLF/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "regional",
       "coverage": "nationwide",
@@ -721,7 +1073,11 @@
       "description": "Disturbance Assessment of National Lands (DANL) data collection.",
       "agency_owner": "BLM",
       "office_owner": "NOC",
-      "topics": ["disturbance", "assessment", "DANL"],
+      "topics": [
+        "disturbance",
+        "assessment",
+        "DANL"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://gis.blm.gov/arcgis/rest/services/DANL/BLM_Natl_DANL_DataCollection/MapServer",
       "development_stage": "production",
@@ -735,14 +1091,18 @@
       }
     },
     {
-      "id": "blm_tga",
-      "title": "BLM Taylor Grazing Act Lands",
-      "description": "Taylor Grazing Act land boundaries.",
+      "id": "blm_tga_1_9_000_000",
+      "title": "BLM Taylor Grazing Act Lands – 1:9,000,000",
+      "description": "Taylor Grazing Act land boundaries. (sublayer: 1:9,000,000)",
       "agency_owner": "BLM",
       "office_owner": "Division of Rangeland Resources",
-      "topics": ["range", "TGA", "grazing"],
-      "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer",
+      "topics": [
+        "range",
+        "TGA",
+        "grazing"
+      ],
+      "geometry_type": "TABLE",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer/5",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "multi_state",
@@ -751,7 +1111,119 @@
         "completeness": 85,
         "documentation": "partial",
         "quality_tier": "silver"
-      }
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer",
+      "_parent_dataset_id": "blm_tga",
+      "_layer_id": 5,
+      "_layer_name": "1:9,000,000"
+    },
+    {
+      "id": "blm_tga_1_7_000_000",
+      "title": "BLM Taylor Grazing Act Lands – 1:7,000,000",
+      "description": "Taylor Grazing Act land boundaries. (sublayer: 1:7,000,000)",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Rangeland Resources",
+      "topics": [
+        "range",
+        "TGA",
+        "grazing"
+      ],
+      "geometry_type": "TABLE",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer/6",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer",
+      "_parent_dataset_id": "blm_tga",
+      "_layer_id": 6,
+      "_layer_name": "1:7,000,000"
+    },
+    {
+      "id": "blm_tga_1_4_000_000",
+      "title": "BLM Taylor Grazing Act Lands – 1:4,000,000",
+      "description": "Taylor Grazing Act land boundaries. (sublayer: 1:4,000,000)",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Rangeland Resources",
+      "topics": [
+        "range",
+        "TGA",
+        "grazing"
+      ],
+      "geometry_type": "TABLE",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer/7",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer",
+      "_parent_dataset_id": "blm_tga",
+      "_layer_id": 7,
+      "_layer_name": "1:4,000,000"
+    },
+    {
+      "id": "blm_tga_1_1_500_000",
+      "title": "BLM Taylor Grazing Act Lands – 1:1,500,000",
+      "description": "Taylor Grazing Act land boundaries. (sublayer: 1:1,500,000)",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Rangeland Resources",
+      "topics": [
+        "range",
+        "TGA",
+        "grazing"
+      ],
+      "geometry_type": "TABLE",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer",
+      "_parent_dataset_id": "blm_tga",
+      "_layer_id": 0,
+      "_layer_name": "1:1,500,000"
+    },
+    {
+      "id": "blm_tga_taylor_grazing_act_district_boundaries_polygons",
+      "title": "BLM Taylor Grazing Act Lands – Taylor Grazing Act District Boundaries Polygons",
+      "description": "<DIV STYLE=\"text-align:Left;\"><P><SPAN>This is the official national dataset of BLM's Taylor Grazing Act (TGA) grazing district boundaries which portrays the grazing districts established or subsequently modified under the Taylor Grazing Act. BLM TGA grazing district boundaries are separate and distinct from BLM administrative districts, which were not established until BLM was formed (under Reorganization plan #3 of 1946) by combining the General Land Office and the Grazing Service.</SPAN></P><P><SPAN>The Taylor Grazing Act of 1934 authorized the Secretary of the Interior to provide for the orderly use of livestock grazing on the public domain lands that “in his opinion are chiefly valuable for grazing and raising forage crops”.</SPAN></P><P><SPAN>Under Section 3 of the Act, grazing permits are issued on public lands within the grazing districts established under the Act. Under Section 15 of the Act, grazing leases are issued on public lands outside the original Grazing District boundaries. Receipts from grazing on Section 3 lands are distributed differently than receipts from grazing on Section 15 lands:</SPAN></P><P><SPAN>TGA Section 3:</SPAN></P><P><SPAN>- 50.0% Range Betterment Projects</SPAN></P><P><SPAN>- 12.5% Returned to the State</SPAN></P><P><SPAN>- 37.5% U.S. Treasury</SPAN></P><P><SPAN /></P><P><SPAN>TGA Section 15:</SPAN></P><P><SPAN>- 50% Range Betterment Projects</SPAN></P><P><SPAN>- 50% Returned to the State</SPAN></P><P><SPAN /></P><P><SPAN>The following states have had TGA Districts consolidated during their history. As a result, their TGA District numbers are out of sequence:</SPAN></P><P><SPAN>- Arizona Grazing District No. 3 was consolidated into Arizona Grazing District No. 2 (Filed: December 20, 1965).</SPAN></P><P><SPAN>- New Mexico Grazing District No.5 was consolidated into New Mexico Grazing District No. 4 (Filed: October 10, 1947).</SPAN></P><P><SPAN>- New Mexico Grazing District No. 4 was consolidated into New Mexico Grazing District No. 3 (Filed: October 14, 1965).</SPAN></P><P><SPAN>- Oregon Grazing District No. 4 was consolidated into Oregon Grazing District No. 3 (Filed: October 16, 1947).</SPAN></P></DIV>",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Rangeland Resources",
+      "topics": [
+        "range",
+        "TGA",
+        "grazing"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer/9",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
+      "_parent_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer",
+      "_parent_dataset_id": "blm_tga",
+      "_layer_id": 9,
+      "_layer_name": "Taylor Grazing Act District Boundaries Polygons"
     },
     {
       "id": "blm_fiat_sagebrush",
@@ -759,9 +1231,14 @@
       "description": "Sagebrush habitat at risk of conifer expansion from the FIAT analysis.",
       "agency_owner": "BLM",
       "office_owner": "Division of Wildlife",
-      "topics": ["wildlife", "sagebrush", "habitat", "FIAT"],
+      "topics": [
+        "wildlife",
+        "sagebrush",
+        "habitat",
+        "FIAT"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/wildlife/BLM_FIAT_Sagebrush_Habitat_at_Risk_of_Conifer_Expansion/MapServer",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/wildlife/BLM_FIAT_Sagebrush_Habitat_at_Risk_of_Conifer_Expansion/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "multi_state",
@@ -778,7 +1255,11 @@
       "description": "Public Land Survey System (PLSS) township boundaries.",
       "agency_owner": "ESRI/BLM",
       "office_owner": "NOC",
-      "topics": ["PLSS", "cadastral", "survey"],
+      "topics": [
+        "PLSS",
+        "cadastral",
+        "survey"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/1",
       "development_stage": "production",
@@ -797,7 +1278,11 @@
       "description": "Public Land Survey System (PLSS) section boundaries.",
       "agency_owner": "ESRI/BLM",
       "office_owner": "NOC",
-      "topics": ["PLSS", "cadastral", "survey"],
+      "topics": [
+        "PLSS",
+        "cadastral",
+        "survey"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/2",
       "development_stage": "production",
@@ -816,7 +1301,12 @@
       "description": "Public Land Survey System (PLSS) parcel boundaries (quarter sections and smaller).",
       "agency_owner": "ESRI/BLM",
       "office_owner": "NOC",
-      "topics": ["PLSS", "cadastral", "survey", "parcels"],
+      "topics": [
+        "PLSS",
+        "cadastral",
+        "survey",
+        "parcels"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/3",
       "development_stage": "production",
@@ -836,9 +1326,13 @@
       "description": "Federal land ownership boundaries for all agencies.",
       "agency_owner": "ESRI",
       "office_owner": "Living Atlas",
-      "topics": ["federal lands", "ownership", "boundaries"],
+      "topics": [
+        "federal lands",
+        "ownership",
+        "boundaries"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Federal_Lands/FeatureServer",
+      "public_web_service": "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Federal_Lands/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -850,13 +1344,17 @@
       }
     },
     {
-      "id": "usfws_critical_habitat",
-      "title": "USFWS Critical Habitat",
-      "description": "Critical habitat designations for threatened and endangered species.",
+      "id": "usfws_critical_habitat_final_critical_habitat_features",
+      "title": "USFWS Critical Habitat – Final Critical Habitat Features",
+      "description": "Critical habitat designations for threatened and endangered species. (sublayer: Final Critical Habitat Features)",
       "agency_owner": "USFWS",
-      "topics": ["wildlife", "critical habitat", "ESA"],
+      "topics": [
+        "wildlife",
+        "critical habitat",
+        "ESA"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/USFWS_Critical_Habitat/FeatureServer",
+      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/USFWS_Critical_Habitat/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -865,16 +1363,50 @@
         "completeness": 90,
         "documentation": "complete",
         "quality_tier": "gold"
-      }
+      },
+      "_parent_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/USFWS_Critical_Habitat/FeatureServer",
+      "_parent_dataset_id": "usfws_critical_habitat",
+      "_layer_id": 0,
+      "_layer_name": "Final Critical Habitat Features"
+    },
+    {
+      "id": "usfws_critical_habitat_proposed_critical_habitat_features",
+      "title": "USFWS Critical Habitat – Proposed Critical Habitat Features",
+      "description": "Critical habitat designations for threatened and endangered species. (sublayer: Proposed Critical Habitat Features)",
+      "agency_owner": "USFWS",
+      "topics": [
+        "wildlife",
+        "critical habitat",
+        "ESA"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/USFWS_Critical_Habitat/FeatureServer/2",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/USFWS_Critical_Habitat/FeatureServer",
+      "_parent_dataset_id": "usfws_critical_habitat",
+      "_layer_id": 2,
+      "_layer_name": "Proposed Critical Habitat Features"
     },
     {
       "id": "usfws_at_risk_species",
       "title": "USFWS At-Risk Species",
       "description": "At-risk species data layer from USFWS.",
       "agency_owner": "USFWS",
-      "topics": ["wildlife", "at-risk species", "ESA"],
+      "topics": [
+        "wildlife",
+        "at-risk species",
+        "ESA"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/At_Risk_Species_Data_Layer_07_23_25_Hosted_view/FeatureServer",
+      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/At_Risk_Species_Data_Layer_07_23_25_Hosted_view/FeatureServer/2",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -890,9 +1422,13 @@
       "title": "USFWS National Wildlife Refuge Boundaries",
       "description": "National Wildlife Refuge System boundaries.",
       "agency_owner": "USFWS",
-      "topics": ["wildlife", "refuges", "boundaries"],
+      "topics": [
+        "wildlife",
+        "refuges",
+        "boundaries"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/National_Wildlife_Refuge_System_Boundaries/FeatureServer",
+      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/National_Wildlife_Refuge_System_Boundaries/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -908,7 +1444,10 @@
       "title": "USFWS Regions",
       "description": "US Fish and Wildlife Service regional boundaries.",
       "agency_owner": "USFWS",
-      "topics": ["admin boundaries", "regions"],
+      "topics": [
+        "admin boundaries",
+        "regions"
+      ],
       "geometry_type": "POLYGON",
       "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0",
       "development_stage": "production",
@@ -926,9 +1465,13 @@
       "title": "USGS Ungulate Migration",
       "description": "Ungulate migration corridors and seasonal ranges.",
       "agency_owner": "USGS",
-      "topics": ["wildlife", "migration", "ungulates"],
+      "topics": [
+        "wildlife",
+        "migration",
+        "ungulates"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://services.arcgis.com/U7I2hMhPtOeGx0fs/arcgis/rest/services/Ungulate_Migration/FeatureServer",
+      "public_web_service": "https://services.arcgis.com/U7I2hMhPtOeGx0fs/arcgis/rest/services/Ungulate_Migration/FeatureServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "multi_state",
@@ -944,7 +1487,11 @@
       "title": "3DEP Elevation",
       "description": "3D Elevation Program elevation data (ImageServer).",
       "agency_owner": "USGS",
-      "topics": ["elevation", "terrain", "DEM"],
+      "topics": [
+        "elevation",
+        "terrain",
+        "DEM"
+      ],
       "geometry_type": "RASTER",
       "public_web_service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
       "development_stage": "production",
@@ -958,13 +1505,17 @@
       }
     },
     {
-      "id": "nwi_wetlands",
-      "title": "National Wetlands Inventory (NWI)",
-      "description": "National Wetlands Inventory wetland boundaries.",
+      "id": "nwi_wetlands_wetlands",
+      "title": "National Wetlands Inventory (NWI) – Wetlands",
+      "description": "National Wetlands Inventory wetland boundaries. (sublayer: Wetlands)",
       "agency_owner": "USFWS",
-      "topics": ["wetlands", "hydrology", "NWI"],
+      "topics": [
+        "wetlands",
+        "hydrology",
+        "NWI"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -973,16 +1524,206 @@
         "completeness": 85,
         "documentation": "complete",
         "quality_tier": "gold"
-      }
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "_parent_dataset_id": "nwi_wetlands",
+      "_layer_id": 0,
+      "_layer_name": "Wetlands"
     },
     {
-      "id": "nwi_riparian",
-      "title": "Riparian Areas (NWI)",
-      "description": "Riparian areas from the National Wetlands Inventory.",
+      "id": "nwi_wetlands_wetlands_conus_east",
+      "title": "National Wetlands Inventory (NWI) – Wetlands_CONUS_East",
+      "description": "National Wetlands Inventory wetland boundaries. (sublayer: Wetlands_CONUS_East)",
       "agency_owner": "USFWS",
-      "topics": ["riparian", "hydrology", "NWI"],
+      "topics": [
+        "wetlands",
+        "hydrology",
+        "NWI"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Riparian/MapServer",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "_parent_dataset_id": "nwi_wetlands",
+      "_layer_id": 1,
+      "_layer_name": "Wetlands_CONUS_East"
+    },
+    {
+      "id": "nwi_wetlands_wetlands_conus_west",
+      "title": "National Wetlands Inventory (NWI) – Wetlands_CONUS_West",
+      "description": "National Wetlands Inventory wetland boundaries. (sublayer: Wetlands_CONUS_West)",
+      "agency_owner": "USFWS",
+      "topics": [
+        "wetlands",
+        "hydrology",
+        "NWI"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/2",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "_parent_dataset_id": "nwi_wetlands",
+      "_layer_id": 2,
+      "_layer_name": "Wetlands_CONUS_West"
+    },
+    {
+      "id": "nwi_wetlands_wetlands_hawaii",
+      "title": "National Wetlands Inventory (NWI) – Wetlands_Hawaii",
+      "description": "National Wetlands Inventory wetland boundaries. (sublayer: Wetlands_Hawaii)",
+      "agency_owner": "USFWS",
+      "topics": [
+        "wetlands",
+        "hydrology",
+        "NWI"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/3",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "_parent_dataset_id": "nwi_wetlands",
+      "_layer_id": 3,
+      "_layer_name": "Wetlands_Hawaii"
+    },
+    {
+      "id": "nwi_wetlands_wetlands_pactrust",
+      "title": "National Wetlands Inventory (NWI) – Wetlands_PacTrust",
+      "description": "National Wetlands Inventory wetland boundaries. (sublayer: Wetlands_PacTrust)",
+      "agency_owner": "USFWS",
+      "topics": [
+        "wetlands",
+        "hydrology",
+        "NWI"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/4",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "_parent_dataset_id": "nwi_wetlands",
+      "_layer_id": 4,
+      "_layer_name": "Wetlands_PacTrust"
+    },
+    {
+      "id": "nwi_wetlands_wetlands_prvi",
+      "title": "National Wetlands Inventory (NWI) – Wetlands_PRVI",
+      "description": "National Wetlands Inventory wetland boundaries. (sublayer: Wetlands_PRVI)",
+      "agency_owner": "USFWS",
+      "topics": [
+        "wetlands",
+        "hydrology",
+        "NWI"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/5",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "_parent_dataset_id": "nwi_wetlands",
+      "_layer_id": 5,
+      "_layer_name": "Wetlands_PRVI"
+    },
+    {
+      "id": "nwi_wetlands_wetlands_project_metadata",
+      "title": "National Wetlands Inventory (NWI) – Wetlands_Project_Metadata",
+      "description": "National Wetlands Inventory wetland boundaries. (sublayer: Wetlands_Project_Metadata)",
+      "agency_owner": "USFWS",
+      "topics": [
+        "wetlands",
+        "hydrology",
+        "NWI"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/6",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "_parent_dataset_id": "nwi_wetlands",
+      "_layer_id": 6,
+      "_layer_name": "Wetlands_Project_Metadata"
+    },
+    {
+      "id": "nwi_wetlands_nwi_wetland_codes",
+      "title": "National Wetlands Inventory (NWI) – NWI_Wetland_Codes",
+      "description": "National Wetlands Inventory wetland boundaries. (sublayer: NWI_Wetland_Codes)",
+      "agency_owner": "USFWS",
+      "topics": [
+        "wetlands",
+        "hydrology",
+        "NWI"
+      ],
+      "geometry_type": "TABLE",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/7",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "_parent_dataset_id": "nwi_wetlands",
+      "_layer_id": 7,
+      "_layer_name": "NWI_Wetland_Codes"
+    },
+    {
+      "id": "nwi_riparian_riparian",
+      "title": "Riparian Areas (NWI) – Riparian",
+      "description": "This data set represents the extent, approximate location and type of riparian habitats in the western United States. These data delineate the areal extent of riparian habitats as defined by A System For Mapping Riparian Areas in the United States (USFWS 2009). Certain riparian habitats may be excluded from the National mapping program because of the limitations of aerial imagery as the primary data source used to detect riparian habitats.  This dataset should be used in conjuction with the Riparian Mapping Areas layer, which identifies the extent and location of Riparian mapping projects.\n \nThe present goal of the Service is to provide the citizens of the United States and its Trust Territories with current geospatially referenced information on the status, extent, characteristics and functions of wetlands, riparian, deepwater and related aquatic habitats in priority areas to promote the understanding and conservation of these resources.\n\nThe riparian maps were produced as topical overlays using U.S. Geological Survey topographic maps as the base. The hard copy product is a composite map showing topographic and planimetric features from the USGS map base and riparian habitats from the Service's topical overlay. Thus, the data are intended for use in publications, at a scale of 1:24,000 or smaller. Due to the scale, the primary intended use is for regional and watershed data display and analysis, rather than specific project data analysis. The map products were neither designed or intended to represent legal or regulatory products. Questions or comments regarding the interpretation or classification of riparian habitats can be addressed by visiting http://www.fws.gov/wetlands/FAQs.html. These data were developed in conjunction with the publication; A System For Mapping Riparian Areas in the United States (USFWS 2009). These spatial data are not designed to stand alone. They form topical overlays to the U.S. Geological Survey 1:24,000 or 1:25,000 scale topographic quadrangles. These data will also work with current available digital wetlands data. Note that riparian delineations were drawn to follow the extent of riparian features described by this project and may not match surface features shown on other base maps.\n\nDue to the quantity and complexity of the riparian data the riparian data only display at 1:250,000 scale and greater. For wetland information visit www.fws.gov/wetlands/",
+      "agency_owner": "USFWS",
+      "topics": [
+        "riparian",
+        "hydrology",
+        "NWI"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Riparian/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -991,16 +1732,50 @@
         "completeness": 80,
         "documentation": "partial",
         "quality_tier": "silver"
-      }
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Riparian/MapServer",
+      "_parent_dataset_id": "nwi_riparian",
+      "_layer_id": 0,
+      "_layer_name": "Riparian"
     },
     {
-      "id": "nhd",
-      "title": "National Hydrography Dataset (NHD)",
-      "description": "National Hydrography Dataset streams, rivers, and water bodies.",
+      "id": "nwi_riparian_riparian_mapping_areas",
+      "title": "Riparian Areas (NWI) – Riparian Mapping Areas",
+      "description": "This data set represents the extent and location of National Wetland Inventory riparian mapping projects in the western United States.",
+      "agency_owner": "USFWS",
+      "topics": [
+        "riparian",
+        "hydrology",
+        "NWI"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Riparian/MapServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
+      "_parent_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Riparian/MapServer",
+      "_parent_dataset_id": "nwi_riparian",
+      "_layer_id": 1,
+      "_layer_name": "Riparian Mapping Areas"
+    },
+    {
+      "id": "nhd_point",
+      "title": "National Hydrography Dataset (NHD) – Point",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
       "agency_owner": "USGS",
-      "topics": ["hydrology", "streams", "NHD"],
-      "geometry_type": "multiple",
-      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -1009,16 +1784,336 @@
         "completeness": 90,
         "documentation": "complete",
         "quality_tier": "gold"
-      }
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 0,
+      "_layer_name": "Point"
     },
     {
-      "id": "nhdplus_hr",
-      "title": "NHDPlus High Resolution",
-      "description": "NHDPlus High Resolution hydrography dataset.",
+      "id": "nhd_point_event",
+      "title": "National Hydrography Dataset (NHD) – Point Event",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
       "agency_owner": "USGS",
-      "topics": ["hydrology", "streams", "NHDPlus"],
-      "geometry_type": "multiple",
-      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 1,
+      "_layer_name": "Point Event"
+    },
+    {
+      "id": "nhd_line_large_scale",
+      "title": "National Hydrography Dataset (NHD) – Line - Large Scale ",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/2",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 2,
+      "_layer_name": "Line - Large Scale "
+    },
+    {
+      "id": "nhd_flow_direction",
+      "title": "National Hydrography Dataset (NHD) – Flow Direction",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  \nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/3",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 3,
+      "_layer_name": "Flow Direction"
+    },
+    {
+      "id": "nhd_flowline_small_scale",
+      "title": "National Hydrography Dataset (NHD) – Flowline - Small Scale",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/4",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 4,
+      "_layer_name": "Flowline - Small Scale"
+    },
+    {
+      "id": "nhd_flowline_small_scale_hi_pr_vi_pacific_territories",
+      "title": "National Hydrography Dataset (NHD) – Flowline - Small Scale (HI, PR, VI, Pacific Territories)",
+      "description": "National Hydrography Dataset streams, rivers, and water bodies. (sublayer: Flowline - Small Scale (HI, PR, VI, Pacific Territories))",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/5",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 5,
+      "_layer_name": "Flowline - Small Scale (HI, PR, VI, Pacific Territories)"
+    },
+    {
+      "id": "nhd_flowline_large_scale",
+      "title": "National Hydrography Dataset (NHD) – Flowline - Large Scale",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/6",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 6,
+      "_layer_name": "Flowline - Large Scale"
+    },
+    {
+      "id": "nhd_area_small_scale",
+      "title": "National Hydrography Dataset (NHD) – Area - Small Scale",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/7",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 7,
+      "_layer_name": "Area - Small Scale"
+    },
+    {
+      "id": "nhd_area_small_scale_hi_pr_vi_pacific_territories",
+      "title": "National Hydrography Dataset (NHD) – Area - Small Scale (HI, PR, VI, Pacific Territories)",
+      "description": "National Hydrography Dataset streams, rivers, and water bodies. (sublayer: Area - Small Scale (HI, PR, VI, Pacific Territories))",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/8",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 8,
+      "_layer_name": "Area - Small Scale (HI, PR, VI, Pacific Territories)"
+    },
+    {
+      "id": "nhd_area_large_scale",
+      "title": "National Hydrography Dataset (NHD) – Area - Large Scale",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/9",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 9,
+      "_layer_name": "Area - Large Scale"
+    },
+    {
+      "id": "nhd_waterbody_small_scale",
+      "title": "National Hydrography Dataset (NHD) – Waterbody - Small Scale",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/10",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 10,
+      "_layer_name": "Waterbody - Small Scale"
+    },
+    {
+      "id": "nhd_waterbody_small_scale_hi_pr_vi_pacific_territories",
+      "title": "National Hydrography Dataset (NHD) – Waterbody - Small Scale (HI, PR, VI, Pacific Territories)",
+      "description": "National Hydrography Dataset streams, rivers, and water bodies. (sublayer: Waterbody - Small Scale (HI, PR, VI, Pacific Territories))",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/11",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 11,
+      "_layer_name": "Waterbody - Small Scale (HI, PR, VI, Pacific Territories)"
+    },
+    {
+      "id": "nhd_waterbody_large_scale",
+      "title": "National Hydrography Dataset (NHD) – Waterbody - Large Scale",
+      "description": "Abstract:\nThe National Hydrography Dataset (NHD) is a feature-based database that interconnects and uniquely identifies the stream segments or reaches that make up the nation's surface water drainage system.  NHD data was originally developed at 1:100,000-scale and exists at that scale for the whole country. This high-resolution NHD, generally developed at 1:24,000/1:12,000 scale, adds detail to the original 1:100,000-scale NHD. (Data for Alaska, Puerto Rico and the Virgin Islands was developed at high-resolution, not 1:100,000 scale.) Local resolution NHD is being developed where partners and data exist. The NHD contains reach codes for networked features, flow direction, names, and centerline representations for areal water bodies. Reaches are also defined on waterbodies and the approximate shorelines of the Great Lakes, the Atlantic and Pacific Oceans and the Gulf of Mexico. The NHD also incorporates the National Spatial Data Infrastructure framework criteria established by the Federal Geographic Data Committee.  Use the metadata link, http://nhdgeo.usgs.gov/metadata/nhd_high.htm, for additional information.\nPurpose:\nThe NHD is a national framework for assigning reach addresses to water-related entities, such as industrial discharges, drinking water supplies, fish habitat areas, wild and scenic rivers. Reach addresses establish the locations of these entities relative to one another within the NHD surface water drainage network, much like addresses on streets. Once linked to the NHD by their reach addresses, the upstream/downstream relationships of these water-related entities--and any associated information about them--can be analyzed using software tools ranging from spreadsheets to geographic information systems (GIS). GIS can also be used to combine NHD-based network analysis with other data layers, such as soils, land use and population, to help understand and display their respective effects upon one another. Furthermore, because the NHD provides a nationally consistent framework for addressing and analysis, water-related information linked to reach addresses by one organization (national, state, local) can be shared with other organizations and easily integrated into many different types of applications to the benefit of all.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHD"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/12",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "_parent_dataset_id": "nhd",
+      "_layer_id": 12,
+      "_layer_name": "Waterbody - Large Scale"
+    },
+    {
+      "id": "nhdplus_hr_nhdplusgage",
+      "title": "NHDPlus High Resolution – NHDPlusGage",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDPlusGage)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "regional",
       "coverage": "nationwide",
@@ -1028,16 +2123,349 @@
         "completeness": 90,
         "documentation": "complete",
         "quality_tier": "gold"
-      }
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 0,
+      "_layer_name": "NHDPlusGage"
     },
     {
-      "id": "wbd",
-      "title": "Watershed Boundaries (WBD)",
-      "description": "Watershed Boundary Dataset hydrologic unit boundaries.",
+      "id": "nhdplus_hr_nhdplussink",
+      "title": "NHDPlus High Resolution – NHDPlusSink",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDPlusSink)",
       "agency_owner": "USGS",
-      "topics": ["hydrology", "watersheds", "WBD", "HUC"],
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/1",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 1,
+      "_layer_name": "NHDPlusSink"
+    },
+    {
+      "id": "nhdplus_hr_nhdpoint",
+      "title": "NHDPlus High Resolution – NHDPoint",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDPoint)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/2",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 2,
+      "_layer_name": "NHDPoint"
+    },
+    {
+      "id": "nhdplus_hr_networknhdflowline",
+      "title": "NHDPlus High Resolution – NetworkNHDFlowline",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NetworkNHDFlowline)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/3",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 3,
+      "_layer_name": "NetworkNHDFlowline"
+    },
+    {
+      "id": "nhdplus_hr_nonnetworknhdflowline",
+      "title": "NHDPlus High Resolution – NonNetworkNHDFlowline",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NonNetworkNHDFlowline)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/4",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 4,
+      "_layer_name": "NonNetworkNHDFlowline"
+    },
+    {
+      "id": "nhdplus_hr_flowdirection",
+      "title": "NHDPlus High Resolution – FlowDirection",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: FlowDirection)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/5",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 5,
+      "_layer_name": "FlowDirection"
+    },
+    {
+      "id": "nhdplus_hr_nhdpluswall",
+      "title": "NHDPlus High Resolution – NHDPlusWall",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDPlusWall)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/6",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 6,
+      "_layer_name": "NHDPlusWall"
+    },
+    {
+      "id": "nhdplus_hr_nhdline",
+      "title": "NHDPlus High Resolution – NHDLine",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDLine)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/7",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 7,
+      "_layer_name": "NHDLine"
+    },
+    {
+      "id": "nhdplus_hr_nhdarea",
+      "title": "NHDPlus High Resolution – NHDArea",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDArea)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/8",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 8,
+      "_layer_name": "NHDArea"
+    },
+    {
+      "id": "nhdplus_hr_nhdwaterbody",
+      "title": "NHDPlus High Resolution – NHDWaterbody",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDWaterbody)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/9",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 9,
+      "_layer_name": "NHDWaterbody"
+    },
+    {
+      "id": "nhdplus_hr_nhdpluscatchment",
+      "title": "NHDPlus High Resolution – NHDPlusCatchment",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDPlusCatchment)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/10",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 10,
+      "_layer_name": "NHDPlusCatchment"
+    },
+    {
+      "id": "nhdplus_hr_nhdplusboundaryunit",
+      "title": "NHDPlus High Resolution – NHDPlusBoundaryUnit",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: NHDPlusBoundaryUnit)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/11",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 11,
+      "_layer_name": "NHDPlusBoundaryUnit"
+    },
+    {
+      "id": "nhdplus_hr_wbdhu12",
+      "title": "NHDPlus High Resolution – WBDHU12",
+      "description": "NHDPlus High Resolution hydrography dataset. (sublayer: WBDHU12)",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "streams",
+        "NHDPlus"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/12",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "_parent_dataset_id": "nhdplus_hr",
+      "_layer_id": 12,
+      "_layer_name": "WBDHU12"
+    },
+    {
+      "id": "wbd_wbdline",
+      "title": "Watershed Boundaries (WBD) – WBDLine",
+      "description": "The Watershed Boundary Dataset (WBD) is a comprehensive aggregated collection of hydrologic unit data consistent with the national criteria for delineation and resolution. It defines the areal extent of surface water drainage to a point except in coastal or lake front areas where there could be multiple outlets as stated by the \"Federal Standards and Procedures for the National Watershed Boundary Dataset (WBD)\" “Standard” (http://pubs.usgs.gov/tm/11/a3/). Watershed boundaries are determined solely upon science-based hydrologic principles, not favoring any administrative boundaries or special projects, nor particular program or agency. This dataset represents the hydrologic unit boundaries to the 12-digit (6th level) for the entire United States. Some areas may also include additional subdivisions representing the 14- and 16-digit hydrologic unit (HU). At a minimum, the HUs are delineated at 1:24,000-scale in the conterminous United States, 1:25,000-scale in Hawaii, Pacific basin and the Caribbean, and 1:63,360-scale in Alaska, meeting the National Map Accuracy Standards (NMAS). Higher resolution boundaries are being developed where partners and data exist and will be incorporated back into the WBD. WBD data are delivered as a dataset of polygons and corresponding lines that define the boundary of the polygon. WBD polygon attributes include hydrologic unit codes (HUC), size (in the form of acres and square kilometers), name, downstream hydrologic unit code, type of watershed, non-contributing areas, and flow modifications. The HUC describes where the unit is in the country and the level of the unit. WBD line attributes contain the highest level of hydrologic unit for each boundary, line source information and flow modifications.",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -1046,16 +2474,240 @@
         "completeness": 95,
         "documentation": "complete",
         "quality_tier": "gold"
-      }
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 0,
+      "_layer_name": "WBDLine"
+    },
+    {
+      "id": "wbd_2_digit_hu_region",
+      "title": "Watershed Boundaries (WBD) – 2-digit HU (Region)",
+      "description": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 14 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000).",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 1,
+      "_layer_name": "2-digit HU (Region)"
+    },
+    {
+      "id": "wbd_4_digit_hu_subregion",
+      "title": "Watershed Boundaries (WBD) – 4-digit HU (Subregion)",
+      "description": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 14 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000).",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/2",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 2,
+      "_layer_name": "4-digit HU (Subregion)"
+    },
+    {
+      "id": "wbd_6_digit_hu_basin",
+      "title": "Watershed Boundaries (WBD) – 6-digit HU (Basin)",
+      "description": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 14 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000).",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/3",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 3,
+      "_layer_name": "6-digit HU (Basin)"
+    },
+    {
+      "id": "wbd_8_digit_hu_subbasin",
+      "title": "Watershed Boundaries (WBD) – 8-digit HU  (Subbasin)",
+      "description": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 14 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000).",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/4",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 4,
+      "_layer_name": "8-digit HU  (Subbasin)"
+    },
+    {
+      "id": "wbd_10_digit_hu_watershed",
+      "title": "Watershed Boundaries (WBD) – 10-digit HU (Watershed)",
+      "description": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 14 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000).",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/5",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 5,
+      "_layer_name": "10-digit HU (Watershed)"
+    },
+    {
+      "id": "wbd_12_digit_hu_subwatershed",
+      "title": "Watershed Boundaries (WBD) – 12-digit HU (Subwatershed)",
+      "description": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 14 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000).",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/6",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 6,
+      "_layer_name": "12-digit HU (Subwatershed)"
+    },
+    {
+      "id": "wbd_14_digit_hu",
+      "title": "Watershed Boundaries (WBD) – 14-digit HU",
+      "description": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 14 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000).",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/7",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 7,
+      "_layer_name": "14-digit HU"
+    },
+    {
+      "id": "wbd_16_digit_hu",
+      "title": "Watershed Boundaries (WBD) – 16-digit HU",
+      "description": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 14 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000).",
+      "agency_owner": "USGS",
+      "topics": [
+        "hydrology",
+        "watersheds",
+        "WBD",
+        "HUC"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/8",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "_parent_dataset_id": "wbd",
+      "_layer_id": 8,
+      "_layer_name": "16-digit HU"
     },
     {
       "id": "bia_aian_lands",
       "title": "BIA American Indian / Alaska Native Lands",
       "description": "American Indian and Alaska Native land area representations.",
       "agency_owner": "BIA",
-      "topics": ["tribal", "AIAN", "boundaries"],
+      "topics": [
+        "tribal",
+        "AIAN",
+        "boundaries"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_National_LAR/MapServer",
+      "public_web_service": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_National_LAR/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -1071,9 +2723,12 @@
       "title": "BIA Tribal Statistical Areas",
       "description": "Tribal statistical area boundaries.",
       "agency_owner": "BIA",
-      "topics": ["tribal", "statistical areas"],
+      "topics": [
+        "tribal",
+        "statistical areas"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_Tribal_Statistical_Areas/MapServer",
+      "public_web_service": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_Tribal_Statistical_Areas/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -1085,13 +2740,17 @@
       }
     },
     {
-      "id": "fema_nfhl",
-      "title": "FEMA National Flood Hazard Layer (NFHL)",
-      "description": "FEMA flood hazard zones and flood insurance rate maps.",
+      "id": "fema_nfhl_nfhl_availability",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – NFHL Availability",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: NFHL Availability)",
       "agency_owner": "FEMA",
-      "topics": ["flood", "hazard", "NFHL"],
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -1100,16 +2759,856 @@
         "completeness": 85,
         "documentation": "complete",
         "quality_tier": "gold"
-      }
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 0,
+      "_layer_name": "NFHL Availability"
+    },
+    {
+      "id": "fema_nfhl_firm_panels",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – FIRM Panels",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: FIRM Panels)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/3",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 3,
+      "_layer_name": "FIRM Panels"
+    },
+    {
+      "id": "fema_nfhl_lomrs",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – LOMRs",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: LOMRs)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 1,
+      "_layer_name": "LOMRs"
+    },
+    {
+      "id": "fema_nfhl_lomas",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – LOMAs",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: LOMAs)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/34",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 34,
+      "_layer_name": "LOMAs"
+    },
+    {
+      "id": "fema_nfhl_political_jurisdictions",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Political Jurisdictions",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Political Jurisdictions)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/22",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 22,
+      "_layer_name": "Political Jurisdictions"
+    },
+    {
+      "id": "fema_nfhl_profile_baselines",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Profile Baselines",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Profile Baselines)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/17",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 17,
+      "_layer_name": "Profile Baselines"
+    },
+    {
+      "id": "fema_nfhl_water_lines",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Water Lines",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Water Lines)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/20",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 20,
+      "_layer_name": "Water Lines"
+    },
+    {
+      "id": "fema_nfhl_cross_sections",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Cross-Sections",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Cross-Sections)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/14",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 14,
+      "_layer_name": "Cross-Sections"
+    },
+    {
+      "id": "fema_nfhl_base_flood_elevations",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Base Flood Elevations",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Base Flood Elevations)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/16",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 16,
+      "_layer_name": "Base Flood Elevations"
+    },
+    {
+      "id": "fema_nfhl_levees",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Levees",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Levees)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/23",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 23,
+      "_layer_name": "Levees"
+    },
+    {
+      "id": "fema_nfhl_seclusion_boundaries",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Seclusion Boundaries",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Seclusion Boundaries)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/29",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 29,
+      "_layer_name": "Seclusion Boundaries"
+    },
+    {
+      "id": "fema_nfhl_coastal_transects",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Coastal Transects",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Coastal Transects)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/15",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 15,
+      "_layer_name": "Coastal Transects"
+    },
+    {
+      "id": "fema_nfhl_transect_baselines",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Transect Baselines",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Transect Baselines)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/18",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 18,
+      "_layer_name": "Transect Baselines"
+    },
+    {
+      "id": "fema_nfhl_general_structures",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – General Structures",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: General Structures)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/24",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 24,
+      "_layer_name": "General Structures"
+    },
+    {
+      "id": "fema_nfhl_river_mile_markers",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – River Mile Markers",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: River Mile Markers)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/7",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 7,
+      "_layer_name": "River Mile Markers"
+    },
+    {
+      "id": "fema_nfhl_water_areas",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Water Areas",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Water Areas)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/32",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 32,
+      "_layer_name": "Water Areas"
+    },
+    {
+      "id": "fema_nfhl_plss",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – PLSS",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: PLSS)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/5",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 5,
+      "_layer_name": "PLSS"
+    },
+    {
+      "id": "fema_nfhl_limit_of_moderate_wave_action",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Limit of Moderate Wave Action",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Limit of Moderate Wave Action)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/19",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 19,
+      "_layer_name": "Limit of Moderate Wave Action"
+    },
+    {
+      "id": "fema_nfhl_flood_hazard_boundaries",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Flood Hazard Boundaries",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Flood Hazard Boundaries)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/27",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 27,
+      "_layer_name": "Flood Hazard Boundaries"
+    },
+    {
+      "id": "fema_nfhl_flood_hazard_zones",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Flood Hazard Zones",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Flood Hazard Zones)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/28",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 28,
+      "_layer_name": "Flood Hazard Zones"
+    },
+    {
+      "id": "fema_nfhl_primary_frontal_dunes",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Primary Frontal Dunes",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Primary Frontal Dunes)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/25",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 25,
+      "_layer_name": "Primary Frontal Dunes"
+    },
+    {
+      "id": "fema_nfhl_base_index",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Base Index",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Base Index)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/4",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 4,
+      "_layer_name": "Base Index"
+    },
+    {
+      "id": "fema_nfhl_topographic_low_confidence_areas",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Topographic Low Confidence Areas",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Topographic Low Confidence Areas)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/6",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 6,
+      "_layer_name": "Topographic Low Confidence Areas"
+    },
+    {
+      "id": "fema_nfhl_datum_conversion_points",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Datum Conversion Points",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Datum Conversion Points)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/8",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 8,
+      "_layer_name": "Datum Conversion Points"
+    },
+    {
+      "id": "fema_nfhl_coastal_gages",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Coastal Gages",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Coastal Gages)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/9",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 9,
+      "_layer_name": "Coastal Gages"
+    },
+    {
+      "id": "fema_nfhl_gages",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Gages",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Gages)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/10",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 10,
+      "_layer_name": "Gages"
+    },
+    {
+      "id": "fema_nfhl_nodes",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Nodes",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Nodes)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/11",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 11,
+      "_layer_name": "Nodes"
+    },
+    {
+      "id": "fema_nfhl_high_water_marks",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – High Water Marks",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: High Water Marks)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/12",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 12,
+      "_layer_name": "High Water Marks"
+    },
+    {
+      "id": "fema_nfhl_station_start_points",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Station Start Points",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Station Start Points)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POINT",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/13",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 13,
+      "_layer_name": "Station Start Points"
+    },
+    {
+      "id": "fema_nfhl_hydrologic_reaches",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Hydrologic Reaches",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Hydrologic Reaches)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/26",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 26,
+      "_layer_name": "Hydrologic Reaches"
+    },
+    {
+      "id": "fema_nfhl_alluvial_fans",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Alluvial Fans",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Alluvial Fans)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/30",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 30,
+      "_layer_name": "Alluvial Fans"
+    },
+    {
+      "id": "fema_nfhl_subbasins",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Subbasins",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Subbasins)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/31",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 31,
+      "_layer_name": "Subbasins"
+    },
+    {
+      "id": "fema_nfhl_study_info",
+      "title": "FEMA National Flood Hazard Layer (NFHL) – Study_Info",
+      "description": "FEMA flood hazard zones and flood insurance rate maps. (sublayer: Study_Info)",
+      "agency_owner": "FEMA",
+      "topics": [
+        "flood",
+        "hazard",
+        "NFHL"
+      ],
+      "geometry_type": "TABLE",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer/41",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "_parent_dataset_id": "fema_nfhl",
+      "_layer_id": 41,
+      "_layer_name": "Study_Info"
     },
     {
       "id": "usfs_inventoried_roadless",
       "title": "USFS Inventoried Roadless Areas (2001)",
       "description": "US Forest Service Inventoried Roadless Areas from the 2001 rule.",
       "agency_owner": "USFS",
-      "topics": ["roadless", "wilderness", "USFS"],
+      "topics": [
+        "roadless",
+        "wilderness",
+        "USFS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_InventoriedRoadlessAreas2001_01/MapServer",
+      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_InventoriedRoadlessAreas2001_01/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -1121,13 +3620,17 @@
       }
     },
     {
-      "id": "usfs_boundaries",
-      "title": "USFS National Forest Boundaries",
-      "description": "US Forest Service administrative forest boundaries.",
+      "id": "usfs_boundaries_administrative_forest_boundaries_national_extent",
+      "title": "USFS National Forest Boundaries – Administrative Forest Boundaries - National Extent",
+      "description": "This dataset is intended for read-only use. The purpose of these data is to provide display, identification, and analysis tools for determining current boundary information for Forest Service managers, GIS specialists, and others.",
       "agency_owner": "USFS",
-      "topics": ["admin boundaries", "national forests", "USFS"],
+      "topics": [
+        "admin boundaries",
+        "national forests",
+        "USFS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer",
+      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",
@@ -1136,16 +3639,50 @@
         "completeness": 95,
         "documentation": "complete",
         "quality_tier": "gold"
-      }
+      },
+      "_parent_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer",
+      "_parent_dataset_id": "usfs_boundaries",
+      "_layer_id": 0,
+      "_layer_name": "Administrative Forest Boundaries - National Extent"
+    },
+    {
+      "id": "usfs_boundaries_administrative_forest_boundaries_regional_extent",
+      "title": "USFS National Forest Boundaries – Administrative Forest Boundaries - Regional Extent",
+      "description": "This dataset is intended for read-only use. The purpose of these data is to provide display, identification, and analysis tools for determining current boundary information for Forest Service managers, GIS specialists, and others.",
+      "agency_owner": "USFS",
+      "topics": [
+        "admin boundaries",
+        "national forests",
+        "USFS"
+      ],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
+      "_parent_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer",
+      "_parent_dataset_id": "usfs_boundaries",
+      "_layer_id": 1,
+      "_layer_name": "Administrative Forest Boundaries - Regional Extent"
     },
     {
       "id": "usfs_wilderness",
       "title": "USFS Wilderness Areas",
       "description": "US Forest Service designated wilderness areas.",
       "agency_owner": "USFS",
-      "topics": ["wilderness", "special designations", "USFS"],
+      "topics": [
+        "wilderness",
+        "special designations",
+        "USFS"
+      ],
       "geometry_type": "POLYGON",
-      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_Wilderness_01/MapServer",
+      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_Wilderness_01/MapServer/0",
       "development_stage": "production",
       "scale_suitability": "national",
       "coverage": "nationwide",

@@ -1023,5 +1023,288 @@ textarea.dataset-edit-input {
   margin-bottom: 0.6rem;
 }
 
+/* ============================
+   DEVELOPMENT STAGE BADGES
+   ============================ */
 
+.stage-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+}
 
+.stage-planned {
+  border-color: #6b7280;
+  background: rgba(107, 114, 128, 0.15);
+  color: #9ca3af;
+}
+
+.stage-dev {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+.stage-qa {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+}
+
+.stage-prod {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.stage-deprecated {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+/* ============================
+   SCALE SUITABILITY BADGES
+   ============================ */
+
+.scale-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+}
+
+.scale-national {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.15);
+  color: #60a5fa;
+}
+
+.scale-regional {
+  border-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+}
+
+.scale-local {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+}
+
+/* ============================
+   QUALITY TIER BADGES
+   ============================ */
+
+.tier-badge-large {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius);
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: 2px solid var(--border-color);
+  background: var(--bg-card);
+  margin-bottom: 0.75rem;
+}
+
+.tier-bronze {
+  border-color: #cd7f32;
+  background: rgba(205, 127, 50, 0.12);
+  color: #d4a574;
+}
+
+.tier-silver {
+  border-color: #c0c0c0;
+  background: rgba(192, 192, 192, 0.12);
+  color: #d4d4d4;
+}
+
+.tier-gold {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.12);
+  color: #fde047;
+}
+
+.maturity-overview {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+/* ============================
+   COMPLETENESS BAR
+   ============================ */
+
+.completeness-bar-container {
+  margin: 0.75rem 0;
+}
+
+.completeness-label {
+  margin-bottom: 0.35rem;
+  font-size: 0.9rem;
+}
+
+.completeness-bar-track {
+  height: 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.completeness-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+/* ============================
+   HISTOGRAM CHARTS
+   ============================ */
+
+.histogram-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.histogram-row {
+  display: grid;
+  grid-template-columns: 120px 1fr 100px;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.histogram-label {
+  color: var(--text-main);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.histogram-bar-container {
+  height: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.histogram-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-hover) 100%);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.histogram-count {
+  color: var(--text-muted);
+  text-align: right;
+  font-size: 0.8rem;
+}
+
+/* ============================
+   STATISTICS GRID
+   ============================ */
+
+.stats-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  min-width: 80px;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+/* ============================
+   FIELD STATS SELECTOR
+   ============================ */
+
+.field-stats-selector {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.field-stats-dropdown {
+  flex: 1;
+  max-width: 400px;
+  padding: 0.5rem 0.65rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: 0.9rem;
+}
+
+.field-stats-dropdown:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field-stats-content {
+  min-height: 100px;
+}
+
+.field-stats-content h4 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1rem;
+  color: var(--text-main);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* ============================
+   DEVELOPMENT CARD STYLES
+   ============================ */
+
+.card-development ul,
+.card-scale ul {
+  margin: 0.25rem 0 0 0;
+  padding-left: 1.25rem;
+}
+
+.card-development li,
+.card-scale li {
+  margin-bottom: 0.15rem;
+  color: var(--text-main);
+}

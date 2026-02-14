@@ -235,6 +235,109 @@ async function fetchSampleRows(serviceUrl, layerId = 0, n = 8) {
   return fetchJsonWithTimeout(u);
 }
 
+// Fetch statistics for numeric/date fields (min, max, avg, stddev, count)
+async function fetchFieldStatistics(serviceUrl, layerId = 0, fieldName, fieldType) {
+  const base = normalizeServiceUrl(serviceUrl);
+  const statTypes = ['min', 'max', 'avg', 'stddev', 'count'];
+  const outStatistics = statTypes.map(t => ({
+    statisticType: t,
+    onStatisticField: fieldName,
+    outStatisticFieldName: `${t}_${fieldName}`
+  }));
+  
+  const params = new URLSearchParams({
+    where: '1=1',
+    outStatistics: JSON.stringify(outStatistics),
+    f: 'json',
+  });
+  const u = `${base}/${layerId}/query?${params.toString()}`;
+  return fetchJsonWithTimeout(u);
+}
+
+// Fetch unique value counts for a field (for histograms/value distribution)
+async function fetchFieldValueCounts(serviceUrl, layerId = 0, fieldName, maxValues = 50) {
+  const base = normalizeServiceUrl(serviceUrl);
+  const params = new URLSearchParams({
+    where: '1=1',
+    outFields: fieldName,
+    groupByFieldsForStatistics: fieldName,
+    outStatistics: JSON.stringify([{
+      statisticType: 'count',
+      onStatisticField: fieldName,
+      outStatisticFieldName: 'value_count'
+    }]),
+    orderByFields: 'value_count DESC',
+    resultRecordCount: String(maxValues),
+    f: 'json',
+  });
+  const u = `${base}/${layerId}/query?${params.toString()}`;
+  return fetchJsonWithTimeout(u);
+}
+
+// Determine if a field type is numeric (for statistics)
+function isNumericFieldType(esriType) {
+  const t = String(esriType || '').toUpperCase();
+  return t.includes('INTEGER') || t.includes('DOUBLE') || t.includes('FLOAT') || t.includes('SINGLE') || t.includes('SMALL');
+}
+
+// Determine if a field type is date
+function isDateFieldType(esriType) {
+  return String(esriType || '').toUpperCase().includes('DATE');
+}
+
+// Build a simple inline histogram bar chart HTML
+function buildHistogramHTML(valueCounts, fieldName, totalCount) {
+  if (!valueCounts || !valueCounts.length) return '<p class="text-muted">No data available</p>';
+  
+  const maxCount = Math.max(...valueCounts.map(v => v.count || 0));
+  
+  let html = '<div class="histogram-chart">';
+  valueCounts.slice(0, 10).forEach(v => {
+    const label = v.value !== null && v.value !== undefined ? String(v.value) : '(null)';
+    const count = v.count || 0;
+    const pct = maxCount > 0 ? (count / maxCount * 100) : 0;
+    const pctOfTotal = totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : '0';
+    
+    html += `
+      <div class="histogram-row">
+        <div class="histogram-label" title="${escapeHtml(label)}">${escapeHtml(label.length > 20 ? label.slice(0, 18) + '...' : label)}</div>
+        <div class="histogram-bar-container">
+          <div class="histogram-bar" style="width: ${pct}%"></div>
+        </div>
+        <div class="histogram-count">${count.toLocaleString()} (${pctOfTotal}%)</div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  
+  if (valueCounts.length > 10) {
+    html += `<p class="text-muted" style="margin-top:0.5rem;">Showing top 10 of ${valueCounts.length} unique values</p>`;
+  }
+  
+  return html;
+}
+
+// Build statistics summary HTML
+function buildStatisticsHTML(stats, fieldName) {
+  if (!stats) return '<p class="text-muted">Statistics unavailable</p>';
+  
+  const formatNum = (n) => {
+    if (n === null || n === undefined) return '—';
+    if (typeof n === 'number') return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
+    return String(n);
+  };
+  
+  return `
+    <div class="stats-grid">
+      <div class="stat-item"><span class="stat-label">Min</span><span class="stat-value">${formatNum(stats.min)}</span></div>
+      <div class="stat-item"><span class="stat-label">Max</span><span class="stat-value">${formatNum(stats.max)}</span></div>
+      <div class="stat-item"><span class="stat-label">Avg</span><span class="stat-value">${formatNum(stats.avg)}</span></div>
+      <div class="stat-item"><span class="stat-label">Std Dev</span><span class="stat-value">${formatNum(stats.stddev)}</span></div>
+      <div class="stat-item"><span class="stat-label">Count</span><span class="stat-value">${formatNum(stats.count)}</span></div>
+    </div>
+  `;
+}
+
 function buildExportImageUrl(mapServerUrl, extent) {
   const base = normalizeServiceUrl(mapServerUrl);
   const wkid = extent?.spatialReference?.wkid || 4326;
@@ -401,8 +504,96 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
       }
     }
 
+    // Field Statistics & Histograms section
+    if (layerJson && Array.isArray(layerJson.fields) && layerJson.fields.length) {
+      html += `
+        <div class="card" style="margin-top:0.75rem;">
+          <div style="font-weight:600; margin-bottom:0.5rem;">Field Statistics & Histograms</div>
+          <p style="color:var(--text-muted); margin-bottom:0.75rem;">Select a field to view statistics and value distribution.</p>
+          <div class="field-stats-selector">
+            <select id="fieldStatsSelect" class="field-stats-dropdown">
+              <option value="">— Select a field —</option>
+              ${layerJson.fields.map(f => `<option value="${escapeHtml(f.name)}" data-field-type="${escapeHtml(f.type || '')}">${escapeHtml(f.name)}${f.alias ? ` (${escapeHtml(f.alias)})` : ''}</option>`).join('')}
+            </select>
+            <button type="button" class="btn primary" id="loadFieldStatsBtn">Load Statistics</button>
+          </div>
+          <div id="fieldStatsContent" class="field-stats-content"></div>
+        </div>
+      `;
+    }
+
     contentEl.innerHTML = html;
     statusEl.textContent = 'Preview loaded.';
+
+    // Wire up the field statistics loader
+    const fieldSelect = contentEl.querySelector('#fieldStatsSelect');
+    const loadStatsBtn = contentEl.querySelector('#loadFieldStatsBtn');
+    const statsContent = contentEl.querySelector('#fieldStatsContent');
+    
+    if (fieldSelect && loadStatsBtn && statsContent) {
+      loadStatsBtn.addEventListener('click', async () => {
+        const fieldName = fieldSelect.value;
+        if (!fieldName) {
+          statsContent.innerHTML = '<p class="text-muted">Please select a field.</p>';
+          return;
+        }
+        
+        const fieldType = fieldSelect.options[fieldSelect.selectedIndex].getAttribute('data-field-type') || '';
+        statsContent.innerHTML = '<p>Loading statistics...</p>';
+        
+        try {
+          const isNumeric = isNumericFieldType(fieldType);
+          const isDate = isDateFieldType(fieldType);
+          
+          let statsHtml = `<h4 style="margin-top:0.75rem;">${escapeHtml(fieldName)}</h4>`;
+          statsHtml += `<p style="color:var(--text-muted);">Type: ${escapeHtml(fieldType)}</p>`;
+          
+          // For numeric/date fields, fetch statistics
+          if (isNumeric || isDate) {
+            try {
+              const statsJson = await fetchFieldStatistics(url, layerId, fieldName, fieldType);
+              if (statsJson && Array.isArray(statsJson.features) && statsJson.features.length) {
+                const statsAttrs = statsJson.features[0].attributes || {};
+                const stats = {
+                  min: statsAttrs[`min_${fieldName}`],
+                  max: statsAttrs[`max_${fieldName}`],
+                  avg: statsAttrs[`avg_${fieldName}`],
+                  stddev: statsAttrs[`stddev_${fieldName}`],
+                  count: statsAttrs[`count_${fieldName}`]
+                };
+                statsHtml += '<div style="margin-top:0.5rem;"><strong>Statistics</strong></div>';
+                statsHtml += buildStatisticsHTML(stats, fieldName);
+              }
+            } catch (e) {
+              console.warn('Could not fetch statistics:', e);
+            }
+          }
+          
+          // Fetch value distribution (histogram)
+          try {
+            const valueCountsJson = await fetchFieldValueCounts(url, layerId, fieldName, 50);
+            if (valueCountsJson && Array.isArray(valueCountsJson.features) && valueCountsJson.features.length) {
+              const valueCounts = valueCountsJson.features.map(f => ({
+                value: f.attributes ? f.attributes[fieldName] : null,
+                count: f.attributes ? f.attributes['value_count'] : 0
+              }));
+              const totalCount = valueCounts.reduce((sum, v) => sum + (v.count || 0), 0);
+              
+              statsHtml += '<div style="margin-top:1rem;"><strong>Value Distribution</strong></div>';
+              statsHtml += buildHistogramHTML(valueCounts, fieldName, totalCount);
+            }
+          } catch (e) {
+            console.warn('Could not fetch value counts:', e);
+            statsHtml += '<p class="text-muted">Could not load value distribution.</p>';
+          }
+          
+          statsContent.innerHTML = statsHtml;
+        } catch (err) {
+          console.error('Stats loading error:', err);
+          statsContent.innerHTML = '<p class="text-muted">Failed to load statistics.</p>';
+        }
+      });
+    }
   } catch (err) {
     console.error(err);
     statusEl.textContent = 'Failed to load preview (service JSON blocked or unavailable).';
@@ -580,6 +771,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     { key: 'data_standard', label: 'Data Standard', type: 'text' },
 
     { key: 'notes', label: 'Notes', type: 'textarea' },
+    
+    // Development & Status
+    { key: 'development_stage', label: 'Development Stage', type: 'select', options: ['planned', 'in_development', 'qa', 'production', 'deprecated'] },
+    { key: 'target_release_date', label: 'Target Release Date', type: 'text' },
+    { key: 'blockers', label: 'Blockers (comma-separated)', type: 'csv' },
+    
+    // National Scale Suitability
+    { key: 'scale_suitability', label: 'Scale Suitability', type: 'select', options: ['national', 'regional', 'local'] },
+    { key: 'coverage', label: 'Coverage', type: 'select', options: ['nationwide', 'multi_state', 'single_state', 'partial'] },
+    { key: 'web_mercator_compatible', label: 'Web Mercator Compatible', type: 'boolean' },
+    { key: 'performance_notes', label: 'Performance Notes', type: 'textarea' },
+    
+    // Maturity
+    { key: 'maturity.completeness', label: 'Completeness (%)', type: 'number' },
+    { key: 'maturity.documentation', label: 'Documentation Level', type: 'select', options: ['none', 'minimal', 'partial', 'complete'] },
+    { key: 'maturity.quality_tier', label: 'Quality Tier', type: 'select', options: ['bronze', 'silver', 'gold'] },
   ];
 
   // --- Edit Fields for Suggest Attribute Change functionality ---
@@ -835,6 +1042,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     html += `<h2>Editing: ${escapeHtml(dataset.title || dataset.id)}</h2>`;
     if (dataset.description) html += `<p>${escapeHtml(dataset.description)}</p>`;
 
+    // Helper to get nested value from draft
+    function getNestedValue(obj, path) {
+      return path.split('.').reduce((o, k) => (o && o[k] !== undefined) ? o[k] : undefined, obj);
+    }
+
     // Form container
     html += `<div class="card card-meta" id="datasetEditCard">`;
     html += `<div class="dataset-edit-actions">
@@ -844,7 +1056,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Fields
     DATASET_EDIT_FIELDS.forEach((f) => {
-      const val = draft[f.key];
+      const val = getNestedValue(draft, f.key);
 
       if (f.type === 'textarea') {
         html += `
@@ -853,6 +1065,34 @@ document.addEventListener('DOMContentLoaded', async () => {
           <textarea class="dataset-edit-input" data-edit-key="${escapeHtml(f.key)}">${escapeHtml(
           val || ''
         )}</textarea>
+        </div>
+      `;
+      } else if (f.type === 'select' && Array.isArray(f.options)) {
+        html += `
+        <div class="dataset-edit-row">
+          <label class="dataset-edit-label">${escapeHtml(f.label)}</label>
+          <select class="dataset-edit-input" data-edit-key="${escapeHtml(f.key)}">
+            <option value="">(select)</option>
+            ${f.options.map(opt => `<option value="${escapeHtml(opt)}" ${val === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`).join('')}
+          </select>
+        </div>
+      `;
+      } else if (f.type === 'boolean') {
+        html += `
+        <div class="dataset-edit-row">
+          <label class="dataset-edit-label">${escapeHtml(f.label)}</label>
+          <select class="dataset-edit-input" data-edit-key="${escapeHtml(f.key)}">
+            <option value="">(select)</option>
+            <option value="true" ${val === true ? 'selected' : ''}>Yes</option>
+            <option value="false" ${val === false ? 'selected' : ''}>No</option>
+          </select>
+        </div>
+      `;
+      } else if (f.type === 'number') {
+        html += `
+        <div class="dataset-edit-row">
+          <label class="dataset-edit-label">${escapeHtml(f.label)}</label>
+          <input class="dataset-edit-input" type="number" data-edit-key="${escapeHtml(f.key)}" value="${val !== undefined ? escapeHtml(String(val)) : ''}" />
         </div>
       `;
       } else {
@@ -930,16 +1170,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     const submitBtn = datasetDetailEl.querySelector('button[data-edit-submit]');
     if (submitBtn) {
       submitBtn.addEventListener('click', () => {
+        // Helper to set nested value in draft
+        function setNestedValue(obj, path, value) {
+          const keys = path.split('.');
+          let current = obj;
+          for (let i = 0; i < keys.length - 1; i++) {
+            if (!current[keys[i]]) current[keys[i]] = {};
+            current = current[keys[i]];
+          }
+          current[keys[keys.length - 1]] = value;
+        }
+
         const inputs = datasetDetailEl.querySelectorAll('[data-edit-key]');
         inputs.forEach((el) => {
           const k = el.getAttribute('data-edit-key');
           const raw = el.value;
 
           const fieldDef = DATASET_EDIT_FIELDS.find((x) => x.key === k);
+          let parsedValue;
+
           if (fieldDef && fieldDef.type === 'csv') {
-            draft[k] = parseCsvList(raw);
+            parsedValue = parseCsvList(raw);
+          } else if (fieldDef && fieldDef.type === 'boolean') {
+            if (raw === 'true') parsedValue = true;
+            else if (raw === 'false') parsedValue = false;
+            else parsedValue = undefined;
+          } else if (fieldDef && fieldDef.type === 'number') {
+            const num = parseFloat(raw);
+            parsedValue = isNaN(num) ? undefined : num;
           } else {
-            draft[k] = String(raw || '').trim();
+            parsedValue = String(raw || '').trim() || undefined;
+          }
+
+          // Handle nested keys like maturity.completeness
+          if (k.includes('.')) {
+            setNestedValue(draft, k, parsedValue);
+          } else {
+            draft[k] = parsedValue;
           }
         });
 
@@ -2136,6 +2403,109 @@ document.addEventListener('DOMContentLoaded', async () => {
  </p>`;
 
     if (dataset.notes) html += `<p><strong>Notes:</strong> ${escapeHtml(dataset.notes)}</p>`;
+    html += '</div>';
+
+    // Development & Status card
+    html += '<div class="card card-development">';
+    html += '<h3>Development & Status</h3>';
+    
+    const stageLabels = {
+      'planned': { label: 'Planned', class: 'stage-planned' },
+      'in_development': { label: 'In Development', class: 'stage-dev' },
+      'qa': { label: 'QA/Testing', class: 'stage-qa' },
+      'production': { label: 'Production', class: 'stage-prod' },
+      'deprecated': { label: 'Deprecated', class: 'stage-deprecated' }
+    };
+    const stage = dataset.development_stage || 'unknown';
+    const stageInfo = stageLabels[stage] || { label: stage, class: '' };
+    
+    html += `<p><strong>Development Stage:</strong> <span class="stage-badge ${stageInfo.class}">${escapeHtml(stageInfo.label)}</span></p>`;
+    
+    if (dataset.target_release_date) {
+      html += `<p><strong>Target Release Date:</strong> ${escapeHtml(dataset.target_release_date)}</p>`;
+    }
+    
+    if (Array.isArray(dataset.blockers) && dataset.blockers.length) {
+      html += `<p><strong>Blockers:</strong></p><ul>`;
+      dataset.blockers.forEach(b => { html += `<li>${escapeHtml(b)}</li>`; });
+      html += `</ul>`;
+    }
+    html += '</div>';
+
+    // National Scale Suitability card
+    html += '<div class="card card-scale">';
+    html += '<h3>National Scale Suitability</h3>';
+    
+    const scaleLabels = {
+      'national': { label: 'National', class: 'scale-national', icon: '🌎' },
+      'regional': { label: 'Regional', class: 'scale-regional', icon: '🗺️' },
+      'local': { label: 'Local', class: 'scale-local', icon: '📍' }
+    };
+    const coverageLabels = {
+      'nationwide': 'Nationwide (all 50 states)',
+      'multi_state': 'Multi-state',
+      'single_state': 'Single state',
+      'partial': 'Partial coverage'
+    };
+    
+    const scaleVal = dataset.scale_suitability || '';
+    const scaleInfo = scaleLabels[scaleVal] || { label: scaleVal || 'Unknown', class: '', icon: '' };
+    const coverageVal = dataset.coverage || '';
+    const coverageLabel = coverageLabels[coverageVal] || coverageVal || 'Unknown';
+    
+    html += `<p><strong>Scale Suitability:</strong> <span class="scale-badge ${scaleInfo.class}">${scaleInfo.icon} ${escapeHtml(scaleInfo.label)}</span></p>`;
+    html += `<p><strong>Coverage:</strong> ${escapeHtml(coverageLabel)}</p>`;
+    
+    const wmCompat = dataset.web_mercator_compatible;
+    if (wmCompat !== undefined) {
+      html += `<p><strong>Web Mercator Compatible:</strong> ${wmCompat ? '✅ Yes' : '❌ No'}</p>`;
+    }
+    
+    if (dataset.performance_notes) {
+      html += `<p><strong>Performance Notes:</strong> ${escapeHtml(dataset.performance_notes)}</p>`;
+    }
+    html += '</div>';
+
+    // Maturity card
+    const maturity = dataset.maturity || {};
+    html += '<div class="card card-maturity">';
+    html += '<h3>Data Maturity</h3>';
+    
+    const tierLabels = {
+      'bronze': { label: 'Bronze', class: 'tier-bronze', icon: '🥉' },
+      'silver': { label: 'Silver', class: 'tier-silver', icon: '🥈' },
+      'gold': { label: 'Gold', class: 'tier-gold', icon: '🥇' }
+    };
+    const docLabels = {
+      'none': 'None',
+      'minimal': 'Minimal',
+      'partial': 'Partial',
+      'complete': 'Complete'
+    };
+    
+    const tier = maturity.quality_tier || '';
+    const tierInfo = tierLabels[tier] || { label: tier || 'Unknown', class: '', icon: '' };
+    const completeness = maturity.completeness;
+    const docLevel = maturity.documentation || '';
+    const docLabel = docLabels[docLevel] || docLevel || 'Unknown';
+    
+    html += `<div class="maturity-overview">`;
+    html += `<div class="tier-badge-large ${tierInfo.class}">${tierInfo.icon}<span>${escapeHtml(tierInfo.label)}</span></div>`;
+    html += `</div>`;
+    
+    if (completeness !== undefined) {
+      const pct = Math.min(100, Math.max(0, Number(completeness) || 0));
+      html += `
+        <div class="completeness-bar-container">
+          <div class="completeness-label"><strong>Completeness:</strong> ${pct}%</div>
+          <div class="completeness-bar-track">
+            <div class="completeness-bar-fill" style="width: ${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }
+    
+    html += `<p><strong>Documentation:</strong> ${escapeHtml(docLabel)}</p>`;
     html += '</div>';
 
     // Attributes + inline attribute details

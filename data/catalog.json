@@ -18,7 +18,17 @@
         "internal_web_service": "https://...",
         "data_standard": "https://...",
         "projection": "e.g., EPSG:3857 / EPSG:4269",
-        "notes": "Any special notes, caveats, lineage, etc."
+        "notes": "Any special notes, caveats, lineage, etc.",
+        "development_stage": "planned | in_development | qa | production | deprecated",
+        "target_release_date": "YYYY-MM-DD",
+        "blockers": "e.g., awaiting data review, pending security approval",
+        "scale_suitability": "national | regional | local",
+        "coverage": "nationwide | multi_state | single_state | partial",
+        "performance_notes": "e.g., Tile-cached, feature count limits, etc.",
+        "web_mercator_compatible": "true / false",
+        "maturity_completeness": "0-100 percent complete",
+        "maturity_documentation": "none | minimal | partial | complete",
+        "maturity_quality_tier": "bronze | silver | gold"
       },
       "new_attribute": {
         "id": "e.g., STATE_NAME",
@@ -422,7 +432,17 @@
       "access_level": "public",
       "public_web_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit/MapServer",
       "internal_web_service": "unknown",
-      "data_standard": "https://doimspp.sharepoint.com/sites/blm-oc/DataAdmin/DataStandards/SitePages/ADMU.aspx"
+      "data_standard": "https://doimspp.sharepoint.com/sites/blm-oc/DataAdmin/DataStandards/SitePages/ADMU.aspx",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Tile-cached for fast rendering at national scale",
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
     },
     {
       "id": "This is a hidden unique ID for the dataset used for the Catalog UI.",
@@ -488,6 +508,16 @@
       "data_standard": "https://example.gov/standards/blm_rmp_boundaries",
       "access_level": "PUBLIC",
       "notes": "Used in NEPA and land use planning program-wide.",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Supports dynamic queries; no tile cache",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
       "attribute_ids": [
         "RMP_ID",
         "STATE",
@@ -526,6 +556,16 @@
       "data_standard": "https://example.gov/standards/blm_wildfire_perimeters",
       "access_level": "PUBLIC",
       "notes": "Includes only perimeters that intersect BLM-administered lands.",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "High update frequency during fire season; may have latency",
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
       "attribute_ids": [
         "FIRE_ID",
         "FIRE_NAME",
@@ -566,6 +606,16 @@
       "data_standard": "https://example.gov/standards/blm_acec_boundaries",
       "access_level": "PUBLIC",
       "notes": "Includes currently designated ACECs; proposed ACECs are maintained separately.",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Low feature count; suitable for national web maps",
+      "maturity": {
+        "completeness": 88,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
       "attribute_ids": [
         "ACEC_ID",
         "ACEC_NAME",
@@ -605,6 +655,16 @@
       "data_standard": "https://example.gov/standards/blm_wilderness_study_areas",
       "access_level": "PUBLIC",
       "notes": "Includes WSAs and their current status relative to wilderness designation.",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Static dataset; excellent for national web maps",
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      },
       "attribute_ids": [
         "WSA_ID",
         "WSA_NAME",
@@ -644,6 +704,18 @@
       "data_standard": "https://example.gov/standards/blm_oil_gas_leases",
       "access_level": "PUBLIC",
       "notes": "Represents active and historical oil and gas leases on BLM-administered lands.",
+      "development_stage": "production",
+      "target_release_date": null,
+      "blockers": [],
+      "scale_suitability": "regional",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "performance_notes": "Large feature count; consider filtering by state for web maps",
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      },
       "attribute_ids": [
         "LEASE_ID",
         "STATE",
@@ -684,6 +756,21 @@
       "data_standard": "https://example.gov/standards/blm_rights_of_way",
       "access_level": "PUBLIC",
       "notes": "Includes major transmission, pipeline, road, and other rights-of-way.",
+      "development_stage": "in_development",
+      "target_release_date": "2026-06-01",
+      "blockers": [
+        "Awaiting data QA review",
+        "Pending attribute standardization"
+      ],
+      "scale_suitability": "regional",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "performance_notes": "High feature count and complex geometry; use generalized version for national maps",
+      "maturity": {
+        "completeness": 65,
+        "documentation": "minimal",
+        "quality_tier": "bronze"
+      },
       "attribute_ids": [
         "ROW_ID",
         "STATE",

@@ -1,0 +1,1160 @@
+{
+  "ui": {
+    "placeholders": {
+      "new_dataset": {
+        "id": "e.g., blm_admin_units",
+        "title": "Human-friendly dataset title",
+        "description": "Short description of the dataset",
+        "objname": "e.g., SDE.ADMIN.AdminUnit",
+        "geometry_type": "e.g., POLYGON / POLYLINE / POINT / TABLE",
+        "agency_owner": "e.g., BLM",
+        "office_owner": "e.g., HQ / State / Field Office",
+        "contact_email": "name@agency.gov",
+        "topics": "e.g., planning, NEPA, boundaries",
+        "update_frequency": "e.g., Quarterly / Annually / Ad hoc",
+        "status": "e.g., Authoritative / Draft",
+        "access_level": "e.g., Public / Internal",
+        "public_web_service": "https://...",
+        "internal_web_service": "https://...",
+        "data_standard": "https://...",
+        "projection": "e.g., EPSG:3857 / EPSG:4269",
+        "notes": "Any special notes, caveats, lineage, etc.",
+        "development_stage": "planned | in_development | qa | production | deprecated",
+        "target_release_date": "YYYY-MM-DD",
+        "blockers": "e.g., awaiting data review, pending security approval",
+        "scale_suitability": "national | regional | local",
+        "coverage": "nationwide | multi_state | single_state | partial",
+        "performance_notes": "e.g., Tile-cached, feature count limits, etc.",
+        "web_mercator_compatible": "true / false",
+        "maturity_completeness": "0-100 percent complete",
+        "maturity_documentation": "none | minimal | partial | complete",
+        "maturity_quality_tier": "bronze | silver | gold"
+      },
+      "new_attribute": {
+        "id": "e.g., STATE_NAME",
+        "label": "e.g., State Name",
+        "type": "e.g., string | integer | float | date | enumerated",
+        "definition": "Short definition of what this attribute represents.",
+        "expected_value": "Example value, e.g., \"California\"",
+        "values": "For enumerated types: JSON array like [{\"code\":1,\"label\":\"...\",\"description\":\"...\"}]",
+        "notes": "Optional notes for reviewers",
+        "bulk_attributes_json": "[{ \"id\": \"...\", \"label\": \"...\", \"type\": \"...\", \"definition\": \"...\" }]",
+        "bulk_notes": "Optional notes for reviewers"
+      }
+    }
+  },
+  "attributes": [],
+  "datasets": [
+    {
+      "id": "blm_admin_units",
+      "title": "BLM Administrative Units",
+      "description": "BLM administrative boundary polygons including state, district, and field office boundaries.",
+      "agency_owner": "BLM",
+      "office_owner": "NOC",
+      "topics": ["admin boundaries", "jurisdiction"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_acec",
+      "title": "BLM Areas of Critical Environmental Concern (ACEC)",
+      "description": "Polygon boundaries of designated Areas of Critical Environmental Concern (ACECs) on BLM-administered lands.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands",
+      "topics": ["planning", "special designations", "ACEC"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_ACEC/MapServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_nlcs_nm_nca",
+      "title": "BLM National Conservation Areas (NLCS)",
+      "description": "National Conservation Lands System - National Monuments and National Conservation Areas.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands",
+      "topics": ["NLCS", "special designations", "conservation"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_NM_NCA/MapServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_wilderness_areas",
+      "title": "BLM Wilderness Areas (NLCS)",
+      "description": "Congressionally designated Wilderness Areas on BLM-administered lands.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands",
+      "topics": ["NLCS", "wilderness", "special designations"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WLD_WSA/MapServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 98,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_wsa",
+      "title": "BLM Wilderness Study Areas (WSA)",
+      "description": "Wilderness Study Areas on BLM-administered lands awaiting Congressional determination.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands",
+      "topics": ["NLCS", "wilderness", "special designations"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WLD_WSA/MapServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_wild_scenic_rivers",
+      "title": "BLM Wild & Scenic Rivers (NLCS)",
+      "description": "Wild and Scenic Rivers on or adjacent to BLM-administered lands.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands",
+      "topics": ["NLCS", "rivers", "special designations"],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WSR/MapServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_land_use_planning_boundaries",
+      "title": "BLM Land Use Planning Boundaries",
+      "description": "Resource Management Plan (RMP) boundaries for BLM planning areas.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands",
+      "topics": ["planning", "RMP", "boundaries"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_LandUsePlanningBoundaries/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_land_use_plans_approved_2022",
+      "title": "BLM National Land Use Plans (Approved 2022)",
+      "description": "Approved Land Use Plans as of 2022.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Planning",
+      "topics": ["planning", "RMP"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_Use_Plans_Approved_2022/FeatureServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_revision_dev_land_use_plans",
+      "title": "BLM Revision/Development Land Use Plans",
+      "description": "Land Use Plans currently under revision or development.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Planning",
+      "topics": ["planning", "RMP", "revision"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Revision_Development_Land_Use_Plans/FeatureServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_visual_resource_inventory",
+      "title": "BLM Visual Resource Inventory Classes",
+      "description": "Visual Resource Inventory (VRI) class polygons.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands",
+      "topics": ["visual resources", "planning"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Visual_Resource_Inventory_Classes_Polygon/FeatureServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 75,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_grazing_allotments",
+      "title": "BLM Grazing Allotments",
+      "description": "National grazing allotment polygon boundaries.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Rangeland Resources",
+      "topics": ["range", "grazing", "permits"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Grazing_Allotment_Polygons/FeatureServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_grazing_pastures",
+      "title": "BLM Grazing Pastures",
+      "description": "National grazing pasture polygon boundaries within allotments.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Rangeland Resources",
+      "topics": ["range", "grazing", "pastures"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Grazing_Pasture_Polygons/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_oil_gas_leases",
+      "title": "BLM Oil and Gas Leases (MLRS)",
+      "description": "Oil and gas lease polygons from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["energy", "oil and gas", "leases", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Leases/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_oil_gas_agreements",
+      "title": "BLM Oil and Gas Agreements",
+      "description": "Oil and gas agreements from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["energy", "oil and gas", "agreements", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Agreements/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_oil_gas_participating_areas",
+      "title": "BLM Oil and Gas Participating Areas",
+      "description": "Oil and gas participating areas from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["energy", "oil and gas", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Participating_Areas/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_oil_shale_leases",
+      "title": "BLM Oil Shale Leases",
+      "description": "Oil shale lease polygons from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["energy", "oil shale", "leases", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_Shale_Leases/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_geothermal_leases",
+      "title": "BLM Geothermal Leases",
+      "description": "Geothermal lease polygons from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["energy", "geothermal", "leases", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Geothermal_Leases/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_coal_cases",
+      "title": "BLM Coal Leases & Cases",
+      "description": "Coal leases and cases from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["energy", "coal", "leases", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Coal_Cases/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_mining_claims_active",
+      "title": "BLM Mining Claims (Active)",
+      "description": "Active (not closed) mining claims from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["minerals", "mining claims", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mining_Claims_Not_Closed/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Large feature count; may require filtering for web map performance",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_mining_claims_closed",
+      "title": "BLM Mining Claims (Closed)",
+      "description": "Closed mining claims from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["minerals", "mining claims", "MLRS", "historical"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mining_Claims_Closed/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very large feature count; consider filtering for web maps",
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_non_energy_leasables",
+      "title": "BLM Non-Energy Leasables",
+      "description": "Non-energy leasable mineral cases from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["minerals", "leasables", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Non_Energy_Leasables/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_mineral_materials",
+      "title": "BLM Mineral Materials",
+      "description": "Mineral materials sites from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["minerals", "materials", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Mineral_Materials/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_locatable_notices",
+      "title": "BLM Locatable Notices",
+      "description": "Locatable mineral notices from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["minerals", "locatable", "notices", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Locatable_Notices/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_locatable_plans_operations",
+      "title": "BLM Locatable Plans of Operations",
+      "description": "Locatable mineral plans of operations from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["minerals", "locatable", "plans", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Locatable_Plans_Of_Operations/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_locatable_allocations",
+      "title": "BLM Locatable Mineral Allocations",
+      "description": "Locatable mineral allocations for Resource Use Decision Documents (RUDD).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Energy and Minerals",
+      "topics": ["minerals", "locatable", "allocations", "RUDD"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/Locatables_RUDD_ProofOfConcept/FeatureServer",
+      "development_stage": "in_development",
+      "scale_suitability": "national",
+      "coverage": "partial",
+      "web_mercator_compatible": true,
+      "blockers": ["Proof of concept - not production ready"],
+      "maturity": {
+        "completeness": 50,
+        "documentation": "minimal",
+        "quality_tier": "bronze"
+      }
+    },
+    {
+      "id": "blm_timber_allocations",
+      "title": "BLM Timber Allocations",
+      "description": "Timber allocations for Resource Use Decision Documents (RUDD).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Forestry",
+      "topics": ["forestry", "timber", "allocations", "RUDD"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/Timber_RUDD_ProofOfConcept/FeatureServer",
+      "development_stage": "in_development",
+      "scale_suitability": "regional",
+      "coverage": "partial",
+      "web_mercator_compatible": true,
+      "blockers": ["Proof of concept - not production ready"],
+      "maturity": {
+        "completeness": 50,
+        "documentation": "minimal",
+        "quality_tier": "bronze"
+      }
+    },
+    {
+      "id": "blm_row",
+      "title": "BLM Rights-of-Way (ROW)",
+      "description": "Rights-of-way authorizations from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands and Realty",
+      "topics": ["lands", "rights of way", "ROW", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_LUA_ROW/FeatureServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_lua_leases_permits",
+      "title": "BLM LUA Leases, Permits & Easements",
+      "description": "Land Use Authorization leases, permits, and easements from the Mining and Lands Records System (MLRS).",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands and Realty",
+      "topics": ["lands", "leases", "permits", "easements", "MLRS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_LUA_Leases_Permits_Esmts/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_wild_horse_burro_herd_areas",
+      "title": "BLM Wild Horse and Burro Herd Areas",
+      "description": "Wild horse and burro herd area boundaries.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Wild Horse and Burro",
+      "topics": ["wild horses", "wildlife", "herd areas"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Wild_Horse_and_Burro_Heard_Area_Polygons/FeatureServer/4",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_wild_horse_burro_hma",
+      "title": "BLM Wild Horse and Burro Herd Management Areas",
+      "description": "Wild horse and burro herd management area boundaries.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Wild Horse and Burro",
+      "topics": ["wild horses", "wildlife", "HMA"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Wild_Horse_and_Burro_Heard_Mgmt_Area_Polygons/FeatureServer/5",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "blm_eplanning_projects",
+      "title": "BLM ePlanning Projects",
+      "description": "NEPA projects and comment periods from the ePlanning system.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Planning",
+      "topics": ["NEPA", "planning", "ePlanning", "projects"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_fire_perimeters",
+      "title": "BLM Fire Perimeters (Final Poly)",
+      "description": "Final fire perimeter polygons on or near BLM-administered lands.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Fire and Aviation",
+      "topics": ["fire", "perimeters", "wildfire"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/fire/BLM_Natl_FirePerimeter/MapServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_recreation_sites",
+      "title": "BLM National Recreation Sites",
+      "description": "Point locations of BLM recreation sites.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Recreation",
+      "topics": ["recreation", "sites", "points"],
+      "geometry_type": "POINT",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_National_Recreation_Site_Points/FeatureServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 75,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_lwcf",
+      "title": "BLM Land and Water Conservation Fund (LWCF)",
+      "description": "Land and Water Conservation Fund acquisition boundaries.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Lands",
+      "topics": ["LWCF", "acquisition", "boundaries"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_and_Water_Conservation_Fund_LWCF_Polygons/FeatureServer/2",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_gtlf_roads_trails",
+      "title": "BLM GTLF Roads & Trails",
+      "description": "Ground Transportation Linear Features - roads and trails on BLM-administered lands.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Transportation",
+      "topics": ["transportation", "roads", "trails", "GTLF"],
+      "geometry_type": "POLYLINE",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/transportation/BLM_Natl_GTLF/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Large feature count; best used at regional scale",
+      "maturity": {
+        "completeness": 70,
+        "documentation": "minimal",
+        "quality_tier": "bronze"
+      }
+    },
+    {
+      "id": "blm_danl",
+      "title": "BLM DANL Disturbance Assessment",
+      "description": "Disturbance Assessment of National Lands (DANL) data collection.",
+      "agency_owner": "BLM",
+      "office_owner": "NOC",
+      "topics": ["disturbance", "assessment", "DANL"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/DANL/BLM_Natl_DANL_DataCollection/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 75,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_tga",
+      "title": "BLM Taylor Grazing Act Lands",
+      "description": "Taylor Grazing Act land boundaries.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Rangeland Resources",
+      "topics": ["range", "TGA", "grazing"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/range/BLM_Natl_TGA/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "blm_fiat_sagebrush",
+      "title": "BLM FIAT Sagebrush Habitat at Risk",
+      "description": "Sagebrush habitat at risk of conifer expansion from the FIAT analysis.",
+      "agency_owner": "BLM",
+      "office_owner": "Division of Wildlife",
+      "topics": ["wildlife", "sagebrush", "habitat", "FIAT"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://gis.blm.gov/arcgis/rest/services/wildlife/BLM_FIAT_Sagebrush_Habitat_at_Risk_of_Conifer_Expansion/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "plss_township",
+      "title": "PLSS Township",
+      "description": "Public Land Survey System (PLSS) township boundaries.",
+      "agency_owner": "ESRI/BLM",
+      "office_owner": "NOC",
+      "topics": ["PLSS", "cadastral", "survey"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/1",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "plss_section",
+      "title": "PLSS Section",
+      "description": "Public Land Survey System (PLSS) section boundaries.",
+      "agency_owner": "ESRI/BLM",
+      "office_owner": "NOC",
+      "topics": ["PLSS", "cadastral", "survey"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/2",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "plss_parcel",
+      "title": "PLSS Parcel",
+      "description": "Public Land Survey System (PLSS) parcel boundaries (quarter sections and smaller).",
+      "agency_owner": "ESRI/BLM",
+      "office_owner": "NOC",
+      "topics": ["PLSS", "cadastral", "survey", "parcels"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/3",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very large feature count; filter by state/township for web maps",
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "usa_federal_lands",
+      "title": "USA Federal Lands",
+      "description": "Federal land ownership boundaries for all agencies.",
+      "agency_owner": "ESRI",
+      "office_owner": "Living Atlas",
+      "topics": ["federal lands", "ownership", "boundaries"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Federal_Lands/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "usfws_critical_habitat",
+      "title": "USFWS Critical Habitat",
+      "description": "Critical habitat designations for threatened and endangered species.",
+      "agency_owner": "USFWS",
+      "topics": ["wildlife", "critical habitat", "ESA"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/USFWS_Critical_Habitat/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "usfws_at_risk_species",
+      "title": "USFWS At-Risk Species",
+      "description": "At-risk species data layer from USFWS.",
+      "agency_owner": "USFWS",
+      "topics": ["wildlife", "at-risk species", "ESA"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/At_Risk_Species_Data_Layer_07_23_25_Hosted_view/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "usfws_nwr_boundaries",
+      "title": "USFWS National Wildlife Refuge Boundaries",
+      "description": "National Wildlife Refuge System boundaries.",
+      "agency_owner": "USFWS",
+      "topics": ["wildlife", "refuges", "boundaries"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/National_Wildlife_Refuge_System_Boundaries/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "usfws_regions",
+      "title": "USFWS Regions",
+      "description": "US Fish and Wildlife Service regional boundaries.",
+      "agency_owner": "USFWS",
+      "topics": ["admin boundaries", "regions"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "usgs_ungulate_migration",
+      "title": "USGS Ungulate Migration",
+      "description": "Ungulate migration corridors and seasonal ranges.",
+      "agency_owner": "USGS",
+      "topics": ["wildlife", "migration", "ungulates"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://services.arcgis.com/U7I2hMhPtOeGx0fs/arcgis/rest/services/Ungulate_Migration/FeatureServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "multi_state",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "usgs_3dep_elevation",
+      "title": "3DEP Elevation",
+      "description": "3D Elevation Program elevation data (ImageServer).",
+      "agency_owner": "USGS",
+      "topics": ["elevation", "terrain", "DEM"],
+      "geometry_type": "RASTER",
+      "public_web_service": "https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "nwi_wetlands",
+      "title": "National Wetlands Inventory (NWI)",
+      "description": "National Wetlands Inventory wetland boundaries.",
+      "agency_owner": "USFWS",
+      "topics": ["wetlands", "hydrology", "NWI"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "nwi_riparian",
+      "title": "Riparian Areas (NWI)",
+      "description": "Riparian areas from the National Wetlands Inventory.",
+      "agency_owner": "USFWS",
+      "topics": ["riparian", "hydrology", "NWI"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://fwsprimary.wim.usgs.gov/server/rest/services/Riparian/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 80,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "nhd",
+      "title": "National Hydrography Dataset (NHD)",
+      "description": "National Hydrography Dataset streams, rivers, and water bodies.",
+      "agency_owner": "USGS",
+      "topics": ["hydrology", "streams", "NHD"],
+      "geometry_type": "multiple",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "nhdplus_hr",
+      "title": "NHDPlus High Resolution",
+      "description": "NHDPlus High Resolution hydrography dataset.",
+      "agency_owner": "USGS",
+      "topics": ["hydrology", "streams", "NHDPlus"],
+      "geometry_type": "multiple",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "regional",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "performance_notes": "Very detailed; best used at regional scale",
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "wbd",
+      "title": "Watershed Boundaries (WBD)",
+      "description": "Watershed Boundary Dataset hydrologic unit boundaries.",
+      "agency_owner": "USGS",
+      "topics": ["hydrology", "watersheds", "WBD", "HUC"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "bia_aian_lands",
+      "title": "BIA American Indian / Alaska Native Lands",
+      "description": "American Indian and Alaska Native land area representations.",
+      "agency_owner": "BIA",
+      "topics": ["tribal", "AIAN", "boundaries"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_National_LAR/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 90,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "bia_tribal_statistical_areas",
+      "title": "BIA Tribal Statistical Areas",
+      "description": "Tribal statistical area boundaries.",
+      "agency_owner": "BIA",
+      "topics": ["tribal", "statistical areas"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_Tribal_Statistical_Areas/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "partial",
+        "quality_tier": "silver"
+      }
+    },
+    {
+      "id": "fema_nfhl",
+      "title": "FEMA National Flood Hazard Layer (NFHL)",
+      "description": "FEMA flood hazard zones and flood insurance rate maps.",
+      "agency_owner": "FEMA",
+      "topics": ["flood", "hazard", "NFHL"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://hazards.fema.gov/arcgis/rest/services/public/NFHL/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 85,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "usfs_inventoried_roadless",
+      "title": "USFS Inventoried Roadless Areas (2001)",
+      "description": "US Forest Service Inventoried Roadless Areas from the 2001 rule.",
+      "agency_owner": "USFS",
+      "topics": ["roadless", "wilderness", "USFS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_InventoriedRoadlessAreas2001_01/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "usfs_boundaries",
+      "title": "USFS National Forest Boundaries",
+      "description": "US Forest Service administrative forest boundaries.",
+      "agency_owner": "USFS",
+      "topics": ["admin boundaries", "national forests", "USFS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_ForestSystemBoundaries_01/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    },
+    {
+      "id": "usfs_wilderness",
+      "title": "USFS Wilderness Areas",
+      "description": "US Forest Service designated wilderness areas.",
+      "agency_owner": "USFS",
+      "topics": ["wilderness", "special designations", "USFS"],
+      "geometry_type": "POLYGON",
+      "public_web_service": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_Wilderness_01/MapServer",
+      "development_stage": "production",
+      "scale_suitability": "national",
+      "coverage": "nationwide",
+      "web_mercator_compatible": true,
+      "maturity": {
+        "completeness": 95,
+        "documentation": "complete",
+        "quality_tier": "gold"
+      }
+    }
+  ]
+}

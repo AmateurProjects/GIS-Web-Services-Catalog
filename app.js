@@ -435,14 +435,48 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
 
     // Build content
     const meta = {
-      'Service': serviceJson.mapName || serviceJson.name || '',
-      'Type': upper.includes('/MAPSERVER') ? 'MapServer' : (upper.includes('/FEATURESERVER') ? 'FeatureServer' : ''),
-      'WKID': serviceJson.spatialReference?.wkid || serviceJson.fullExtent?.spatialReference?.wkid || '',
-      'Layers': Array.isArray(serviceJson.layers) ? String(serviceJson.layers.length) : '',
+      'Service Name': serviceJson.mapName || serviceJson.name || '',
+      'Service Type': upper.includes('/MAPSERVER') ? 'MapServer' : (upper.includes('/FEATURESERVER') ? 'FeatureServer' : (upper.includes('/IMAGESERVER') ? 'ImageServer' : 'Unknown')),
+      'Spatial Reference (WKID)': serviceJson.spatialReference?.wkid || serviceJson.fullExtent?.spatialReference?.wkid || '',
+      'Layer Count': Array.isArray(serviceJson.layers) ? String(serviceJson.layers.length) : '',
       'Capabilities': serviceJson.capabilities || '',
     };
 
+    // Service description from metadata
+    const serviceDescription = serviceJson.serviceDescription || serviceJson.description || '';
+    const copyrightText = serviceJson.copyrightText || '';
+    const documentInfo = serviceJson.documentInfo || {};
+    const currentVersion = serviceJson.currentVersion || '';
+    const maxRecordCount = serviceJson.maxRecordCount || '';
+
     let html = '';
+
+    // Service Metadata from REST endpoint
+    html += `
+      <div class="card" style="margin-top:0.75rem;">
+        <div style="font-weight:600; margin-bottom:0.5rem;">Service Metadata (from REST endpoint)</div>
+        ${serviceDescription 
+          ? `<p><strong>Description:</strong> ${escapeHtml(serviceDescription)}</p>` 
+          : `<p class="metadata-missing"><strong>Description:</strong> <em>Not provided by service</em></p>`
+        }
+        ${copyrightText 
+          ? `<p><strong>Copyright:</strong> ${escapeHtml(copyrightText)}</p>` 
+          : `<p class="metadata-missing"><strong>Copyright:</strong> <em>Not provided by service</em></p>`
+        }
+        ${documentInfo.Author 
+          ? `<p><strong>Author:</strong> ${escapeHtml(documentInfo.Author)}</p>` 
+          : `<p class="metadata-missing"><strong>Author:</strong> <em>Not provided by service</em></p>`
+        }
+        ${currentVersion 
+          ? `<p><strong>ArcGIS Server Version:</strong> ${escapeHtml(String(currentVersion))}</p>` 
+          : ''
+        }
+        ${maxRecordCount 
+          ? `<p><strong>Max Record Count:</strong> ${escapeHtml(String(maxRecordCount))}</p>` 
+          : ''
+        }
+      </div>
+    `;
 
     // Image (if available)
     if (exportUrl) {

@@ -134,7 +134,7 @@ h1::before {
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 8px var(--accent-glow);
-  animation: pulse-dot 2.5s ease-in-out infinite;
+  animation: pulse-dot 2.5s ease-in-out 1 forwards;
 }
 
 @keyframes pulse-dot {
@@ -179,7 +179,7 @@ nav { display: flex; gap: 0.4rem; }
   top: 0; left: -75%;
   width: 50%; height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-  animation: tab-shine 2.5s ease-in-out infinite;
+  animation: tab-shine 0.8s ease-in-out 1 forwards;
 }
 
 @keyframes tab-shine {
@@ -764,29 +764,20 @@ code {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
   margin-right: 0.35rem;
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1.2rem;
+  height: 1.2rem;
   color: var(--geom-purple);
+  flex-shrink: 0;
 }
 
-.geom-icon-list  { width: 1.3rem; margin-right: 0.4rem; }
-.geom-icon-inline { width: 1.1rem; }
-
-.geom-icon.geom-poly {
-  width: 1.2em;
-  height: 0.85em;
-  background-color: var(--geom-purple);
-  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 70"><polygon points="10,70 90,70 70,10 30,10"/></svg>');
-  mask-repeat: no-repeat;
-  mask-size: contain;
-  mask-position: center;
-  -webkit-mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 70"><polygon points="10,70 90,70 70,10 30,10"/></svg>');
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: contain;
-  -webkit-mask-position: center;
+.geom-icon svg {
+  display: block;
+  filter: drop-shadow(0 0 3px rgba(192,132,252,0.35));
 }
+
+.geom-icon-list  { width: 1.3rem; height: 1.3rem; margin-right: 0.4rem; }
+.geom-icon-inline { width: 1.1rem; height: 1.1rem; }
 
 /* ================================================================
    CARD ROW LAYOUT
@@ -1202,7 +1193,7 @@ textarea.dataset-edit-input {
   top: 0; left: -100%;
   width: 60%; height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255,215,0,0.15), transparent);
-  animation: gold-shimmer 3s ease-in-out infinite;
+  animation: gold-shimmer 1.5s ease-in-out 1 forwards;
 }
 
 @keyframes gold-shimmer {
@@ -1251,7 +1242,7 @@ textarea.dataset-edit-input {
   top: 0; left: -100%;
   width: 60%; height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  animation: bar-shine 2s ease-in-out infinite;
+  animation: bar-shine 1.2s ease-in-out 1 forwards;
 }
 
 @keyframes bar-shine {

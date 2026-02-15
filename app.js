@@ -122,7 +122,10 @@ async function checkUrlStatus(url) {
         cache: 'no-store',
       });
       // opaque response => cannot verify status, but request likely reached the server
-      if (resp2 && resp2.type === 'opaque') return 'unknown';
+      if (resp2 && resp2.type === 'opaque') {
+        setCachedUrlStatus(url, 'unknown');
+        return 'unknown';
+      }
       // if somehow we got a normal response here, treat 2xx/3xx as ok
       if (resp2 && typeof resp2.status === 'number') {
         const s2 = (resp2.status >= 200 && resp2.status < 400) ? 'ok' : 'bad';
@@ -362,22 +365,6 @@ function buildStatisticsHTML(stats, fieldName) {
   `;
 }
 
-function buildExportImageUrl(mapServerUrl, extent) {
-  const base = normalizeServiceUrl(mapServerUrl);
-  const wkid = extent?.spatialReference?.wkid || 4326;
-  const bbox = [extent.xmin, extent.ymin, extent.xmax, extent.ymax].join(',');
-  const params = new URLSearchParams({
-    bbox,
-    bboxSR: String(wkid),
-    imageSR: String(wkid),
-    size: '1000,520',
-    format: 'png',
-    transparent: 'true',
-    f: 'image',
-  });
-  return `${base}/export?${params.toString()}`;
-}
-
 function renderKeyValueRows(obj) {
   // simple helper to keep markup tidy
   const rows = Object.entries(obj || {})
@@ -386,18 +373,12 @@ function renderKeyValueRows(obj) {
   return rows.join('');
 }
 
-function isUrlStatusOk(hostEl, url) {
-  const u = normalizeServiceUrl(url);
-  if (!u) return false;
-  const row =
-    hostEl.querySelector(`[data-url-check-row][data-url="${CSS.escape(u)}"]`) ||
-    hostEl.querySelector(`[data-url-check-row][data-url="${CSS.escape(url)}"]`);
-  const status = row ? row.getAttribute('data-url-status') : 'unknown';
-  return status === 'ok';
-}
-
 // Initialize interactive ArcGIS map for dataset preview
 let currentMapView = null;
+
+// Render generation counter — incremented each time renderDatasetDetail is called.
+// Async operations (preview, coverage map) check this to avoid painting into stale DOM.
+let _renderGeneration = 0;
 function initializeArcGISMap(serviceUrl, layerId) {
   const mapContainer = document.getElementById('arcgisMapContainer');
   if (!mapContainer) return;
@@ -477,7 +458,7 @@ function initializeArcGISMap(serviceUrl, layerId) {
   });
 }
 
-async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
+async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation) {
   if (!hostEl) return;
 
   const card = hostEl.querySelector('#datasetPreviewCard');
@@ -550,6 +531,9 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
       } catch {}
     }
     try { sampleJson = await fetchSampleRows(fetchBaseUrl, layerId, 10); } catch {}
+
+    // Bail if user navigated to a different dataset while we were fetching
+    if (generation !== _renderGeneration) return;
 
     // Build content
     const meta = {
@@ -1017,11 +1001,9 @@ function buildCoverageMapSVG(analysisResults) {
  * The host element must contain #coverageMapCard with [data-cov-status]
  * and [data-cov-content] children.
  */
-async function renderCoverageMapCard(hostEl, publicServiceUrl) {
-  console.log('[CoverageMap] renderCoverageMapCard called, hostEl:', !!hostEl, 'url:', publicServiceUrl);
+async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
   if (!hostEl) return;
   const card = hostEl.querySelector('#coverageMapCard');
-  console.log('[CoverageMap] card element found:', !!card);
   if (!card) return;
 
   const statusEl  = card.querySelector('[data-cov-status]');
@@ -1061,11 +1043,15 @@ async function renderCoverageMapCard(hostEl, publicServiceUrl) {
     return;
   }
 
+  // Bail if user navigated to a different dataset while fetching
+  if (generation !== _renderGeneration) return;
+
   // Step 2 — run spatial intersection counts
   statusEl.textContent = `Analyzing coverage across ${states.length} states\u2026`;
   let results;
   try {
     results = await runCoverageAnalysis(url, layerId, states, (done, total) => {
+      if (generation !== _renderGeneration) return;
       statusEl.textContent = `Analyzing coverage: ${done} / ${total} states\u2026`;
     });
   } catch (err) {
@@ -1073,6 +1059,9 @@ async function renderCoverageMapCard(hostEl, publicServiceUrl) {
     statusEl.textContent = 'Coverage analysis failed \u2014 the service may not support spatial queries.';
     return;
   }
+
+  // Bail if user navigated away during analysis
+  if (generation !== _renderGeneration) return;
 
   _coverageAnalysisCache.set(cacheKey, results);
   paintCoverageResult(statusEl, contentEl, results);
@@ -2643,11 +2632,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 
   // --- Load catalog once ---
-  let catalog;
   let catalogData = null;
   try {
-    catalog = await Catalog.loadCatalog();
-    catalogData = catalog;
+    catalogData = await Catalog.loadCatalog();
   } catch (err) {
     console.error('Failed to load catalog.json:', err);
     if (datasetListEl) datasetListEl.textContent = 'Error loading catalog.';
@@ -2655,8 +2642,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  const allDatasets = catalog.datasets || [];
-  const allAttributes = catalog.attributes || [];
+  const allDatasets = catalogData.datasets || [];
+  const allAttributes = catalogData.attributes || [];
 
   // ===========================
   // DATASET SUBMISSION MODAL
@@ -2804,6 +2791,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ===========================
   function renderDatasetDetail(datasetId) {
     if (!datasetDetailEl) return;
+
+  // Increment render generation so stale async operations (preview, coverage) bail out
+  _renderGeneration++;
+  const currentGeneration = _renderGeneration;
+
+  // Destroy any existing ArcGIS MapView to prevent memory leaks
+  if (currentMapView) {
+    currentMapView.destroy();
+    currentMapView = null;
+  }
 
   // Browsing existing datasets should not animate.
   // Also make sure no prior FX classes linger from edit/create flows.
@@ -3033,10 +3030,10 @@ html += `
 runUrlChecks(datasetDetailEl);
 
 // Load service preview immediately (don't wait for URL health check)
-maybeRenderPublicServicePreviewCard(datasetDetailEl, dataset.public_web_service);
+maybeRenderPublicServicePreviewCard(datasetDetailEl, dataset.public_web_service, currentGeneration);
 
 // Run coverage map analysis (async, renders into the #coverageMapCard placeholder)
-renderCoverageMapCard(datasetDetailEl, dataset.public_web_service);
+renderCoverageMapCard(datasetDetailEl, dataset.public_web_service, currentGeneration);
 
     const editBtn = datasetDetailEl.querySelector('button[data-edit-dataset]');
     if (editBtn) {

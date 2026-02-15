@@ -1133,40 +1133,6 @@ textarea.dataset-edit-input {
 }
 
 /* ================================================================
-   SCALE SUITABILITY BADGES
-   ================================================================ */
-
-.scale-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  border: 1px solid;
-  transition: transform 120ms var(--ease-spring);
-}
-
-.scale-national {
-  border-color: rgba(59,130,246,0.4);
-  background: rgba(59,130,246,0.1);
-  color: #60a5fa;
-}
-
-.scale-regional {
-  border-color: rgba(139,92,246,0.4);
-  background: rgba(139,92,246,0.1);
-  color: #a78bfa;
-}
-
-.scale-local {
-  border-color: rgba(245,158,11,0.4);
-  background: rgba(245,158,11,0.1);
-  color: #fbbf24;
-}
-
-/* ================================================================
    QUALITY TIER BADGES
    ================================================================ */
 
@@ -1435,17 +1401,15 @@ textarea.dataset-edit-input {
 .text-muted { color: var(--text-muted); }
 
 /* ================================================================
-   DEVELOPMENT / SCALE CARD LISTS
+   DEVELOPMENT CARD LISTS
    ================================================================ */
 
-.card-development ul,
-.card-scale ul {
+.card-development ul {
   margin: 0.25rem 0 0;
   padding-left: 1.25rem;
 }
 
-.card-development li,
-.card-scale li {
+.card-development li {
   margin-bottom: 0.15rem;
   color: var(--text-main);
 }

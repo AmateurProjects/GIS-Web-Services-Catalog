@@ -533,12 +533,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
     // For layer-level fetches use the right base URL
     const fetchBaseUrl = isLayerUrl ? url : serviceBaseUrl;
 
-    // Static image works for MapServer.
-    let exportUrl = '';
     const upper = url.toUpperCase();
-    if (upper.includes('/MAPSERVER')) {
-      if (serviceJson.fullExtent) exportUrl = buildExportImageUrl(serviceBaseUrl, serviceJson.fullExtent);
-    }
 
     // Layer fields + sample rows (best-effort)
     let layerJson = null;
@@ -598,20 +593,6 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
         }
       </div>
     `;
-
-    // Image (if available)
-    if (exportUrl) {
-      html += `
-        <div class="card" style="margin-top:0.75rem;">
-          <div style="font-weight:600; margin-bottom:0.5rem;">Map extent preview</div>
-          <img src="${escapeHtml(exportUrl)}" alt="Map preview"
-               style="width:100%; height:auto; border-radius:12px; display:block;" />
-          <div style="margin-top:0.5rem; color:var(--text-muted); font-size:0.95rem;">
-            Rendered from the service’s full extent.
-          </div>
-        </div>
-      `;
-    }
 
     // Interactive ArcGIS Map View
     const mapServiceUrl = url;
@@ -779,6 +760,313 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl) {
 }
 
 
+
+
+// ====== COVERAGE MAP (State-level Intersection Analysis via Census Bureau) ======
+
+const CENSUS_STATES_SERVICE =
+  'https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0';
+const COVERAGE_CONCURRENCY = 4;
+
+// 50 US states + DC  (FIPS codes)
+const US_STATE_FIPS = new Set([
+  '01','02','04','05','06','08','09','10','11','12','13','15','16','17','18','19','20',
+  '21','22','23','24','25','26','27','28','29','30','31','32','33','34','35','36','37',
+  '38','39','40','41','42','44','45','46','47','48','49','50','51','53','54','55','56'
+]);
+
+// Session caches
+let _censusStatesCache = null;
+const _coverageAnalysisCache = new Map();
+
+/**
+ * Fetch generalized state boundaries from the Census Bureau TIGERweb service.
+ * Results are cached for the page session.
+ */
+async function fetchCensusStateBoundaries() {
+  if (_censusStatesCache) return _censusStatesCache;
+
+  const params = new URLSearchParams({
+    where:                '1=1',
+    outFields:            'STATE,NAME,STUSAB',
+    returnGeometry:       'true',
+    outSR:                '4326',
+    geometryPrecision:    '2',
+    maxAllowableOffset:   '0.05',
+    resultRecordCount:    '60',
+    f:                    'json',
+  });
+
+  const data = await fetchJsonWithTimeout(
+    `${CENSUS_STATES_SERVICE}/query?${params}`, 25000
+  );
+  if (!data || !Array.isArray(data.features)) {
+    throw new Error('Census state boundary query returned no features');
+  }
+
+  // Normalize field names (Census can vary between NAME / name etc.)
+  function attr(f, ...keys) {
+    for (const k of keys) {
+      if (f.attributes[k] !== undefined) return f.attributes[k];
+      if (f.attributes[k.toUpperCase()] !== undefined) return f.attributes[k.toUpperCase()];
+    }
+    return '';
+  }
+
+  const states = data.features
+    .map(f => ({
+      fips: String(attr(f, 'STATE', 'STATEFP', 'GEOID')).padStart(2, '0'),
+      name: attr(f, 'NAME'),
+      abbr: attr(f, 'STUSAB'),
+      geometry: f.geometry,
+    }))
+    .filter(s => US_STATE_FIPS.has(s.fips) && s.geometry && s.geometry.rings);
+
+  _censusStatesCache = states;
+  return states;
+}
+
+/**
+ * Query a dataset's feature service for the count of features that intersect
+ * a given polygon geometry (one state boundary).
+ */
+async function queryFeatureCountInGeometry(serviceUrl, layerId, geometry) {
+  const base = normalizeServiceUrl(serviceUrl);
+  const parsed = parseServiceAndLayerId(base);
+  const target = parsed.isLayerUrl ? base : `${base}/${layerId}`;
+
+  const params = new URLSearchParams({
+    where:            '1=1',
+    geometry:         JSON.stringify(geometry),
+    geometryType:     'esriGeometryPolygon',
+    inSR:             '4326',
+    spatialRel:       'esriSpatialRelIntersects',
+    returnCountOnly:  'true',
+    f:                'json',
+  });
+
+  const data = await fetchJsonWithTimeout(`${target}/query?${params}`, 10000);
+  return (data && typeof data.count === 'number') ? data.count : 0;
+}
+
+/**
+ * Run the coverage analysis across all states with a concurrency pool.
+ * Calls onProgress(completed, total) after each state finishes.
+ */
+async function runCoverageAnalysis(serviceUrl, layerId, states, onProgress) {
+  const results = [];
+  let idx = 0;
+
+  const workers = Array.from({ length: COVERAGE_CONCURRENCY }, async () => {
+    while (idx < states.length) {
+      const i = idx++;
+      const state = states[i];
+      let count;
+      try {
+        count = await queryFeatureCountInGeometry(serviceUrl, layerId, state.geometry);
+      } catch {
+        count = -1; // error
+      }
+      results.push({ ...state, count });
+      if (onProgress) onProgress(results.length, states.length);
+    }
+  });
+
+  await Promise.all(workers);
+  return results;
+}
+
+// ── SVG map rendering helpers ──
+
+function projectGeoToSVG(lon, lat, geoBounds, viewport) {
+  const x = viewport.x + ((lon - geoBounds.minLon) / (geoBounds.maxLon - geoBounds.minLon)) * viewport.w;
+  const y = viewport.y + (1 - (lat - geoBounds.minLat) / (geoBounds.maxLat - geoBounds.minLat)) * viewport.h;
+  return [x, y];
+}
+
+function polygonRingsToPath(rings, geoBounds, viewport) {
+  if (!rings || !rings.length) return '';
+  return rings.map(ring => {
+    if (!ring || ring.length < 3) return '';
+    const pts = ring.map(([lon, lat]) => {
+      const [x, y] = projectGeoToSVG(lon, lat, geoBounds, viewport);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    });
+    return 'M' + pts.join('L') + 'Z';
+  }).join('');
+}
+
+function approximateCentroid(rings) {
+  const ring = rings[0];
+  if (!ring || !ring.length) return [0, 0];
+  let cx = 0, cy = 0;
+  ring.forEach(([lon, lat]) => { cx += lon; cy += lat; });
+  return [cx / ring.length, cy / ring.length];
+}
+
+/**
+ * Build a complete coverage map SVG showing the US with Alaska/Hawaii insets.
+ * States with features are given a solid blue fill; others are dark gray.
+ */
+function buildCoverageMapSVG(analysisResults) {
+  const W = 960, H = 620;
+
+  // Geographic bounds & SVG viewports
+  const conus = { minLon: -125, maxLon: -66, minLat: 24.3, maxLat: 49.5 };
+  const conusVP = { x: 0, y: 0, w: W, h: H * 0.82 };
+
+  const ak = { minLon: -190, maxLon: -130, minLat: 51, maxLat: 72 };
+  const akVP = { x: 10, y: H * 0.68, w: W * 0.24, h: H * 0.28 };
+
+  const hi = { minLon: -161, maxLon: -154, minLat: 18.5, maxLat: 22.5 };
+  const hiVP = { x: W * 0.26, y: H * 0.80, w: W * 0.12, h: H * 0.16 };
+
+  // Color scale (logarithmic for better visual distribution)
+  const maxCount = Math.max(...analysisResults.map(s => s.count).filter(c => c > 0), 1);
+
+  function stateColor(count) {
+    if (count <= 0) return 'rgba(255,255,255,0.06)';
+    const t = Math.min(1, Math.log(count + 1) / Math.log(maxCount + 1));
+    // Light blue → deep blue gradient
+    const r = Math.round(30 + (1 - t) * 40);
+    const g = Math.round(80 + (1 - t) * 80);
+    const b = Math.round(140 + t * 115);
+    const a = 0.45 + t * 0.5;
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  let pathsHtml = '';
+  let labelsHtml = '';
+
+  analysisResults.forEach(state => {
+    if (!state.geometry || !state.geometry.rings) return;
+
+    const isAK = state.fips === '02';
+    const isHI = state.fips === '15';
+    const bounds = isAK ? ak : isHI ? hi : conus;
+    const vp     = isAK ? akVP : isHI ? hiVP : conusVP;
+
+    const d = polygonRingsToPath(state.geometry.rings, bounds, vp);
+    if (!d) return;
+
+    const fill = stateColor(state.count);
+    const stroke = state.count > 0 ? 'rgba(91,163,245,0.55)' : 'rgba(255,255,255,0.12)';
+    const title  = `${escapeHtml(state.name)}: ${state.count >= 0 ? state.count.toLocaleString() + ' features' : 'query failed'}`;
+
+    pathsHtml += `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="0.8"
+      fill-rule="evenodd" data-state="${escapeHtml(state.abbr)}" data-count="${state.count}">
+      <title>${title}</title></path>\n`;
+
+    // Count label for states with data
+    if (state.count > 0) {
+      const [clon, clat] = approximateCentroid(state.geometry.rings);
+      const [sx, sy] = projectGeoToSVG(clon, clat, bounds, vp);
+      const countStr = state.count >= 1000
+        ? (state.count / 1000).toFixed(state.count >= 10000 ? 0 : 1) + 'k'
+        : String(state.count);
+      labelsHtml += `<text x="${sx.toFixed(0)}" y="${sy.toFixed(0)}" class="cov-count">${countStr}</text>\n`;
+      labelsHtml += `<text x="${sx.toFixed(0)}" y="${(sy + 11).toFixed(0)}" class="cov-abbr">${escapeHtml(state.abbr)}</text>\n`;
+    }
+  });
+
+  // Inset outlines & labels
+  const insetsHtml = `
+    <rect x="${akVP.x}" y="${akVP.y}" width="${akVP.w}" height="${akVP.h}"
+          fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" rx="6"/>
+    <text x="${akVP.x + 6}" y="${akVP.y + 14}" class="cov-inset-label">Alaska</text>
+    <rect x="${hiVP.x}" y="${hiVP.y}" width="${hiVP.w}" height="${hiVP.h}"
+          fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" rx="6"/>
+    <text x="${hiVP.x + 6}" y="${hiVP.y + 14}" class="cov-inset-label">Hawaii</text>
+  `;
+
+  // Summary stats
+  const statesWithData = analysisResults.filter(s => s.count > 0).length;
+  const totalFeatures  = analysisResults.reduce((sum, s) => sum + Math.max(0, s.count), 0);
+  const failedCount    = analysisResults.filter(s => s.count === -1).length;
+
+  const svg = `<svg viewBox="0 0 ${W} ${H}" class="coverage-map-svg"
+    xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <g>${pathsHtml}</g>
+    <g>${labelsHtml}</g>
+    ${insetsHtml}
+  </svg>`;
+
+  return { svg, statesWithData, totalFeatures, totalStates: analysisResults.length, failedCount };
+}
+
+/**
+ * Main entry-point: renders the coverage map card inside a host element.
+ * The host element must contain #coverageMapCard with [data-cov-status]
+ * and [data-cov-content] children.
+ */
+async function renderCoverageMapCard(hostEl, publicServiceUrl) {
+  if (!hostEl) return;
+  const card = hostEl.querySelector('#coverageMapCard');
+  if (!card) return;
+
+  const statusEl  = card.querySelector('[data-cov-status]');
+  const contentEl = card.querySelector('[data-cov-content]');
+  if (!statusEl || !contentEl) return;
+
+  const url = normalizeServiceUrl(publicServiceUrl);
+  if (!url) {
+    statusEl.textContent = 'No public web service URL available for coverage analysis.';
+    return;
+  }
+  if (!looksLikeArcGisService(url)) {
+    statusEl.textContent = 'Coverage analysis requires an ArcGIS REST Map/Feature service.';
+    return;
+  }
+
+  // Determine the layer id from the URL
+  const parsed = parseServiceAndLayerId(url);
+  const layerId = parsed.isLayerUrl ? parsed.layerId : 0;
+
+  // Check cache
+  const cacheKey = `${url}__${layerId}`;
+  if (_coverageAnalysisCache.has(cacheKey)) {
+    const cached = _coverageAnalysisCache.get(cacheKey);
+    paintCoverageResult(statusEl, contentEl, cached);
+    return;
+  }
+
+  // Step 1 — fetch state boundaries
+  statusEl.textContent = 'Fetching state boundaries from Census Bureau\u2026';
+  let states;
+  try {
+    states = await fetchCensusStateBoundaries();
+  } catch (err) {
+    console.error('Census state fetch failed:', err);
+    statusEl.textContent = 'Could not fetch state boundaries from Census Bureau TIGER service.';
+    return;
+  }
+
+  // Step 2 — run spatial intersection counts
+  statusEl.textContent = `Analyzing coverage across ${states.length} states\u2026`;
+  let results;
+  try {
+    results = await runCoverageAnalysis(url, layerId, states, (done, total) => {
+      statusEl.textContent = `Analyzing coverage: ${done} / ${total} states\u2026`;
+    });
+  } catch (err) {
+    console.error('Coverage analysis failed:', err);
+    statusEl.textContent = 'Coverage analysis failed \u2014 the service may not support spatial queries.';
+    return;
+  }
+
+  _coverageAnalysisCache.set(cacheKey, results);
+  paintCoverageResult(statusEl, contentEl, results);
+}
+
+function paintCoverageResult(statusEl, contentEl, results) {
+  const { svg, statesWithData, totalFeatures, totalStates, failedCount } =
+    buildCoverageMapSVG(results);
+
+  let summary = `${statesWithData} of ${totalStates} states with data \u00b7 ${totalFeatures.toLocaleString()} total features`;
+  if (failedCount > 0) summary += ` \u00b7 ${failedCount} state(s) could not be queried`;
+  statusEl.textContent = summary;
+  contentEl.innerHTML = svg;
+}
 
 
 // ====== CONFIG ======
@@ -2604,38 +2892,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     html += '</div>';
 
-    // National Scale Suitability card
-    html += '<div class="card card-scale">';
-    html += '<h3>National Scale Suitability</h3>';
-    
-    const scaleLabels = {
-      'national': { label: 'National', class: 'scale-national', icon: '🌎' },
-      'regional': { label: 'Regional', class: 'scale-regional', icon: '🗺️' },
-      'local': { label: 'Local', class: 'scale-local', icon: '📍' }
-    };
-    const coverageLabels = {
-      'nationwide': 'Nationwide (all 50 states)',
-      'multi_state': 'Multi-state',
-      'single_state': 'Single state',
-      'partial': 'Partial coverage'
-    };
-    
-    const scaleVal = dataset.scale_suitability || '';
-    const scaleInfo = scaleLabels[scaleVal] || { label: scaleVal || 'Unknown', class: '', icon: '' };
-    const coverageVal = dataset.coverage || '';
-    const coverageLabel = coverageLabels[coverageVal] || coverageVal || 'Unknown';
-    
-    html += `<p><strong>Scale Suitability:</strong> <span class="scale-badge ${scaleInfo.class}">${scaleInfo.icon} ${escapeHtml(scaleInfo.label)}</span></p>`;
-    html += `<p><strong>Coverage:</strong> ${escapeHtml(coverageLabel)}</p>`;
-    
-    const wmCompat = dataset.web_mercator_compatible;
-    if (wmCompat !== undefined) {
-      html += `<p><strong>Web Mercator Compatible:</strong> ${wmCompat ? '✅ Yes' : '❌ No'}</p>`;
-    }
-    
-    if (dataset.performance_notes) {
-      html += `<p><strong>Performance Notes:</strong> ${escapeHtml(dataset.performance_notes)}</p>`;
-    }
+    // Coverage Map card (populated asynchronously by renderCoverageMapCard)
+    html += '<div class="card card-coverage" id="coverageMapCard">';
+    html += '<h3>Coverage Map</h3>';
+    html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a></p>';
+    html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
+    html += '<div data-cov-content></div>';
     html += '</div>';
 
     // Maturity card
@@ -2753,7 +3015,8 @@ runUrlChecks(datasetDetailEl);
 // Load service preview immediately (don't wait for URL health check)
 maybeRenderPublicServicePreviewCard(datasetDetailEl, dataset.public_web_service);
 
-
+// Run coverage map analysis (async, renders into the #coverageMapCard placeholder)
+renderCoverageMapCard(datasetDetailEl, dataset.public_web_service);
 
     const editBtn = datasetDetailEl.querySelector('button[data-edit-dataset]');
     if (editBtn) {

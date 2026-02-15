@@ -456,11 +456,13 @@ function initializeArcGISMap(serviceUrl, layerId) {
         center: [-98.5795, 39.8283] // Center of US
       });
 
-      // Zoom to layer extent when loaded
+      // Zoom to layer extent when loaded (wait for view.ready to avoid animation errors)
       layer.when(function() {
-        if (layer.fullExtent) {
-          currentMapView.goTo(layer.fullExtent).catch(function(err) {
-            console.warn('Could not zoom to layer extent:', err);
+        if (layer.fullExtent && currentMapView) {
+          currentMapView.when(function() {
+            currentMapView.goTo(layer.fullExtent, { animate: false }).catch(function(err) {
+              console.warn('Could not zoom to layer extent:', err);
+            });
           });
         }
       }).catch(function(err) {
@@ -835,7 +837,8 @@ async function queryFeatureCountInGeometry(serviceUrl, layerId, geometry) {
   const parsed = parseServiceAndLayerId(base);
   const target = parsed.isLayerUrl ? base : `${base}/${layerId}`;
 
-  const params = new URLSearchParams({
+  // Use POST to avoid 414 URI Too Long for complex state polygons (e.g. Alaska)
+  const body = new URLSearchParams({
     where:            '1=1',
     geometry:         JSON.stringify(geometry),
     geometryType:     'esriGeometryPolygon',
@@ -845,8 +848,23 @@ async function queryFeatureCountInGeometry(serviceUrl, layerId, geometry) {
     f:                'json',
   });
 
-  const data = await fetchJsonWithTimeout(`${target}/query?${params}`, 10000);
-  return (data && typeof data.count === 'number') ? data.count : 0;
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 10000);
+  try {
+    const resp = await fetch(`${target}/query`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: body.toString(),
+      mode: 'cors',
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    return (data && typeof data.count === 'number') ? data.count : 0;
+  } finally {
+    clearTimeout(t);
+  }
 }
 
 /**

@@ -258,121 +258,6 @@ async function fetchSampleRows(serviceUrl, layerId = 0, n = 8) {
   return fetchJsonWithTimeout(u);
 }
 
-// Fetch statistics for numeric/date fields (min, max, avg, stddev, count)
-async function fetchFieldStatistics(serviceUrl, layerId = 0, fieldName, fieldType) {
-  const base = normalizeServiceUrl(serviceUrl);
-  const parsed = parseServiceAndLayerId(base);
-  const target = parsed.isLayerUrl ? base : `${base}/${layerId}`;
-  const statTypes = ['min', 'max', 'avg', 'stddev', 'count'];
-  const outStatistics = statTypes.map(t => ({
-    statisticType: t,
-    onStatisticField: fieldName,
-    outStatisticFieldName: `${t}_${fieldName}`
-  }));
-  
-  const params = new URLSearchParams({
-    where: '1=1',
-    outStatistics: JSON.stringify(outStatistics),
-    f: 'json',
-  });
-  const u = `${target}/query?${params.toString()}`;
-  return fetchJsonWithTimeout(u);
-}
-
-// Fetch unique value counts for a field (for histograms/value distribution)
-async function fetchFieldValueCounts(serviceUrl, layerId = 0, fieldName, maxValues = 50) {
-  const base = normalizeServiceUrl(serviceUrl);
-  const parsed = parseServiceAndLayerId(base);
-  const target = parsed.isLayerUrl ? base : `${base}/${layerId}`;
-  const params = new URLSearchParams({
-    where: '1=1',
-    outFields: fieldName,
-    groupByFieldsForStatistics: fieldName,
-    outStatistics: JSON.stringify([{
-      statisticType: 'count',
-      onStatisticField: fieldName,
-      outStatisticFieldName: 'value_count'
-    }]),
-    orderByFields: 'value_count DESC',
-    resultRecordCount: String(maxValues),
-    f: 'json',
-  });
-  const u = `${target}/query?${params.toString()}`;
-  return fetchJsonWithTimeout(u);
-}
-
-// Determine if a field type is numeric (for statistics)
-function isNumericFieldType(esriType) {
-  const t = String(esriType || '').toUpperCase();
-  return t.includes('INTEGER') || t.includes('DOUBLE') || t.includes('FLOAT') || t.includes('SINGLE') || t.includes('SMALL');
-}
-
-// Determine if a field type is date
-function isDateFieldType(esriType) {
-  return String(esriType || '').toUpperCase().includes('DATE');
-}
-
-// Build a simple inline histogram bar chart HTML
-function buildHistogramHTML(valueCounts, fieldName, totalCount) {
-  if (!valueCounts || !valueCounts.length) return '<p class="text-muted">No data available</p>';
-  
-  const maxCount = Math.max(...valueCounts.map(v => v.count || 0));
-  
-  let html = '<div class="histogram-chart">';
-  valueCounts.slice(0, 10).forEach(v => {
-    const label = v.value !== null && v.value !== undefined ? String(v.value) : '(null)';
-    const count = v.count || 0;
-    const pct = maxCount > 0 ? (count / maxCount * 100) : 0;
-    const pctOfTotal = totalCount > 0 ? ((count / totalCount) * 100).toFixed(1) : '0';
-    
-    html += `
-      <div class="histogram-row">
-        <div class="histogram-label" title="${escapeHtml(label)}">${escapeHtml(label.length > 20 ? label.slice(0, 18) + '...' : label)}</div>
-        <div class="histogram-bar-container">
-          <div class="histogram-bar" style="width: ${pct}%"></div>
-        </div>
-        <div class="histogram-count">${count.toLocaleString()} (${pctOfTotal}%)</div>
-      </div>
-    `;
-  });
-  html += '</div>';
-  
-  if (valueCounts.length > 10) {
-    html += `<p class="text-muted" style="margin-top:0.5rem;">Showing top 10 of ${valueCounts.length} unique values</p>`;
-  }
-  
-  return html;
-}
-
-// Build statistics summary HTML
-function buildStatisticsHTML(stats, fieldName) {
-  if (!stats) return '<p class="text-muted">Statistics unavailable</p>';
-  
-  const formatNum = (n) => {
-    if (n === null || n === undefined) return '—';
-    if (typeof n === 'number') return n.toLocaleString(undefined, { maximumFractionDigits: 2 });
-    return String(n);
-  };
-  
-  return `
-    <div class="stats-grid">
-      <div class="stat-item"><span class="stat-label">Min</span><span class="stat-value">${formatNum(stats.min)}</span></div>
-      <div class="stat-item"><span class="stat-label">Max</span><span class="stat-value">${formatNum(stats.max)}</span></div>
-      <div class="stat-item"><span class="stat-label">Avg</span><span class="stat-value">${formatNum(stats.avg)}</span></div>
-      <div class="stat-item"><span class="stat-label">Std Dev</span><span class="stat-value">${formatNum(stats.stddev)}</span></div>
-      <div class="stat-item"><span class="stat-label">Count</span><span class="stat-value">${formatNum(stats.count)}</span></div>
-    </div>
-  `;
-}
-
-function renderKeyValueRows(obj) {
-  // simple helper to keep markup tidy
-  const rows = Object.entries(obj || {})
-    .filter(([_, v]) => v !== undefined && v !== null && String(v).trim() !== '')
-    .map(([k, v]) => `<div class="kv-row"><div class="kv-k">${escapeHtml(k)}</div><div class="kv-v">${escapeHtml(String(v))}</div></div>`);
-  return rows.join('');
-}
-
 // Initialize interactive ArcGIS map for dataset preview
 let currentMapView = null;
 
@@ -535,15 +420,6 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
     // Bail if user navigated to a different dataset while we were fetching
     if (generation !== _renderGeneration) return;
 
-    // Build content
-    const meta = {
-      'Service Name': serviceJson.mapName || serviceJson.name || '',
-      'Service Type': upper.includes('/MAPSERVER') ? 'MapServer' : (upper.includes('/FEATURESERVER') ? 'FeatureServer' : (upper.includes('/IMAGESERVER') ? 'ImageServer' : 'Unknown')),
-      'Spatial Reference (WKID)': serviceJson.spatialReference?.wkid || serviceJson.fullExtent?.spatialReference?.wkid || '',
-      'Layer Count': Array.isArray(serviceJson.layers) ? String(serviceJson.layers.length) : '',
-      'Capabilities': serviceJson.capabilities || '',
-    };
-
     // Service description from metadata
     const serviceDescription = serviceJson.serviceDescription || serviceJson.description || '';
     const copyrightText = serviceJson.copyrightText || '';
@@ -594,17 +470,6 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
       </div>
     `;
 
-    // Metadata
-    html += `
-      <div class="card" style="margin-top:0.75rem;">
-        <div style="font-weight:600; margin-bottom:0.5rem;">Service summary</div>
-        <div class="kv">${renderKeyValueRows(meta)}</div>
-        <div style="margin-top:0.5rem;">
-          <a href="${escapeHtml(url)}" target="_blank" rel="noopener">Open service</a>
-        </div>
-      </div>
-    `;
-
     // Fields summary — redesigned as a table with async null% / unique% stats
     if (layerJson && Array.isArray(layerJson.fields) && layerJson.fields.length) {
       const allFields = layerJson.fields;
@@ -651,7 +516,6 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
                   <th>Field Name</th>
                   <th>Alias</th>
                   <th>Type</th>
-                  <th>Length</th>
                   <th class="fields-stat-col">Null %</th>
                   <th class="fields-stat-col">Distinct</th>
                 </tr>
@@ -662,12 +526,10 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
                   const hasDomain = f.domain && f.domain.type === 'codedValue';
                   const rowCls = key ? ' class="field-row-key"' : (hasDomain ? ' class="field-row-domain"' : '');
                   const badge = key ? '<span class="field-key-badge">KEY</span>' : (hasDomain ? '<span class="field-domain-badge">DOMAIN</span>' : '');
-                  const len = f.length != null && f.length > 0 ? String(f.length) : '\u2014';
                   return `<tr${rowCls} data-field-idx="${i}">
                     <td class="field-name-cell">${badge}<code>${escapeHtml(f.name)}</code></td>
                     <td>${escapeHtml(f.alias || '')}</td>
                     <td><span class="field-type-pill">${escapeHtml(friendlyType(f.type))}</span></td>
-                    <td>${len}</td>
                     <td class="fields-stat-col" data-field-null="${i}"><span class="field-stat-loading">\u2022\u2022\u2022</span></td>
                     <td class="fields-stat-col" data-field-uniq="${i}"><span class="field-stat-loading">\u2022\u2022\u2022</span></td>
                   </tr>`;
@@ -818,99 +680,12 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
       }
     }
 
-    // Field Statistics & Histograms section
-    if (layerJson && Array.isArray(layerJson.fields) && layerJson.fields.length) {
-      html += `
-        <div class="card" style="margin-top:0.75rem;">
-          <div style="font-weight:600; margin-bottom:0.5rem;">Field Statistics & Histograms</div>
-          <p style="color:var(--text-muted); margin-bottom:0.75rem;">Select a field to view statistics and value distribution.</p>
-          <div class="field-stats-selector">
-            <select id="fieldStatsSelect" class="field-stats-dropdown">
-              <option value="">— Select a field —</option>
-              ${layerJson.fields.map(f => `<option value="${escapeHtml(f.name)}" data-field-type="${escapeHtml(f.type || '')}">${escapeHtml(f.name)}${f.alias ? ` (${escapeHtml(f.alias)})` : ''}</option>`).join('')}
-            </select>
-            <button type="button" class="btn primary" id="loadFieldStatsBtn">Load Statistics</button>
-          </div>
-          <div id="fieldStatsContent" class="field-stats-content"></div>
-        </div>
-      `;
-    }
-
     contentEl.innerHTML = html;
     statusEl.textContent = 'Preview loaded.';
 
     // Initialize interactive ArcGIS map (use service root for MapImageLayer)
     initializeArcGISMap(serviceBaseUrl, layerId);
 
-    // Wire up the field statistics loader
-    const fieldSelect = contentEl.querySelector('#fieldStatsSelect');
-    const loadStatsBtn = contentEl.querySelector('#loadFieldStatsBtn');
-    const statsContent = contentEl.querySelector('#fieldStatsContent');
-    
-    if (fieldSelect && loadStatsBtn && statsContent) {
-      loadStatsBtn.addEventListener('click', async () => {
-        const fieldName = fieldSelect.value;
-        if (!fieldName) {
-          statsContent.innerHTML = '<p class="text-muted">Please select a field.</p>';
-          return;
-        }
-        
-        const fieldType = fieldSelect.options[fieldSelect.selectedIndex].getAttribute('data-field-type') || '';
-        statsContent.innerHTML = '<p>Loading statistics...</p>';
-        
-        try {
-          const isNumeric = isNumericFieldType(fieldType);
-          const isDate = isDateFieldType(fieldType);
-          
-          let statsHtml = `<h4 style="margin-top:0.75rem;">${escapeHtml(fieldName)}</h4>`;
-          statsHtml += `<p style="color:var(--text-muted);">Type: ${escapeHtml(fieldType)}</p>`;
-          
-          // For numeric/date fields, fetch statistics
-          if (isNumeric || isDate) {
-            try {
-              const statsJson = await fetchFieldStatistics(url, layerId, fieldName, fieldType);
-              if (statsJson && Array.isArray(statsJson.features) && statsJson.features.length) {
-                const statsAttrs = statsJson.features[0].attributes || {};
-                const stats = {
-                  min: statsAttrs[`min_${fieldName}`],
-                  max: statsAttrs[`max_${fieldName}`],
-                  avg: statsAttrs[`avg_${fieldName}`],
-                  stddev: statsAttrs[`stddev_${fieldName}`],
-                  count: statsAttrs[`count_${fieldName}`]
-                };
-                statsHtml += '<div style="margin-top:0.5rem;"><strong>Statistics</strong></div>';
-                statsHtml += buildStatisticsHTML(stats, fieldName);
-              }
-            } catch (e) {
-              console.warn('Could not fetch statistics:', e);
-            }
-          }
-          
-          // Fetch value distribution (histogram)
-          try {
-            const valueCountsJson = await fetchFieldValueCounts(url, layerId, fieldName, 50);
-            if (valueCountsJson && Array.isArray(valueCountsJson.features) && valueCountsJson.features.length) {
-              const valueCounts = valueCountsJson.features.map(f => ({
-                value: f.attributes ? f.attributes[fieldName] : null,
-                count: f.attributes ? f.attributes['value_count'] : 0
-              }));
-              const totalCount = valueCounts.reduce((sum, v) => sum + (v.count || 0), 0);
-              
-              statsHtml += '<div style="margin-top:1rem;"><strong>Value Distribution</strong></div>';
-              statsHtml += buildHistogramHTML(valueCounts, fieldName, totalCount);
-            }
-          } catch (e) {
-            console.warn('Could not fetch value counts:', e);
-            statsHtml += '<p class="text-muted">Could not load value distribution.</p>';
-          }
-          
-          statsContent.innerHTML = statsHtml;
-        } catch (err) {
-          console.error('Stats loading error:', err);
-          statsContent.innerHTML = '<p class="text-muted">Failed to load statistics.</p>';
-        }
-      });
-    }
   } catch (err) {
     console.error(err);
     statusEl.textContent = 'Failed to load preview (service JSON blocked or unavailable).';

@@ -927,13 +927,13 @@ function buildCoverageMapSVG(analysisResults) {
   const maxCount = Math.max(...analysisResults.map(s => s.count).filter(c => c > 0), 1);
 
   function stateColor(count) {
-    if (count <= 0) return 'rgba(255,255,255,0.06)';
+    if (count <= 0) return 'rgba(255,255,255,0.12)';
     const t = Math.min(1, Math.log(count + 1) / Math.log(maxCount + 1));
     // Light blue → deep blue gradient
     const r = Math.round(30 + (1 - t) * 40);
     const g = Math.round(80 + (1 - t) * 80);
     const b = Math.round(140 + t * 115);
-    const a = 0.45 + t * 0.5;
+    const a = 0.5 + t * 0.45;
     return `rgba(${r},${g},${b},${a})`;
   }
 
@@ -952,7 +952,7 @@ function buildCoverageMapSVG(analysisResults) {
     if (!d) return;
 
     const fill = stateColor(state.count);
-    const stroke = state.count > 0 ? 'rgba(91,163,245,0.55)' : 'rgba(255,255,255,0.12)';
+    const stroke = state.count > 0 ? 'rgba(91,163,245,0.6)' : 'rgba(255,255,255,0.3)';
     const title  = `${escapeHtml(state.name)}: ${state.count >= 0 ? state.count.toLocaleString() + ' features' : 'query failed'}`;
 
     pathsHtml += `<path d="${d}" fill="${fill}" stroke="${stroke}" stroke-width="0.8"
@@ -974,10 +974,10 @@ function buildCoverageMapSVG(analysisResults) {
   // Inset outlines & labels
   const insetsHtml = `
     <rect x="${akVP.x}" y="${akVP.y}" width="${akVP.w}" height="${akVP.h}"
-          fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" rx="6"/>
+          fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1" rx="6"/>
     <text x="${akVP.x + 6}" y="${akVP.y + 14}" class="cov-inset-label">Alaska</text>
     <rect x="${hiVP.x}" y="${hiVP.y}" width="${hiVP.w}" height="${hiVP.h}"
-          fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1" rx="6"/>
+          fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1" rx="6"/>
     <text x="${hiVP.x + 6}" y="${hiVP.y + 14}" class="cov-inset-label">Hawaii</text>
   `;
 
@@ -1086,6 +1086,8 @@ async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
 function paintCoverageResult(statusEl, contentEl, results) {
   const { svg, statesWithData, totalFeatures, totalStates, failedCount } =
     buildCoverageMapSVG(results);
+
+  console.log('[CoverageMap] paint stats:', { statesWithData, totalFeatures, totalStates, failedCount, svgLength: svg.length });
 
   let summary = `${statesWithData} of ${totalStates} states with data \u00b7 ${totalFeatures.toLocaleString()} total features`;
   if (failedCount > 0) summary += ` \u00b7 ${failedCount} state(s) could not be queried`;

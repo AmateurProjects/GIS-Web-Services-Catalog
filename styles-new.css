@@ -384,6 +384,7 @@ input[type="search"]:focus {
 .detail-panel > * {
   max-width: 980px;
   width: 100%;
+  flex-shrink: 0;
 }
 
 .detail-panel h2 {
@@ -1433,7 +1434,6 @@ textarea.dataset-edit-input {
    ================================================================ */
 
 .card-coverage {
-  overflow: hidden;
   border-left: 4px solid #4CAF50;
   min-height: 60px;
 }

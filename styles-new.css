@@ -1458,22 +1458,28 @@ textarea.dataset-edit-input {
 
 .cov-count {
   fill: var(--text-main, #e8e8e8);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 700;
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  paint-order: stroke fill;
+  stroke: rgba(0, 0, 0, 0.7);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 
 .cov-abbr {
   fill: var(--text-muted, #a0a0a0);
-  font-size: 6.5px;
-  font-weight: 500;
+  font-size: 9px;
+  font-weight: 600;
   text-anchor: middle;
   dominant-baseline: central;
   pointer-events: none;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  paint-order: stroke fill;
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
 }
 
 .cov-inset-label {
@@ -1486,6 +1492,137 @@ textarea.dataset-edit-input {
   font-size: 0.85rem;
   color: var(--text-muted, #aaa);
   margin-bottom: 0.25rem;
+}
+
+/* ================================================================
+   FIELDS TABLE
+   ================================================================ */
+
+.card-fields {
+  overflow: hidden;
+}
+
+.fields-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.85rem;
+}
+
+.fields-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel, #12141a);
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color, rgba(255,255,255,0.08));
+  white-space: nowrap;
+}
+
+.fields-table tbody tr {
+  transition: background 120ms ease;
+}
+
+.fields-table tbody tr:hover {
+  background: rgba(91, 163, 245, 0.06);
+}
+
+.fields-table tbody td {
+  padding: 0.4rem 0.65rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.fields-table code {
+  font-size: 0.82rem;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Key field row highlight */
+.field-row-key {
+  background: rgba(250, 204, 21, 0.05) !important;
+}
+
+.field-row-key:hover {
+  background: rgba(250, 204, 21, 0.1) !important;
+}
+
+.field-key-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: rgba(250, 204, 21, 0.15);
+  color: #facc15;
+  border: 1px solid rgba(250, 204, 21, 0.3);
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
+.field-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.field-type-pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(91, 163, 245, 0.1);
+  color: rgba(91, 163, 245, 0.9);
+  border: 1px solid rgba(91, 163, 245, 0.15);
+}
+
+.fields-stat-col {
+  text-align: right;
+  min-width: 70px;
+}
+
+.field-stat-loading {
+  color: var(--text-muted);
+  opacity: 0.4;
+  letter-spacing: 0.15em;
+}
+
+.field-stat-zero {
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+.field-stat-bar {
+  display: inline-block;
+  position: relative;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: linear-gradient(90deg, rgba(239,68,68,0.2) var(--pct), transparent var(--pct));
+  color: #fca5a5;
+}
+
+.field-stat-bar-blue {
+  background: linear-gradient(90deg, rgba(91,163,245,0.2) var(--pct), transparent var(--pct));
+  color: #93c5fd;
+}
+
+.field-stat-unique {
+  color: #4ade80;
+  font-weight: 600;
+  font-size: 0.8rem;
 }
 
 /* ================================================================

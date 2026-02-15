@@ -530,7 +530,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
         if (direct && Array.isArray(direct.fields)) layerJson = direct;
       } catch {}
     }
-    try { sampleJson = await fetchSampleRows(fetchBaseUrl, layerId, 10); } catch {}
+    try { sampleJson = await fetchSampleRows(fetchBaseUrl, layerId, 5); } catch {}
 
     // Bail if user navigated to a different dataset while we were fetching
     if (generation !== _renderGeneration) return;
@@ -605,28 +605,198 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
       </div>
     `;
 
-    // Fields summary
+    // Fields summary — redesigned as a table with async null% / unique% stats
     if (layerJson && Array.isArray(layerJson.fields) && layerJson.fields.length) {
-      const topFields = layerJson.fields.slice(0, 14);
+      const allFields = layerJson.fields;
+
+      // Identify key / system fields
+      const oidField = (layerJson.objectIdField || '').toUpperCase();
+      const globalIdField = (layerJson.globalIdField || '').toUpperCase();
+      function isKeyField(f) {
+        const n = (f.name || '').toUpperCase();
+        const t = (f.type || '').toUpperCase();
+        return n === oidField || n === globalIdField
+          || t === 'ESRIFIELDTYPEOID' || t === 'ESRIFIELDTYPEGLOBALID';
+      }
+
+      // Friendly type labels
+      function friendlyType(esriType) {
+        const map = {
+          'ESRIFIELDTYPEOID':       'OID',
+          'ESRIFIELDTYPEGLOBALID':  'GlobalID',
+          'ESRIFIELDTYPESTRING':    'String',
+          'ESRIFIELDTYPEINTEGER':   'Integer',
+          'ESRIFIELDTYPESMALLINTEGER': 'SmallInt',
+          'ESRIFIELDTYPEDOUBLE':    'Double',
+          'ESRIFIELDTYPESINGLE':    'Single',
+          'ESRIFIELDTYPEDATE':      'Date',
+          'ESRIFIELDTYPEBLOB':      'Blob',
+          'ESRIFIELDTYPEGUID':      'GUID',
+          'ESRIFIELDTYPEXML':       'XML',
+          'ESRIFIELDTYPEGEOMETRY':  'Geometry',
+          'ESRIFIELDTYPERASTER':    'Raster',
+        };
+        const key = String(esriType || '').toUpperCase().replace(/\s/g, '');
+        return map[key] || esriType || '';
+      }
+
       html += `
-        <div class="card" style="margin-top:0.75rem;">
-          <div style="font-weight:600; margin-bottom:0.5rem;">Fields (layer ${escapeHtml(String(layerId))})</div>
-          <div style="color:var(--text-muted); margin-bottom:0.5rem;">Showing ${topFields.length} of ${layerJson.fields.length}</div>
-          <ul style="margin:0; padding-left:1.1rem;">
-            ${topFields.map(f => `<li><code>${escapeHtml(f.name)}</code>${f.alias ? ` — ${escapeHtml(f.alias)}` : ''} <span style="color:var(--text-muted);">(${escapeHtml(f.type || '')})</span></li>`).join('')}
-          </ul>
+        <div class="card card-fields" style="margin-top:0.75rem;">
+          <div style="font-weight:600; margin-bottom:0.25rem;">Fields (layer ${escapeHtml(String(layerId))})</div>
+          <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${allFields.length} fields. Null % and Unique % are computed from the full dataset via service statistics queries.</p>
+          <div style="overflow-x:auto;">
+            <table class="fields-table" id="fieldsTable">
+              <thead>
+                <tr>
+                  <th>Field Name</th>
+                  <th>Alias</th>
+                  <th>Type</th>
+                  <th>Length</th>
+                  <th class="fields-stat-col">Null %</th>
+                  <th class="fields-stat-col">Unique %</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${allFields.map((f, i) => {
+                  const key = isKeyField(f);
+                  const rowCls = key ? ' class="field-row-key"' : '';
+                  const badge = key ? '<span class="field-key-badge">KEY</span>' : '';
+                  const len = f.length != null && f.length > 0 ? String(f.length) : '\u2014';
+                  return `<tr${rowCls} data-field-idx="${i}">
+                    <td class="field-name-cell">${badge}<code>${escapeHtml(f.name)}</code></td>
+                    <td>${escapeHtml(f.alias || '')}</td>
+                    <td><span class="field-type-pill">${escapeHtml(friendlyType(f.type))}</span></td>
+                    <td>${len}</td>
+                    <td class="fields-stat-col" data-field-null="${i}"><span class="field-stat-loading">\u2022\u2022\u2022</span></td>
+                    <td class="fields-stat-col" data-field-uniq="${i}"><span class="field-stat-loading">\u2022\u2022\u2022</span></td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
         </div>
       `;
+
+      // --- Async field stats: runs after card renders ---
+      // We capture variables for the async closure
+      const _fieldStatsUrl = fetchBaseUrl;
+      const _fieldStatsLayerId = layerId;
+      const _fieldStatsFields = allFields;
+      const _fieldStatsGen = generation;
+
+      // Defer to next microtask so the DOM is painted first
+      setTimeout(async () => {
+        if (_fieldStatsGen !== _renderGeneration) return;
+        const table = contentEl.querySelector('#fieldsTable');
+        if (!table) return;
+
+        // 1) Get total feature count
+        let totalCount = 0;
+        try {
+          const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
+          const base = normalizeServiceUrl(_fieldStatsUrl);
+          const parsed = parseServiceAndLayerId(base);
+          const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
+          const countJson = await fetchJsonWithTimeout(`${target}/query?${countParams}`, 8000);
+          totalCount = (countJson && typeof countJson.count === 'number') ? countJson.count : 0;
+        } catch {}
+        if (_fieldStatsGen !== _renderGeneration || !totalCount) {
+          // Can't compute percentages without total count — show dashes
+          table.querySelectorAll('[data-field-null], [data-field-uniq]').forEach(td => {
+            td.textContent = '\u2014';
+          });
+          return;
+        }
+
+        // 2) Query null count and distinct count per field (batched with concurrency limit)
+        const STAT_CONCURRENCY = 3;
+        let fIdx = 0;
+
+        async function processField() {
+          while (fIdx < _fieldStatsFields.length) {
+            const i = fIdx++;
+            const f = _fieldStatsFields[i];
+            if (_fieldStatsGen !== _renderGeneration) return;
+
+            const nullCell = table.querySelector(`[data-field-null="${i}"]`);
+            const uniqCell = table.querySelector(`[data-field-uniq="${i}"]`);
+            if (!nullCell || !uniqCell) continue;
+
+            // Skip geometry/blob/raster fields
+            const ft = (f.type || '').toUpperCase();
+            if (ft.includes('GEOMETRY') || ft.includes('BLOB') || ft.includes('RASTER') || ft.includes('XML')) {
+              nullCell.textContent = '\u2014';
+              uniqCell.textContent = '\u2014';
+              continue;
+            }
+
+            try {
+              // COUNT(fieldName) gives non-null count
+              const base = normalizeServiceUrl(_fieldStatsUrl);
+              const parsed = parseServiceAndLayerId(base);
+              const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
+              const statParams = new URLSearchParams({
+                where: '1=1',
+                outStatistics: JSON.stringify([
+                  { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'nn_count' }
+                ]),
+                f: 'json',
+              });
+              const statJson = await fetchJsonWithTimeout(`${target}/query?${statParams}`, 6000);
+              const nnCount = (statJson?.features?.[0]?.attributes?.nn_count) ?? totalCount;
+              const nullPct = totalCount > 0 ? ((totalCount - nnCount) / totalCount * 100) : 0;
+              nullCell.innerHTML = nullPct > 0
+                ? `<span class="field-stat-bar" style="--pct:${Math.min(nullPct, 100).toFixed(0)}%">${nullPct.toFixed(1)}%</span>`
+                : '<span class="field-stat-zero">0%</span>';
+            } catch {
+              nullCell.textContent = '\u2014';
+            }
+
+            try {
+              // Distinct count via groupByFieldsForStatistics (count unique values)
+              const base = normalizeServiceUrl(_fieldStatsUrl);
+              const parsed = parseServiceAndLayerId(base);
+              const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
+              const distParams = new URLSearchParams({
+                where: '1=1',
+                outFields: f.name,
+                groupByFieldsForStatistics: f.name,
+                outStatistics: JSON.stringify([
+                  { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'grp_count' }
+                ]),
+                returnCountOnly: 'true',
+                f: 'json',
+              });
+              const distJson = await fetchJsonWithTimeout(`${target}/query?${distParams}`, 6000);
+              const distinctCount = (distJson && typeof distJson.count === 'number') ? distJson.count : null;
+              if (distinctCount != null && totalCount > 0) {
+                const uniqPct = (distinctCount / totalCount * 100);
+                const isUnique = distinctCount === totalCount;
+                uniqCell.innerHTML = isUnique
+                  ? '<span class="field-stat-unique">100% \u2713</span>'
+                  : `<span class="field-stat-bar field-stat-bar-blue" style="--pct:${Math.min(uniqPct, 100).toFixed(0)}%">${uniqPct.toFixed(1)}%</span>`;
+              } else {
+                uniqCell.textContent = '\u2014';
+              }
+            } catch {
+              uniqCell.textContent = '\u2014';
+            }
+          }
+        }
+
+        await Promise.all(Array.from({ length: STAT_CONCURRENCY }, processField));
+      }, 50);
     }
 
     // Sample table
     if (sampleJson && Array.isArray(sampleJson.features) && sampleJson.features.length) {
-      const rows = sampleJson.features.map(ft => ft.attributes || {}).slice(0, 10);
+      const rows = sampleJson.features.map(ft => ft.attributes || {}).slice(0, 5);
       const cols = Object.keys(rows[0] || {}).slice(0, 10); // keep table compact
       if (cols.length) {
         html += `
           <div class="card" style="margin-top:0.75rem;">
-            <div style="font-weight:600; margin-bottom:0.5rem;">Sample records (layer ${escapeHtml(String(layerId))})</div>
+            <div style="font-weight:600; margin-bottom:0.25rem;">Sample records (layer ${escapeHtml(String(layerId))})</div>
+            <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Rows are randomly selected from the service and may not be representative of the full dataset.</p>
             <div style="overflow:auto;">
               <table>
                 <thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
@@ -765,28 +935,55 @@ const US_STATE_FIPS = new Set([
 let _censusStatesCache = null;
 const _coverageAnalysisCache = new Map();
 
+// ── ArcGIS SDK query modules (loaded on-demand for coverage analysis) ──
+let _esriQuery = null;
+let _EsriQueryClass = null;
+let _geometryEngine = null;
+
+function _loadCoverageQueryModules() {
+  return new Promise((resolve, reject) => {
+    if (_esriQuery && _EsriQueryClass && _geometryEngine) { resolve(); return; }
+    if (typeof require === 'undefined') {
+      reject(new Error('ArcGIS JS SDK not loaded'));
+      return;
+    }
+    require([
+      'esri/rest/query',
+      'esri/rest/support/Query',
+      'esri/geometry/geometryEngine'
+    ], (queryMod, QueryClass, geomEngine) => {
+      _esriQuery = queryMod;
+      _EsriQueryClass = QueryClass;
+      _geometryEngine = geomEngine;
+      resolve();
+    }, reject);
+  });
+}
+
 /**
- * Fetch generalized state boundaries from the Census Bureau TIGERweb service.
- * Results are cached for the page session.
+ * Fetch generalized state boundaries from the Census Bureau TIGERweb service
+ * using the ArcGIS JS SDK query module. Results are cached for the page session.
  */
 async function fetchCensusStateBoundaries() {
   if (_censusStatesCache) return _censusStatesCache;
 
-  const params = new URLSearchParams({
-    where:                '1=1',
-    outFields:            'STATE,NAME,STUSAB',
-    returnGeometry:       'true',
-    outSR:                '4326',
-    geometryPrecision:    '2',
-    maxAllowableOffset:   '0.05',
-    resultRecordCount:    '60',
-    f:                    'json',
+  await _loadCoverageQueryModules();
+
+  const query = new _EsriQueryClass({
+    where:              '1=1',
+    outFields:          ['STATE', 'NAME', 'STUSAB'],
+    returnGeometry:     true,
+    outSpatialReference: { wkid: 4326 },
+    geometryPrecision:  2,
+    maxAllowableOffset: 0.05,
+    num:                60,
   });
 
-  const data = await fetchJsonWithTimeout(
-    `${CENSUS_STATES_SERVICE}/query?${params}`, 25000
+  const featureSet = await _esriQuery.executeQueryJSON(
+    CENSUS_STATES_SERVICE, query, { timeout: 25000 }
   );
-  if (!data || !Array.isArray(data.features)) {
+
+  if (!featureSet || !Array.isArray(featureSet.features) || !featureSet.features.length) {
     throw new Error('Census state boundary query returned no features');
   }
 
@@ -799,12 +996,12 @@ async function fetchCensusStateBoundaries() {
     return '';
   }
 
-  const states = data.features
+  const states = featureSet.features
     .map(f => ({
       fips: String(attr(f, 'STATE', 'STATEFP', 'GEOID')).padStart(2, '0'),
       name: attr(f, 'NAME'),
       abbr: attr(f, 'STUSAB'),
-      geometry: f.geometry,
+      geometry: f.geometry, // esri/geometry/Polygon — has .rings for SVG rendering
     }))
     .filter(s => US_STATE_FIPS.has(s.fips) && s.geometry && s.geometry.rings);
 
@@ -814,41 +1011,32 @@ async function fetchCensusStateBoundaries() {
 
 /**
  * Query a dataset's feature service for the count of features that intersect
- * a given polygon geometry (one state boundary).
+ * a given polygon geometry (one state boundary) using the ArcGIS JS SDK.
+ * A small inward buffer (-2 km) is applied to the state polygon to exclude
+ * sliver intersections along shared borders.
  */
 async function queryFeatureCountInGeometry(serviceUrl, layerId, geometry) {
+  await _loadCoverageQueryModules();
+
   const base = normalizeServiceUrl(serviceUrl);
   const parsed = parseServiceAndLayerId(base);
   const target = parsed.isLayerUrl ? base : `${base}/${layerId}`;
 
-  // Use POST to avoid 414 URI Too Long for complex state polygons (e.g. Alaska)
-  const body = new URLSearchParams({
-    where:            '1=1',
-    geometry:         JSON.stringify(geometry),
-    geometryType:     'esriGeometryPolygon',
-    inSR:             '4326',
-    spatialRel:       'esriSpatialRelIntersects',
-    returnCountOnly:  'true',
-    f:                'json',
+  // Negative geodesic buffer shrinks the polygon inward by 2 km,
+  // eliminating thin slivers at state boundaries from being counted.
+  const buffered = _geometryEngine.geodesicBuffer(geometry, -2, 'kilometers');
+
+  // If the buffer collapses the polygon entirely (tiny island/territory),
+  // fall back to the original geometry.
+  const queryGeom = (buffered && buffered.rings && buffered.rings.length) ? buffered : geometry;
+
+  const query = new _EsriQueryClass({
+    where:               '1=1',
+    geometry:            queryGeom,
+    spatialRelationship: 'intersects',
   });
 
-  const controller = new AbortController();
-  const t = setTimeout(() => controller.abort(), 10000);
-  try {
-    const resp = await fetch(`${target}/query`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body.toString(),
-      mode: 'cors',
-      cache: 'no-store',
-      signal: controller.signal,
-    });
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const data = await resp.json();
-    return (data && typeof data.count === 'number') ? data.count : 0;
-  } finally {
-    clearTimeout(t);
-  }
+  return await _esriQuery.executeForCount(target, query, { timeout: 10000 });
 }
 
 /**
@@ -898,12 +1086,66 @@ function polygonRingsToPath(rings, geoBounds, viewport) {
   }).join('');
 }
 
-function approximateCentroid(rings) {
-  const ring = rings[0];
-  if (!ring || !ring.length) return [0, 0];
-  let cx = 0, cy = 0;
-  ring.forEach(([lon, lat]) => { cx += lon; cy += lat; });
-  return [cx / ring.length, cy / ring.length];
+/**
+ * Compute a visually centered label point for a polygon.
+ * Uses the signed-area centroid of the largest ring, then clamps it
+ * inside that ring's bounding box so labels stay within the state.
+ */
+function polygonLabelPoint(rings) {
+  if (!rings || !rings.length) return [0, 0];
+
+  // Find the ring with the largest absolute area (outer ring)
+  let bestRing = rings[0];
+  let bestArea = 0;
+  rings.forEach(ring => {
+    if (!ring || ring.length < 3) return;
+    let a = 0;
+    for (let i = 0, n = ring.length; i < n; i++) {
+      const [x0, y0] = ring[i];
+      const [x1, y1] = ring[(i + 1) % n];
+      a += x0 * y1 - x1 * y0;
+    }
+    if (Math.abs(a) > bestArea) {
+      bestArea = Math.abs(a);
+      bestRing = ring;
+    }
+  });
+
+  // Signed-area centroid of the largest ring
+  let cx = 0, cy = 0, totalA = 0;
+  for (let i = 0, n = bestRing.length; i < n; i++) {
+    const [x0, y0] = bestRing[i];
+    const [x1, y1] = bestRing[(i + 1) % n];
+    const cross = x0 * y1 - x1 * y0;
+    cx += (x0 + x1) * cross;
+    cy += (y0 + y1) * cross;
+    totalA += cross;
+  }
+  if (Math.abs(totalA) > 1e-10) {
+    cx /= (3 * totalA);
+    cy /= (3 * totalA);
+  } else {
+    // Degenerate — fall back to simple average
+    cx = 0; cy = 0;
+    bestRing.forEach(([lon, lat]) => { cx += lon; cy += lat; });
+    cx /= bestRing.length;
+    cy /= bestRing.length;
+  }
+
+  // Clamp into the ring's bounding box with 15% inset to avoid edges
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  bestRing.forEach(([lon, lat]) => {
+    if (lon < minX) minX = lon;
+    if (lon > maxX) maxX = lon;
+    if (lat < minY) minY = lat;
+    if (lat > maxY) maxY = lat;
+  });
+  const padX = (maxX - minX) * 0.15;
+  const padY = (maxY - minY) * 0.15;
+  cx = Math.max(minX + padX, Math.min(maxX - padX, cx));
+  cy = Math.max(minY + padY, Math.min(maxY - padY, cy));
+
+  return [cx, cy];
 }
 
 /**
@@ -961,13 +1203,13 @@ function buildCoverageMapSVG(analysisResults) {
 
     // Count label for states with data
     if (state.count > 0) {
-      const [clon, clat] = approximateCentroid(state.geometry.rings);
+      const [clon, clat] = polygonLabelPoint(state.geometry.rings);
       const [sx, sy] = projectGeoToSVG(clon, clat, bounds, vp);
       const countStr = state.count >= 1000
         ? (state.count / 1000).toFixed(state.count >= 10000 ? 0 : 1) + 'k'
         : String(state.count);
-      labelsHtml += `<text x="${sx.toFixed(0)}" y="${sy.toFixed(0)}" class="cov-count">${countStr}</text>\n`;
-      labelsHtml += `<text x="${sx.toFixed(0)}" y="${(sy + 11).toFixed(0)}" class="cov-abbr">${escapeHtml(state.abbr)}</text>\n`;
+      labelsHtml += `<text x="${sx.toFixed(0)}" y="${(sy - 2).toFixed(0)}" class="cov-count">${countStr}</text>\n`;
+      labelsHtml += `<text x="${sx.toFixed(0)}" y="${(sy + 12).toFixed(0)}" class="cov-abbr">${escapeHtml(state.abbr)}</text>\n`;
     }
   });
 
@@ -1002,17 +1244,15 @@ function buildCoverageMapSVG(analysisResults) {
  * and [data-cov-content] children.
  */
 async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
-  console.log('[CoverageMap] enter — hostEl:', !!hostEl, '| url:', publicServiceUrl, '| gen:', generation);
-  if (!hostEl) { console.warn('[CoverageMap] bail: no hostEl'); return; }
+  if (!hostEl) return;
   const card = hostEl.querySelector('#coverageMapCard');
-  if (!card) { console.warn('[CoverageMap] bail: #coverageMapCard not found in DOM'); return; }
+  if (!card) return;
 
   const statusEl  = card.querySelector('[data-cov-status]');
   const contentEl = card.querySelector('[data-cov-content]');
-  if (!statusEl || !contentEl) { console.warn('[CoverageMap] bail: statusEl=', !!statusEl, 'contentEl=', !!contentEl); return; }
+  if (!statusEl || !contentEl) return;
 
   const url = normalizeServiceUrl(publicServiceUrl);
-  console.log('[CoverageMap] normalized url:', url, '| looksArcGIS:', looksLikeArcGisService(url));
   if (!url) {
     statusEl.textContent = 'No public web service URL available for coverage analysis.';
     return;
@@ -1025,38 +1265,30 @@ async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
   // Determine the layer id from the URL
   const parsed = parseServiceAndLayerId(url);
   const layerId = parsed.isLayerUrl ? parsed.layerId : 0;
-  console.log('[CoverageMap] layerId:', layerId, '| isLayerUrl:', parsed.isLayerUrl);
 
   // Check cache
   const cacheKey = `${url}__${layerId}`;
   if (_coverageAnalysisCache.has(cacheKey)) {
-    console.log('[CoverageMap] cache hit — painting cached result');
     const cached = _coverageAnalysisCache.get(cacheKey);
     paintCoverageResult(statusEl, contentEl, cached);
     return;
   }
 
   // Step 1 — fetch state boundaries
-  console.log('[CoverageMap] step 1: fetching Census state boundaries…');
   statusEl.textContent = 'Fetching state boundaries from Census Bureau\u2026';
   let states;
   try {
     states = await fetchCensusStateBoundaries();
-    console.log('[CoverageMap] Census fetch OK — got', states.length, 'states');
   } catch (err) {
-    console.error('[CoverageMap] Census state fetch FAILED:', err);
+    console.error('Census state fetch failed:', err);
     statusEl.textContent = 'Could not fetch state boundaries from Census Bureau TIGER service.';
     return;
   }
 
   // Bail if user navigated to a different dataset while fetching
-  if (generation !== _renderGeneration) {
-    console.warn('[CoverageMap] bail after Census fetch: generation mismatch', generation, '!==', _renderGeneration);
-    return;
-  }
+  if (generation !== _renderGeneration) return;
 
   // Step 2 — run spatial intersection counts
-  console.log('[CoverageMap] step 2: running coverage analysis on', states.length, 'states against', url);
   statusEl.textContent = `Analyzing coverage across ${states.length} states\u2026`;
   let results;
   try {
@@ -1064,30 +1296,22 @@ async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
       if (generation !== _renderGeneration) return;
       statusEl.textContent = `Analyzing coverage: ${done} / ${total} states\u2026`;
     });
-    console.log('[CoverageMap] analysis complete —', results.length, 'results');
   } catch (err) {
-    console.error('[CoverageMap] Coverage analysis FAILED:', err);
+    console.error('Coverage analysis failed:', err);
     statusEl.textContent = 'Coverage analysis failed \u2014 the service may not support spatial queries.';
     return;
   }
 
   // Bail if user navigated away during analysis
-  if (generation !== _renderGeneration) {
-    console.warn('[CoverageMap] bail after analysis: generation mismatch', generation, '!==', _renderGeneration);
-    return;
-  }
+  if (generation !== _renderGeneration) return;
 
   _coverageAnalysisCache.set(cacheKey, results);
-  console.log('[CoverageMap] painting results…');
   paintCoverageResult(statusEl, contentEl, results);
-  console.log('[CoverageMap] done ✓');
 }
 
 function paintCoverageResult(statusEl, contentEl, results) {
   const { svg, statesWithData, totalFeatures, totalStates, failedCount } =
     buildCoverageMapSVG(results);
-
-  console.log('[CoverageMap] paint stats:', { statesWithData, totalFeatures, totalStates, failedCount, svgLength: svg.length });
 
   let summary = `${statesWithData} of ${totalStates} states with data \u00b7 ${totalFeatures.toLocaleString()} total features`;
   if (failedCount > 0) summary += ` \u00b7 ${failedCount} state(s) could not be queried`;
@@ -2930,7 +3154,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
     html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
     html += '<h3>\uD83D\uDDFA\uFE0F Coverage Map</h3>';
-    html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a></p>';
+    html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 2 km inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
     html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
     html += '<div data-cov-content></div>';
     html += '</div>';

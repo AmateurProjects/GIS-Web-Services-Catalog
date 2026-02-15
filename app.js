@@ -1018,8 +1018,10 @@ function buildCoverageMapSVG(analysisResults) {
  * and [data-cov-content] children.
  */
 async function renderCoverageMapCard(hostEl, publicServiceUrl) {
+  console.log('[CoverageMap] renderCoverageMapCard called, hostEl:', !!hostEl, 'url:', publicServiceUrl);
   if (!hostEl) return;
   const card = hostEl.querySelector('#coverageMapCard');
+  console.log('[CoverageMap] card element found:', !!card);
   if (!card) return;
 
   const statusEl  = card.querySelector('[data-cov-status]');
@@ -2911,8 +2913,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     html += '</div>';
 
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
-    html += '<div class="card card-coverage" id="coverageMapCard">';
-    html += '<h3>Coverage Map</h3>';
+    html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
+    html += '<h3>\uD83D\uDDFA\uFE0F Coverage Map</h3>';
     html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a></p>';
     html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
     html += '<div data-cov-content></div>';

@@ -1002,15 +1002,17 @@ function buildCoverageMapSVG(analysisResults) {
  * and [data-cov-content] children.
  */
 async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
-  if (!hostEl) return;
+  console.log('[CoverageMap] enter — hostEl:', !!hostEl, '| url:', publicServiceUrl, '| gen:', generation);
+  if (!hostEl) { console.warn('[CoverageMap] bail: no hostEl'); return; }
   const card = hostEl.querySelector('#coverageMapCard');
-  if (!card) return;
+  if (!card) { console.warn('[CoverageMap] bail: #coverageMapCard not found in DOM'); return; }
 
   const statusEl  = card.querySelector('[data-cov-status]');
   const contentEl = card.querySelector('[data-cov-content]');
-  if (!statusEl || !contentEl) return;
+  if (!statusEl || !contentEl) { console.warn('[CoverageMap] bail: statusEl=', !!statusEl, 'contentEl=', !!contentEl); return; }
 
   const url = normalizeServiceUrl(publicServiceUrl);
+  console.log('[CoverageMap] normalized url:', url, '| looksArcGIS:', looksLikeArcGisService(url));
   if (!url) {
     statusEl.textContent = 'No public web service URL available for coverage analysis.';
     return;
@@ -1023,30 +1025,38 @@ async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
   // Determine the layer id from the URL
   const parsed = parseServiceAndLayerId(url);
   const layerId = parsed.isLayerUrl ? parsed.layerId : 0;
+  console.log('[CoverageMap] layerId:', layerId, '| isLayerUrl:', parsed.isLayerUrl);
 
   // Check cache
   const cacheKey = `${url}__${layerId}`;
   if (_coverageAnalysisCache.has(cacheKey)) {
+    console.log('[CoverageMap] cache hit — painting cached result');
     const cached = _coverageAnalysisCache.get(cacheKey);
     paintCoverageResult(statusEl, contentEl, cached);
     return;
   }
 
   // Step 1 — fetch state boundaries
+  console.log('[CoverageMap] step 1: fetching Census state boundaries…');
   statusEl.textContent = 'Fetching state boundaries from Census Bureau\u2026';
   let states;
   try {
     states = await fetchCensusStateBoundaries();
+    console.log('[CoverageMap] Census fetch OK — got', states.length, 'states');
   } catch (err) {
-    console.error('Census state fetch failed:', err);
+    console.error('[CoverageMap] Census state fetch FAILED:', err);
     statusEl.textContent = 'Could not fetch state boundaries from Census Bureau TIGER service.';
     return;
   }
 
   // Bail if user navigated to a different dataset while fetching
-  if (generation !== _renderGeneration) return;
+  if (generation !== _renderGeneration) {
+    console.warn('[CoverageMap] bail after Census fetch: generation mismatch', generation, '!==', _renderGeneration);
+    return;
+  }
 
   // Step 2 — run spatial intersection counts
+  console.log('[CoverageMap] step 2: running coverage analysis on', states.length, 'states against', url);
   statusEl.textContent = `Analyzing coverage across ${states.length} states\u2026`;
   let results;
   try {
@@ -1054,17 +1064,23 @@ async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
       if (generation !== _renderGeneration) return;
       statusEl.textContent = `Analyzing coverage: ${done} / ${total} states\u2026`;
     });
+    console.log('[CoverageMap] analysis complete —', results.length, 'results');
   } catch (err) {
-    console.error('Coverage analysis failed:', err);
+    console.error('[CoverageMap] Coverage analysis FAILED:', err);
     statusEl.textContent = 'Coverage analysis failed \u2014 the service may not support spatial queries.';
     return;
   }
 
   // Bail if user navigated away during analysis
-  if (generation !== _renderGeneration) return;
+  if (generation !== _renderGeneration) {
+    console.warn('[CoverageMap] bail after analysis: generation mismatch', generation, '!==', _renderGeneration);
+    return;
+  }
 
   _coverageAnalysisCache.set(cacheKey, results);
+  console.log('[CoverageMap] painting results…');
   paintCoverageResult(statusEl, contentEl, results);
+  console.log('[CoverageMap] done ✓');
 }
 
 function paintCoverageResult(statusEl, contentEl, results) {

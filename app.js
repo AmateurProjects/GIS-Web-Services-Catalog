@@ -213,7 +213,10 @@ function parseServiceAndLayerId(rawUrl) {
 
 function looksLikeArcGisService(url) {
   const u = String(url || '').toUpperCase();
-  return u.includes('/ARCGIS/REST/SERVICES/') && (u.includes('/MAPSERVER') || u.includes('/FEATURESERVER') || u.includes('/IMAGESERVER'));
+  // ArcGIS Server can be deployed at any context path (not just /arcgis/)
+  // Common patterns: /arcgis/rest/services/, /nlsdb/rest/services/, /gis/rest/services/
+  // The reliable marker is /rest/services/ combined with a service type endpoint
+  return u.includes('/REST/SERVICES/') && (u.includes('/MAPSERVER') || u.includes('/FEATURESERVER') || u.includes('/IMAGESERVER'));
 }
 
 async function fetchJsonWithTimeout(url, timeoutMs = 4500) {
@@ -432,7 +435,8 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
     // Service Metadata from REST endpoint
     html += `
       <div class="card" style="margin-top:0.75rem;">
-        <div style="font-weight:600; margin-bottom:0.5rem;">Service Metadata (from REST endpoint)</div>
+        <div class="card-header-row"><div style="font-weight:600;">Service Metadata</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+        <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Fetched from the ArcGIS REST endpoint</p>
         ${serviceDescription 
           ? `<p><strong>Description:</strong> ${escapeHtml(serviceDescription)}</p>` 
           : `<p class="metadata-missing"><strong>Description:</strong> <em>Not provided by service</em></p>`
@@ -461,7 +465,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
     const mapLayerId = layerId;
     html += `
       <div class="card" style="margin-top:0.75rem;">
-        <div style="font-weight:600; margin-bottom:0.5rem;">Interactive Map</div>
+        <div class="card-header-row"><div style="font-weight:600;">Interactive Map</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
         <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset</div>
         <div id="arcgisMapContainer" 
              data-service-url="${escapeHtml(mapServiceUrl)}" 
@@ -507,7 +511,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
 
       html += `
         <div class="card card-fields" style="margin-top:0.75rem;">
-          <div style="font-weight:600; margin-bottom:0.25rem;">Fields (layer ${escapeHtml(String(layerId))})</div>
+          <div class="card-header-row"><div style="font-weight:600;">Fields (layer ${escapeHtml(String(layerId))})</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
           <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${allFields.length} fields. Null % and Distinct counts are computed from the full dataset via service statistics queries.</p>
           <div style="overflow-x:auto;">
             <table class="fields-table" id="fieldsTable">
@@ -665,7 +669,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
       if (cols.length) {
         html += `
           <div class="card" style="margin-top:0.75rem;">
-            <div style="font-weight:600; margin-bottom:0.25rem;">Sample records (layer ${escapeHtml(String(layerId))})</div>
+            <div class="card-header-row"><div style="font-weight:600;">Sample Records (layer ${escapeHtml(String(layerId))})</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
             <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Rows are randomly selected from the service and may not be representative of the full dataset.</p>
             <div style="overflow:auto;">
               <table>
@@ -2738,37 +2742,151 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    const list = document.createElement('ul');
+    // Group datasets by parent service
+    const serviceGroups = new Map(); // _parent_service -> { label, datasets[] }
+    const standaloneDatasets = [];
+
     filtered.forEach((ds) => {
-      const li = document.createElement('li');
-      li.className = 'list-item dataset-item';
-
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'list-item-button';
-      btn.setAttribute('data-ds-id', ds.id);
-
-      const geomIconHtml = getGeometryIconHTML(ds.geometry_type || '', 'geom-icon-list');
-
-      btn.innerHTML = `
-        ${geomIconHtml}
-        <span class="list-item-label">${escapeHtml(ds.title || ds.id)}</span>
-      `;
-
-      btn.addEventListener('click', () => {
-        showDatasetsView();
-        renderDatasetDetail(ds.id);
-      });
-
-      li.appendChild(btn);
-      list.appendChild(li);
+      if (ds._parent_service) {
+        if (!serviceGroups.has(ds._parent_service)) {
+          // Extract a friendly service name from the URL
+          const serviceName = extractServiceNameFromUrl(ds._parent_service);
+          serviceGroups.set(ds._parent_service, {
+            label: serviceName,
+            url: ds._parent_service,
+            datasets: []
+          });
+        }
+        serviceGroups.get(ds._parent_service).datasets.push(ds);
+      } else {
+        standaloneDatasets.push(ds);
+      }
     });
 
+    // Sort sublayers within each group by layer ID
+    serviceGroups.forEach((group) => {
+      group.datasets.sort((a, b) => (a._layer_id ?? 999) - (b._layer_id ?? 999));
+    });
+
+    const container = document.createElement('div');
+
+    // Render grouped services first
+    serviceGroups.forEach((group, serviceUrl) => {
+      const groupEl = document.createElement('div');
+      groupEl.className = 'service-tree-group';
+
+      // Check if any child is currently selected (to auto-expand)
+      const hasSelectedChild = group.datasets.some(ds => ds.id === lastSelectedDatasetId);
+
+      // Header (collapsible)
+      const header = document.createElement('button');
+      header.type = 'button';
+      header.className = 'service-tree-header' + (hasSelectedChild ? ' is-expanded' : '');
+      header.innerHTML = `
+        <span class="service-tree-toggle">▶</span>
+        <span class="service-tree-label" title="${escapeHtml(group.label)}">${escapeHtml(group.label)}</span>
+        <span class="service-tree-count">${group.datasets.length} layers</span>
+      `;
+
+      // Children container
+      const childrenEl = document.createElement('ul');
+      childrenEl.className = 'service-tree-children' + (hasSelectedChild ? ' is-open' : '');
+
+      // Toggle expand/collapse
+      header.addEventListener('click', () => {
+        header.classList.toggle('is-expanded');
+        childrenEl.classList.toggle('is-open');
+      });
+
+      // Render child datasets
+      group.datasets.forEach((ds) => {
+        const li = document.createElement('li');
+        li.className = 'list-item dataset-item';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'list-item-button';
+        btn.setAttribute('data-ds-id', ds.id);
+
+        const geomIconHtml = getGeometryIconHTML(ds.geometry_type || '', 'geom-icon-list');
+        const layerName = ds._layer_name || ds.title || ds.id;
+        const layerId = ds._layer_id !== undefined ? ds._layer_id : '';
+
+        btn.innerHTML = `
+          ${geomIconHtml}
+          <span class="list-item-label">${escapeHtml(layerName)}</span>
+          ${layerId !== '' ? `<span class="sublayer-id">/${layerId}</span>` : ''}
+        `;
+
+        btn.addEventListener('click', () => {
+          showDatasetsView();
+          renderDatasetDetail(ds.id);
+        });
+
+        li.appendChild(btn);
+        childrenEl.appendChild(li);
+      });
+
+      groupEl.appendChild(header);
+      groupEl.appendChild(childrenEl);
+      container.appendChild(groupEl);
+    });
+
+    // Render standalone datasets
+    if (standaloneDatasets.length > 0) {
+      const standaloneList = document.createElement('ul');
+      standaloneDatasets.forEach((ds) => {
+        const li = document.createElement('li');
+        li.className = 'list-item dataset-item standalone-dataset';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'list-item-button';
+        btn.setAttribute('data-ds-id', ds.id);
+
+        const geomIconHtml = getGeometryIconHTML(ds.geometry_type || '', 'geom-icon-list');
+
+        btn.innerHTML = `
+          ${geomIconHtml}
+          <span class="list-item-label">${escapeHtml(ds.title || ds.id)}</span>
+        `;
+
+        btn.addEventListener('click', () => {
+          showDatasetsView();
+          renderDatasetDetail(ds.id);
+        });
+
+        li.appendChild(btn);
+        standaloneList.appendChild(li);
+      });
+      container.appendChild(standaloneList);
+    }
+
     datasetListEl.innerHTML = '';
-    datasetListEl.appendChild(list);
+    datasetListEl.appendChild(container);
 
    // keep active highlight in sync after re-render
    setActiveListButton(datasetListEl, (b) => b.getAttribute('data-ds-id') === lastSelectedDatasetId);
+  }
+
+  // Helper: Extract a friendly service name from an ArcGIS REST URL
+  function extractServiceNameFromUrl(url) {
+    if (!url) return 'Unknown Service';
+    // Example: https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer
+    // We want: "BLM_Natl_AdminUnit_Generalized"
+    const match = url.match(/\/rest\/services\/(?:[^\/]+\/)?([^\/]+)\/(?:MapServer|FeatureServer|ImageServer)/i);
+    if (match && match[1]) {
+      // Replace underscores with spaces for readability
+      return match[1].replace(/_/g, ' ');
+    }
+    // Fallback: return last path segment before service type
+    const parts = url.split('/');
+    for (let i = parts.length - 1; i >= 0; i--) {
+      if (/^(MapServer|FeatureServer|ImageServer)$/i.test(parts[i]) && parts[i - 1]) {
+        return parts[i - 1].replace(/_/g, ' ');
+      }
+    }
+    return 'Service';
   }
 
   function renderAttributeList(filterText = '') {
@@ -2861,7 +2979,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     html += `<h2>${escapeHtml(dataset.title || dataset.id)}</h2>`;
     if (dataset.description) html += `<p>${escapeHtml(dataset.description)}</p>`;
 
+    // Data source legend (dev helper)
+    html += `
+      <div class="card" style="padding:0.6rem 0.85rem; margin-bottom:0.5rem; background:rgba(255,255,255,0.02);">
+        <div style="font-size:0.8rem; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
+          <strong style="color:var(--text-main);">Data Source Legend:</strong>
+          <span><span class="data-source-badge data-source-badge-manual">Manual</span> Entered in catalog.json</span>
+          <span><span class="data-source-badge data-source-badge-auto">Auto</span> Fetched from ArcGIS REST API</span>
+          <span><span class="data-source-badge data-source-badge-hybrid">Hybrid</span> Links manual to auto-detected</span>
+        </div>
+      </div>
+    `;
+
     html += '<div class="card card-meta">';
+    html += '<div class="card-header-row"><h3>Catalog Metadata</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
     html += `<p><strong>Database Object Name:</strong> ${escapeHtml(dataset.objname || '')}</p>`;
     html += `<p><strong>Geometry Type:</strong> ${geomIconHtml}${escapeHtml(dataset.geometry_type || '')}</p>`;
     html += `<p><strong>Agency Owner:</strong> ${escapeHtml(dataset.agency_owner || '')}</p>`;
@@ -2909,7 +3040,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Development & Status card
     html += '<div class="card card-development">';
-    html += '<h3>Development & Status</h3>';
+    html += '<div class="card-header-row"><h3>Development & Status</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
     
     const stageLabels = {
       'planned': { label: 'Planned', class: 'stage-planned' },
@@ -2936,7 +3067,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
     html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
-    html += '<h3>\uD83D\uDDFA\uFE0F Coverage Map</h3>';
+    html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>';
     html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 2 km inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
     html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
     html += '<div data-cov-content></div>';
@@ -2945,7 +3076,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Maturity card
     const maturity = dataset.maturity || {};
     html += '<div class="card card-maturity">';
-    html += '<h3>Data Maturity</h3>';
+    html += '<div class="card-header-row"><h3>Data Maturity</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
     
     const tierLabels = {
       'bronze': { label: 'Bronze', class: 'tier-bronze', icon: '🥉' },
@@ -3002,7 +3133,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       html += `
         <div class="card-row">
           <div class="card card-attributes">
-            <h3>Attributes</h3>
+            <div class="card-header-row"><h3>Attributes</h3><span class="data-source-badge data-source-badge-hybrid">Hybrid</span></div>
             <ul>
       `;
       attrs.forEach((attr) => {
@@ -3036,7 +3167,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 // --- Public Web Service preview card (renders after URL checks) ---
 html += `
   <div class="card card-map-preview" id="datasetPreviewCard">
-    <h3>Public Web Service preview</h3>
+    <div class="card-header-row"><h3>Public Web Service Preview</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>
     <div class="map-preview-status" data-preview-status>
       Checking Public Web Service…
     </div>

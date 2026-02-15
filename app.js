@@ -643,7 +643,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
       html += `
         <div class="card card-fields" style="margin-top:0.75rem;">
           <div style="font-weight:600; margin-bottom:0.25rem;">Fields (layer ${escapeHtml(String(layerId))})</div>
-          <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${allFields.length} fields. Null % and Unique % are computed from the full dataset via service statistics queries.</p>
+          <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${allFields.length} fields. Null % and Distinct counts are computed from the full dataset via service statistics queries.</p>
           <div style="overflow-x:auto;">
             <table class="fields-table" id="fieldsTable">
               <thead>
@@ -653,14 +653,15 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
                   <th>Type</th>
                   <th>Length</th>
                   <th class="fields-stat-col">Null %</th>
-                  <th class="fields-stat-col">Unique %</th>
+                  <th class="fields-stat-col">Distinct</th>
                 </tr>
               </thead>
               <tbody>
                 ${allFields.map((f, i) => {
                   const key = isKeyField(f);
-                  const rowCls = key ? ' class="field-row-key"' : '';
-                  const badge = key ? '<span class="field-key-badge">KEY</span>' : '';
+                  const hasDomain = f.domain && f.domain.type === 'codedValue';
+                  const rowCls = key ? ' class="field-row-key"' : (hasDomain ? ' class="field-row-domain"' : '');
+                  const badge = key ? '<span class="field-key-badge">KEY</span>' : (hasDomain ? '<span class="field-domain-badge">DOMAIN</span>' : '');
                   const len = f.length != null && f.length > 0 ? String(f.length) : '\u2014';
                   return `<tr${rowCls} data-field-idx="${i}">
                     <td class="field-name-cell">${badge}<code>${escapeHtml(f.name)}</code></td>
@@ -770,11 +771,18 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
               const distJson = await fetchJsonWithTimeout(`${target}/query?${distParams}`, 6000);
               const distinctCount = (distJson && typeof distJson.count === 'number') ? distJson.count : null;
               if (distinctCount != null && totalCount > 0) {
-                const uniqPct = (distinctCount / totalCount * 100);
                 const isUnique = distinctCount === totalCount;
-                uniqCell.innerHTML = isUnique
-                  ? '<span class="field-stat-unique">100% \u2713</span>'
-                  : `<span class="field-stat-bar field-stat-bar-blue" style="--pct:${Math.min(uniqPct, 100).toFixed(0)}%">${uniqPct.toFixed(1)}%</span>`;
+                const hasDomain = f.domain && f.domain.type === 'codedValue';
+                if (isUnique) {
+                  uniqCell.innerHTML = `<span class="field-stat-unique">${distinctCount.toLocaleString()} \u2713</span>`;
+                } else if (hasDomain) {
+                  const domainCount = f.domain.codedValues ? f.domain.codedValues.length : distinctCount;
+                  uniqCell.innerHTML = `<span class="field-stat-domain">${distinctCount.toLocaleString()} of ${domainCount} codes</span>`;
+                } else if (distinctCount <= 25) {
+                  uniqCell.innerHTML = `<span class="field-stat-low-card">${distinctCount.toLocaleString()}</span>`;
+                } else {
+                  uniqCell.innerHTML = `<span class="field-stat-count">${distinctCount.toLocaleString()}</span>`;
+                }
               } else {
                 uniqCell.textContent = '\u2014';
               }
@@ -3246,9 +3254,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     <button type="button" class="suggest-button" data-edit-dataset="${escapeHtml(dataset.id)}">
       Suggest a change to this dataset
     </button>
-    <button type="button" class="export-button" data-export-schema="${escapeHtml(dataset.id)}">
-      Export ArcGIS schema (Python)
-    </button>
   </div>
 `;
 
@@ -3297,17 +3302,6 @@ renderCoverageMapCard(datasetDetailEl, dataset.public_web_service, currentGenera
       });
     });
 
-    const exportBtn = datasetDetailEl.querySelector('button[data-export-schema]');
-    if (exportBtn) {
-      exportBtn.addEventListener('click', () => {
-        const dsId = exportBtn.getAttribute('data-export-schema');
-        const ds = Catalog.getDatasetById(dsId);
-        if (!ds) return;
-        const attrsForDs = Catalog.getAttributesForDataset(ds);
-        const script = buildArcGisSchemaPython(ds, attrsForDs);
-        downloadTextFile(script, `${ds.id}_schema_arcpy.py`);
-      });
-    }
   }
 
   function renderInlineAttributeDetail(attrId) {
@@ -3696,130 +3690,3 @@ function getGeometryIconHTML(geometryType, contextClass) {
   </svg></span>`;
 }
 
-// Build ArcGIS Python schema script for a dataset
-function buildArcGisSchemaPython(dataset, attrs) {
-  const lines = [];
-  const dsId = dataset.id || '';
-  const objname = dataset.objname || dsId;
-
-  lines.push('# -*- coding: utf-8 -*-');
-  lines.push('# Auto-generated ArcGIS schema script from Public Lands National GIS Data Catalog');
-  lines.push(`# Dataset ID: ${dsId}`);
-  if (dataset.title) lines.push(`# Title: ${dataset.title}`);
-  if (dataset.description) lines.push(`# Description: ${dataset.description}`);
-  lines.push('');
-  lines.push('import arcpy');
-  lines.push('');
-  lines.push('# TODO: Update these paths and settings before running');
-  lines.push('gdb = r"C:\\path\\to\\your.gdb"');
-  lines.push(`fc_name = "${objname}"`);
-
-  const proj = dataset.projection || '';
-  const epsgMatch = proj.match(/EPSG:(\d+)/i);
-
-  const geomType = (dataset.geometry_type || 'POLYGON').toUpperCase();
-  lines.push(`geometry_type = "${geomType}"  # e.g. "POINT", "POLYLINE", "POLYGON"`);
-
-  if (epsgMatch) {
-    lines.push(`spatial_reference = arcpy.SpatialReference(${epsgMatch[1]})  # from ${proj}`);
-  } else {
-    lines.push('spatial_reference = None  # TODO: set a spatial reference if desired');
-  }
-
-  lines.push('');
-  lines.push('# Create the feature class');
-  lines.push('out_fc = arcpy.management.CreateFeatureclass(');
-  lines.push('    gdb,');
-  lines.push('    fc_name,');
-  lines.push('    geometry_type,');
-  lines.push('    spatial_reference=spatial_reference');
-  lines.push(')[0]');
-  lines.push('');
-  lines.push('# Define fields: (name, type, alias, length, domain)');
-  lines.push('fields = [');
-
-  const enumDomainComments = [];
-
-  attrs.forEach((attr) => {
-    const fieldInfo = mapAttributeToArcGisField(attr);
-
-    const name = attr.id || '';
-    const alias = attr.label || '';
-    const type = fieldInfo.type;
-    const length = fieldInfo.length;
-    const domain = 'None';
-
-    const safeAlias = alias.replace(/"/g, '""');
-
-    lines.push(`    ("${name}", "${type}", "${safeAlias}", ${length}, ${domain}),`);
-
-    if (attr.type === 'enumerated' && Array.isArray(attr.values) && attr.values.length) {
-      const commentLines = [];
-      commentLines.push(`# Domain suggestion for ${name} (${alias}):`);
-      attr.values.forEach((v) => {
-        const code = v.code !== undefined ? String(v.code) : '';
-        const label = v.label || '';
-        const desc = v.description || '';
-        commentLines.push(`#   ${code} = ${label}  -  ${desc}`);
-      });
-      enumDomainComments.push(commentLines.join('\n'));
-    }
-  });
-
-  lines.push(']');
-  lines.push('');
-  lines.push('# Add fields to the feature class');
-  lines.push('for name, ftype, alias, length, domain in fields:');
-  lines.push('    kwargs = {"field_alias": alias}');
-  lines.push('    if length is not None and ftype == "TEXT":');
-  lines.push('        kwargs["field_length"] = length');
-  lines.push('    if domain is not None and domain != "None":');
-  lines.push('        kwargs["field_domain"] = domain');
-  lines.push('    arcpy.management.AddField(out_fc, name, ftype, **kwargs)');
-  lines.push('');
-
-  if (enumDomainComments.length) {
-    lines.push('# ---------------------------------------------------------------------------');
-    lines.push('# Suggested coded value domains for enumerated fields');
-    lines.push('# You can use these comments to create geodatabase domains manually:');
-    lines.push('# ---------------------------------------------------------------------------');
-    enumDomainComments.forEach((block) => {
-      lines.push(block);
-      lines.push('');
-    });
-  }
-
-  return lines.join('\n');
-}
-
-function mapAttributeToArcGisField(attr) {
-  const t = (attr.type || '').toLowerCase();
-  switch (t) {
-    case 'string':
-      return { type: 'TEXT', length: 255 };
-    case 'integer':
-      return { type: 'LONG', length: null };
-    case 'float':
-      return { type: 'DOUBLE', length: null };
-    case 'boolean':
-      return { type: 'SHORT', length: null };
-    case 'date':
-      return { type: 'DATE', length: null };
-    case 'enumerated':
-      return { type: 'LONG', length: null };
-    default:
-      return { type: 'TEXT', length: 255 };
-  }
-}
-
-function downloadTextFile(content, filename) {
-  const blob = new Blob([content], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}

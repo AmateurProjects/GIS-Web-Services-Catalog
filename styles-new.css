@@ -213,7 +213,7 @@ section {
   border-right: 1px solid var(--border-color);
   padding: 0.85rem;
   background: var(--bg-panel);
-  overflow-y: auto;
+  overflow-y: hidden;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -226,6 +226,9 @@ section {
   background: var(--glass-bg);
   border-radius: var(--radius);
   border: 1px solid var(--border-color);
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
 }
 
 .sidebar .toolbar { margin-bottom: 0; }
@@ -628,13 +631,18 @@ a:hover { color: var(--accent-hover); text-decoration: underline; }
 
 .suggest-button:hover::after { left: 130%; }
 
-.export-button { margin-left: 0; }
-
 .card-actions {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 0.75rem;
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  background: var(--bg-main);
+  padding: 0.75rem 0;
+  margin-top: auto;
+  border-top: 1px solid var(--border-color);
 }
 
 /* ================================================================
@@ -792,13 +800,13 @@ code {
 .geom-icon-list  { width: 1.35rem; height: 1.35rem; margin-right: 0.45rem; }
 .geom-icon-inline { width: 1.15rem; height: 1.15rem; }
 
-/* ── Per-type colors ── */
-.geom-type-point      { color: #22d3ee; filter: drop-shadow(0 0 4px rgba(34,211,238,0.3)); }
-.geom-type-multipoint { color: #2dd4bf; filter: drop-shadow(0 0 4px rgba(45,212,191,0.3)); }
-.geom-type-line       { color: #4ade80; filter: drop-shadow(0 0 4px rgba(74,222,128,0.3)); }
-.geom-type-polygon    { color: #60a5fa; filter: drop-shadow(0 0 4px rgba(96,165,250,0.3)); }
-.geom-type-table      { color: #fbbf24; filter: drop-shadow(0 0 4px rgba(251,191,36,0.25)); }
-.geom-type-raster     { color: #c084fc; filter: drop-shadow(0 0 4px rgba(192,132,252,0.3)); }
+/* ── Unified icon color ── */
+.geom-type-point,
+.geom-type-multipoint,
+.geom-type-line,
+.geom-type-polygon,
+.geom-type-table,
+.geom-type-raster     { color: var(--accent); filter: drop-shadow(0 0 4px var(--accent-glow)); }
 .geom-type-unknown    { color: var(--text-muted); opacity: 0.6; }
 
 /* ================================================================
@@ -1571,6 +1579,30 @@ textarea.dataset-edit-input {
   vertical-align: middle;
 }
 
+/* Domain field row highlight */
+.field-row-domain {
+  background: rgba(168, 85, 247, 0.04) !important;
+}
+
+.field-row-domain:hover {
+  background: rgba(168, 85, 247, 0.08) !important;
+}
+
+.field-domain-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  margin-right: 0.4rem;
+  vertical-align: middle;
+}
+
 .field-name-cell {
   display: flex;
   align-items: center;
@@ -1622,6 +1654,23 @@ textarea.dataset-edit-input {
 .field-stat-unique {
   color: #4ade80;
   font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.field-stat-domain {
+  color: #c084fc;
+  font-weight: 500;
+  font-size: 0.8rem;
+}
+
+.field-stat-low-card {
+  color: #fbbf24;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.field-stat-count {
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 

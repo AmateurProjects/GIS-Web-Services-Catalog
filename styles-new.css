@@ -1297,6 +1297,45 @@ textarea.dataset-edit-input {
 }
 
 /* ================================================================
+   MANUAL SECTIONS (within combined card)
+   ================================================================ */
+
+.manual-section {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.manual-section:first-of-type {
+  padding-top: 0;
+}
+
+.manual-section:last-of-type {
+  border-bottom: none;
+}
+
+.manual-section-title {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.manual-section-actions {
+  display: flex;
+  justify-content: flex-start;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.manual-section-actions .suggest-button {
+  padding: 0.45rem 1.25rem;
+  font-size: 0.85rem;
+}
+
+/* ================================================================
    SERVICE TREE (collapsible groups)
    ================================================================ */
 
@@ -1477,6 +1516,163 @@ textarea.dataset-edit-input {
 .metadata-missing {
   color: var(--text-muted);
   opacity: 0.7;
+}
+
+/* ================================================================
+   COLLAPSIBLE TEXT (Show more/less)
+   ================================================================ */
+
+.collapsible-text-container {
+  margin-bottom: 0.75rem;
+}
+
+.collapsible-text {
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.collapsible-text.is-collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  max-height: 6em;
+}
+
+.show-more-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent-primary);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.25rem 0;
+  margin-top: 0.25rem;
+  display: inline-block;
+}
+
+.show-more-btn:hover {
+  text-decoration: underline;
+}
+
+/* ================================================================
+   METADATA GRID
+   ================================================================ */
+
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.metadata-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.metadata-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  opacity: 0.8;
+}
+
+.metadata-value {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.metadata-value code {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.8rem;
+  background: rgba(255,255,255,0.05);
+  padding: 0.15rem 0.35rem;
+  border-radius: 4px;
+}
+
+/* ================================================================
+   CAPABILITY PILLS & FLAGS
+   ================================================================ */
+
+.metadata-capabilities {
+  margin: 0.75rem 0;
+}
+
+.capability-pill {
+  display: inline-block;
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.5rem;
+  border-radius: 12px;
+  margin-right: 0.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.capability-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.capability-flag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+}
+
+.capability-flag.is-supported {
+  background: rgba(52, 211, 153, 0.1);
+  color: #34d399;
+}
+
+.capability-flag.is-not-supported {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  opacity: 0.75;
+}
+
+/* ================================================================
+   EXTENT DETAILS
+   ================================================================ */
+
+.extent-details {
+  margin-top: 0.75rem;
+  padding: 0.5rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 6px;
+}
+
+.extent-details summary {
+  cursor: pointer;
+  user-select: none;
+}
+
+.extent-details summary:hover {
+  color: var(--accent-primary);
+}
+
+.extent-coords {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.35rem 1rem;
+  margin-top: 0.5rem;
+  font-family: 'Fira Code', 'Consolas', monospace;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .metadata-missing em {

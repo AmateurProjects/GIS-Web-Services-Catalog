@@ -429,6 +429,25 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
     const documentInfo = serviceJson.documentInfo || {};
     const currentVersion = serviceJson.currentVersion || '';
     const maxRecordCount = serviceJson.maxRecordCount || '';
+    
+    // Additional metadata from service/layer JSON
+    const spatialRef = serviceJson.spatialReference || layerJson?.spatialReference || {};
+    const wkid = spatialRef.latestWkid || spatialRef.wkid || '';
+    const capabilities = serviceJson.capabilities || '';
+    const supportsStatistics = layerJson?.supportsStatistics ?? serviceJson.supportsStatistics ?? null;
+    const supportsAdvancedQueries = layerJson?.advancedQueryCapabilities?.supportsAdvancedQueries ?? null;
+    const geometryType = layerJson?.geometryType || '';
+    const objectIdField = layerJson?.objectIdField || '';
+    const globalIdField = layerJson?.globalIdField || '';
+    const displayField = layerJson?.displayField || '';
+    const hasAttachments = layerJson?.hasAttachments ?? null;
+    const hasM = layerJson?.hasM ?? null;
+    const hasZ = layerJson?.hasZ ?? null;
+    const minScale = layerJson?.minScale || 0;
+    const maxScale = layerJson?.maxScale || 0;
+    const editFieldsInfo = layerJson?.editFieldsInfo || null;
+    const featureCount = layerJson?.featureCount ?? null; // sometimes available
+    const extent = layerJson?.extent || serviceJson.fullExtent || null;
 
     let html = '';
 
@@ -437,10 +456,18 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
       <div class="card" style="margin-top:0.75rem;">
         <div class="card-header-row"><div style="font-weight:600;">Service Metadata</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
         <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Fetched from the ArcGIS REST endpoint</p>
+        
         ${serviceDescription 
-          ? `<p><strong>Description:</strong> ${escapeHtml(serviceDescription)}</p>` 
+          ? `<div class="collapsible-text-container">
+               <p><strong>Description:</strong></p>
+               <div class="collapsible-text ${serviceDescription.length > 300 ? 'is-collapsed' : ''}" data-full-text="${escapeHtml(serviceDescription)}">
+                 ${escapeHtml(serviceDescription)}
+               </div>
+               ${serviceDescription.length > 300 ? '<button type="button" class="show-more-btn" data-toggle-collapse>Show more</button>' : ''}
+             </div>` 
           : `<p class="metadata-missing"><strong>Description:</strong> <em>Not provided by service</em></p>`
         }
+        
         ${copyrightText 
           ? `<p><strong>Copyright:</strong> ${escapeHtml(copyrightText)}</p>` 
           : `<p class="metadata-missing"><strong>Copyright:</strong> <em>Not provided by service</em></p>`
@@ -449,12 +476,90 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
           ? `<p><strong>Author:</strong> ${escapeHtml(documentInfo.Author)}</p>` 
           : `<p class="metadata-missing"><strong>Author:</strong> <em>Not provided by service</em></p>`
         }
-        ${currentVersion 
-          ? `<p><strong>ArcGIS Server Version:</strong> ${escapeHtml(String(currentVersion))}</p>` 
+        
+        <div class="metadata-grid">
+          ${currentVersion 
+            ? `<div class="metadata-item"><span class="metadata-label">Server Version</span><span class="metadata-value">${escapeHtml(String(currentVersion))}</span></div>` 
+            : ''
+          }
+          ${wkid 
+            ? `<div class="metadata-item"><span class="metadata-label">Spatial Reference</span><span class="metadata-value">EPSG:${escapeHtml(String(wkid))}</span></div>` 
+            : ''
+          }
+          ${geometryType 
+            ? `<div class="metadata-item"><span class="metadata-label">Geometry Type</span><span class="metadata-value">${escapeHtml(geometryType.replace('esriGeometry', ''))}</span></div>` 
+            : ''
+          }
+          ${maxRecordCount 
+            ? `<div class="metadata-item"><span class="metadata-label">Max Record Count</span><span class="metadata-value">${Number(maxRecordCount).toLocaleString()}</span></div>` 
+            : ''
+          }
+          ${featureCount !== null 
+            ? `<div class="metadata-item"><span class="metadata-label">Feature Count</span><span class="metadata-value">${Number(featureCount).toLocaleString()}</span></div>` 
+            : ''
+          }
+          ${objectIdField 
+            ? `<div class="metadata-item"><span class="metadata-label">Object ID Field</span><span class="metadata-value"><code>${escapeHtml(objectIdField)}</code></span></div>` 
+            : ''
+          }
+          ${globalIdField 
+            ? `<div class="metadata-item"><span class="metadata-label">Global ID Field</span><span class="metadata-value"><code>${escapeHtml(globalIdField)}</code></span></div>` 
+            : ''
+          }
+          ${displayField 
+            ? `<div class="metadata-item"><span class="metadata-label">Display Field</span><span class="metadata-value"><code>${escapeHtml(displayField)}</code></span></div>` 
+            : ''
+          }
+        </div>
+        
+        <div class="metadata-capabilities">
+          ${capabilities 
+            ? `<p><strong>Capabilities:</strong> ${capabilities.split(',').map(c => `<span class="capability-pill">${escapeHtml(c.trim())}</span>`).join(' ')}</p>` 
+            : ''
+          }
+          <div class="capability-flags">
+            ${supportsStatistics !== null 
+              ? `<span class="capability-flag ${supportsStatistics ? 'is-supported' : 'is-not-supported'}">${supportsStatistics ? '✓' : '✗'} Statistics</span>` 
+              : ''
+            }
+            ${supportsAdvancedQueries !== null 
+              ? `<span class="capability-flag ${supportsAdvancedQueries ? 'is-supported' : 'is-not-supported'}">${supportsAdvancedQueries ? '✓' : '✗'} Advanced Queries</span>` 
+              : ''
+            }
+            ${hasAttachments !== null 
+              ? `<span class="capability-flag ${hasAttachments ? 'is-supported' : 'is-not-supported'}">${hasAttachments ? '✓' : '✗'} Attachments</span>` 
+              : ''
+            }
+            ${hasZ !== null 
+              ? `<span class="capability-flag ${hasZ ? 'is-supported' : 'is-not-supported'}">${hasZ ? '✓' : '✗'} Z Values</span>` 
+              : ''
+            }
+            ${hasM !== null 
+              ? `<span class="capability-flag ${hasM ? 'is-supported' : 'is-not-supported'}">${hasM ? '✓' : '✗'} M Values</span>` 
+              : ''
+            }
+            ${editFieldsInfo 
+              ? `<span class="capability-flag is-supported">✓ Editor Tracking</span>` 
+              : ''
+            }
+          </div>
+        </div>
+        
+        ${(minScale > 0 || maxScale > 0) 
+          ? `<p><strong>Visibility Scale Range:</strong> ${maxScale > 0 ? '1:' + Number(maxScale).toLocaleString() : 'Any'} – ${minScale > 0 ? '1:' + Number(minScale).toLocaleString() : 'Any'}</p>` 
           : ''
         }
-        ${maxRecordCount 
-          ? `<p><strong>Max Record Count:</strong> ${escapeHtml(String(maxRecordCount))}</p>` 
+        
+        ${extent && extent.xmin !== undefined 
+          ? `<details class="extent-details">
+               <summary><strong>Full Extent</strong></summary>
+               <div class="extent-coords">
+                 <span>xmin: ${extent.xmin?.toFixed(4)}</span>
+                 <span>ymin: ${extent.ymin?.toFixed(4)}</span>
+                 <span>xmax: ${extent.xmax?.toFixed(4)}</span>
+                 <span>ymax: ${extent.ymax?.toFixed(4)}</span>
+               </div>
+             </details>` 
           : ''
         }
       </div>
@@ -511,7 +616,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
 
       html += `
         <div class="card card-fields" style="margin-top:0.75rem;">
-          <div class="card-header-row"><div style="font-weight:600;">Fields (layer ${escapeHtml(String(layerId))})</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+          <div class="card-header-row"><div style="font-weight:600;">Fields</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
           <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${allFields.length} fields. Null % and Distinct counts are computed from the full dataset via service statistics queries.</p>
           <div style="overflow-x:auto;">
             <table class="fields-table" id="fieldsTable">
@@ -620,22 +725,46 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
             }
 
             try {
-              // Distinct count via groupByFieldsForStatistics (count unique values)
+              // Distinct count: try multiple approaches for compatibility
               const base = normalizeServiceUrl(_fieldStatsUrl);
               const parsed = parseServiceAndLayerId(base);
               const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
-              const distParams = new URLSearchParams({
-                where: '1=1',
-                outFields: f.name,
-                groupByFieldsForStatistics: f.name,
-                outStatistics: JSON.stringify([
-                  { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'grp_count' }
-                ]),
-                returnCountOnly: 'true',
-                f: 'json',
-              });
-              const distJson = await fetchJsonWithTimeout(`${target}/query?${distParams}`, 6000);
-              const distinctCount = (distJson && typeof distJson.count === 'number') ? distJson.count : null;
+              
+              let distinctCount = null;
+              
+              // Approach 1: returnDistinctValues with returnCountOnly (cleaner, but not always supported)
+              try {
+                const distParams1 = new URLSearchParams({
+                  where: '1=1',
+                  outFields: f.name,
+                  returnDistinctValues: 'true',
+                  returnCountOnly: 'true',
+                  f: 'json',
+                });
+                const distJson1 = await fetchJsonWithTimeout(`${target}/query?${distParams1}`, 5000);
+                if (distJson1 && typeof distJson1.count === 'number') {
+                  distinctCount = distJson1.count;
+                }
+              } catch {}
+              
+              // Approach 2: If approach 1 failed, use groupByFieldsForStatistics and count features
+              if (distinctCount === null) {
+                try {
+                  const distParams2 = new URLSearchParams({
+                    where: '1=1',
+                    groupByFieldsForStatistics: f.name,
+                    outStatistics: JSON.stringify([
+                      { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }
+                    ]),
+                    f: 'json',
+                  });
+                  const distJson2 = await fetchJsonWithTimeout(`${target}/query?${distParams2}`, 5000);
+                  if (distJson2 && Array.isArray(distJson2.features)) {
+                    distinctCount = distJson2.features.length;
+                  }
+                } catch {}
+              }
+              
               if (distinctCount != null && totalCount > 0) {
                 const isUnique = distinctCount === totalCount;
                 const hasDomain = f.domain && f.domain.type === 'codedValue';
@@ -665,11 +794,11 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
     // Sample table
     if (sampleJson && Array.isArray(sampleJson.features) && sampleJson.features.length) {
       const rows = sampleJson.features.map(ft => ft.attributes || {}).slice(0, 5);
-      const cols = Object.keys(rows[0] || {}).slice(0, 10); // keep table compact
+      const cols = Object.keys(rows[0] || {}); // show all columns
       if (cols.length) {
         html += `
           <div class="card" style="margin-top:0.75rem;">
-            <div class="card-header-row"><div style="font-weight:600;">Sample Records (layer ${escapeHtml(String(layerId))})</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+            <div class="card-header-row"><div style="font-weight:600;">Sample Records</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
             <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Rows are randomly selected from the service and may not be representative of the full dataset.</p>
             <div style="overflow:auto;">
               <table>
@@ -2701,6 +2830,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // ===========================
+  // COLLAPSIBLE TEXT TOGGLE (delegated)
+  // ===========================
+  document.body.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-toggle-collapse]');
+    if (!btn) return;
+    
+    const container = btn.closest('.collapsible-text-container');
+    if (!container) return;
+    
+    const textEl = container.querySelector('.collapsible-text');
+    if (!textEl) return;
+    
+    const isCollapsed = textEl.classList.contains('is-collapsed');
+    if (isCollapsed) {
+      textEl.classList.remove('is-collapsed');
+      btn.textContent = 'Show less';
+    } else {
+      textEl.classList.add('is-collapsed');
+      btn.textContent = 'Show more';
+    }
+  });
+
+  // ===========================
   // TAB SWITCHING
   // ===========================
   function showDatasetsView() {
@@ -2992,7 +3144,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
 
     html += '<div class="card card-meta">';
-    html += '<div class="card-header-row"><h3>Catalog Metadata</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
+    html += '<div class="card-header-row"><h3>Dataset Information</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
+    
+    // === Catalog Metadata Section ===
+    html += '<div class="manual-section">';
+    html += '<h4 class="manual-section-title">Catalog Metadata</h4>';
     html += `<p><strong>Database Object Name:</strong> ${escapeHtml(dataset.objname || '')}</p>`;
     html += `<p><strong>Geometry Type:</strong> ${geomIconHtml}${escapeHtml(dataset.geometry_type || '')}</p>`;
     html += `<p><strong>Agency Owner:</strong> ${escapeHtml(dataset.agency_owner || '')}</p>`;
@@ -3036,11 +3192,11 @@ document.addEventListener('DOMContentLoaded', async () => {
  </p>`;
 
     if (dataset.notes) html += `<p><strong>Notes:</strong> ${escapeHtml(dataset.notes)}</p>`;
-    html += '</div>';
+    html += '</div>'; // end Catalog Metadata section
 
-    // Development & Status card
-    html += '<div class="card card-development">';
-    html += '<div class="card-header-row"><h3>Development & Status</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
+    // === Development & Status Section ===
+    html += '<div class="manual-section">';
+    html += '<h4 class="manual-section-title">Development & Status</h4>';
     
     const stageLabels = {
       'planned': { label: 'Planned', class: 'stage-planned' },
@@ -3063,20 +3219,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       dataset.blockers.forEach(b => { html += `<li>${escapeHtml(b)}</li>`; });
       html += `</ul>`;
     }
-    html += '</div>';
+    html += '</div>'; // end Development & Status section
 
-    // Coverage Map card (populated asynchronously by renderCoverageMapCard)
-    html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
-    html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>';
-    html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 2 km inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
-    html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
-    html += '<div data-cov-content></div>';
-    html += '</div>';
-
-    // Maturity card
+    // === Data Maturity Section ===
     const maturity = dataset.maturity || {};
-    html += '<div class="card card-maturity">';
-    html += '<div class="card-header-row"><h3>Data Maturity</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
+    html += '<div class="manual-section">';
+    html += '<h4 class="manual-section-title">Data Maturity</h4>';
     
     const tierLabels = {
       'bronze': { label: 'Bronze', class: 'tier-bronze', icon: '🥉' },
@@ -3125,7 +3273,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       });
       html += `</ul></div>`;
     }
+    html += '</div>'; // end Data Maturity section
 
+    // Edit button at bottom of manual card
+    html += `
+      <div class="manual-section-actions">
+        <button type="button" class="suggest-button" data-edit-dataset="${escapeHtml(dataset.id)}">
+          Edit
+        </button>
+      </div>
+    `;
+
+    html += '</div>'; // end combined manual card
+
+    // Coverage Map card (populated asynchronously by renderCoverageMapCard)
+    html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
+    html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>';
+    html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 2 km inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
+    html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
+    html += '<div data-cov-content></div>';
     html += '</div>';
 
     // Attributes + inline attribute details - only show if dataset has attributes
@@ -3154,15 +3320,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       `;
     }
-
-    html += `
-  <div class="card card-actions">
-    <button type="button" class="suggest-button" data-edit-dataset="${escapeHtml(dataset.id)}">
-      Suggest a change to this dataset
-    </button>
-  </div>
-`;
-
 
 // --- Public Web Service preview card (renders after URL checks) ---
 html += `

@@ -312,7 +312,7 @@ function initializeArcGISMap(serviceUrl, layerId) {
       }
 
       const map = new Map({
-        basemap: "topo-vector",
+        basemap: "dark-gray-vector",
         layers: [layer]
       });
 
@@ -419,6 +419,15 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
       } catch {}
     }
     try { sampleJson = await fetchSampleRows(fetchBaseUrl, layerId, 5); } catch {}
+
+    // Fetch total record count for sample records display
+    let recordCount = null;
+    try {
+      const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
+      const countTarget = isLayerUrl ? fetchBaseUrl : `${fetchBaseUrl}/${layerId}`;
+      const countJson = await fetchJsonWithTimeout(`${countTarget}/query?${countParams}`, 5000);
+      if (countJson && typeof countJson.count === 'number') recordCount = countJson.count;
+    } catch {}
 
     // Bail if user navigated to a different dataset while we were fetching
     if (generation !== _renderGeneration) return;
@@ -769,7 +778,7 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
                 const isUnique = distinctCount === totalCount;
                 const hasDomain = f.domain && f.domain.type === 'codedValue';
                 if (isUnique) {
-                  uniqCell.innerHTML = `<span class="field-stat-unique">${distinctCount.toLocaleString()} \u2713</span>`;
+                  uniqCell.innerHTML = `<span class="field-stat-unique">${distinctCount.toLocaleString()}</span>`;
                 } else if (hasDomain) {
                   const domainCount = f.domain.codedValues ? f.domain.codedValues.length : distinctCount;
                   uniqCell.innerHTML = `<span class="field-stat-domain">${distinctCount.toLocaleString()} of ${domainCount} codes</span>`;
@@ -795,11 +804,12 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
     if (sampleJson && Array.isArray(sampleJson.features) && sampleJson.features.length) {
       const rows = sampleJson.features.map(ft => ft.attributes || {}).slice(0, 5);
       const cols = Object.keys(rows[0] || {}); // show all columns
+      const recordCountText = recordCount !== null ? `${recordCount.toLocaleString()} total records in service.` : '';
       if (cols.length) {
         html += `
           <div class="card" style="margin-top:0.75rem;">
             <div class="card-header-row"><div style="font-weight:600;">Sample Records</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
-            <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Rows are randomly selected from the service and may not be representative of the full dataset.</p>
+            <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${recordCountText} Showing ${rows.length} randomly selected rows.</p>
             <div style="overflow:auto;">
               <table>
                 <thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
@@ -1229,7 +1239,7 @@ function paintCoverageResult(statusEl, contentEl, results) {
   const { svg, statesWithData, totalFeatures, totalStates, failedCount } =
     buildCoverageMapSVG(results);
 
-  let summary = `${statesWithData} of ${totalStates} states with data \u00b7 ${totalFeatures.toLocaleString()} total features`;
+  let summary = `${statesWithData} of ${totalStates} states with data \u00b7 ${totalFeatures.toLocaleString()} intersections`;
   if (failedCount > 0) summary += ` \u00b7 ${failedCount} state(s) could not be queried`;
   statusEl.textContent = summary;
   contentEl.innerHTML = svg;
@@ -3149,7 +3159,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     // === Catalog Metadata Section ===
     html += '<div class="manual-section">';
     html += '<h4 class="manual-section-title">Catalog Metadata</h4>';
-    html += `<p><strong>Database Object Name:</strong> ${escapeHtml(dataset.objname || '')}</p>`;
     html += `<p><strong>Geometry Type:</strong> ${geomIconHtml}${escapeHtml(dataset.geometry_type || '')}</p>`;
     html += `<p><strong>Agency Owner:</strong> ${escapeHtml(dataset.agency_owner || '')}</p>`;
     html += `<p><strong>Office Owner:</strong> ${escapeHtml(dataset.office_owner || '')}</p>`;
@@ -3161,7 +3170,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }</p>`;
 
     html += `<p><strong>Update Frequency:</strong> ${escapeHtml(dataset.update_frequency || '')}</p>`;
-    html += `<p><strong>Status:</strong> ${escapeHtml(dataset.status || '')}</p>`;
     html += `<p><strong>Access Level:</strong> ${escapeHtml(dataset.access_level || '')}</p>`;
 
  html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dataset.public_web_service || '')}" data-url-status="idle">

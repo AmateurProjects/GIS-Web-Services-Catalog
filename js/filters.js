@@ -191,16 +191,19 @@ export function renderFilterPanel() {
 
   els.datasetFiltersEl.innerHTML = panelHtml;
 
-  // Wire filter group toggle
+  // Wire filter group toggle (in-place, no full re-render)
   els.datasetFiltersEl.querySelectorAll('[data-fg-toggle]').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.getAttribute('data-fg-toggle');
       filterGroupOpen[key] = !filterGroupOpen[key];
-      renderFilterPanel();
+      const isOpen = filterGroupOpen[key];
+      btn.classList.toggle('is-open', isOpen);
+      const body = btn.nextElementSibling;
+      if (body) body.classList.toggle('is-open', isOpen);
     });
   });
 
-  // Wire filter option clicks
+  // Wire filter option clicks (toggle in-place, only update chips + list)
   els.datasetFiltersEl.querySelectorAll('.filter-option').forEach(el => {
     el.addEventListener('click', () => {
       const group = el.getAttribute('data-fg');
@@ -210,12 +213,40 @@ export function renderFilterPanel() {
       } else {
         activeFilters[group].add(value);
       }
-      renderFilterPanel();
+      // Toggle visual state in-place
+      el.classList.toggle('is-checked', activeFilters[group].has(value));
+      const checkbox = el.querySelector('.filter-checkbox');
+      if (checkbox) checkbox.textContent = activeFilters[group].has(value) ? '✓' : '';
+      // Update the group header badge count
+      const groupEl = el.closest('.filter-group');
+      if (groupEl) {
+        const badge = groupEl.querySelector('.filter-group-active-count');
+        const count = activeFilters[group].size;
+        if (count > 0) {
+          if (badge) {
+            badge.textContent = count;
+          } else {
+            const header = groupEl.querySelector('.filter-group-header');
+            if (header) header.insertAdjacentHTML('beforeend', `<span class="filter-group-active-count">${count}</span>`);
+          }
+        } else if (badge) {
+          badge.remove();
+        }
+      }
+      // Only re-render the chips and dataset list (lightweight)
+      renderActiveFilterChips();
       if (_renderDatasetList) _renderDatasetList();
     });
   });
 
   // ── Active filter chips ──
+  renderActiveFilterChips();
+}
+
+/** Render only the active-filter chip bar (lightweight, no filter panel rebuild) */
+function renderActiveFilterChips() {
+  if (!els.activeFilterChipsEl) return;
+
   let chipsHtml = '';
   const chipLabels = {
     stage: 'Stage', tier: 'Tier', geometry: 'Geometry',
@@ -239,7 +270,7 @@ export function renderFilterPanel() {
       const group = btn.getAttribute('data-chip-fg');
       const value = btn.getAttribute('data-chip-fv');
       activeFilters[group].delete(value);
-      renderFilterPanel();
+      renderFilterPanel();  // full rebuild needed to un-check the checkbox
       if (_renderDatasetList) _renderDatasetList();
     });
   });

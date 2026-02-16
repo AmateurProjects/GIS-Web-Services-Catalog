@@ -265,6 +265,11 @@ export function renderDatasetEditForm(datasetId) {
         const origCompact = compactObject(original);
         const changes = computeChanges(origCompact, updated);
 
+        if (!changes.length) {
+          alert('No changes detected.');
+          return;
+        }
+
         const issueUrl = buildGithubIssueUrlForEditedDataset(datasetId, origCompact, updated, changes);
 
         // Return UI to normal view right away
@@ -624,7 +629,7 @@ export function renderDatasetEditForm(datasetId) {
 
     // Render the rest using the same field list you use for edit mode
     DATASET_EDIT_FIELDS.forEach((f) => {
-      const val = draft[f.key];
+      const val = f.key.includes('.') ? f.key.split('.').reduce((o, k) => (o && o[k] !== undefined) ? o[k] : undefined, draft) : draft[f.key];
 
       if (f.type === 'textarea') {
         html += `
@@ -632,6 +637,36 @@ export function renderDatasetEditForm(datasetId) {
             <label class="dataset-edit-label">${escapeHtml(f.label)}</label>
             <textarea class="dataset-edit-input" data-new-ds-key="${escapeHtml(f.key)}"
                       placeholder="${placeholderFor(f.key)}">${escapeHtml(val || '')}</textarea>
+          </div>
+        `;
+      } else if (f.type === 'select' && Array.isArray(f.options)) {
+        html += `
+          <div class="dataset-edit-row">
+            <label class="dataset-edit-label">${escapeHtml(f.label)}</label>
+            <select class="dataset-edit-input" data-new-ds-key="${escapeHtml(f.key)}">
+              <option value="">(select)</option>
+              ${f.options.map(opt => `<option value="${escapeHtml(opt)}" ${val === opt ? 'selected' : ''}>${escapeHtml(opt)}</option>`).join('')}
+            </select>
+          </div>
+        `;
+      } else if (f.type === 'boolean') {
+        html += `
+          <div class="dataset-edit-row">
+            <label class="dataset-edit-label">${escapeHtml(f.label)}</label>
+            <select class="dataset-edit-input" data-new-ds-key="${escapeHtml(f.key)}">
+              <option value="">(select)</option>
+              <option value="true" ${val === true ? 'selected' : ''}>Yes</option>
+              <option value="false" ${val === false ? 'selected' : ''}>No</option>
+            </select>
+          </div>
+        `;
+      } else if (f.type === 'number') {
+        html += `
+          <div class="dataset-edit-row">
+            <label class="dataset-edit-label">${escapeHtml(f.label)}</label>
+            <input class="dataset-edit-input" type="number" data-new-ds-key="${escapeHtml(f.key)}"
+                   placeholder="${placeholderFor(f.key)}"
+                   value="${val !== undefined ? escapeHtml(String(val)) : ''}" />
           </div>
         `;
       } else {
@@ -900,6 +935,17 @@ export function renderDatasetEditForm(datasetId) {
     const submitBtn = els.datasetDetailEl.querySelector('button[data-new-ds-submit]');
     if (submitBtn) {
       submitBtn.addEventListener('click', () => {
+        // Helper to set nested value (e.g. maturity.completeness)
+        function setNestedValue(obj, path, value) {
+          const keys = path.split('.');
+          let current = obj;
+          for (let i = 0; i < keys.length - 1; i++) {
+            if (!current[keys[i]]) current[keys[i]] = {};
+            current = current[keys[i]];
+          }
+          current[keys[keys.length - 1]] = value;
+        }
+
         const inputs = els.datasetDetailEl.querySelectorAll('[data-new-ds-key]');
         const out = {};
 
@@ -907,11 +953,28 @@ export function renderDatasetEditForm(datasetId) {
           const k = el.getAttribute('data-new-ds-key');
           const raw = el.value;
 
-          if (k === 'topics') {
-            out[k] = parseCsvList(raw);
-            return;
+          const fieldDef = DATASET_EDIT_FIELDS.find((x) => x.key === k);
+          let parsedValue;
+
+          if (fieldDef && fieldDef.type === 'csv') {
+            parsedValue = parseCsvList(raw);
+          } else if (fieldDef && fieldDef.type === 'boolean') {
+            if (raw === 'true') parsedValue = true;
+            else if (raw === 'false') parsedValue = false;
+            else parsedValue = undefined;
+          } else if (fieldDef && fieldDef.type === 'number') {
+            const num = parseFloat(raw);
+            parsedValue = isNaN(num) ? undefined : num;
+          } else {
+            parsedValue = String(raw || '').trim() || undefined;
           }
-          out[k] = String(raw || '').trim();
+
+          // Handle nested keys like maturity.completeness
+          if (k.includes('.')) {
+            setNestedValue(out, k, parsedValue);
+          } else {
+            out[k] = parsedValue;
+          }
         });
 
         const id = String(out.id || '').trim();
@@ -943,17 +1006,21 @@ export function renderDatasetEditForm(datasetId) {
         // 2) Validate + build new attribute objects
         const newAttributesOut = [];
         const newAttrIds = [];
-        (draft.new_attributes || []).forEach((a, i) => {
+        let attrValidationFailed = false;
+        for (let i = 0; i < (draft.new_attributes || []).length; i++) {
+          const a = draft.new_attributes[i];
           const aid = String(a.id || '').trim();
           if (!aid) {
             alert(`New attribute #${i + 1} is missing an Attribute ID.`);
-            return;
+            attrValidationFailed = true;
+            break;
           }
 
           // If it already exists, force user to add it as an existing attribute instead
           if (getAttributeById(aid)) {
             alert(`New attribute ID "${aid}" already exists. Add it as an existing attribute instead.`);
-            return;
+            attrValidationFailed = true;
+            break;
           }
 
           const type = String(a.type || '').trim();
@@ -964,11 +1031,13 @@ export function renderDatasetEditForm(datasetId) {
               const parsed = tryParseJson(rawVals);
               if (parsed && parsed.__parse_error__) {
                 alert(`Enumerated values JSON parse error for "${aid}":\n${parsed.__parse_error__}`);
-                return;
+                attrValidationFailed = true;
+                break;
               }
               if (parsed && !Array.isArray(parsed)) {
                 alert(`Enumerated values for "${aid}" must be a JSON array.`);
-                return;
+                attrValidationFailed = true;
+                break;
               }
               values = parsed || [];
             } else {
@@ -987,7 +1056,8 @@ export function renderDatasetEditForm(datasetId) {
 
           newAttributesOut.push(attrObj);
           newAttrIds.push(aid);
-        });
+        }
+        if (attrValidationFailed) return;
 
         // 3) Combine existing + new attribute IDs (de-dupe)
         const existingIds = Array.from(
@@ -1006,13 +1076,17 @@ export function renderDatasetEditForm(datasetId) {
           contact_email: out.contact_email,
           topics: out.topics || [],
           update_frequency: out.update_frequency,
+          development_stage: out.development_stage,
           status: out.status,
           access_level: out.access_level,
+          coverage: out.coverage,
+          web_mercator_compatible: out.web_mercator_compatible,
           public_web_service: out.public_web_service,
           internal_web_service: out.internal_web_service,
           data_standard: out.data_standard,
           projection: out.projection,
           notes: out.notes,
+          maturity: out.maturity || undefined,
           attribute_ids: combinedAttrIds.length ? combinedAttrIds : undefined,
         });
 
@@ -1202,6 +1276,11 @@ export function renderDatasetEditForm(datasetId) {
         const updated = compactObject(draft);
         const origCompact = compactObject(original);
         const changes = computeChanges(origCompact, updated);
+
+        if (!changes.length) {
+          alert('No changes detected.');
+          return;
+        }
 
         const issueUrl = buildGithubIssueUrlForEditedAttribute(attrId, origCompact, updated, changes);
 

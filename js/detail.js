@@ -111,14 +111,19 @@ export function renderDatasetDetail(datasetId) {
    }
  </p>`;
 
- html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dataset.data_standard || '')}" data-url-status="idle">
-   <strong>Data Standard:</strong>
-   <span class="url-status-icon" aria-hidden="true"></span>
-   ${dataset.data_standard
-     ? `<a href="${dataset.data_standard}" target="_blank" rel="noopener">${escapeHtml(dataset.data_standard)}</a>`
-     : ''
+ if (dataset.data_standard) {
+   const dsVal = dataset.data_standard;
+   const isUrl = /^https?:\/\//i.test(dsVal);
+   if (isUrl) {
+     html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dsVal)}" data-url-status="idle">
+       <strong>Data Standard:</strong>
+       <span class="url-status-icon" aria-hidden="true"></span>
+       <a href="${escapeHtml(dsVal)}" target="_blank" rel="noopener">${escapeHtml(dsVal)}</a>
+     </p>`;
+   } else {
+     html += `<p><strong>Data Standard:</strong> ${escapeHtml(dsVal)}</p>`;
    }
- </p>`;
+ }
 
     if (dataset.notes) html += `<p><strong>Notes:</strong> ${escapeHtml(dataset.notes)}</p>`;
     html += '</div>'; // end Catalog Metadata section

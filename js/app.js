@@ -9,6 +9,12 @@ import { renderDatasetDetail, renderInlineAttributeDetail, renderAttributeDetail
 import { renderDatasetEditForm, renderNewAttributeCreateForm, renderNewDatasetCreateForm, renderAttributeEditForm, registerFormCallbacks } from './forms.js';
 import { showDashboardView, showDatasetsView, showAttributesView, registerNavigationCallbacks } from './navigation.js';
 
+/** Simple debounce helper */
+function debounce(fn, ms) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   // ── Populate DOM element references ──
   initElements();
@@ -45,6 +51,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderInlineAttributeDetail,
   });
 
+  // ── Show loading state ──
+  if (els.dashboardContentEl) {
+    els.dashboardContentEl.innerHTML = '<p class="loading-message">Loading catalog data&hellip;</p>';
+  }
+  if (els.datasetListEl) {
+    els.datasetListEl.innerHTML = '<p class="loading-message">Loading&hellip;</p>';
+  }
+  if (els.attributeListEl) {
+    els.attributeListEl.innerHTML = '<p class="loading-message">Loading&hellip;</p>';
+  }
+
   // ── Load catalog data ──
   try {
     const catalogData = await loadCatalog();
@@ -53,8 +70,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     state.allAttributes = catalogData.attributes || [];
   } catch (err) {
     console.error('Failed to load catalog.json:', err);
-    if (els.datasetListEl) els.datasetListEl.textContent = 'Error loading catalog.';
-    if (els.attributeListEl) els.attributeListEl.textContent = 'Error loading catalog.';
+    const msg = 'Error loading catalog. Please try refreshing the page.';
+    if (els.dashboardContentEl) els.dashboardContentEl.innerHTML = `<p class="error-message">${msg}</p>`;
+    if (els.datasetListEl) els.datasetListEl.innerHTML = `<p class="error-message">${msg}</p>`;
+    if (els.attributeListEl) els.attributeListEl.innerHTML = `<p class="error-message">${msg}</p>`;
     return;
   }
 
@@ -98,12 +117,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (els.datasetsTabBtn) els.datasetsTabBtn.addEventListener('click', showDatasetsView);
   if (els.attributesTabBtn) els.attributesTabBtn.addEventListener('click', showAttributesView);
 
-  // ── Search inputs ──
+  // ── Search inputs (debounced) ──
   if (els.datasetSearchInput) {
-    els.datasetSearchInput.addEventListener('input', () => renderDatasetList(els.datasetSearchInput.value));
+    els.datasetSearchInput.addEventListener('input', debounce(() => {
+      renderDatasetList(els.datasetSearchInput.value);
+    }, 200));
   }
   if (els.attributeSearchInput) {
-    els.attributeSearchInput.addEventListener('input', () => renderAttributeList(els.attributeSearchInput.value));
+    els.attributeSearchInput.addEventListener('input', debounce(() => {
+      renderAttributeList(els.attributeSearchInput.value);
+    }, 200));
   }
 
   // ── Initial render ──

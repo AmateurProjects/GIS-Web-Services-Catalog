@@ -2,6 +2,7 @@
 
 import { state, els } from './state.js';
 import { getDatasetById } from './catalog.js';
+import { getCurrentMapView } from './arcgis-preview.js';
 
 // Lazy imports to break circular dependencies — these modules import from navigation.js too.
 // ES modules handle this fine because all calls are from event handlers, not at import time.
@@ -30,7 +31,16 @@ export function hideAllViews() {
   if (els.attributesTabBtn) els.attributesTabBtn.classList.remove('active');
 }
 
+/** Destroy the ArcGIS MapView if it exists, to free WebGL resources */
+function cleanupMapView() {
+  const view = getCurrentMapView();
+  if (view) {
+    try { view.destroy(); } catch (_) { /* ignore */ }
+  }
+}
+
 export function showDashboardView() {
+  cleanupMapView();
   hideAllViews();
   if (els.dashboardView) els.dashboardView.classList.remove('hidden');
   els.dashboardTabBtn && els.dashboardTabBtn.classList.add('active');
@@ -50,6 +60,7 @@ export function showDatasetsView() {
 }
 
 export function showAttributesView() {
+  cleanupMapView();
   hideAllViews();
   if (els.attributesView) els.attributesView.classList.remove('hidden');
   if (els.attributesTabBtn) els.attributesTabBtn.classList.add('active');

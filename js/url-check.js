@@ -4,13 +4,21 @@ export const URL_CHECK = {
   concurrency: 3,
 };
 
-// Cache URL check results for this browser session (page lifetime)
+// Cache URL check results with a 5-minute TTL
 // url -> { status: "ok"|"bad"|"unknown", ts: number }
 const urlStatusCache = new Map();
+const URL_CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
 
 export function getCachedUrlStatus(url) {
   if (!url) return null;
-  return urlStatusCache.get(url) || null;
+  const entry = urlStatusCache.get(url);
+  if (!entry) return null;
+  // Expire stale entries
+  if (Date.now() - entry.ts > URL_CACHE_TTL_MS) {
+    urlStatusCache.delete(url);
+    return null;
+  }
+  return entry;
 }
 
 export function setCachedUrlStatus(url, status) {

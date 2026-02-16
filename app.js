@@ -574,19 +574,22 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
       </div>
     `;
 
-    // Interactive ArcGIS Map View
+    // Interactive ArcGIS Map View (skip for non-spatial tables)
     const mapServiceUrl = url;
     const mapLayerId = layerId;
-    html += `
-      <div class="card" style="margin-top:0.75rem;">
-        <div class="card-header-row"><div style="font-weight:600;">Interactive Map</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
-        <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset</div>
-        <div id="arcgisMapContainer" 
-             data-service-url="${escapeHtml(mapServiceUrl)}" 
-             data-layer-id="${mapLayerId}"
-             style="width:100%; height:400px; border-radius:12px; overflow:hidden; background:#e0e0e0;"></div>
-      </div>
-    `;
+    const _isTable = !geometryType || geometryType.toUpperCase() === 'TABLE';
+    if (!_isTable) {
+      html += `
+        <div class="card" style="margin-top:0.75rem;">
+          <div class="card-header-row"><div style="font-weight:600;">Interactive Map</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+          <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset</div>
+          <div id="arcgisMapContainer" 
+               data-service-url="${escapeHtml(mapServiceUrl)}" 
+               data-layer-id="${mapLayerId}"
+               style="width:100%; height:400px; border-radius:12px; overflow:hidden; background:#e0e0e0;"></div>
+        </div>
+      `;
+    }
 
     // Fields summary — redesigned as a table with async null% / unique% stats
     if (layerJson && Array.isArray(layerJson.fields) && layerJson.fields.length) {
@@ -827,7 +830,10 @@ async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation
     statusEl.textContent = 'Preview loaded.';
 
     // Initialize interactive ArcGIS map (use service root for MapImageLayer)
-    initializeArcGISMap(serviceBaseUrl, layerId);
+    // Skip for non-spatial tables — there is no geometry to display.
+    if (!_isTable) {
+      initializeArcGISMap(serviceBaseUrl, layerId);
+    }
 
   } catch (err) {
     console.error(err);
@@ -1169,7 +1175,7 @@ function buildCoverageMapSVG(analysisResults) {
  * The host element must contain #coverageMapCard with [data-cov-status]
  * and [data-cov-content] children.
  */
-async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
+async function renderCoverageMapCard(hostEl, publicServiceUrl, generation, dataset) {
   if (!hostEl) return;
   const card = hostEl.querySelector('#coverageMapCard');
   if (!card) return;
@@ -1192,11 +1198,17 @@ async function renderCoverageMapCard(hostEl, publicServiceUrl, generation) {
   const parsed = parseServiceAndLayerId(url);
   const layerId = parsed.isLayerUrl ? parsed.layerId : 0;
 
-  // Check cache
+  // Check session cache (from prior live or pre-computed render)
   const cacheKey = `${url}__${layerId}`;
   if (_coverageAnalysisCache.has(cacheKey)) {
     const cached = _coverageAnalysisCache.get(cacheKey);
     paintCoverageResult(statusEl, contentEl, cached);
+    return;
+  }
+
+  // Check for pre-computed coverage data from catalog.json
+  if (dataset && dataset._coverage && dataset._coverage.states) {
+    await renderCoverageFromPrecomputed(statusEl, contentEl, dataset._coverage, url, layerId, generation);
     return;
   }
 
@@ -1243,6 +1255,51 @@ function paintCoverageResult(statusEl, contentEl, results) {
   if (failedCount > 0) summary += ` \u00b7 ${failedCount} state(s) could not be queried`;
   statusEl.textContent = summary;
   contentEl.innerHTML = svg;
+}
+
+/**
+ * Render coverage map from pre-computed data stored in catalog.json.
+ * Still needs Census state boundaries for SVG rendering (fetched & cached per session),
+ * but skips the expensive per-state spatial intersection queries.
+ */
+async function renderCoverageFromPrecomputed(statusEl, contentEl, coverageData, url, layerId, generation) {
+  const generatedDate = coverageData.generated
+    ? new Date(coverageData.generated).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+    : 'unknown date';
+
+  statusEl.textContent = `Loading pre-computed coverage (${generatedDate})\u2026`;
+
+  // Fetch Census state boundaries for SVG rendering (cached per session)
+  let states;
+  try {
+    states = await fetchCensusStateBoundaries();
+  } catch (err) {
+    console.error('Census state fetch failed:', err);
+    // Fall back to text-only summary
+    const entries = Object.entries(coverageData.states || {});
+    const withData = entries.filter(([, c]) => c > 0).length;
+    const total = entries.reduce((s, [, c]) => s + Math.max(0, c), 0);
+    statusEl.textContent = `${withData} states with data \u00b7 ${total.toLocaleString()} intersections (pre-computed ${generatedDate}). Map unavailable \u2014 Census boundary fetch failed.`;
+    return;
+  }
+
+  if (generation !== _renderGeneration) return;
+
+  // Merge pre-computed counts onto state geometry objects
+  const stateCountMap = coverageData.states;
+  const results = states.map(s => ({
+    ...s,
+    count: stateCountMap[s.abbr] !== undefined ? stateCountMap[s.abbr] : 0,
+  }));
+
+  // Populate session cache so subsequent views reuse it
+  const cacheKey = `${url}__${layerId}`;
+  _coverageAnalysisCache.set(cacheKey, results);
+
+  paintCoverageResult(statusEl, contentEl, results);
+
+  // Append pre-computed note to the status line
+  statusEl.textContent += ` (pre-computed ${generatedDate})`;
 }
 
 
@@ -3296,7 +3353,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
     html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
-    html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>';
+    html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><div style="display:flex;align-items:center;gap:0.5rem;"><span class="data-source-badge data-source-badge-auto">Auto</span><button type="button" class="btn" data-cov-refresh title="Re-run live coverage analysis" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button></div></div>';
     html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 2 km inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
     html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
     html += '<div data-cov-content></div>';
@@ -3351,7 +3408,29 @@ runUrlChecks(datasetDetailEl);
 maybeRenderPublicServicePreviewCard(datasetDetailEl, dataset.public_web_service, currentGeneration);
 
 // Run coverage map analysis (async, renders into the #coverageMapCard placeholder)
-renderCoverageMapCard(datasetDetailEl, dataset.public_web_service, currentGeneration);
+renderCoverageMapCard(datasetDetailEl, dataset.public_web_service, currentGeneration, dataset);
+
+// Wire up coverage map refresh button (re-runs live analysis, bypassing pre-computed data)
+const covRefreshBtn = datasetDetailEl.querySelector('button[data-cov-refresh]');
+if (covRefreshBtn) {
+  covRefreshBtn.addEventListener('click', () => {
+    const _url = normalizeServiceUrl(dataset.public_web_service);
+    if (!_url) return;
+    const _parsed = parseServiceAndLayerId(_url);
+    const _lid = _parsed.isLayerUrl ? _parsed.layerId : 0;
+    _coverageAnalysisCache.delete(`${_url}__${_lid}`);
+    // Clear existing content while re-running
+    const _card = datasetDetailEl.querySelector('#coverageMapCard');
+    if (_card) {
+      const _s = _card.querySelector('[data-cov-status]');
+      const _c = _card.querySelector('[data-cov-content]');
+      if (_s) _s.textContent = 'Re-running live coverage analysis\u2026';
+      if (_c) _c.innerHTML = '';
+    }
+    // Pass null for dataset to skip pre-computed data and force live analysis
+    renderCoverageMapCard(datasetDetailEl, dataset.public_web_service, currentGeneration, null);
+  });
+}
 
     const editBtn = datasetDetailEl.querySelector('button[data-edit-dataset]');
     if (editBtn) {

@@ -1419,8 +1419,11 @@ const Catalog = (function () {
 // ====== MAIN APP (tabs, lists, detail panels) ======
 document.addEventListener('DOMContentLoaded', async () => {
   // --- Elements ---
+  const dashboardTabBtn = document.getElementById('dashboardTab');
   const datasetsTabBtn = document.getElementById('datasetsTab');
   const attributesTabBtn = document.getElementById('attributesTab');
+  const dashboardView = document.getElementById('dashboardView');
+  const dashboardContentEl = document.getElementById('dashboardContent');
   const datasetsView = document.getElementById('datasetsView');
   const attributesView = document.getElementById('attributesView');
 
@@ -1432,9 +1435,24 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const datasetDetailEl = document.getElementById('datasetDetail');
   const attributeDetailEl = document.getElementById('attributeDetail');
+  const datasetFiltersEl = document.getElementById('datasetFilters');
+  const activeFilterChipsEl = document.getElementById('activeFilterChips');
 
   // Track last viewed dataset so "Cancel" (and similar actions) can return you to where you were.
   let lastSelectedDatasetId = null;
+
+  // ── Filter state ──
+  // Each key maps to a Set of selected values. Empty set = no filter.
+  const activeFilters = {
+    stage: new Set(),
+    tier: new Set(),
+    geometry: new Set(),
+    coverage: new Set(),
+    office: new Set(),
+  };
+
+  // Track which filter groups are expanded (persist across re-renders)
+  const filterGroupOpen = { stage: true, tier: false, geometry: false, coverage: false, office: false };
 
 
   // NOTE: goBackToAttributesListOrFirst() is defined later in Helpers.
@@ -2922,42 +2940,289 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ===========================
   // TAB SWITCHING
   // ===========================
-  function showDatasetsView() {
-    datasetsView.classList.remove('hidden');
+  function hideAllViews() {
+    dashboardView && dashboardView.classList.add('hidden');
+    datasetsView.classList.add('hidden');
     attributesView.classList.add('hidden');
-    datasetsTabBtn.classList.add('active');
+    dashboardTabBtn && dashboardTabBtn.classList.remove('active');
+    datasetsTabBtn.classList.remove('active');
     attributesTabBtn.classList.remove('active');
   }
 
-  function showAttributesView() {
-    attributesView.classList.remove('hidden');
-    datasetsView.classList.add('hidden');
-    attributesTabBtn.classList.add('active');
-    datasetsTabBtn.classList.remove('active');
+  function showDashboardView() {
+    hideAllViews();
+    dashboardView && dashboardView.classList.remove('hidden');
+    dashboardTabBtn && dashboardTabBtn.classList.add('active');
+    renderDashboard();
   }
 
+  function showDatasetsView() {
+    hideAllViews();
+    datasetsView.classList.remove('hidden');
+    datasetsTabBtn.classList.add('active');
+    // Render filter panel when switching to datasets
+    renderFilterPanel();
+    // Lazy-render dataset detail on first switch to Datasets tab
+    if (lastSelectedDatasetId && datasetDetailEl && datasetDetailEl.classList.contains('hidden')) {
+      renderDatasetDetail(lastSelectedDatasetId);
+    }
+  }
+
+  function showAttributesView() {
+    hideAllViews();
+    attributesView.classList.remove('hidden');
+    attributesTabBtn.classList.add('active');
+  }
+
+  if (dashboardTabBtn) dashboardTabBtn.addEventListener('click', showDashboardView);
   if (datasetsTabBtn) datasetsTabBtn.addEventListener('click', showDatasetsView);
   if (attributesTabBtn) attributesTabBtn.addEventListener('click', showAttributesView);
 
   // ===========================
   // LIST RENDERING
   // ===========================
-  function renderDatasetList(filterText = '') {
-    if (!datasetListEl) return;
-    const ft = filterText.trim().toLowerCase();
 
-    const filtered = !ft
-      ? allDatasets
-      : allDatasets.filter((ds) => {
+  function getFilteredDatasets(textFilter) {
+    const ft = (textFilter || '').trim().toLowerCase();
+    let filtered = allDatasets;
+
+    // Text search
+    if (ft) {
+      filtered = filtered.filter((ds) => {
         const haystack = [ds.id, ds.title, ds.description, ds.agency_owner, ds.office_owner, ...(ds.topics || [])]
           .filter(Boolean)
           .join(' ')
           .toLowerCase();
         return haystack.includes(ft);
       });
+    }
+
+    // Facet filters
+    if (activeFilters.stage.size) {
+      filtered = filtered.filter(ds => activeFilters.stage.has(ds.development_stage || 'unknown'));
+    }
+    if (activeFilters.tier.size) {
+      filtered = filtered.filter(ds => {
+        const t = (ds.maturity && ds.maturity.quality_tier) || 'unassigned';
+        return activeFilters.tier.has(t);
+      });
+    }
+    if (activeFilters.geometry.size) {
+      filtered = filtered.filter(ds => activeFilters.geometry.has((ds.geometry_type || 'UNKNOWN').toUpperCase()));
+    }
+    if (activeFilters.coverage.size) {
+      filtered = filtered.filter(ds => activeFilters.coverage.has(ds.coverage || 'unknown'));
+    }
+    if (activeFilters.office.size) {
+      filtered = filtered.filter(ds => activeFilters.office.has(ds.office_owner || 'Unknown'));
+    }
+
+    return filtered;
+  }
+
+  function hasAnyFilter() {
+    return Object.values(activeFilters).some(s => s.size > 0);
+  }
+
+  function clearAllFilters() {
+    Object.values(activeFilters).forEach(s => s.clear());
+    if (datasetSearchInput) datasetSearchInput.value = '';
+    renderFilterPanel();
+    renderDatasetList();
+  }
+
+  function applyDashboardFilter(group, value) {
+    // Clear all other filters, set only this one, then switch to Datasets tab
+    Object.values(activeFilters).forEach(s => s.clear());
+    if (datasetSearchInput) datasetSearchInput.value = '';
+    activeFilters[group].add(value);
+    filterGroupOpen[group] = true;
+    showDatasetsView();
+    renderFilterPanel();
+    renderDatasetList();
+  }
+
+  // ── Filter Panel Renderer ──
+  function renderFilterPanel() {
+    if (!datasetFiltersEl || !activeFilterChipsEl) return;
+
+    const FILTER_GROUPS = [
+      {
+        key: 'stage',
+        label: 'Development Stage',
+        options: [
+          { value: 'production', label: 'Production' },
+          { value: 'qa', label: 'QA / Testing' },
+          { value: 'in_development', label: 'In Development' },
+          { value: 'planned', label: 'Planned' },
+          { value: 'deprecated', label: 'Deprecated' },
+          { value: 'unknown', label: 'Unknown' },
+        ],
+        getValue: ds => ds.development_stage || 'unknown',
+      },
+      {
+        key: 'tier',
+        label: 'Quality Tier',
+        options: [
+          { value: 'gold', label: 'Gold' },
+          { value: 'silver', label: 'Silver' },
+          { value: 'bronze', label: 'Bronze' },
+          { value: 'unassigned', label: 'Unassigned' },
+        ],
+        getValue: ds => (ds.maturity && ds.maturity.quality_tier) || 'unassigned',
+      },
+      {
+        key: 'geometry',
+        label: 'Geometry Type',
+        options: null, // dynamic
+        getValue: ds => (ds.geometry_type || 'UNKNOWN').toUpperCase(),
+      },
+      {
+        key: 'coverage',
+        label: 'Coverage',
+        options: [
+          { value: 'nationwide', label: 'Nationwide' },
+          { value: 'multi_state', label: 'Multi-State' },
+          { value: 'single_state', label: 'Single State' },
+          { value: 'partial', label: 'Partial' },
+          { value: 'unknown', label: 'Unknown' },
+        ],
+        getValue: ds => ds.coverage || 'unknown',
+      },
+      {
+        key: 'office',
+        label: 'Office Owner',
+        options: null, // dynamic
+        getValue: ds => ds.office_owner || 'Unknown',
+      },
+    ];
+
+    // Pre-count values across ALL datasets (unfiltered) for facet counts
+    const facetCounts = {};
+    FILTER_GROUPS.forEach(fg => {
+      facetCounts[fg.key] = {};
+      allDatasets.forEach(ds => {
+        const v = fg.getValue(ds);
+        facetCounts[fg.key][v] = (facetCounts[fg.key][v] || 0) + 1;
+      });
+    });
+
+    // Build dynamic options for geometry and office
+    FILTER_GROUPS.forEach(fg => {
+      if (fg.options === null) {
+        const sorted = Object.entries(facetCounts[fg.key]).sort((a, b) => b[1] - a[1]);
+        fg.options = sorted.map(([value]) => ({ value, label: value }));
+      }
+    });
+
+    // Remove options with zero count (except if currently checked)
+    // Keep all — dimmed via CSS .is-zero
+
+    let panelHtml = '';
+    FILTER_GROUPS.forEach(fg => {
+      const active = activeFilters[fg.key];
+      const activeCount = active.size;
+      const isOpen = filterGroupOpen[fg.key];
+
+      panelHtml += `<div class="filter-group">`;
+      panelHtml += `<button type="button" class="filter-group-header${isOpen ? ' is-open' : ''}" data-fg-toggle="${fg.key}">`;
+      panelHtml += `<span class="filter-group-toggle">▶</span>`;
+      panelHtml += `<span class="filter-group-label">${escapeHtml(fg.label)}</span>`;
+      if (activeCount > 0) {
+        panelHtml += `<span class="filter-group-active-count">${activeCount}</span>`;
+      }
+      panelHtml += `</button>`;
+      panelHtml += `<div class="filter-group-body${isOpen ? ' is-open' : ''}">`;
+
+      fg.options.forEach(opt => {
+        const count = facetCounts[fg.key][opt.value] || 0;
+        const isChecked = active.has(opt.value);
+        const isZero = count === 0 && !isChecked;
+        panelHtml += `
+          <div class="filter-option${isChecked ? ' is-checked' : ''}${isZero ? ' is-zero' : ''}" data-fg="${fg.key}" data-fv="${escapeHtml(opt.value)}">
+            <span class="filter-checkbox">${isChecked ? '✓' : ''}</span>
+            <span class="filter-option-label">${escapeHtml(opt.label)}</span>
+            <span class="filter-option-count">${count}</span>
+          </div>
+        `;
+      });
+
+      panelHtml += `</div></div>`;
+    });
+
+    datasetFiltersEl.innerHTML = panelHtml;
+
+    // Wire filter group toggle
+    datasetFiltersEl.querySelectorAll('[data-fg-toggle]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-fg-toggle');
+        filterGroupOpen[key] = !filterGroupOpen[key];
+        renderFilterPanel();
+      });
+    });
+
+    // Wire filter option clicks
+    datasetFiltersEl.querySelectorAll('.filter-option').forEach(el => {
+      el.addEventListener('click', () => {
+        const group = el.getAttribute('data-fg');
+        const value = el.getAttribute('data-fv');
+        if (activeFilters[group].has(value)) {
+          activeFilters[group].delete(value);
+        } else {
+          activeFilters[group].add(value);
+        }
+        renderFilterPanel();
+        renderDatasetList();
+      });
+    });
+
+    // ── Active filter chips ──
+    let chipsHtml = '';
+    const chipLabels = {
+      stage: 'Stage', tier: 'Tier', geometry: 'Geometry',
+      coverage: 'Coverage', office: 'Office',
+    };
+    Object.entries(activeFilters).forEach(([group, values]) => {
+      values.forEach(v => {
+        const label = `${chipLabels[group]}: ${v}`;
+        chipsHtml += `<span class="filter-chip">${escapeHtml(label)}<button type="button" class="filter-chip-remove" data-chip-fg="${group}" data-chip-fv="${escapeHtml(v)}">✕</button></span>`;
+      });
+    });
+    if (hasAnyFilter()) {
+      chipsHtml += `<button type="button" class="filter-clear-all" data-clear-all-filters>Clear all</button>`;
+    }
+    activeFilterChipsEl.innerHTML = chipsHtml;
+
+    // Wire chip removal
+    activeFilterChipsEl.querySelectorAll('.filter-chip-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const group = btn.getAttribute('data-chip-fg');
+        const value = btn.getAttribute('data-chip-fv');
+        activeFilters[group].delete(value);
+        renderFilterPanel();
+        renderDatasetList();
+      });
+    });
+
+    // Wire clear all
+    const clearBtn = activeFilterChipsEl.querySelector('[data-clear-all-filters]');
+    if (clearBtn) clearBtn.addEventListener('click', clearAllFilters);
+  }
+
+  function renderDatasetList(filterText) {
+    if (!datasetListEl) return;
+    const ft = filterText !== undefined ? filterText : (datasetSearchInput ? datasetSearchInput.value : '');
+    const filtered = getFilteredDatasets(ft);
+
+    // Show result count when filters are active
+    let countHtml = '';
+    if (hasAnyFilter() || ft.trim()) {
+      countHtml = `<div class="filter-result-count">Showing <strong>${filtered.length}</strong> of ${allDatasets.length} datasets</div>`;
+    }
 
     if (!filtered.length) {
-      datasetListEl.innerHTML = '<p>No datasets found.</p>';
+      datasetListEl.innerHTML = countHtml + '<p style="padding:0.5rem;color:var(--text-muted);">No datasets match the current filters.</p>';
       return;
     }
 
@@ -3082,6 +3347,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     datasetListEl.innerHTML = '';
+    if (countHtml) {
+      const countDiv = document.createElement('div');
+      countDiv.innerHTML = countHtml;
+      datasetListEl.appendChild(countDiv.firstElementChild);
+    }
     datasetListEl.appendChild(container);
 
    // keep active highlight in sync after re-render
@@ -3683,10 +3953,382 @@ if (covRefreshBtn) {
   }
 
   // ===========================
+  // DASHBOARD RENDERER
+  // ===========================
+  function renderDashboard() {
+    if (!dashboardContentEl) return;
+
+    const ds = allDatasets;
+    const totalDatasets = ds.length;
+
+    // ── Unique parent services ──
+    const parentServices = new Set();
+    ds.forEach(d => {
+      if (d._parent_service) parentServices.add(d._parent_service);
+      else if (d.public_web_service) parentServices.add(d.public_web_service);
+    });
+    const totalServices = parentServices.size;
+
+    // ── Stage counts ──
+    const stageCounts = { planned: 0, in_development: 0, qa: 0, production: 0, deprecated: 0, unknown: 0 };
+    ds.forEach(d => {
+      const s = d.development_stage || 'unknown';
+      if (stageCounts[s] !== undefined) stageCounts[s]++;
+      else stageCounts.unknown++;
+    });
+
+    // ── Tier counts ──
+    const tierCounts = { gold: 0, silver: 0, bronze: 0, unassigned: 0 };
+    ds.forEach(d => {
+      const t = (d.maturity && d.maturity.quality_tier) || '';
+      if (tierCounts[t] !== undefined) tierCounts[t]++;
+      else tierCounts.unassigned++;
+    });
+
+    // ── Geometry type counts ──
+    const geomCounts = {};
+    ds.forEach(d => {
+      const g = (d.geometry_type || 'UNKNOWN').toUpperCase();
+      geomCounts[g] = (geomCounts[g] || 0) + 1;
+    });
+
+    // ── Coverage analysis ──
+    let datasetsWithCoverage = 0;
+    let nationwideCoverage = 0;
+    let partialCoverage = 0;
+    let noCoverageData = 0;
+    ds.forEach(d => {
+      if (d._coverage && d._coverage.states) {
+        datasetsWithCoverage++;
+        if (d._coverage.statesWithData >= 45) nationwideCoverage++;
+        else partialCoverage++;
+      } else {
+        noCoverageData++;
+      }
+    });
+
+    // ── Average completeness ──
+    let compSum = 0, compCount = 0;
+    ds.forEach(d => {
+      if (d.maturity && typeof d.maturity.completeness === 'number') {
+        compSum += d.maturity.completeness;
+        compCount++;
+      }
+    });
+    const avgCompleteness = compCount > 0 ? Math.round(compSum / compCount) : 0;
+
+    // ── Agency / Office breakdown ──
+    const officeCounts = {};
+    ds.forEach(d => {
+      const o = d.office_owner || 'Unknown';
+      officeCounts[o] = (officeCounts[o] || 0) + 1;
+    });
+
+    // ── Datasets sorted by completeness (lowest first — attention needed) ──
+    const lowCompleteness = ds
+      .filter(d => d.maturity && typeof d.maturity.completeness === 'number')
+      .sort((a, b) => a.maturity.completeness - b.maturity.completeness)
+      .slice(0, 10);
+
+    // ── Datasets with coverage gaps (fewest states) ──
+    const coverageGaps = ds
+      .filter(d => d._coverage && d._coverage.states && d.coverage === 'nationwide')
+      .map(d => {
+        const statesWithData = d._coverage.statesWithData || 0;
+        return { ...d, _statesWithData: statesWithData };
+      })
+      .sort((a, b) => a._statesWithData - b._statesWithData)
+      .slice(0, 10);
+
+    // ── Build HTML ──
+    let html = '';
+
+    // Header
+    html += `
+      <div class="dashboard-header">
+        <h2>Catalog Dashboard</h2>
+        <p>Enterprise overview of BLM GIS web service health, maturity, and coverage.</p>
+      </div>
+    `;
+
+    // ── KPI Cards ──
+    html += `<div class="dashboard-kpi-row">`;
+
+    // Total Datasets
+    html += `
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background: var(--accent);"></div>
+        <div class="kpi-value" style="color: var(--accent);">${totalDatasets}</div>
+        <div class="kpi-label">Total Datasets</div>
+        <div class="kpi-sublabel">${totalServices} service${totalServices !== 1 ? 's' : ''}</div>
+      </div>
+    `;
+
+    // Production
+    html += `
+      <div class="kpi-card" data-dash-filter="stage" data-dash-value="production">
+        <div class="kpi-card-accent" style="background: var(--green);"></div>
+        <div class="kpi-value" style="color: var(--green);">${stageCounts.production}</div>
+        <div class="kpi-label">Production</div>
+        <div class="kpi-sublabel">${totalDatasets > 0 ? Math.round(stageCounts.production / totalDatasets * 100) : 0}% of catalog</div>
+      </div>
+    `;
+
+    // Gold Tier
+    html += `
+      <div class="kpi-card" data-dash-filter="tier" data-dash-value="gold">
+        <div class="kpi-card-accent" style="background: #fde047;"></div>
+        <div class="kpi-value" style="color: #fde047;">${tierCounts.gold}</div>
+        <div class="kpi-label">Gold Tier</div>
+        <div class="kpi-sublabel">${tierCounts.silver} silver · ${tierCounts.bronze} bronze</div>
+      </div>
+    `;
+
+    // Average Completeness
+    html += `
+      <div class="kpi-card">
+        <div class="kpi-card-accent" style="background: var(--purple);"></div>
+        <div class="kpi-value" style="color: var(--purple);">${avgCompleteness}%</div>
+        <div class="kpi-label">Avg Completeness</div>
+        <div class="kpi-sublabel">${compCount} dataset${compCount !== 1 ? 's' : ''} scored</div>
+      </div>
+    `;
+
+    // Coverage
+    html += `
+      <div class="kpi-card" data-dash-filter="coverage" data-dash-value="nationwide">
+        <div class="kpi-card-accent" style="background: #4CAF50;"></div>
+        <div class="kpi-value" style="color: #4CAF50;">${datasetsWithCoverage}</div>
+        <div class="kpi-label">Coverage Analyzed</div>
+        <div class="kpi-sublabel">${nationwideCoverage} nationwide · ${noCoverageData} pending</div>
+      </div>
+    `;
+
+    html += `</div>`; // end kpi-row
+
+    // ── Charts Row ──
+    html += `<div class="dashboard-charts-row">`;
+
+    // 1) Development Stage bar chart
+    const stageEntries = [
+      { key: 'production', label: 'Production', color: 'rgba(16,185,129,0.7)' },
+      { key: 'qa', label: 'QA / Testing', color: 'rgba(139,92,246,0.7)' },
+      { key: 'in_development', label: 'In Development', color: 'rgba(245,158,11,0.7)' },
+      { key: 'planned', label: 'Planned', color: 'rgba(107,114,128,0.7)' },
+      { key: 'deprecated', label: 'Deprecated', color: 'rgba(239,68,68,0.7)' },
+      { key: 'unknown', label: 'Unknown', color: 'rgba(255,255,255,0.15)' },
+    ];
+    const maxStage = Math.max(...stageEntries.map(e => stageCounts[e.key] || 0), 1);
+
+    html += `<div class="dashboard-chart-card">`;
+    html += `<div class="dashboard-chart-title">Development Stage</div>`;
+    html += `<div class="hbar-chart">`;
+    stageEntries.forEach(e => {
+      const count = stageCounts[e.key] || 0;
+      if (count === 0 && e.key === 'unknown') return;
+      const pct = (count / maxStage) * 100;
+      html += `
+        <div class="hbar-row" data-dash-filter="stage" data-dash-value="${e.key}">
+          <span class="hbar-label">${e.label}</span>
+          <div class="hbar-track">
+            <div class="hbar-fill" style="width:${pct.toFixed(1)}%; background:${e.color};"></div>
+          </div>
+          <span class="hbar-count">${count}</span>
+        </div>
+      `;
+    });
+    html += `</div></div>`;
+
+    // 2) Quality Tier donut chart
+    const tierEntries = [
+      { key: 'gold', label: 'Gold', color: '#fde047' },
+      { key: 'silver', label: 'Silver', color: '#d4d4d4' },
+      { key: 'bronze', label: 'Bronze', color: '#d4a574' },
+      { key: 'unassigned', label: 'Unassigned', color: 'rgba(255,255,255,0.15)' },
+    ];
+    const tierTotal = tierEntries.reduce((s, e) => s + (tierCounts[e.key] || 0), 0) || 1;
+    const circumference = 2 * Math.PI * 15.9155;
+
+    html += `<div class="dashboard-chart-card">`;
+    html += `<div class="dashboard-chart-title">Quality Tier</div>`;
+    html += `<div class="donut-chart-container">`;
+    html += `<svg class="donut-svg" viewBox="0 0 42 42">`;
+    html += `<circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3.5"/>`;
+
+    let tierOffset = 0;
+    tierEntries.forEach(e => {
+      const count = tierCounts[e.key] || 0;
+      if (count === 0) return;
+      const pct = count / tierTotal;
+      const dashLen = pct * circumference;
+      const dashGap = circumference - dashLen;
+      html += `<circle class="donut-segment" cx="21" cy="21" r="15.9155" fill="none" stroke="${e.color}" stroke-width="3.5" stroke-dasharray="${dashLen.toFixed(2)} ${dashGap.toFixed(2)}" stroke-dashoffset="${(-tierOffset).toFixed(2)}" transform="rotate(-90 21 21)"/>`;
+      tierOffset += dashLen;
+    });
+
+    html += `<text x="21" y="20" class="donut-center-text">${tierTotal}</text>`;
+    html += `<text x="21" y="25" class="donut-center-sublabel">datasets</text>`;
+    html += `</svg>`;
+
+    html += `<div class="donut-legend">`;
+    tierEntries.forEach(e => {
+      const count = tierCounts[e.key] || 0;
+      html += `<div class="donut-legend-item" data-dash-filter="tier" data-dash-value="${e.key}"><span class="donut-legend-swatch" style="background:${e.color}"></span>${e.label}<span class="donut-legend-count">${count}</span></div>`;
+    });
+    html += `</div></div></div>`;
+
+    // 3) Geometry Types bar chart
+    const geomEntries = Object.entries(geomCounts).sort((a, b) => b[1] - a[1]);
+    const maxGeom = Math.max(...geomEntries.map(e => e[1]), 1);
+    const geomColors = {
+      'POINT': 'rgba(52,211,153,0.7)',
+      'POLYGON': 'rgba(91,163,245,0.7)',
+      'POLYLINE': 'rgba(16,185,129,0.7)',
+      'TABLE': 'rgba(251,191,36,0.7)',
+      'MULTIPOINT': 'rgba(52,211,153,0.5)',
+      'MULTIPATCH': 'rgba(192,132,252,0.7)',
+    };
+
+    html += `<div class="dashboard-chart-card">`;
+    html += `<div class="dashboard-chart-title">Geometry Types</div>`;
+    html += `<div class="hbar-chart">`;
+    geomEntries.forEach(([geom, count]) => {
+      const pct = (count / maxGeom) * 100;
+      const color = geomColors[geom] || 'rgba(255,255,255,0.2)';
+      html += `
+        <div class="hbar-row" data-dash-filter="geometry" data-dash-value="${escapeHtml(geom)}">
+          <span class="hbar-label">${escapeHtml(geom)}</span>
+          <div class="hbar-track">
+            <div class="hbar-fill" style="width:${pct.toFixed(1)}%; background:${color};"></div>
+          </div>
+          <span class="hbar-count">${count}</span>
+        </div>
+      `;
+    });
+    html += `</div></div>`;
+
+    html += `</div>`; // end charts-row
+
+    // ── Tables Row ──
+    html += `<div class="dashboard-table-row">`;
+
+    // 1) Datasets needing attention (lowest completeness)
+    html += `<div class="dashboard-table-card">`;
+    html += `<div class="dashboard-chart-title">Needs Attention — Lowest Completeness</div>`;
+    if (lowCompleteness.length) {
+      html += `<table class="dashboard-mini-table"><thead><tr><th>Dataset</th><th>Stage</th><th>Tier</th><th>Complete</th></tr></thead><tbody>`;
+      lowCompleteness.forEach(d => {
+        const comp = d.maturity.completeness;
+        const stage = d.development_stage || 'unknown';
+        const tier = (d.maturity && d.maturity.quality_tier) || '';
+        const stageClass = { planned: 'planned', in_development: 'dev', qa: 'qa', production: 'prod', deprecated: 'deprecated' }[stage] || 'planned';
+        const tierClass = tier || 'bronze';
+        const label = d._layer_name || d.title || d.id;
+        html += `<tr>
+          <td><button type="button" class="dash-link" data-dash-ds="${escapeHtml(d.id)}" title="${escapeHtml(d.title || d.id)}">${escapeHtml(label.length > 40 ? label.slice(0, 37) + '…' : label)}</button></td>
+          <td><span class="dash-stage dash-stage-${stageClass}">${escapeHtml(stage.replace('_', ' '))}</span></td>
+          <td>${tier ? `<span class="dash-tier dash-tier-${tierClass}">${escapeHtml(tier)}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:0.4rem;">
+              <div style="flex:1;height:6px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;"><div style="height:100%;width:${comp}%;background:${comp < 50 ? 'var(--red)' : comp < 80 ? 'var(--amber)' : 'var(--green)'};border-radius:3px;"></div></div>
+              <span style="font-size:0.78rem;font-weight:600;color:${comp < 50 ? 'var(--red)' : comp < 80 ? 'var(--amber)' : 'var(--green)'}">${comp}%</span>
+            </div>
+          </td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p style="color:var(--text-muted);font-size:0.85rem;">No completeness data available yet.</p>`;
+    }
+    html += `</div>`;
+
+    // 2) Coverage gaps (nationwide datasets with fewest states)
+    html += `<div class="dashboard-table-card">`;
+    html += `<div class="dashboard-chart-title">Coverage Gaps — Nationwide Datasets</div>`;
+    if (coverageGaps.length) {
+      html += `<table class="dashboard-mini-table"><thead><tr><th>Dataset</th><th>States</th><th>Coverage</th></tr></thead><tbody>`;
+      coverageGaps.forEach(d => {
+        const stateData = d._coverage.states || {};
+        const statesWithData = d._statesWithData;
+        const totalStates = Object.keys(stateData).length || 51;
+        const label = d._layer_name || d.title || d.id;
+
+        // Mini coverage bar (51 tiny segments)
+        const sortedStates = Object.entries(stateData).sort((a, b) => a[0].localeCompare(b[0]));
+        let covBarHtml = '<div class="coverage-gap-bar" title="' + statesWithData + ' of ' + totalStates + ' states">';
+        sortedStates.forEach(([abbr, count]) => {
+          const color = count > 0 ? 'rgba(91,163,245,0.7)' : 'rgba(255,255,255,0.08)';
+          covBarHtml += `<div class="coverage-gap-segment" style="background:${color};" title="${abbr}: ${count}"></div>`;
+        });
+        covBarHtml += '</div>';
+
+        html += `<tr>
+          <td><button type="button" class="dash-link" data-dash-ds="${escapeHtml(d.id)}" title="${escapeHtml(d.title || d.id)}">${escapeHtml(label.length > 35 ? label.slice(0, 32) + '…' : label)}</button></td>
+          <td style="font-weight:600;color:${statesWithData < 30 ? 'var(--red)' : statesWithData < 45 ? 'var(--amber)' : 'var(--green)'}">${statesWithData}/${totalStates}</td>
+          <td style="min-width:120px;">${covBarHtml}</td>
+        </tr>`;
+      });
+      html += `</tbody></table>`;
+    } else {
+      html += `<p style="color:var(--text-muted);font-size:0.85rem;">No nationwide datasets with coverage data yet.</p>`;
+    }
+    html += `</div>`;
+
+    html += `</div>`; // end table-row
+
+    // ── Office / Owner breakdown ──
+    const officeEntries = Object.entries(officeCounts).sort((a, b) => b[1] - a[1]);
+    const maxOffice = Math.max(...officeEntries.map(e => e[1]), 1);
+
+    html += `<div class="dashboard-charts-row" style="grid-template-columns: 1fr;">`;
+    html += `<div class="dashboard-chart-card">`;
+    html += `<div class="dashboard-chart-title">Datasets by Office Owner</div>`;
+    html += `<div class="hbar-chart">`;
+    officeEntries.forEach(([office, count]) => {
+      const pct = (count / maxOffice) * 100;
+      html += `
+        <div class="hbar-row" data-dash-filter="office" data-dash-value="${escapeHtml(office)}">
+          <span class="hbar-label">${escapeHtml(office)}</span>
+          <div class="hbar-track">
+            <div class="hbar-fill" style="width:${pct.toFixed(1)}%; background:rgba(192,132,252,0.6);"></div>
+          </div>
+          <span class="hbar-count">${count}</span>
+        </div>
+      `;
+    });
+    html += `</div></div></div>`;
+
+    dashboardContentEl.innerHTML = html;
+
+    // ── Wire up dataset links in dashboard tables ──
+    dashboardContentEl.querySelectorAll('button[data-dash-ds]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const dsId = btn.getAttribute('data-dash-ds');
+        showDatasetsView();
+        lastSelectedDatasetId = dsId;
+        renderDatasetDetail(dsId);
+      });
+    });
+
+    // ── Wire up drill-down filter clicks ──
+    dashboardContentEl.querySelectorAll('[data-dash-filter]').forEach(el => {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', (e) => {
+        // Don't intercept clicks on nested dash-ds buttons
+        if (e.target.closest('button[data-dash-ds]')) return;
+        const group = el.getAttribute('data-dash-filter');
+        const value = el.getAttribute('data-dash-value');
+        applyDashboardFilter(group, value);
+      });
+    });
+  }
+
+  // ===========================
   // INITIAL RENDER + SEARCH
   // ===========================
   renderDatasetList();
   renderAttributeList();
+  renderDashboard();
 
   if (datasetSearchInput) {
     datasetSearchInput.addEventListener('input', () => renderDatasetList(datasetSearchInput.value));
@@ -3695,12 +4337,11 @@ if (covRefreshBtn) {
     attributeSearchInput.addEventListener('input', () => renderAttributeList(attributeSearchInput.value));
   }
 
-// Initial render: only render the active tab's detail (Datasets tab is active by default)
+// Initial render: Dashboard is the default active tab.
+// Pre-select the first dataset so clicking the Datasets tab shows detail immediately.
   if (allDatasets.length) {
     lastSelectedDatasetId = allDatasets[0].id;
-    renderDatasetDetail(allDatasets[0].id);
   }
-// Attribute detail will render when user clicks the Attributes tab or an attribute link
 });
 
 // ====== UTILS ======

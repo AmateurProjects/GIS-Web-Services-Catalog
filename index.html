@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <title>BLM GIS Web Services Catalog</title>
   <meta name="description" content="Catalog and documentation for BLM GIS web services of the United States.">
-  <link rel="stylesheet" href="styles-new.css?v=16" />
+  <link rel="stylesheet" href="styles-new.css?v=18" />
   <!-- ArcGIS Maps SDK for JavaScript -->
   <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/dark/main.css" />
   <script src="https://js.arcgis.com/4.29/"></script>
@@ -15,14 +15,19 @@
   <header>
     <h1>BLM GIS Web Services Catalog</h1>
     <nav>
-      <button id="datasetsTab" class="tab-button active">Datasets</button>
+      <button id="dashboardTab" class="tab-button active">Dashboard</button>
+      <button id="datasetsTab" class="tab-button">Datasets</button>
       <button id="attributesTab" class="tab-button">Attributes</button>
     </nav>
   </header>
 
   <main>
+    <!-- DASHBOARD VIEW -->
+    <section id="dashboardView" class="dashboard-view">
+      <div id="dashboardContent" class="dashboard-content"></div>
+    </section>
     <!-- DATASETS VIEW -->
-    <section id="datasetsView">
+    <section id="datasetsView" class="hidden">
       <div class="sidebar">
         <div class="toolbar">
           <input id="datasetSearchInput" type="search" placeholder="Search datasets..." />
@@ -32,6 +37,8 @@
             </button>
           </div>
         </div>
+        <div id="activeFilterChips" class="active-filter-chips"></div>
+        <div id="datasetFilters" class="filter-panel"></div>
         <div id="datasetList"></div>
       </div>
       <div id="datasetDetail" class="detail-panel hidden"></div>
@@ -53,7 +60,7 @@
     </section>
   </main>
 
-  <script src="app.js?v=23"></script>
+  <script src="app.js?v=25"></script>
 </body>
 
 </html>

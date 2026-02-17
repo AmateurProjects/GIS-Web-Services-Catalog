@@ -6,6 +6,7 @@ import { escapeHtml } from './utils.js';
 import { showDatasetsView } from './navigation.js';
 import { applyDashboardFilter } from './filters.js';
 import { fetchPendingDatasetRequests, parseRequestedDatasetName } from './github-api.js';
+import { checkUrlStatus } from './url-check.js';
 
 let _renderDatasetDetail = null;
 export function registerDashboardCallbacks({ renderDatasetDetail }) {
@@ -88,12 +89,15 @@ export function renderDashboard() {
       .slice(0, 10);
 
     // ── Datasets with coverage gaps (fewest states) ──
+    // Exclude 0% coverage — those are often datasets that haven't been analyzed
+    // or have non-spatial data, not necessarily real gaps.
     const coverageGaps = ds
       .filter(d => d._coverage && d._coverage.states && d.coverage === 'nationwide')
       .map(d => {
         const statesWithData = d._coverage.statesWithData || 0;
         return { ...d, _statesWithData: statesWithData };
       })
+      .filter(d => d._statesWithData > 0)
       .sort((a, b) => a._statesWithData - b._statesWithData)
       .slice(0, 10);
 
@@ -333,6 +337,20 @@ export function renderDashboard() {
 
     html += `</div>`; // end table-row
 
+    // ── Service Health Status (async) ──
+    html += `
+      <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
+        <div class="dashboard-chart-card" id="dashServiceHealthCard">
+          <div class="dashboard-chart-title">Service Health</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Live reachability check of all cataloged web service endpoints.</p>
+          <div data-dash-health-summary class="service-health-summary"></div>
+          <div data-dash-health-list>
+            <p class="loading-message" style="font-size:0.85rem;">Checking services\u2026</p>
+          </div>
+        </div>
+      </div>
+    `;
+
     // ── Pending Dataset Requests (loads async) ──
     html += `
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
@@ -394,6 +412,9 @@ export function renderDashboard() {
 
     // ── Load pending requests async ──
     loadDashboardPendingRequests();
+
+    // ── Load service health checks async ──
+    loadServiceHealthStatus();
   }
 
 /** Fetch and render pending dataset requests in the dashboard. */
@@ -431,4 +452,131 @@ async function loadDashboardPendingRequests() {
     console.warn('Failed to load pending requests for dashboard', err);
     listEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Could not load pending requests.</p>';
   }
+}
+
+/** Check all unique service URLs and display results in the dashboard. */
+async function loadServiceHealthStatus() {
+  const summaryEl = els.dashboardContentEl?.querySelector('[data-dash-health-summary]');
+  const listEl = els.dashboardContentEl?.querySelector('[data-dash-health-list]');
+  if (!listEl) return;
+
+  const ds = state.allDatasets;
+
+  // Build unique service URL map: url → { url, datasets: [{ id, title }] }
+  const serviceMap = new Map();
+  ds.forEach(d => {
+    const url = d.public_web_service;
+    if (!url) return;
+    // Use the parent service URL if available, otherwise the dataset URL directly
+    const key = d._parent_service || url;
+    if (!serviceMap.has(key)) {
+      serviceMap.set(key, { url: key, datasets: [] });
+    }
+    serviceMap.get(key).datasets.push({ id: d.id, title: d._layer_name || d.title || d.id });
+  });
+
+  const services = [...serviceMap.values()];
+  if (!services.length) {
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No web services configured in the catalog.</p>';
+    if (summaryEl) summaryEl.innerHTML = '';
+    return;
+  }
+
+  // Show progress bar
+  let checked = 0;
+  const total = services.length;
+  function updateProgress() {
+    if (!summaryEl) return;
+    summaryEl.innerHTML = `
+      <div class="health-progress">
+        <span class="health-progress-label">Checking ${checked} / ${total} services\u2026</span>
+        <div class="completeness-bar-track" style="height:6px;">
+          <div class="completeness-bar-fill" style="width:${Math.round((checked / total) * 100)}%;background:var(--accent);transition:width 300ms;"></div>
+        </div>
+      </div>
+    `;
+  }
+  updateProgress();
+
+  // Check all services with concurrency limit
+  const CONCURRENCY = 4;
+  const results = new Array(services.length);
+  let idx = 0;
+
+  async function worker() {
+    while (idx < services.length) {
+      const i = idx++;
+      const svc = services[i];
+      // Append ?f=pjson to get a quick JSON response from ArcGIS REST
+      const testUrl = svc.url.includes('?')
+        ? `${svc.url}&f=pjson`
+        : `${svc.url}?f=pjson`;
+      const status = await checkUrlStatus(testUrl);
+      results[i] = { ...svc, status };
+      checked++;
+      updateProgress();
+    }
+  }
+
+  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
+
+  // Tally
+  let okCount = 0, badCount = 0, unknownCount = 0;
+  results.forEach(r => {
+    if (r.status === 'ok') okCount++;
+    else if (r.status === 'bad') badCount++;
+    else unknownCount++;
+  });
+
+  // Summary badges
+  if (summaryEl) {
+    summaryEl.innerHTML = `
+      <div class="health-kpi-row">
+        <span class="health-kpi health-kpi-ok"><span class="health-kpi-value">${okCount}</span> Reachable</span>
+        <span class="health-kpi health-kpi-bad"><span class="health-kpi-value">${badCount}</span> Unreachable</span>
+        <span class="health-kpi health-kpi-unknown"><span class="health-kpi-value">${unknownCount}</span> Uncertain</span>
+        <span class="health-kpi" style="color:var(--text-muted);"><span class="health-kpi-value">${total}</span> Total</span>
+      </div>
+    `;
+  }
+
+  // Sort: bad first, then unknown, then ok
+  const statusOrder = { bad: 0, unknown: 1, ok: 2 };
+  results.sort((a, b) => (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1));
+
+  // Table
+  let html = '';
+  html += `<table class="dashboard-mini-table service-health-table"><thead><tr><th>Status</th><th>Service Endpoint</th><th>Datasets</th></tr></thead><tbody>`;
+  results.forEach(r => {
+    const statusIcon = r.status === 'ok'
+      ? '<span class="health-dot health-dot-ok" title="Reachable">\u25CF</span>'
+      : r.status === 'bad'
+        ? '<span class="health-dot health-dot-bad" title="Unreachable">\u25CF</span>'
+        : '<span class="health-dot health-dot-unknown" title="Uncertain (CORS/blocked)">\u25CF</span>';
+    const statusLabel = r.status === 'ok' ? 'Up' : r.status === 'bad' ? 'Down' : '???';
+    const shortUrl = r.url.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+    const truncUrl = shortUrl.length > 60 ? shortUrl.slice(0, 57) + '\u2026' : shortUrl;
+    const dsCount = r.datasets.length;
+    const dsNames = r.datasets.slice(0, 3).map(d => escapeHtml(d.title)).join(', ');
+    const more = dsCount > 3 ? ` +${dsCount - 3} more` : '';
+
+    html += `<tr class="health-row health-row-${r.status}">`;
+    html += `<td class="health-status-cell">${statusIcon} ${statusLabel}</td>`;
+    html += `<td><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" class="health-url" title="${escapeHtml(r.url)}">${escapeHtml(truncUrl)}</a></td>`;
+    html += `<td class="health-ds-cell">${dsNames}${more}</td>`;
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+
+  listEl.innerHTML = html;
+
+  // Wire dataset links in health table
+  listEl.querySelectorAll('button[data-dash-ds]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dsId = btn.getAttribute('data-dash-ds');
+      showDatasetsView();
+      state.lastSelectedDatasetId = dsId;
+      if (_renderDatasetDetail) _renderDatasetDetail(dsId);
+    });
+  });
 }

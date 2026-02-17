@@ -220,7 +220,7 @@ initMaturityCard(els.datasetDetailEl, dataset, !!dataset.public_web_service);
 runUrlChecks(els.datasetDetailEl);
 
 // Load service preview immediately (don't wait for URL health check)
-maybeRenderPublicServicePreviewCard(els.datasetDetailEl, dataset.public_web_service, currentGeneration);
+maybeRenderPublicServicePreviewCard(els.datasetDetailEl, dataset.public_web_service, currentGeneration, { datasetId: dataset.id });
 
 // Run coverage map analysis (async, renders into the #coverageMapCard placeholder)
 renderCoverageMapCard(els.datasetDetailEl, dataset.public_web_service, currentGeneration, dataset);

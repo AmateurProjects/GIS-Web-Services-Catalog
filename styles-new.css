@@ -1623,6 +1623,17 @@ textarea.dataset-edit-input {
   font-size: 0.7rem;
 }
 
+.data-source-badge-cached {
+  background: rgba(96, 165, 250, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.data-source-badge-cached::before {
+  content: "📦";
+  font-size: 0.7rem;
+}
+
 .data-source-badge-hybrid {
   background: rgba(139, 92, 246, 0.15);
   color: #a78bfa;
@@ -2490,6 +2501,93 @@ textarea.dataset-edit-input {
 .dash-tier-bronze { border-color: rgba(205,127,50,0.4); background: rgba(205,127,50,0.1); color: #d4a574; }
 .dash-tier-silver { border-color: rgba(192,192,192,0.4); background: rgba(192,192,192,0.1); color: #d4d4d4; }
 .dash-tier-gold   { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.1); color: #fde047; }
+
+/* ================================================================
+   SERVICE HEALTH STATUS (Dashboard)
+   ================================================================ */
+
+.service-health-summary {
+  margin-bottom: 0.75rem;
+}
+
+.health-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.health-progress-label {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.health-kpi-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.health-kpi {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.health-kpi-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.health-kpi-ok        { color: var(--green, #10b981); }
+.health-kpi-bad       { color: var(--red, #ef4444); }
+.health-kpi-unknown   { color: var(--amber, #f59e0b); }
+
+.service-health-table td,
+.service-health-table th {
+  vertical-align: middle;
+}
+
+.health-status-cell {
+  white-space: nowrap;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.health-dot {
+  font-size: 0.9rem;
+  margin-right: 0.2rem;
+}
+
+.health-dot-ok      { color: var(--green, #10b981); }
+.health-dot-bad     { color: var(--red, #ef4444); }
+.health-dot-unknown { color: var(--amber, #f59e0b); }
+
+.health-row-bad {
+  background: rgba(239,68,68,0.04);
+}
+
+.health-url {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.8rem;
+  word-break: break-all;
+}
+
+.health-url:hover {
+  text-decoration: underline;
+}
+
+.health-ds-cell {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  max-width: 250px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 @media (max-width: 1100px) {
   .dashboard-kpi-row { grid-template-columns: repeat(3, 1fr); }

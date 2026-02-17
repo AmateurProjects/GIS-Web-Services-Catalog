@@ -1,0 +1,56 @@
+name: Generate Service Info
+
+on:
+  schedule:
+    # Runs weekly on Sunday at 06:00 UTC
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force re-process all datasets'
+        required: false
+        default: 'false'
+        type: boolean
+      dataset:
+        description: 'Process only a specific dataset ID (leave blank for all)'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate service info
+        run: |
+          ARGS="--write"
+          if [ "${{ inputs.force }}" = "true" ]; then
+            ARGS="$ARGS --force"
+          fi
+          if [ -n "${{ inputs.dataset }}" ]; then
+            ARGS="$ARGS --dataset ${{ inputs.dataset }}"
+          fi
+          node scripts/generate-service-info.js $ARGS
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/service-info/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update pre-generated service info [skip ci]"
+            git push
+          fi

@@ -213,13 +213,695 @@ export function initializeArcGISMap(serviceUrl, layerId) {
   });
 }
 
-export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation) {
+// ── Cached service info loader ──
+
+async function fetchCachedServiceInfo(datasetId) {
+  if (!datasetId) return null;
+  try {
+    const resp = await fetch(`data/service-info/${encodeURIComponent(datasetId)}.json`, { cache: 'no-store' });
+    if (!resp.ok) return null;
+    return await resp.json();
+  } catch {
+    return null;
+  }
+}
+
+// ── Extract metadata properties from live-fetched service/layer JSON ──
+
+function extractMetadataProps(serviceJson, layerJson, recordCount) {
+  const documentInfo = serviceJson.documentInfo || {};
+  const spatialRef = serviceJson.spatialReference || layerJson?.spatialReference || {};
+  const extent = layerJson?.extent || serviceJson.fullExtent || null;
+  return {
+    serviceDescription: serviceJson.serviceDescription || serviceJson.description || '',
+    copyrightText: serviceJson.copyrightText || '',
+    author: documentInfo.Author || '',
+    subject: documentInfo.Subject || '',
+    keywords: documentInfo.Keywords || '',
+    comments: documentInfo.Comments || '',
+    currentVersion: serviceJson.currentVersion || '',
+    maxRecordCount: serviceJson.maxRecordCount || '',
+    wkid: spatialRef.latestWkid || spatialRef.wkid || '',
+    capabilities: serviceJson.capabilities || '',
+    syncEnabled: serviceJson.syncEnabled ?? null,
+    supportedQueryFormats: layerJson?.supportedQueryFormats || serviceJson.supportedQueryFormats || '',
+    layerName: layerJson?.name || '',
+    layerType: layerJson?.type || '',
+    geometryType: layerJson?.geometryType || '',
+    objectIdField: layerJson?.objectIdField || '',
+    globalIdField: layerJson?.globalIdField || '',
+    displayField: layerJson?.displayField || '',
+    supportsStatistics: layerJson?.supportsStatistics ?? serviceJson.supportsStatistics ?? null,
+    supportsAdvancedQueries: layerJson?.advancedQueryCapabilities?.supportsAdvancedQueries ?? null,
+    hasAttachments: layerJson?.hasAttachments ?? null,
+    hasZ: layerJson?.hasZ ?? null,
+    hasM: layerJson?.hasM ?? null,
+    minScale: layerJson?.minScale || 0,
+    maxScale: layerJson?.maxScale || 0,
+    editFieldsInfo: !!(layerJson?.editFieldsInfo),
+    featureCount: layerJson?.featureCount ?? null,
+    lastEditDate: layerJson?.editingInfo?.lastEditDate || serviceJson.editingInfo?.lastEditDate || null,
+    definitionExpression: layerJson?.definitionExpression || '',
+    recordCount,
+    extent: extent ? { xmin: extent.xmin, ymin: extent.ymin, xmax: extent.xmax, ymax: extent.ymax } : null,
+  };
+}
+
+// ── Friendly ESRI field type labels ──
+
+const ESRI_TYPE_LABELS = {
+  'ESRIFIELDTYPEOID':         'OID',
+  'ESRIFIELDTYPEGLOBALID':    'GlobalID',
+  'ESRIFIELDTYPESTRING':      'String',
+  'ESRIFIELDTYPEINTEGER':     'Integer',
+  'ESRIFIELDTYPESMALLINTEGER': 'SmallInt',
+  'ESRIFIELDTYPEDOUBLE':      'Double',
+  'ESRIFIELDTYPESINGLE':      'Single',
+  'ESRIFIELDTYPEDATE':        'Date',
+  'ESRIFIELDTYPEBLOB':        'Blob',
+  'ESRIFIELDTYPEGUID':        'GUID',
+  'ESRIFIELDTYPEXML':         'XML',
+  'ESRIFIELDTYPEGEOMETRY':    'Geometry',
+  'ESRIFIELDTYPERASTER':      'Raster',
+};
+
+function friendlyType(esriType) {
+  const key = String(esriType || '').toUpperCase().replace(/\s/g, '');
+  return ESRI_TYPE_LABELS[key] || esriType || '';
+}
+
+// ── Build Service Metadata card HTML ──
+
+function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {}) {
+  const badge = isCached ? 'Cached' : 'Auto';
+  const subtitle = isCached
+    ? `Generated ${generatedDate} from ArcGIS REST endpoint`
+    : 'Fetched from the ArcGIS REST endpoint';
+  const refreshBtn = isCached
+    ? '<button type="button" class="btn" data-refresh-metadata title="Refresh from live service" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>'
+    : '';
+
+  return `
+    <div class="card" style="margin-top:0.75rem;" id="serviceMetadataCard">
+      <div class="card-header-row">
+        <div style="font-weight:600;">Service Metadata</div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="data-source-badge data-source-badge-${isCached ? 'cached' : 'auto'}">${badge}</span>
+          ${refreshBtn}
+        </div>
+      </div>
+      <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${subtitle}</p>
+      
+      ${m.serviceDescription
+        ? `<div class="collapsible-text-container">
+             <p><strong>Description:</strong></p>
+             <div class="collapsible-text ${m.serviceDescription.length > 300 ? 'is-collapsed' : ''}" data-full-text="${escapeHtml(m.serviceDescription)}">
+               ${escapeHtml(m.serviceDescription)}
+             </div>
+             ${m.serviceDescription.length > 300 ? '<button type="button" class="show-more-btn" data-toggle-collapse>Show more</button>' : ''}
+           </div>`
+        : '<p class="metadata-missing"><strong>Description:</strong> <em>Not provided by service</em></p>'
+      }
+      
+      ${m.copyrightText
+        ? `<p><strong>Copyright:</strong> ${escapeHtml(m.copyrightText)}</p>`
+        : '<p class="metadata-missing"><strong>Copyright:</strong> <em>Not provided by service</em></p>'
+      }
+      ${m.author
+        ? `<p><strong>Author:</strong> ${escapeHtml(m.author)}</p>`
+        : '<p class="metadata-missing"><strong>Author:</strong> <em>Not provided by service</em></p>'
+      }
+      ${m.subject ? `<p><strong>Subject:</strong> ${escapeHtml(m.subject)}</p>` : ''}
+      ${m.keywords
+        ? `<p><strong>Keywords:</strong> ${escapeHtml(m.keywords).split(',').map(k => `<span class="capability-pill">${k.trim()}</span>`).join(' ')}</p>`
+        : ''
+      }
+      ${m.comments
+        ? `<div class="collapsible-text-container">
+             <p><strong>Comments:</strong></p>
+             <div class="collapsible-text ${m.comments.length > 300 ? 'is-collapsed' : ''}" data-full-text="${escapeHtml(m.comments)}">
+               ${escapeHtml(m.comments)}
+             </div>
+             ${m.comments.length > 300 ? '<button type="button" class="show-more-btn" data-toggle-collapse>Show more</button>' : ''}
+           </div>`
+        : ''
+      }
+      
+      <div class="metadata-grid">
+        ${m.layerName ? `<div class="metadata-item"><span class="metadata-label">Layer Name</span><span class="metadata-value">${escapeHtml(m.layerName)}</span></div>` : ''}
+        ${m.layerType ? `<div class="metadata-item"><span class="metadata-label">Layer Type</span><span class="metadata-value">${escapeHtml(m.layerType)}</span></div>` : ''}
+        ${m.currentVersion ? `<div class="metadata-item"><span class="metadata-label">Server Version</span><span class="metadata-value">${escapeHtml(String(m.currentVersion))}</span></div>` : ''}
+        ${m.wkid ? `<div class="metadata-item"><span class="metadata-label">Spatial Reference</span><span class="metadata-value">EPSG:${escapeHtml(String(m.wkid))}</span></div>` : ''}
+        ${m.geometryType ? `<div class="metadata-item"><span class="metadata-label">Geometry Type</span><span class="metadata-value">${escapeHtml(m.geometryType.replace('esriGeometry', ''))}</span></div>` : ''}
+        ${m.maxRecordCount ? `<div class="metadata-item"><span class="metadata-label">Max Record Count</span><span class="metadata-value">${Number(m.maxRecordCount).toLocaleString()}</span></div>` : ''}
+        ${m.featureCount !== null && m.featureCount !== undefined ? `<div class="metadata-item"><span class="metadata-label">Feature Count</span><span class="metadata-value">${Number(m.featureCount).toLocaleString()}</span></div>` : ''}
+        ${m.objectIdField ? `<div class="metadata-item"><span class="metadata-label">Object ID Field</span><span class="metadata-value"><code>${escapeHtml(m.objectIdField)}</code></span></div>` : ''}
+        ${m.globalIdField ? `<div class="metadata-item"><span class="metadata-label">Global ID Field</span><span class="metadata-value"><code>${escapeHtml(m.globalIdField)}</code></span></div>` : ''}
+        ${m.displayField ? `<div class="metadata-item"><span class="metadata-label">Display Field</span><span class="metadata-value"><code>${escapeHtml(m.displayField)}</code></span></div>` : ''}
+        ${m.recordCount !== null && m.recordCount !== undefined ? `<div class="metadata-item"><span class="metadata-label">Total Records</span><span class="metadata-value">${Number(m.recordCount).toLocaleString()}</span></div>` : ''}
+        ${m.lastEditDate ? `<div class="metadata-item"><span class="metadata-label">Last Edited</span><span class="metadata-value">${new Date(m.lastEditDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span></div>` : ''}
+        ${m.supportedQueryFormats ? `<div class="metadata-item"><span class="metadata-label">Query Formats</span><span class="metadata-value">${escapeHtml(m.supportedQueryFormats)}</span></div>` : ''}
+      </div>
+      
+      <div class="metadata-capabilities">
+        ${m.capabilities
+          ? `<p><strong>Capabilities:</strong> ${m.capabilities.split(',').map(c => `<span class="capability-pill">${escapeHtml(c.trim())}</span>`).join(' ')}</p>`
+          : ''
+        }
+        <div class="capability-flags">
+          ${m.supportsStatistics !== null && m.supportsStatistics !== undefined ? `<span class="capability-flag ${m.supportsStatistics ? 'is-supported' : 'is-not-supported'}">${m.supportsStatistics ? '✓' : '✗'} Statistics</span>` : ''}
+          ${m.supportsAdvancedQueries !== null && m.supportsAdvancedQueries !== undefined ? `<span class="capability-flag ${m.supportsAdvancedQueries ? 'is-supported' : 'is-not-supported'}">${m.supportsAdvancedQueries ? '✓' : '✗'} Advanced Queries</span>` : ''}
+          ${m.hasAttachments !== null && m.hasAttachments !== undefined ? `<span class="capability-flag ${m.hasAttachments ? 'is-supported' : 'is-not-supported'}">${m.hasAttachments ? '✓' : '✗'} Attachments</span>` : ''}
+          ${m.hasZ !== null && m.hasZ !== undefined ? `<span class="capability-flag ${m.hasZ ? 'is-supported' : 'is-not-supported'}">${m.hasZ ? '✓' : '✗'} Z Values</span>` : ''}
+          ${m.hasM !== null && m.hasM !== undefined ? `<span class="capability-flag ${m.hasM ? 'is-supported' : 'is-not-supported'}">${m.hasM ? '✓' : '✗'} M Values</span>` : ''}
+          ${m.editFieldsInfo ? '<span class="capability-flag is-supported">✓ Editor Tracking</span>' : ''}
+          ${m.syncEnabled !== null && m.syncEnabled !== undefined ? `<span class="capability-flag ${m.syncEnabled ? 'is-supported' : 'is-not-supported'}">${m.syncEnabled ? '✓' : '✗'} Sync</span>` : ''}
+        </div>
+      </div>
+      
+      ${m.definitionExpression ? `<p style="margin-top:0.5rem;"><strong>Definition Expression:</strong> <code style="word-break:break-all;">${escapeHtml(m.definitionExpression)}</code></p>` : ''}
+      
+      ${(m.minScale > 0 || m.maxScale > 0)
+        ? `<p><strong>Visibility Scale Range:</strong> ${m.maxScale > 0 ? '1:' + Number(m.maxScale).toLocaleString() : 'Any'} – ${m.minScale > 0 ? '1:' + Number(m.minScale).toLocaleString() : 'Any'}</p>`
+        : ''
+      }
+      
+      ${m.extent && m.extent.xmin !== undefined
+        ? `<details class="extent-details">
+             <summary><strong>Full Extent</strong></summary>
+             <div class="extent-coords">
+               <span>xmin: ${m.extent.xmin?.toFixed(4)}</span>
+               <span>ymin: ${m.extent.ymin?.toFixed(4)}</span>
+               <span>xmax: ${m.extent.xmax?.toFixed(4)}</span>
+               <span>ymax: ${m.extent.ymax?.toFixed(4)}</span>
+             </div>
+           </details>`
+        : ''
+      }
+    </div>
+  `;
+}
+
+// ── Build Interactive Map card HTML ──
+
+function buildMapCardHTML(url, layerId) {
+  return `
+    <div class="card" style="margin-top:0.75rem;">
+      <div class="card-header-row"><div style="font-weight:600;">Interactive Map</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+      <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset</div>
+      <div id="arcgisMapContainer"
+           data-service-url="${escapeHtml(url)}"
+           data-layer-id="${layerId}"
+           style="width:100%; height:400px; border-radius:12px; overflow:hidden; background:#e0e0e0;"></div>
+    </div>
+  `;
+}
+
+// ── Build Fields card HTML ──
+
+function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDate = '', oidFieldName = '', globalIdFieldName = '' } = {}) {
+  if (!fields || !fields.length) return '';
+
+  const badge = isCached ? 'Cached' : 'Auto';
+  const refreshBtn = isCached
+    ? '<button type="button" class="btn" data-refresh-fields title="Refresh from live service" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>'
+    : '';
+  const subtitle = isCached
+    ? `${fields.length} fields. Generated ${generatedDate}. Null % and Distinct counts pre-computed.`
+    : `${fields.length} fields. Null % and Distinct counts are computed from the full dataset via service statistics queries.`;
+
+  const oidUpper = oidFieldName.toUpperCase();
+  const globalIdUpper = globalIdFieldName.toUpperCase();
+
+  function isKeyField(f) {
+    const n = (f.name || '').toUpperCase();
+    const t = (f.type || '').toUpperCase();
+    return n === oidUpper || n === globalIdUpper
+      || t === 'ESRIFIELDTYPEOID' || t === 'ESRIFIELDTYPEGLOBALID';
+  }
+
+  // Build a lookup map for pre-computed stats
+  const statsMap = {};
+  if (fieldStats && fieldStats.length) {
+    fieldStats.forEach(s => { statsMap[s.name] = s; });
+  }
+
+  const hasPrecomputedStats = isCached && fieldStats && fieldStats.length > 0;
+
+  return `
+    <div class="card card-fields" style="margin-top:0.75rem;" id="fieldsCard">
+      <div class="card-header-row">
+        <div style="font-weight:600;">Fields</div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="data-source-badge data-source-badge-${isCached ? 'cached' : 'auto'}">${badge}</span>
+          ${refreshBtn}
+        </div>
+      </div>
+      <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${subtitle}</p>
+      <div style="overflow-x:auto;">
+        <table class="fields-table" id="fieldsTable">
+          <thead>
+            <tr>
+              <th>Field Name</th>
+              <th>Alias</th>
+              <th>Type</th>
+              <th class="fields-stat-col">Null %</th>
+              <th class="fields-stat-col">Distinct</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${fields.map((f, i) => {
+              const key = isKeyField(f);
+              const hasDomain = !!(f.domain && (f.domain.type === 'codedValue' || f.domain === true));
+              const rowCls = key ? ' class="field-row-key"' : (hasDomain ? ' class="field-row-domain"' : '');
+              const fieldBadge = key ? '<span class="field-key-badge">KEY</span>' : (hasDomain ? '<span class="field-domain-badge">DOMAIN</span>' : '');
+
+              // Pre-computed stats (cached) or loading placeholders (live)
+              let nullCell, uniqCell;
+              const stat = statsMap[f.name];
+              if (hasPrecomputedStats && stat && !stat.skipped) {
+                const nullPct = stat.nullPct;
+                nullCell = nullPct !== null && nullPct !== undefined
+                  ? (nullPct > 0
+                    ? `<span class="field-stat-bar" style="--pct:${Math.min(nullPct, 100).toFixed(0)}%">${Number(nullPct).toFixed(1)}%</span>`
+                    : '<span class="field-stat-zero">0%</span>')
+                  : '\u2014';
+                const dc = stat.distinctCount;
+                if (dc !== null && dc !== undefined) {
+                  if (stat.hasDomain) {
+                    const dvCount = f.domain?.codedValueCount || dc;
+                    uniqCell = `<span class="field-stat-domain">${dc.toLocaleString()} of ${dvCount} codes</span>`;
+                  } else if (dc <= 25) {
+                    uniqCell = `<span class="field-stat-low-card">${dc.toLocaleString()}</span>`;
+                  } else {
+                    uniqCell = `<span class="field-stat-count">${dc.toLocaleString()}</span>`;
+                  }
+                } else {
+                  uniqCell = '\u2014';
+                }
+              } else if (hasPrecomputedStats && stat && stat.skipped) {
+                nullCell = '\u2014';
+                uniqCell = '\u2014';
+              } else {
+                nullCell = `<span class="field-stat-loading">\u2022\u2022\u2022</span>`;
+                uniqCell = `<span class="field-stat-loading">\u2022\u2022\u2022</span>`;
+              }
+
+              return `<tr${rowCls} data-field-idx="${i}">
+                <td class="field-name-cell">${fieldBadge}<code>${escapeHtml(f.name)}</code></td>
+                <td>${escapeHtml(f.alias || '')}</td>
+                <td><span class="field-type-pill">${escapeHtml(friendlyType(f.type))}</span></td>
+                <td class="fields-stat-col" data-field-null="${i}">${nullCell}</td>
+                <td class="fields-stat-col" data-field-uniq="${i}">${uniqCell}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+// ── Build Sample Records card HTML ──
+
+function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDate = '' } = {}) {
+  const badge = isCached ? 'Cached' : 'Auto';
+  const refreshBtn = '<button type="button" class="btn" data-sample-refresh title="Fetch new random sample from live service" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>';
+
+  let bodyHTML;
+  if (rows && rows.length) {
+    const cols = Object.keys(rows[0]);
+    bodyHTML = `
+      <div style="overflow:auto;">
+        <table>
+          <thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
+          <tbody>
+            ${rows.map(r => `<tr>${cols.map(c => `<td>${escapeHtml(String(r[c] ?? ''))}</td>`).join('')}</tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  } else {
+    bodyHTML = '<p class="loading-message" style="font-size:0.85rem;">Selecting random rows\u2026</p>';
+  }
+
+  const total = recordCount != null ? `${Number(recordCount).toLocaleString()} total records in service. ` : '';
+  const desc = rows && rows.length
+    ? `${total}Showing ${rows.length} ${isCached ? 'cached sample' : 'randomly selected'} rows.${isCached ? ' Generated ' + generatedDate + '.' : ''}`
+    : `${total}Loading random sample\u2026`;
+
+  return `
+    <div class="card" id="sampleRecordsCard" style="margin-top:0.75rem;">
+      <div class="card-header-row">
+        <div style="font-weight:600;">Sample Records</div>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="data-source-badge data-source-badge-${isCached ? 'cached' : 'auto'}">${badge}</span>
+          ${refreshBtn}
+        </div>
+      </div>
+      <p class="text-muted" data-sample-desc style="margin-bottom:0.5rem;font-size:0.85rem;">${desc}</p>
+      <div data-sample-content>${bodyHTML}</div>
+    </div>
+  `;
+}
+
+// ── Async field stats loader (runs after live fields card renders) ──
+
+function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation) {
+  const _fieldStatsUrl = fetchBaseUrl;
+  const _fieldStatsLayerId = layerId;
+  const _fieldStatsFields = allFields;
+  const _fieldStatsGen = generation;
+
+  setTimeout(async () => {
+    if (_fieldStatsGen !== _renderGeneration) return;
+    const table = contentEl.querySelector('#fieldsTable');
+    if (!table) return;
+
+    const _fieldStatsCollector = [];
+
+    let totalCount = 0;
+    try {
+      const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
+      const base = normalizeServiceUrl(_fieldStatsUrl);
+      const parsed = parseServiceAndLayerId(base);
+      const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
+      const countJson = await fetchJsonWithTimeout(`${target}/query?${countParams}`, 8000);
+      totalCount = (countJson && typeof countJson.count === 'number') ? countJson.count : 0;
+    } catch {}
+    if (_fieldStatsGen !== _renderGeneration || !totalCount) {
+      table.querySelectorAll('[data-field-null], [data-field-uniq]').forEach(td => {
+        td.textContent = '\u2014';
+      });
+      return;
+    }
+
+    const STAT_CONCURRENCY = 3;
+    let fIdx = 0;
+
+    async function processField() {
+      while (fIdx < _fieldStatsFields.length) {
+        const i = fIdx++;
+        const f = _fieldStatsFields[i];
+        if (_fieldStatsGen !== _renderGeneration) return;
+
+        const nullCell = table.querySelector(`[data-field-null="${i}"]`);
+        const uniqCell = table.querySelector(`[data-field-uniq="${i}"]`);
+        if (!nullCell || !uniqCell) continue;
+
+        const ft = (f.type || '').toUpperCase();
+        if (ft.includes('GEOMETRY') || ft.includes('BLOB') || ft.includes('RASTER') || ft.includes('XML')) {
+          nullCell.textContent = '\u2014';
+          uniqCell.textContent = '\u2014';
+          continue;
+        }
+
+        try {
+          const base = normalizeServiceUrl(_fieldStatsUrl);
+          const parsed = parseServiceAndLayerId(base);
+          const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
+          const statParams = new URLSearchParams({
+            where: '1=1',
+            outStatistics: JSON.stringify([
+              { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'nn_count' }
+            ]),
+            f: 'json',
+          });
+          const statJson = await fetchJsonWithTimeout(`${target}/query?${statParams}`, 6000);
+          const nnCount = (statJson?.features?.[0]?.attributes?.nn_count) ?? totalCount;
+          const nullPct = totalCount > 0 ? ((totalCount - nnCount) / totalCount * 100) : 0;
+          _fieldStatsCollector.push({ name: f.name, type: f.type, alias: f.alias || '', nullPct, hasDomain: !!(f.domain && f.domain.type === 'codedValue') });
+          nullCell.innerHTML = nullPct > 0
+            ? `<span class="field-stat-bar" style="--pct:${Math.min(nullPct, 100).toFixed(0)}%">${nullPct.toFixed(1)}%</span>`
+            : '<span class="field-stat-zero">0%</span>';
+        } catch {
+          nullCell.textContent = '\u2014';
+        }
+
+        try {
+          const base = normalizeServiceUrl(_fieldStatsUrl);
+          const parsed = parseServiceAndLayerId(base);
+          const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
+          
+          let distinctCount = null;
+          try {
+            const distParams1 = new URLSearchParams({
+              where: '1=1', outFields: f.name, returnDistinctValues: 'true', returnCountOnly: 'true', f: 'json',
+            });
+            const distJson1 = await fetchJsonWithTimeout(`${target}/query?${distParams1}`, 5000);
+            if (distJson1 && typeof distJson1.count === 'number') distinctCount = distJson1.count;
+          } catch {}
+          
+          if (distinctCount === null) {
+            try {
+              const distParams2 = new URLSearchParams({
+                where: '1=1', groupByFieldsForStatistics: f.name,
+                outStatistics: JSON.stringify([{ statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }]),
+                f: 'json',
+              });
+              const distJson2 = await fetchJsonWithTimeout(`${target}/query?${distParams2}`, 5000);
+              if (distJson2 && Array.isArray(distJson2.features)) distinctCount = distJson2.features.length;
+            } catch {}
+          }
+          
+          if (distinctCount != null && totalCount > 0) {
+            const isUnique = distinctCount === totalCount;
+            const hasDomain = f.domain && f.domain.type === 'codedValue';
+            if (isUnique) {
+              uniqCell.innerHTML = `<span class="field-stat-unique">${distinctCount.toLocaleString()}</span>`;
+            } else if (hasDomain) {
+              const domainCount = f.domain.codedValues ? f.domain.codedValues.length : distinctCount;
+              uniqCell.innerHTML = `<span class="field-stat-domain">${distinctCount.toLocaleString()} of ${domainCount} codes</span>`;
+            } else if (distinctCount <= 25) {
+              uniqCell.innerHTML = `<span class="field-stat-low-card">${distinctCount.toLocaleString()}</span>`;
+            } else {
+              uniqCell.innerHTML = `<span class="field-stat-count">${distinctCount.toLocaleString()}</span>`;
+            }
+          } else {
+            uniqCell.textContent = '\u2014';
+          }
+        } catch {
+          uniqCell.textContent = '\u2014';
+        }
+      }
+    }
+
+    await Promise.all(Array.from({ length: STAT_CONCURRENCY }, processField));
+
+    try {
+      containingEl.dispatchEvent(new CustomEvent('maturity:field-stats', {
+        detail: { fieldStats: _fieldStatsCollector, totalCount },
+      }));
+    } catch (_) {}
+  }, 50);
+}
+
+// ── Wire sample records refresh (random rows from live service) ──
+
+function wireSampleRefresh(contentEl, fetchBaseUrl, layerId, objectIdField, recordCount, generation) {
+  const sampleCard = contentEl.querySelector('#sampleRecordsCard');
+  if (!sampleCard) return;
+
+  const _sOidField = objectIdField || 'OBJECTID';
+  const _sUrl = fetchBaseUrl;
+  const _sLayerId = layerId;
+  const _sCount = recordCount || 0;
+  const _sGen = generation;
+  const _sContent = sampleCard.querySelector('[data-sample-content]');
+  const _sDesc = sampleCard.querySelector('[data-sample-desc]');
+
+  async function loadRandomSample() {
+    if (_sGen !== _renderGeneration) return;
+    _sContent.innerHTML = '<p class="loading-message" style="font-size:0.85rem;">Selecting random rows\u2026</p>';
+
+    const rows = await fetchRandomSampleRows(_sUrl, _sLayerId, _sOidField, _sCount, 5);
+    if (_sGen !== _renderGeneration) return;
+
+    if (!rows.length) {
+      _sContent.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">Could not fetch sample records.</p>';
+      return;
+    }
+
+    const cols = Object.keys(rows[0]);
+    const total = _sCount ? `${_sCount.toLocaleString()} total records in service. ` : '';
+    _sDesc.textContent = `${total}Showing ${rows.length} randomly selected rows.`;
+
+    // Update badge to show live data
+    const badgeEl = sampleCard.querySelector('.data-source-badge');
+    if (badgeEl) {
+      badgeEl.textContent = 'Auto';
+      badgeEl.className = 'data-source-badge data-source-badge-auto';
+    }
+
+    _sContent.innerHTML = `
+      <div style="overflow:auto;">
+        <table>
+          <thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
+          <tbody>
+            ${rows.map(r => `<tr>${cols.map(c => `<td>${escapeHtml(String(r[c] ?? ''))}</td>`).join('')}</tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }
+
+  const refreshBtn = sampleCard.querySelector('[data-sample-refresh]');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', () => loadRandomSample());
+  }
+
+  return loadRandomSample;
+}
+
+// ── Render from cached service info ──
+
+function renderFromCachedData(contentEl, statusEl, cached, url, generation, containingEl) {
+  const m = cached.metadata;
+  const generatedDate = new Date(cached.generated).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  const parsed = parseServiceAndLayerId(url);
+  const serviceBaseUrl = parsed.serviceUrl;
+  const layerId = parsed.isLayerUrl ? parsed.layerId : 0;
+  const _isTable = !m.geometryType || m.geometryType.toUpperCase() === 'TABLE';
+
+  let html = '';
+
+  // 1. Service Metadata card (from cache)
+  html += buildMetadataCardHTML(m, { isCached: true, generatedDate });
+
+  // 2. Interactive Map (live — still needs the ArcGIS widget)
+  if (!_isTable) {
+    html += buildMapCardHTML(url, layerId);
+  }
+
+  // 3. Fields card (from cache with pre-computed stats)
+  html += buildFieldsCardHTML(cached.fields, cached.fieldStats, {
+    isCached: true,
+    generatedDate,
+    oidFieldName: m.objectIdField || '',
+    globalIdFieldName: m.globalIdField || '',
+  });
+
+  // 4. Sample Records card (from cache)
+  html += buildSampleCardHTML(cached.sampleRows, m.recordCount, { isCached: true, generatedDate });
+
+  contentEl.innerHTML = html;
+  statusEl.textContent = `Preview loaded from cache (${generatedDate}).`;
+
+  // Dispatch maturity events from cached data so the maturity card can score
+  try {
+    // Reconstruct minimal serviceJson/layerJson for maturity scoring
+    const syntheticServiceJson = {
+      capabilities: m.capabilities || '',
+      supportsStatistics: m.supportsStatistics,
+      spatialReference: m.wkid ? { wkid: m.wkid } : {},
+      serviceDescription: m.serviceDescription || '',
+      description: m.serviceDescription || '',
+      copyrightText: m.copyrightText || '',
+      documentInfo: { Author: m.author || '' },
+    };
+    const syntheticLayerJson = {
+      supportsStatistics: m.supportsStatistics,
+      advancedQueryCapabilities: { supportsAdvancedQueries: m.supportsAdvancedQueries },
+      spatialReference: m.wkid ? { wkid: m.wkid } : {},
+      fields: cached.fields || [],
+    };
+    containingEl.dispatchEvent(new CustomEvent('maturity:service-data', {
+      detail: { serviceJson: syntheticServiceJson, layerJson: syntheticLayerJson },
+    }));
+  } catch (_) {}
+
+  // Dispatch cached field stats for maturity
+  if (cached.fieldStats && cached.fieldStats.length) {
+    try {
+      containingEl.dispatchEvent(new CustomEvent('maturity:field-stats', {
+        detail: { fieldStats: cached.fieldStats, totalCount: m.recordCount || 0 },
+      }));
+    } catch (_) {}
+  }
+
+  // Wire sample records refresh (fetch new random rows from live service)
+  const fetchBaseUrl = parsed.isLayerUrl ? url : serviceBaseUrl;
+  wireSampleRefresh(contentEl, fetchBaseUrl, layerId, m.objectIdField, m.recordCount, generation);
+
+  // Wire metadata refresh button
+  const metaRefreshBtn = contentEl.querySelector('[data-refresh-metadata]');
+  if (metaRefreshBtn) {
+    metaRefreshBtn.addEventListener('click', async () => {
+      const card = contentEl.querySelector('#serviceMetadataCard');
+      if (!card) return;
+      card.innerHTML = '<p class="loading-message" style="padding:1rem;font-size:0.85rem;">Refreshing from live service\u2026</p>';
+      try {
+        let sj;
+        try { sj = await fetchServiceJson(serviceBaseUrl); } catch { sj = await fetchServiceJson(url); }
+        let lj = null;
+        try { lj = await fetchLayerJson(fetchBaseUrl, layerId); } catch {}
+        if ((!lj || !Array.isArray(lj.fields)) && parsed.isLayerUrl) {
+          try { const d = await fetchServiceJson(url); if (d && Array.isArray(d.fields)) lj = d; } catch {}
+        }
+        let rc = null;
+        try {
+          const cp = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
+          const ct = parsed.isLayerUrl ? fetchBaseUrl : `${fetchBaseUrl}/${layerId}`;
+          const cj = await fetchJsonWithTimeout(`${ct}/query?${cp}`, 5000);
+          if (cj && typeof cj.count === 'number') rc = cj.count;
+        } catch {}
+        const liveProps = extractMetadataProps(sj, lj, rc);
+        card.outerHTML = buildMetadataCardHTML(liveProps);
+      } catch (e) {
+        card.innerHTML = '<p class="text-muted" style="padding:1rem;font-size:0.85rem;">Failed to refresh metadata from live service.</p>';
+      }
+    });
+  }
+
+  // Wire fields refresh button
+  const fieldsRefreshBtn = contentEl.querySelector('[data-refresh-fields]');
+  if (fieldsRefreshBtn) {
+    fieldsRefreshBtn.addEventListener('click', async () => {
+      const card = contentEl.querySelector('#fieldsCard');
+      if (!card) return;
+      card.innerHTML = '<p class="loading-message" style="padding:1rem;font-size:0.85rem;">Refreshing fields from live service\u2026</p>';
+      try {
+        let lj = null;
+        try { lj = await fetchLayerJson(fetchBaseUrl, layerId); } catch {}
+        if ((!lj || !Array.isArray(lj.fields)) && parsed.isLayerUrl) {
+          try { const d = await fetchServiceJson(url); if (d && Array.isArray(d.fields)) lj = d; } catch {}
+        }
+        if (lj && Array.isArray(lj.fields) && lj.fields.length) {
+          card.outerHTML = buildFieldsCardHTML(lj.fields, null, {
+            isCached: false,
+            oidFieldName: lj.objectIdField || '',
+            globalIdFieldName: lj.globalIdField || '',
+          });
+          // Start async field stats for the refreshed fields
+          startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, lj.fields, generation);
+        } else {
+          card.innerHTML = '<p class="text-muted" style="padding:1rem;font-size:0.85rem;">No fields returned from live service.</p>';
+        }
+      } catch {
+        card.innerHTML = '<p class="text-muted" style="padding:1rem;font-size:0.85rem;">Failed to refresh fields from live service.</p>';
+      }
+    });
+  }
+
+  // Initialize interactive map
+  if (!_isTable) {
+    initializeArcGISMap(serviceBaseUrl, layerId);
+  }
+}
+
+// ── Main preview renderer ──
+
+export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation, options = {}) {
   if (!hostEl) return;
+  const { datasetId, skipCache } = options;
 
   const card = hostEl.querySelector('#datasetPreviewCard');
   const statusEl = hostEl.querySelector('[data-preview-status]');
   const contentEl = hostEl.querySelector('[data-preview-content]');
   if (!card || !statusEl || !contentEl) return;
+
+  // containingEl is hostEl (the dataset detail panel) — used for dispatching maturity events
+  const containingEl = hostEl;
 
   const url = normalizeServiceUrl(publicUrl);
   if (!url) {
@@ -237,20 +919,28 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     return;
   }
 
-  // avoid duplicate loads for same dataset re-render
-  if (contentEl.getAttribute('data-preview-rendered') === url) return;
+  // avoid duplicate loads for same dataset re-render (unless refreshing)
+  if (!skipCache && contentEl.getAttribute('data-preview-rendered') === url) return;
   contentEl.setAttribute('data-preview-rendered', url);
 
+  // ── Try cached data first (unless explicitly skipping) ──
+  if (!skipCache && datasetId) {
+    const cached = await fetchCachedServiceInfo(datasetId);
+    if (cached && cached.metadata) {
+      renderFromCachedData(contentEl, statusEl, cached, url, generation, containingEl);
+      return;
+    }
+  }
+
+  // ── Live fetch path ──
   statusEl.textContent = 'Loading service preview…';
   contentEl.innerHTML = '';
 
   try {
-    // Determine if URL is a layer endpoint or a service root
     const parsed = parseServiceAndLayerId(url);
     const serviceBaseUrl = parsed.serviceUrl;
     const isLayerUrl = parsed.isLayerUrl;
 
-    // Fetch service-level JSON (for metadata, layer list, extent)
     let serviceJson;
     try {
       serviceJson = await fetchServiceJson(serviceBaseUrl);
@@ -258,7 +948,6 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
       serviceJson = await fetchServiceJson(url);
     }
 
-    // Choose the layer ID for field/sample queries
     let layerId;
     if (isLayerUrl) {
       layerId = parsed.layerId;
@@ -268,24 +957,17 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
         : 0;
     }
 
-    // For layer-level fetches use the right base URL
     const fetchBaseUrl = isLayerUrl ? url : serviceBaseUrl;
 
-    const upper = url.toUpperCase();
-
-    // Layer fields (best-effort)
     let layerJson = null;
     try { layerJson = await fetchLayerJson(fetchBaseUrl, layerId); } catch {}
-    // If layerJson came back without fields (e.g. it was a service-root hit),
-    // and the original URL already had fields, try the original URL directly.
     if ((!layerJson || !Array.isArray(layerJson.fields)) && isLayerUrl) {
       try {
-        const direct = await fetchServiceJson(url); // layer-level JSON
+        const direct = await fetchServiceJson(url);
         if (direct && Array.isArray(direct.fields)) layerJson = direct;
       } catch {}
     }
 
-    // Fetch total record count for sample records display
     let recordCount = null;
     try {
       const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
@@ -294,471 +976,52 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
       if (countJson && typeof countJson.count === 'number') recordCount = countJson.count;
     } catch {}
 
-    // Bail if user navigated to a different dataset while we were fetching
     if (generation !== _renderGeneration) return;
 
-    // Dispatch maturity event: service + layer JSON are ready
+    // Dispatch maturity event
     try {
       containingEl.dispatchEvent(new CustomEvent('maturity:service-data', {
         detail: { serviceJson, layerJson },
       }));
     } catch (_) {}
 
-    // Service description from metadata
-    const serviceDescription = serviceJson.serviceDescription || serviceJson.description || '';
-    const copyrightText = serviceJson.copyrightText || '';
-    const documentInfo = serviceJson.documentInfo || {};
-    const currentVersion = serviceJson.currentVersion || '';
-    const maxRecordCount = serviceJson.maxRecordCount || '';
-    
-    // Additional metadata from service/layer JSON
-    const spatialRef = serviceJson.spatialReference || layerJson?.spatialReference || {};
-    const wkid = spatialRef.latestWkid || spatialRef.wkid || '';
-    const capabilities = serviceJson.capabilities || '';
-    const supportsStatistics = layerJson?.supportsStatistics ?? serviceJson.supportsStatistics ?? null;
-    const supportsAdvancedQueries = layerJson?.advancedQueryCapabilities?.supportsAdvancedQueries ?? null;
-    const geometryType = layerJson?.geometryType || '';
-    const objectIdField = layerJson?.objectIdField || '';
-    const globalIdField = layerJson?.globalIdField || '';
-    const displayField = layerJson?.displayField || '';
-    const hasAttachments = layerJson?.hasAttachments ?? null;
-    const hasM = layerJson?.hasM ?? null;
-    const hasZ = layerJson?.hasZ ?? null;
-    const minScale = layerJson?.minScale || 0;
-    const maxScale = layerJson?.maxScale || 0;
-    const editFieldsInfo = layerJson?.editFieldsInfo || null;
-    const featureCount = layerJson?.featureCount ?? null; // sometimes available
-    const extent = layerJson?.extent || serviceJson.fullExtent || null;
+    // Build metadata props and render cards using shared helpers
+    const metaProps = extractMetadataProps(serviceJson, layerJson, recordCount);
 
     let html = '';
+    html += buildMetadataCardHTML(metaProps);
 
-    // Service Metadata from REST endpoint
-    html += `
-      <div class="card" style="margin-top:0.75rem;">
-        <div class="card-header-row"><div style="font-weight:600;">Service Metadata</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
-        <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Fetched from the ArcGIS REST endpoint</p>
-        
-        ${serviceDescription 
-          ? `<div class="collapsible-text-container">
-               <p><strong>Description:</strong></p>
-               <div class="collapsible-text ${serviceDescription.length > 300 ? 'is-collapsed' : ''}" data-full-text="${escapeHtml(serviceDescription)}">
-                 ${escapeHtml(serviceDescription)}
-               </div>
-               ${serviceDescription.length > 300 ? '<button type="button" class="show-more-btn" data-toggle-collapse>Show more</button>' : ''}
-             </div>` 
-          : `<p class="metadata-missing"><strong>Description:</strong> <em>Not provided by service</em></p>`
-        }
-        
-        ${copyrightText 
-          ? `<p><strong>Copyright:</strong> ${escapeHtml(copyrightText)}</p>` 
-          : `<p class="metadata-missing"><strong>Copyright:</strong> <em>Not provided by service</em></p>`
-        }
-        ${documentInfo.Author 
-          ? `<p><strong>Author:</strong> ${escapeHtml(documentInfo.Author)}</p>` 
-          : `<p class="metadata-missing"><strong>Author:</strong> <em>Not provided by service</em></p>`
-        }
-        
-        <div class="metadata-grid">
-          ${currentVersion 
-            ? `<div class="metadata-item"><span class="metadata-label">Server Version</span><span class="metadata-value">${escapeHtml(String(currentVersion))}</span></div>` 
-            : ''
-          }
-          ${wkid 
-            ? `<div class="metadata-item"><span class="metadata-label">Spatial Reference</span><span class="metadata-value">EPSG:${escapeHtml(String(wkid))}</span></div>` 
-            : ''
-          }
-          ${geometryType 
-            ? `<div class="metadata-item"><span class="metadata-label">Geometry Type</span><span class="metadata-value">${escapeHtml(geometryType.replace('esriGeometry', ''))}</span></div>` 
-            : ''
-          }
-          ${maxRecordCount 
-            ? `<div class="metadata-item"><span class="metadata-label">Max Record Count</span><span class="metadata-value">${Number(maxRecordCount).toLocaleString()}</span></div>` 
-            : ''
-          }
-          ${featureCount !== null 
-            ? `<div class="metadata-item"><span class="metadata-label">Feature Count</span><span class="metadata-value">${Number(featureCount).toLocaleString()}</span></div>` 
-            : ''
-          }
-          ${objectIdField 
-            ? `<div class="metadata-item"><span class="metadata-label">Object ID Field</span><span class="metadata-value"><code>${escapeHtml(objectIdField)}</code></span></div>` 
-            : ''
-          }
-          ${globalIdField 
-            ? `<div class="metadata-item"><span class="metadata-label">Global ID Field</span><span class="metadata-value"><code>${escapeHtml(globalIdField)}</code></span></div>` 
-            : ''
-          }
-          ${displayField 
-            ? `<div class="metadata-item"><span class="metadata-label">Display Field</span><span class="metadata-value"><code>${escapeHtml(displayField)}</code></span></div>` 
-            : ''
-          }
-        </div>
-        
-        <div class="metadata-capabilities">
-          ${capabilities 
-            ? `<p><strong>Capabilities:</strong> ${capabilities.split(',').map(c => `<span class="capability-pill">${escapeHtml(c.trim())}</span>`).join(' ')}</p>` 
-            : ''
-          }
-          <div class="capability-flags">
-            ${supportsStatistics !== null 
-              ? `<span class="capability-flag ${supportsStatistics ? 'is-supported' : 'is-not-supported'}">${supportsStatistics ? '✓' : '✗'} Statistics</span>` 
-              : ''
-            }
-            ${supportsAdvancedQueries !== null 
-              ? `<span class="capability-flag ${supportsAdvancedQueries ? 'is-supported' : 'is-not-supported'}">${supportsAdvancedQueries ? '✓' : '✗'} Advanced Queries</span>` 
-              : ''
-            }
-            ${hasAttachments !== null 
-              ? `<span class="capability-flag ${hasAttachments ? 'is-supported' : 'is-not-supported'}">${hasAttachments ? '✓' : '✗'} Attachments</span>` 
-              : ''
-            }
-            ${hasZ !== null 
-              ? `<span class="capability-flag ${hasZ ? 'is-supported' : 'is-not-supported'}">${hasZ ? '✓' : '✗'} Z Values</span>` 
-              : ''
-            }
-            ${hasM !== null 
-              ? `<span class="capability-flag ${hasM ? 'is-supported' : 'is-not-supported'}">${hasM ? '✓' : '✗'} M Values</span>` 
-              : ''
-            }
-            ${editFieldsInfo 
-              ? `<span class="capability-flag is-supported">✓ Editor Tracking</span>` 
-              : ''
-            }
-          </div>
-        </div>
-        
-        ${(minScale > 0 || maxScale > 0) 
-          ? `<p><strong>Visibility Scale Range:</strong> ${maxScale > 0 ? '1:' + Number(maxScale).toLocaleString() : 'Any'} – ${minScale > 0 ? '1:' + Number(minScale).toLocaleString() : 'Any'}</p>` 
-          : ''
-        }
-        
-        ${extent && extent.xmin !== undefined 
-          ? `<details class="extent-details">
-               <summary><strong>Full Extent</strong></summary>
-               <div class="extent-coords">
-                 <span>xmin: ${extent.xmin?.toFixed(4)}</span>
-                 <span>ymin: ${extent.ymin?.toFixed(4)}</span>
-                 <span>xmax: ${extent.xmax?.toFixed(4)}</span>
-                 <span>ymax: ${extent.ymax?.toFixed(4)}</span>
-               </div>
-             </details>` 
-          : ''
-        }
-      </div>
-    `;
-
-    // Interactive ArcGIS Map View (skip for non-spatial tables)
-    const mapServiceUrl = url;
-    const mapLayerId = layerId;
-    const _isTable = !geometryType || geometryType.toUpperCase() === 'TABLE';
+    const _isTable = !metaProps.geometryType || metaProps.geometryType.toUpperCase() === 'TABLE';
     if (!_isTable) {
-      html += `
-        <div class="card" style="margin-top:0.75rem;">
-          <div class="card-header-row"><div style="font-weight:600;">Interactive Map</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
-          <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset</div>
-          <div id="arcgisMapContainer" 
-               data-service-url="${escapeHtml(mapServiceUrl)}" 
-               data-layer-id="${mapLayerId}"
-               style="width:100%; height:400px; border-radius:12px; overflow:hidden; background:#e0e0e0;"></div>
-        </div>
-      `;
+      html += buildMapCardHTML(url, layerId);
     }
 
-    // Fields summary — redesigned as a table with async null% / unique% stats
-    if (layerJson && Array.isArray(layerJson.fields) && layerJson.fields.length) {
-      const allFields = layerJson.fields;
-
-      // Identify key / system fields
-      const oidField = (layerJson.objectIdField || '').toUpperCase();
-      const globalIdField = (layerJson.globalIdField || '').toUpperCase();
-      function isKeyField(f) {
-        const n = (f.name || '').toUpperCase();
-        const t = (f.type || '').toUpperCase();
-        return n === oidField || n === globalIdField
-          || t === 'ESRIFIELDTYPEOID' || t === 'ESRIFIELDTYPEGLOBALID';
-      }
-
-      // Friendly type labels
-      function friendlyType(esriType) {
-        const map = {
-          'ESRIFIELDTYPEOID':       'OID',
-          'ESRIFIELDTYPEGLOBALID':  'GlobalID',
-          'ESRIFIELDTYPESTRING':    'String',
-          'ESRIFIELDTYPEINTEGER':   'Integer',
-          'ESRIFIELDTYPESMALLINTEGER': 'SmallInt',
-          'ESRIFIELDTYPEDOUBLE':    'Double',
-          'ESRIFIELDTYPESINGLE':    'Single',
-          'ESRIFIELDTYPEDATE':      'Date',
-          'ESRIFIELDTYPEBLOB':      'Blob',
-          'ESRIFIELDTYPEGUID':      'GUID',
-          'ESRIFIELDTYPEXML':       'XML',
-          'ESRIFIELDTYPEGEOMETRY':  'Geometry',
-          'ESRIFIELDTYPERASTER':    'Raster',
-        };
-        const key = String(esriType || '').toUpperCase().replace(/\s/g, '');
-        return map[key] || esriType || '';
-      }
-
-      html += `
-        <div class="card card-fields" style="margin-top:0.75rem;">
-          <div class="card-header-row"><div style="font-weight:600;">Fields</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
-          <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${allFields.length} fields. Null % and Distinct counts are computed from the full dataset via service statistics queries.</p>
-          <div style="overflow-x:auto;">
-            <table class="fields-table" id="fieldsTable">
-              <thead>
-                <tr>
-                  <th>Field Name</th>
-                  <th>Alias</th>
-                  <th>Type</th>
-                  <th class="fields-stat-col">Null %</th>
-                  <th class="fields-stat-col">Distinct</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${allFields.map((f, i) => {
-                  const key = isKeyField(f);
-                  const hasDomain = f.domain && f.domain.type === 'codedValue';
-                  const rowCls = key ? ' class="field-row-key"' : (hasDomain ? ' class="field-row-domain"' : '');
-                  const badge = key ? '<span class="field-key-badge">KEY</span>' : (hasDomain ? '<span class="field-domain-badge">DOMAIN</span>' : '');
-                  return `<tr${rowCls} data-field-idx="${i}">
-                    <td class="field-name-cell">${badge}<code>${escapeHtml(f.name)}</code></td>
-                    <td>${escapeHtml(f.alias || '')}</td>
-                    <td><span class="field-type-pill">${escapeHtml(friendlyType(f.type))}</span></td>
-                    <td class="fields-stat-col" data-field-null="${i}"><span class="field-stat-loading">\u2022\u2022\u2022</span></td>
-                    <td class="fields-stat-col" data-field-uniq="${i}"><span class="field-stat-loading">\u2022\u2022\u2022</span></td>
-                  </tr>`;
-                }).join('')}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      `;
-
-      // --- Async field stats: runs after card renders ---
-      // We capture variables for the async closure
-      const _fieldStatsUrl = fetchBaseUrl;
-      const _fieldStatsLayerId = layerId;
-      const _fieldStatsFields = allFields;
-      const _fieldStatsGen = generation;
-
-      // Defer to next microtask so the DOM is painted first
-      setTimeout(async () => {
-        if (_fieldStatsGen !== _renderGeneration) return;
-        const table = contentEl.querySelector('#fieldsTable');
-        if (!table) return;
-
-        // Collector for maturity event
-        const _fieldStatsCollector = [];
-
-        // 1) Get total feature count
-        let totalCount = 0;
-        try {
-          const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
-          const base = normalizeServiceUrl(_fieldStatsUrl);
-          const parsed = parseServiceAndLayerId(base);
-          const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
-          const countJson = await fetchJsonWithTimeout(`${target}/query?${countParams}`, 8000);
-          totalCount = (countJson && typeof countJson.count === 'number') ? countJson.count : 0;
-        } catch {}
-        if (_fieldStatsGen !== _renderGeneration || !totalCount) {
-          // Can't compute percentages without total count — show dashes
-          table.querySelectorAll('[data-field-null], [data-field-uniq]').forEach(td => {
-            td.textContent = '\u2014';
-          });
-          return;
-        }
-
-        // 2) Query null count and distinct count per field (batched with concurrency limit)
-        const STAT_CONCURRENCY = 3;
-        let fIdx = 0;
-
-        async function processField() {
-          while (fIdx < _fieldStatsFields.length) {
-            const i = fIdx++;
-            const f = _fieldStatsFields[i];
-            if (_fieldStatsGen !== _renderGeneration) return;
-
-            const nullCell = table.querySelector(`[data-field-null="${i}"]`);
-            const uniqCell = table.querySelector(`[data-field-uniq="${i}"]`);
-            if (!nullCell || !uniqCell) continue;
-
-            // Skip geometry/blob/raster fields
-            const ft = (f.type || '').toUpperCase();
-            if (ft.includes('GEOMETRY') || ft.includes('BLOB') || ft.includes('RASTER') || ft.includes('XML')) {
-              nullCell.textContent = '\u2014';
-              uniqCell.textContent = '\u2014';
-              continue;
-            }
-
-            try {
-              // COUNT(fieldName) gives non-null count
-              const base = normalizeServiceUrl(_fieldStatsUrl);
-              const parsed = parseServiceAndLayerId(base);
-              const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
-              const statParams = new URLSearchParams({
-                where: '1=1',
-                outStatistics: JSON.stringify([
-                  { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'nn_count' }
-                ]),
-                f: 'json',
-              });
-              const statJson = await fetchJsonWithTimeout(`${target}/query?${statParams}`, 6000);
-              const nnCount = (statJson?.features?.[0]?.attributes?.nn_count) ?? totalCount;
-              const nullPct = totalCount > 0 ? ((totalCount - nnCount) / totalCount * 100) : 0;
-              _fieldStatsCollector.push({ name: f.name, type: f.type, alias: f.alias || '', nullPct, hasDomain: !!(f.domain && f.domain.type === 'codedValue') });
-              nullCell.innerHTML = nullPct > 0
-                ? `<span class="field-stat-bar" style="--pct:${Math.min(nullPct, 100).toFixed(0)}%">${nullPct.toFixed(1)}%</span>`
-                : '<span class="field-stat-zero">0%</span>';
-            } catch {
-              nullCell.textContent = '\u2014';
-            }
-
-            try {
-              // Distinct count: try multiple approaches for compatibility
-              const base = normalizeServiceUrl(_fieldStatsUrl);
-              const parsed = parseServiceAndLayerId(base);
-              const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
-              
-              let distinctCount = null;
-              
-              // Approach 1: returnDistinctValues with returnCountOnly (cleaner, but not always supported)
-              try {
-                const distParams1 = new URLSearchParams({
-                  where: '1=1',
-                  outFields: f.name,
-                  returnDistinctValues: 'true',
-                  returnCountOnly: 'true',
-                  f: 'json',
-                });
-                const distJson1 = await fetchJsonWithTimeout(`${target}/query?${distParams1}`, 5000);
-                if (distJson1 && typeof distJson1.count === 'number') {
-                  distinctCount = distJson1.count;
-                }
-              } catch {}
-              
-              // Approach 2: If approach 1 failed, use groupByFieldsForStatistics and count features
-              if (distinctCount === null) {
-                try {
-                  const distParams2 = new URLSearchParams({
-                    where: '1=1',
-                    groupByFieldsForStatistics: f.name,
-                    outStatistics: JSON.stringify([
-                      { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }
-                    ]),
-                    f: 'json',
-                  });
-                  const distJson2 = await fetchJsonWithTimeout(`${target}/query?${distParams2}`, 5000);
-                  if (distJson2 && Array.isArray(distJson2.features)) {
-                    distinctCount = distJson2.features.length;
-                  }
-                } catch {}
-              }
-              
-              if (distinctCount != null && totalCount > 0) {
-                const isUnique = distinctCount === totalCount;
-                const hasDomain = f.domain && f.domain.type === 'codedValue';
-                if (isUnique) {
-                  uniqCell.innerHTML = `<span class="field-stat-unique">${distinctCount.toLocaleString()}</span>`;
-                } else if (hasDomain) {
-                  const domainCount = f.domain.codedValues ? f.domain.codedValues.length : distinctCount;
-                  uniqCell.innerHTML = `<span class="field-stat-domain">${distinctCount.toLocaleString()} of ${domainCount} codes</span>`;
-                } else if (distinctCount <= 25) {
-                  uniqCell.innerHTML = `<span class="field-stat-low-card">${distinctCount.toLocaleString()}</span>`;
-                } else {
-                  uniqCell.innerHTML = `<span class="field-stat-count">${distinctCount.toLocaleString()}</span>`;
-                }
-              } else {
-                uniqCell.textContent = '\u2014';
-              }
-            } catch {
-              uniqCell.textContent = '\u2014';
-            }
-          }
-        }
-
-        await Promise.all(Array.from({ length: STAT_CONCURRENCY }, processField));
-
-        // Dispatch maturity event: field stats are ready
-        try {
-          containingEl.dispatchEvent(new CustomEvent('maturity:field-stats', {
-            detail: { fieldStats: _fieldStatsCollector, totalCount },
-          }));
-        } catch (_) {}
-      }, 50);
+    // Fields card (live — stats computed async)
+    const allFields = (layerJson && Array.isArray(layerJson.fields)) ? layerJson.fields : [];
+    if (allFields.length) {
+      html += buildFieldsCardHTML(allFields, null, {
+        isCached: false,
+        oidFieldName: layerJson?.objectIdField || '',
+        globalIdFieldName: layerJson?.globalIdField || '',
+      });
     }
 
-    // Sample Records placeholder — populated asynchronously with truly random rows
-    html += `
-      <div class="card" id="sampleRecordsCard" style="margin-top:0.75rem;">
-        <div class="card-header-row">
-          <div style="font-weight:600;">Sample Records</div>
-          <div style="display:flex;align-items:center;gap:0.5rem;">
-            <span class="data-source-badge data-source-badge-auto">Auto</span>
-            <button type="button" class="btn" data-sample-refresh title="Fetch another random sample" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>
-          </div>
-        </div>
-        <p class="text-muted" data-sample-desc style="margin-bottom:0.5rem;font-size:0.85rem;">
-          ${recordCount !== null ? recordCount.toLocaleString() + ' total records in service.' : ''}
-          Loading random sample\u2026
-        </p>
-        <div data-sample-content>
-          <p class="loading-message" style="font-size:0.85rem;">Selecting random rows\u2026</p>
-        </div>
-      </div>
-    `;
+    // Sample records card (live — async random rows)
+    html += buildSampleCardHTML(null, recordCount);
 
     contentEl.innerHTML = html;
     statusEl.textContent = 'Preview loaded.';
 
-    // Wire async random sample rows
-    {
-      const sampleCard = contentEl.querySelector('#sampleRecordsCard');
-      if (sampleCard) {
-        const _sOidField = objectIdField || 'OBJECTID';
-        const _sUrl = fetchBaseUrl;
-        const _sLayerId = layerId;
-        const _sCount = recordCount || 0;
-        const _sGen = generation;
-        const _sContent = sampleCard.querySelector('[data-sample-content]');
-        const _sDesc = sampleCard.querySelector('[data-sample-desc]');
-
-        async function loadRandomSample() {
-          if (_sGen !== _renderGeneration) return;
-          _sContent.innerHTML = '<p class="loading-message" style="font-size:0.85rem;">Selecting random rows\u2026</p>';
-
-          const rows = await fetchRandomSampleRows(_sUrl, _sLayerId, _sOidField, _sCount, 5);
-          if (_sGen !== _renderGeneration) return;
-
-          if (!rows.length) {
-            _sContent.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">Could not fetch sample records.</p>';
-            return;
-          }
-
-          const cols = Object.keys(rows[0]);
-          const total = _sCount ? `${_sCount.toLocaleString()} total records in service. ` : '';
-          _sDesc.textContent = `${total}Showing ${rows.length} randomly selected rows.`;
-          _sContent.innerHTML = `
-            <div style="overflow:auto;">
-              <table>
-                <thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
-                <tbody>
-                  ${rows.map(r => `<tr>${cols.map(c => `<td>${escapeHtml(String(r[c] ?? ''))}</td>`).join('')}</tr>`).join('')}
-                </tbody>
-              </table>
-            </div>
-          `;
-        }
-
-        loadRandomSample();
-
-        const refreshBtn = sampleCard.querySelector('[data-sample-refresh]');
-        if (refreshBtn) {
-          refreshBtn.addEventListener('click', () => loadRandomSample());
-        }
-      }
+    // Start async field stats
+    if (allFields.length) {
+      startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation);
     }
 
-    // Initialize interactive ArcGIS map (use service root for MapImageLayer)
-    // Skip for non-spatial tables — there is no geometry to display.
+    // Wire sample records refresh and load initial sample
+    const loadSample = wireSampleRefresh(contentEl, fetchBaseUrl, layerId, metaProps.objectIdField, recordCount, generation);
+    if (loadSample) loadSample();
+
+    // Initialize interactive map
     if (!_isTable) {
       initializeArcGISMap(serviceBaseUrl, layerId);
     }

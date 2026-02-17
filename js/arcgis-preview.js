@@ -448,6 +448,14 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
 
   const hasPrecomputedStats = isCached && fieldStats && fieldStats.length > 0;
 
+  // Sort: key fields first, then domain fields, then everything else (stable within each group)
+  const sortedFields = fields.map((f, i) => ({ field: f, origIdx: i }));
+  sortedFields.sort((a, b) => {
+    const aKey = isKeyField(a.field) ? 0 : (!!(a.field.domain && (a.field.domain.type === 'codedValue' || a.field.domain === true)) ? 1 : 2);
+    const bKey = isKeyField(b.field) ? 0 : (!!(b.field.domain && (b.field.domain.type === 'codedValue' || b.field.domain === true)) ? 1 : 2);
+    return aKey - bKey || a.origIdx - b.origIdx;
+  });
+
   return `
     <div class="card card-fields" style="margin-top:0.75rem;" id="fieldsCard">
       <div class="card-header-row">
@@ -470,7 +478,7 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
             </tr>
           </thead>
           <tbody>
-            ${fields.map((f, i) => {
+            ${sortedFields.map(({ field: f, origIdx: i }) => {
               const key = isKeyField(f);
               const hasDomain = !!(f.domain && (f.domain.type === 'codedValue' || f.domain === true));
               const rowCls = key ? ' class="field-row-key"' : (hasDomain ? ' class="field-row-domain"' : '');
@@ -488,8 +496,8 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
                   : '\u2014';
                 const dc = stat.distinctCount;
                 if (dc !== null && dc !== undefined) {
-                  if (stat.hasDomain) {
-                    const dvCount = f.domain?.codedValueCount || dc;
+                  if (stat.hasDomain && f.domain && f.domain.codedValues) {
+                    const dvCount = f.domain.codedValues.length;
                     uniqCell = `<span class="field-stat-domain">${dc.toLocaleString()} of ${dvCount} codes</span>`;
                   } else if (dc <= 25) {
                     uniqCell = `<span class="field-stat-low-card">${dc.toLocaleString()}</span>`;

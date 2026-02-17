@@ -6,7 +6,7 @@ import { escapeHtml } from './utils.js';
 import { showDatasetsView } from './navigation.js';
 import { applyDashboardFilter } from './filters.js';
 import { fetchPendingDatasetRequests, parseRequestedDatasetName } from './github-api.js';
-import { checkUrlStatus } from './url-check.js';
+import { checkUrlStatusDetailed } from './url-check.js';
 
 let _renderDatasetDetail = null;
 export function registerDashboardCallbacks({ renderDatasetDetail }) {
@@ -507,12 +507,9 @@ async function loadServiceHealthStatus() {
     while (idx < services.length) {
       const i = idx++;
       const svc = services[i];
-      // Append ?f=pjson to get a quick JSON response from ArcGIS REST
-      const testUrl = svc.url.includes('?')
-        ? `${svc.url}&f=pjson`
-        : `${svc.url}?f=pjson`;
-      const status = await checkUrlStatus(testUrl);
-      results[i] = { ...svc, status };
+      // Use the raw service URL — checkUrlStatusDetailed handles ArcGIS REST query internally
+      const result = await checkUrlStatusDetailed(svc.url);
+      results[i] = { ...svc, status: result.status, detail: result.detail || '' };
       checked++;
       updateProgress();
     }
@@ -532,8 +529,8 @@ async function loadServiceHealthStatus() {
   if (summaryEl) {
     summaryEl.innerHTML = `
       <div class="health-kpi-row">
-        <span class="health-kpi health-kpi-ok"><span class="health-kpi-value">${okCount}</span> Reachable</span>
-        <span class="health-kpi health-kpi-bad"><span class="health-kpi-value">${badCount}</span> Unreachable</span>
+        <span class="health-kpi health-kpi-ok"><span class="health-kpi-value">${okCount}</span> Serving Data</span>
+        <span class="health-kpi health-kpi-bad"><span class="health-kpi-value">${badCount}</span> Not Serving</span>
         <span class="health-kpi health-kpi-unknown"><span class="health-kpi-value">${unknownCount}</span> Uncertain</span>
         <span class="health-kpi" style="color:var(--text-muted);"><span class="health-kpi-value">${total}</span> Total</span>
       </div>
@@ -546,23 +543,25 @@ async function loadServiceHealthStatus() {
 
   // Table
   let html = '';
-  html += `<table class="dashboard-mini-table service-health-table"><thead><tr><th>Status</th><th>Service Endpoint</th><th>Datasets</th></tr></thead><tbody>`;
+  html += `<table class="dashboard-mini-table service-health-table"><thead><tr><th>Status</th><th>Service Endpoint</th><th>Detail</th><th>Datasets</th></tr></thead><tbody>`;
   results.forEach(r => {
     const statusIcon = r.status === 'ok'
-      ? '<span class="health-dot health-dot-ok" title="Reachable">\u25CF</span>'
+      ? '<span class="health-dot health-dot-ok" title="Serving data">\u25CF</span>'
       : r.status === 'bad'
-        ? '<span class="health-dot health-dot-bad" title="Unreachable">\u25CF</span>'
-        : '<span class="health-dot health-dot-unknown" title="Uncertain (CORS/blocked)">\u25CF</span>';
-    const statusLabel = r.status === 'ok' ? 'Up' : r.status === 'bad' ? 'Down' : '???';
+        ? '<span class="health-dot health-dot-bad" title="Not serving data">\u25CF</span>'
+        : '<span class="health-dot health-dot-unknown" title="Cannot verify">\u25CF</span>';
+    const statusLabel = r.status === 'ok' ? 'Healthy' : r.status === 'bad' ? 'Down' : '???';
     const shortUrl = r.url.replace(/^https?:\/\//, '').replace(/\/+$/, '');
     const truncUrl = shortUrl.length > 60 ? shortUrl.slice(0, 57) + '\u2026' : shortUrl;
     const dsCount = r.datasets.length;
     const dsNames = r.datasets.slice(0, 3).map(d => escapeHtml(d.title)).join(', ');
     const more = dsCount > 3 ? ` +${dsCount - 3} more` : '';
+    const detailText = r.detail ? escapeHtml(r.detail) : '';
 
     html += `<tr class="health-row health-row-${r.status}">`;
     html += `<td class="health-status-cell">${statusIcon} ${statusLabel}</td>`;
     html += `<td><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" class="health-url" title="${escapeHtml(r.url)}">${escapeHtml(truncUrl)}</a></td>`;
+    html += `<td class="health-detail-cell" style="font-size:0.8rem;color:var(--text-muted);max-width:220px;">${detailText}</td>`;
     html += `<td class="health-ds-cell">${dsNames}${more}</td>`;
     html += `</tr>`;
   });

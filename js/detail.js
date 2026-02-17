@@ -8,6 +8,7 @@ import { renderCoverageMapCard, getCoverageCache } from './coverage-map.js';
 import { getDatasetById, getAttributeById, getAttributesForDataset, getDatasetsForAttribute } from './catalog.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
 import { enterDatasetEditMode, enterAttributeEditMode } from './edit-mode.js';
+import { applyDashboardFilter } from './filters.js';
 import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
 
 export function renderDatasetDetail(datasetId) {
@@ -28,6 +29,12 @@ export function renderDatasetDetail(datasetId) {
 
     // update "last selected dataset" state whenever we render a dataset detail
     state.lastSelectedDatasetId = datasetId;
+
+    // Update URL hash for deep linking (replace to avoid polluting history on every click)
+    const targetHash = `#dataset/${encodeURIComponent(datasetId)}`;
+    if (window.location.hash !== targetHash) {
+      history.replaceState(null, '', targetHash);
+    }
 
    // highlight active dataset in sidebar (if list is rendered)
    setActiveListButton(els.datasetListEl, (b) => b.getAttribute('data-ds-id') === datasetId);
@@ -80,7 +87,7 @@ export function renderDatasetDetail(datasetId) {
     html += `<p><strong>Contact Email:</strong> ${escapeHtml(dataset.contact_email || '')}</p>`;
 
     html += `<p><strong>Topics:</strong> ${Array.isArray(dataset.topics)
-      ? dataset.topics.map((t) => `<span class="pill pill-topic">${escapeHtml(t)}</span>`).join(' ')
+      ? dataset.topics.map((t) => `<button type="button" class="pill pill-topic pill-clickable" data-topic-filter="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join(' ')
       : ''
       }</p>`;
 
@@ -264,6 +271,14 @@ if (covRefreshBtn) {
       btn.addEventListener('click', () => {
         const attrId = btn.getAttribute('data-attr-id');
         renderInlineAttributeDetail(attrId);
+      });
+    });
+
+    // Wire topic pills → filter by topic
+    els.datasetDetailEl.querySelectorAll('button[data-topic-filter]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const topic = btn.getAttribute('data-topic-filter');
+        applyDashboardFilter('topics', topic);
       });
     });
 

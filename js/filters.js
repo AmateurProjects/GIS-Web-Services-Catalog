@@ -12,10 +12,11 @@ export const activeFilters = {
   geometry: new Set(),
   coverage: new Set(),
   office: new Set(),
+  topics: new Set(),
 };
 
 // Track which filter groups are expanded (persist across re-renders)
-export const filterGroupOpen = { stage: true, tier: false, geometry: false, coverage: false, office: false };
+export const filterGroupOpen = { stage: true, tier: false, geometry: false, coverage: false, office: false, topics: false };
 
 // Lazy reference to renderDatasetList — set by app.js to avoid circular import at eval time
 let _renderDatasetList = null;
@@ -86,6 +87,14 @@ export function initFilterToggle() {
     panel.addEventListener('mouseenter', clearAutoHide);
     panel.addEventListener('mouseleave', () => { if (filterPanelOpen) startAutoHide(); });
   }
+
+  // Close when the layer list is scrolled
+  const listArea = document.querySelector('.sidebar-list-area');
+  if (listArea) {
+    listArea.addEventListener('scroll', () => {
+      if (filterPanelOpen) closeFilterPanel();
+    }, { passive: true });
+  }
 }
 
 function updateFilterToggleBadge() {
@@ -138,6 +147,12 @@ export function getFilteredDatasets(textFilter) {
   }
   if (activeFilters.office.size) {
     filtered = filtered.filter(ds => activeFilters.office.has(ds.office_owner || 'Unknown'));
+  }
+  if (activeFilters.topics.size) {
+    filtered = filtered.filter(ds => {
+      const t = ds.topics || [];
+      return t.some(topic => activeFilters.topics.has(topic));
+    });
   }
 
   return filtered;
@@ -218,6 +233,13 @@ export function renderFilterPanel() {
       options: null, // dynamic
       getValue: ds => ds.office_owner || 'Unknown',
     },
+    {
+      key: 'topics',
+      label: 'Topics',
+      options: null, // dynamic
+      multi: true, // datasets have an array of topics
+      getValues: ds => (ds.topics && ds.topics.length) ? ds.topics : ['(none)'],
+    },
   ];
 
   // Pre-count values across ALL datasets (unfiltered) for facet counts
@@ -225,12 +247,18 @@ export function renderFilterPanel() {
   FILTER_GROUPS.forEach(fg => {
     facetCounts[fg.key] = {};
     state.allDatasets.forEach(ds => {
-      const v = fg.getValue(ds);
-      facetCounts[fg.key][v] = (facetCounts[fg.key][v] || 0) + 1;
+      if (fg.multi && fg.getValues) {
+        fg.getValues(ds).forEach(v => {
+          facetCounts[fg.key][v] = (facetCounts[fg.key][v] || 0) + 1;
+        });
+      } else {
+        const v = fg.getValue(ds);
+        facetCounts[fg.key][v] = (facetCounts[fg.key][v] || 0) + 1;
+      }
     });
   });
 
-  // Build dynamic options for geometry and office
+  // Build dynamic options for groups without predefined options
   FILTER_GROUPS.forEach(fg => {
     if (fg.options === null) {
       const sorted = Object.entries(facetCounts[fg.key]).sort((a, b) => b[1] - a[1]);
@@ -333,7 +361,7 @@ function renderActiveFilterChips() {
   let chipsHtml = '';
   const chipLabels = {
     stage: 'Stage', tier: 'Tier', geometry: 'Geometry',
-    coverage: 'Coverage', office: 'Office',
+    coverage: 'Coverage', office: 'Office', topics: 'Topic',
   };
   Object.entries(activeFilters).forEach(([group, values]) => {
     values.forEach(v => {

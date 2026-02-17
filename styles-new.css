@@ -761,6 +761,20 @@ code {
   color: var(--green);
 }
 
+.pill-clickable {
+  cursor: pointer;
+  background: var(--glass-bg);
+  font: inherit;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.78rem;
+}
+
+.pill-clickable:hover {
+  background: rgba(52,211,153,0.12);
+  border-color: rgba(52,211,153,0.6);
+  box-shadow: 0 2px 8px rgba(52,211,153,0.15);
+}
+
 .pill-keyword {
   border-color: rgba(91,163,245,0.35);
   color: var(--accent);

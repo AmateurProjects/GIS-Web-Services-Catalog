@@ -1,12 +1,14 @@
-// new-dataset-form.js — Simplified new dataset request form (3 fields only).
-// Users typically don't know technical details about datasets that don't exist yet.
-// They just need to say *what* they want and *why*.
+// new-dataset-form.js — New dataset / web service request form.
+// Supports two workflows:
+//   1. Paste an existing ArcGIS REST URL → auto-analyze & pre-fill fields
+//   2. Describe a dataset you need → fill in name + description manually
 
 import { els } from './state.js';
 import { escapeHtml } from './utils.js';
 import { animatePanel, staggerCards } from './ui-fx.js';
 import { showDatasetsView, goBackToLastDatasetOrList } from './navigation.js';
 import { buildNewDatasetRequestUrl, fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
+import { looksLikeArcGisService, normalizeServiceUrl, parseServiceAndLayerId, fetchServiceJson, fetchLayerJson } from './arcgis-preview.js';
 
 /**
  * Render the minimal new-dataset request form into the dataset detail panel.
@@ -23,12 +25,12 @@ export function renderNewDatasetRequestForm() {
     <nav class="breadcrumb">
       <button type="button" class="breadcrumb-root" data-breadcrumb="datasets">Datasets</button>
       <span class="breadcrumb-separator">/</span>
-      <span class="breadcrumb-current">Request new dataset</span>
+      <span class="breadcrumb-current">Submit new dataset</span>
     </nav>
   `;
 
-  html += `<h2>Request a new dataset</h2>`;
-  html += `<p class="modal-help">Describe what dataset you need and why. A catalog maintainer will review your request and add the dataset if approved.</p>`;
+  html += `<h2>Submit a new dataset</h2>`;
+  html += `<p class="modal-help">Paste a web service URL to auto-detect service details, or describe the dataset you need. A catalog maintainer will review your submission.</p>`;
 
   // ── Form card ──
   html += `<div class="card card-meta">`;
@@ -39,6 +41,22 @@ export function renderNewDatasetRequestForm() {
     </div>
   `;
 
+  // Web Service URL (prominent, first)
+  html += `
+    <div class="dataset-edit-row">
+      <label class="dataset-edit-label">Web Service URL</label>
+      <div style="display:flex;gap:0.5rem;align-items:flex-start;">
+        <input class="dataset-edit-input" type="text" data-req-field="service_url" style="flex:1;"
+               placeholder="e.g., https://gis.blm.gov/arcgis/rest/services/.../FeatureServer/0" />
+        <button type="button" class="btn" data-analyze-btn style="white-space:nowrap;">Analyze</button>
+      </div>
+      <p class="text-muted" style="font-size:0.78rem;margin-top:0.25rem;">Paste an ArcGIS REST service URL and click Analyze to auto-fill details below.</p>
+    </div>
+  `;
+
+  // Service analysis preview area (initially hidden)
+  html += `<div data-service-preview style="display:none;"></div>`;
+
   html += `
     <div class="dataset-edit-row">
       <label class="dataset-edit-label">Dataset Name <span class="required-star">*</span></label>
@@ -46,7 +64,7 @@ export function renderNewDatasetRequestForm() {
              placeholder="e.g., BLM Grazing Allotments" />
     </div>
     <div class="dataset-edit-row">
-      <label class="dataset-edit-label">Description <span class="required-star">*</span></label>
+      <label class="dataset-edit-label">Description</label>
       <textarea class="dataset-edit-input" data-req-field="description" rows="3"
                 placeholder="Briefly describe the dataset — what data does it contain?"></textarea>
     </div>
@@ -119,11 +137,6 @@ export function renderNewDatasetRequestForm() {
           </select>
         </div>
         <div class="dataset-edit-row">
-          <label class="dataset-edit-label">Existing link or source (if known)</label>
-          <input class="dataset-edit-input" type="text" data-req-field="existing_link"
-                 placeholder="e.g., a URL, ArcGIS Online page, or document name" />
-        </div>
-        <div class="dataset-edit-row">
           <label class="dataset-edit-label">Anything else?</label>
           <textarea class="dataset-edit-input" data-req-field="additional_notes" rows="2"
                     placeholder="Any other details — contacts, known issues, related datasets, etc."></textarea>
@@ -164,6 +177,134 @@ export function renderNewDatasetRequestForm() {
     });
   }
 
+  // ── Wire Analyze button ──
+  const analyzeBtn = els.datasetDetailEl.querySelector('[data-analyze-btn]');
+  const serviceUrlInput = els.datasetDetailEl.querySelector('[data-req-field="service_url"]');
+  const previewArea = els.datasetDetailEl.querySelector('[data-service-preview]');
+
+  if (analyzeBtn && serviceUrlInput) {
+    analyzeBtn.addEventListener('click', () => analyzeServiceUrl());
+    // Also trigger on paste (slight delay for value to be set)
+    serviceUrlInput.addEventListener('paste', () => setTimeout(() => analyzeServiceUrl(), 150));
+  }
+
+  async function analyzeServiceUrl() {
+    const url = serviceUrlInput?.value?.trim();
+    if (!url) return;
+    if (!looksLikeArcGisService(url)) {
+      if (previewArea) {
+        previewArea.style.display = 'block';
+        previewArea.innerHTML = `<div class="card" style="margin:0.5rem 0;padding:0.75rem;border-color:var(--amber);"><p style="color:var(--amber);font-size:0.85rem;margin:0;">⚠ This doesn't look like an ArcGIS REST service URL. Expected a URL containing <code>/rest/services/</code> and ending in <code>/FeatureServer</code>, <code>/MapServer</code>, or <code>/ImageServer</code>.</p><p class="text-muted" style="font-size:0.8rem;margin:0.4rem 0 0;">You can still submit the form — the URL will be included in the request.</p></div>`;
+      }
+      return;
+    }
+
+    analyzeBtn.disabled = true;
+    analyzeBtn.textContent = 'Analyzing…';
+    if (previewArea) {
+      previewArea.style.display = 'block';
+      previewArea.innerHTML = '<p class="loading-message" style="font-size:0.85rem;margin:0.5rem 0;">Fetching service info…</p>';
+    }
+
+    try {
+      const normalized = normalizeServiceUrl(url);
+      const parsed = parseServiceAndLayerId(normalized);
+      const serviceJson = await fetchServiceJson(parsed.serviceUrl);
+
+      // Determine target layer
+      let layerJson = null;
+      let layerId = parsed.layerId;
+
+      if (layerId !== null) {
+        layerJson = await fetchLayerJson(parsed.serviceUrl, layerId);
+      } else if (serviceJson.layers && serviceJson.layers.length === 1) {
+        layerId = serviceJson.layers[0].id;
+        layerJson = await fetchLayerJson(parsed.serviceUrl, layerId);
+      } else if (serviceJson.layers && serviceJson.layers.length > 0) {
+        layerId = serviceJson.layers[0].id;
+        layerJson = await fetchLayerJson(parsed.serviceUrl, layerId);
+      }
+
+      // Extract useful info
+      const docInfo = serviceJson.documentInfo || {};
+      const serviceName = layerJson?.name || serviceJson.mapName || docInfo.Title || '';
+      const serviceDesc = layerJson?.description || serviceJson.serviceDescription || serviceJson.description || '';
+      const geomType = layerJson?.geometryType || '';
+      const fieldCount = layerJson?.fields?.length || 0;
+      const capabilities = serviceJson.capabilities || '';
+      const version = serviceJson.currentVersion || '';
+      const featureCount = layerJson?.featureCount ?? null;
+      const spatialRef = layerJson?.spatialReference || serviceJson.spatialReference || {};
+      const layerCount = (serviceJson.layers || []).length;
+
+      // Map esri geometry types to our form values
+      const geomMap = {
+        esriGeometryPoint: 'POINT',
+        esriGeometryMultipoint: 'POINT',
+        esriGeometryPolyline: 'POLYLINE',
+        esriGeometryPolygon: 'POLYGON',
+      };
+
+      // Pre-fill form fields
+      const nameInput = els.datasetDetailEl.querySelector('[data-req-field="name"]');
+      const descInput = els.datasetDetailEl.querySelector('[data-req-field="description"]');
+      const geomSelect = els.datasetDetailEl.querySelector('[data-req-field="geometry_type"]');
+
+      if (nameInput && !nameInput.value && serviceName) {
+        nameInput.value = serviceName.replace(/_/g, ' ');
+      }
+      if (descInput && !descInput.value && serviceDesc) {
+        // Strip HTML tags from service description
+        const cleanDesc = serviceDesc.replace(/<[^>]*>/g, '').trim();
+        if (cleanDesc) descInput.value = cleanDesc;
+      }
+      if (geomSelect && geomType && geomMap[geomType]) {
+        geomSelect.value = geomMap[geomType];
+      }
+      if (!geomType) {
+        // Might be a table
+        if (geomSelect) geomSelect.value = 'TABLE';
+      }
+
+      // Auto-expand optional properties so the user sees the auto-filled geometry
+      const propsToggle = els.datasetDetailEl.querySelector('[data-toggle-props]');
+      const propsBodyEl = els.datasetDetailEl.querySelector('[data-props-body]');
+      if (propsToggle && propsBodyEl && propsToggle.getAttribute('aria-expanded') !== 'true') {
+        propsToggle.setAttribute('aria-expanded', 'true');
+        propsBodyEl.style.display = 'block';
+        const icon = propsToggle.querySelector('.collapse-icon');
+        if (icon) icon.style.transform = 'rotate(90deg)';
+      }
+
+      // Show analysis preview
+      if (previewArea) {
+        const geomLabel = geomType ? geomType.replace('esriGeometry', '') : 'Table / Non-spatial';
+        const wkid = spatialRef.latestWkid || spatialRef.wkid || '';
+        let previewHtml = `<div class="card" style="margin:0.5rem 0;padding:0.75rem;border-color:var(--green);">`;
+        previewHtml += `<div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;"><span style="color:var(--green);font-size:1.1rem;">✓</span><strong style="font-size:0.9rem;">Service Detected</strong></div>`;
+        previewHtml += `<div class="metadata-grid" style="font-size:0.82rem;">`;
+        if (serviceName) previewHtml += `<div class="metadata-item"><span class="metadata-label">Name</span><span class="metadata-value">${escapeHtml(serviceName)}</span></div>`;
+        previewHtml += `<div class="metadata-item"><span class="metadata-label">Type</span><span class="metadata-value">${escapeHtml(geomLabel)}</span></div>`;
+        if (fieldCount) previewHtml += `<div class="metadata-item"><span class="metadata-label">Fields</span><span class="metadata-value">${fieldCount}</span></div>`;
+        if (featureCount !== null) previewHtml += `<div class="metadata-item"><span class="metadata-label">Features</span><span class="metadata-value">${Number(featureCount).toLocaleString()}</span></div>`;
+        if (layerCount > 1) previewHtml += `<div class="metadata-item"><span class="metadata-label">Layers</span><span class="metadata-value">${layerCount}</span></div>`;
+        if (version) previewHtml += `<div class="metadata-item"><span class="metadata-label">Version</span><span class="metadata-value">${version}</span></div>`;
+        if (wkid) previewHtml += `<div class="metadata-item"><span class="metadata-label">Spatial Ref</span><span class="metadata-value">EPSG:${wkid}</span></div>`;
+        if (capabilities) previewHtml += `<div class="metadata-item"><span class="metadata-label">Capabilities</span><span class="metadata-value">${escapeHtml(capabilities)}</span></div>`;
+        previewHtml += `</div></div>`;
+        previewArea.innerHTML = previewHtml;
+      }
+    } catch (err) {
+      console.warn('Service analysis failed:', err);
+      if (previewArea) {
+        previewArea.innerHTML = `<div class="card" style="margin:0.5rem 0;padding:0.75rem;border-color:var(--red);"><p style="color:var(--red);font-size:0.85rem;margin:0;">✗ Could not analyze this service. ${escapeHtml(err.message || 'The URL may be unreachable or require authentication.')}</p><p class="text-muted" style="font-size:0.8rem;margin:0.4rem 0 0;">You can still submit the form — the URL will be included in the request for manual review.</p></div>`;
+      }
+    } finally {
+      analyzeBtn.disabled = false;
+      analyzeBtn.textContent = 'Analyze';
+    }
+  }
+
   // ── Wire breadcrumb ──
   const rootBtn = els.datasetDetailEl.querySelector('button[data-breadcrumb="datasets"]');
   if (rootBtn) rootBtn.addEventListener('click', showDatasetsView);
@@ -178,28 +319,25 @@ export function renderNewDatasetRequestForm() {
     submitBtn.addEventListener('click', () => {
       const getVal = (key) => String(els.datasetDetailEl.querySelector(`[data-req-field="${key}"]`)?.value || '').trim();
 
+      const serviceUrl = getVal('service_url');
       const name = getVal('name');
       const description = getVal('description');
       const justification = getVal('justification');
 
       // Optional properties
       const properties = {
+        service_url: serviceUrl,
         topics: getVal('topics'),
         geometry_type: getVal('geometry_type'),
         coverage: getVal('coverage'),
         agency_owner: getVal('agency_owner'),
         update_frequency: getVal('update_frequency'),
         access_level: getVal('access_level'),
-        existing_link: getVal('existing_link'),
         additional_notes: getVal('additional_notes'),
       };
 
       if (!name) {
         alert('Dataset name is required.');
-        return;
-      }
-      if (!description) {
-        alert('A brief description is required.');
         return;
       }
 

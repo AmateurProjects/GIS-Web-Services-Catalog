@@ -86,12 +86,17 @@ export function buildNewDatasetRequestUrl({ name, description, justification, pr
     '',
     `**Dataset Name:** ${name || '(not provided)'}`,
     '',
-    `**Description:** ${description || '(not provided)'}`,
-    '',
-    `**Justification / Use Case:** ${justification || '(not provided)'}`,
   ];
 
-  // Add optional properties if any were filled in
+  // Web service URL gets top-level prominence if provided
+  if (properties.service_url) {
+    bodyLines.push(`**Web Service URL:** ${properties.service_url}`, '');
+  }
+
+  if (description) bodyLines.push(`**Description:** ${description}`, '');
+  if (justification) bodyLines.push(`**Justification / Use Case:** ${justification}`, '');
+
+  // Add optional properties if any were filled in (excluding service_url which is already shown above)
   const propLabels = {
     topics: 'Topic Area',
     geometry_type: 'Data Type',
@@ -99,10 +104,9 @@ export function buildNewDatasetRequestUrl({ name, description, justification, pr
     agency_owner: 'Data Owner / Manager',
     update_frequency: 'Update Frequency',
     access_level: 'Access Level',
-    existing_link: 'Existing Link / Source',
     additional_notes: 'Additional Notes',
   };
-  const filledProps = Object.entries(properties).filter(([, v]) => v);
+  const filledProps = Object.entries(properties).filter(([k, v]) => v && k !== 'service_url');
   if (filledProps.length) {
     bodyLines.push('', '### Additional Details', '');
     filledProps.forEach(([key, val]) => {

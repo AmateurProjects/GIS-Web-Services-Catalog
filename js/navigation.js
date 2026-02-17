@@ -44,6 +44,8 @@ export function showDashboardView() {
   hideAllViews();
   if (els.dashboardView) els.dashboardView.classList.remove('hidden');
   els.dashboardTabBtn && els.dashboardTabBtn.classList.add('active');
+  // Clear dataset hash when leaving dataset view
+  if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
   if (_renderDashboard) _renderDashboard();
 }
 
@@ -64,6 +66,8 @@ export function showAttributesView() {
   hideAllViews();
   if (els.attributesView) els.attributesView.classList.remove('hidden');
   if (els.attributesTabBtn) els.attributesTabBtn.classList.add('active');
+  // Clear dataset hash when leaving dataset view
+  if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
 }
 
 export function goBackToLastDatasetOrList() {

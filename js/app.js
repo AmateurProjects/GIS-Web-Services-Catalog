@@ -125,10 +125,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Initial render ──
   renderDatasetList();
   renderAttributeList();
-  renderDashboard();
 
-  // Pre-select first dataset so clicking Datasets tab shows detail immediately
-  if (state.allDatasets.length) {
-    state.lastSelectedDatasetId = state.allDatasets[0].id;
+  // ── Hash-based deep linking ──
+  function navigateFromHash() {
+    const hash = window.location.hash;
+    const match = hash.match(/^#dataset\/(.+)$/);
+    if (match) {
+      const dsId = decodeURIComponent(match[1]);
+      if (dsId && state.allDatasets.some(ds => ds.id === dsId)) {
+        showDatasetsView();
+        renderDatasetDetail(dsId);
+        return true;
+      }
+    }
+    return false;
   }
+
+  // On initial load, check hash first; fall back to dashboard
+  if (!navigateFromHash()) {
+    renderDashboard();
+    // Pre-select first dataset so clicking Datasets tab shows detail immediately
+    if (state.allDatasets.length) {
+      state.lastSelectedDatasetId = state.allDatasets[0].id;
+    }
+  }
+
+  // Listen for hash changes (back/forward, manual URL edits)
+  window.addEventListener('hashchange', () => navigateFromHash());
 });

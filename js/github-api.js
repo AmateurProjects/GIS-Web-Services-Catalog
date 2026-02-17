@@ -32,41 +32,31 @@ export async function fetchPendingDatasetRequests(forceRefresh = false) {
   }
 
   try {
-    // Search by label first, then also by title prefix to catch issues where
-    // the label wasn't applied (GitHub ignores the labels query param for
-    // users without write/triage access to the repo).
-    const byLabelUrl = `${GITHUB_API_BASE}/issues?labels=${encodeURIComponent(REQUEST_LABEL)}&state=open&per_page=50&sort=created&direction=desc`;
-    const bySearchUrl = `https://api.github.com/search/issues?q=${encodeURIComponent(`repo:${GITHUB_OWNER}/${GITHUB_REPO} is:issue is:open in:title "New dataset request:"`)}&per_page=50&sort=created&order=desc`;
+    // Fetch all open issues from the repo and filter client-side by title prefix.
+    // We avoid the Search API because it doesn't follow GitHub repo renames,
+    // while the regular Issues REST API does.
+    const TITLE_PREFIX = 'New dataset request:';
+    const allIssuesUrl = `${GITHUB_API_BASE}/issues?state=open&per_page=100&sort=created&direction=desc`;
 
-    const [labelResp, searchResp] = await Promise.all([
-      fetch(byLabelUrl, { headers: { Accept: 'application/vnd.github.v3+json' } }),
-      fetch(bySearchUrl, { headers: { Accept: 'application/vnd.github.v3+json' } }),
-    ]);
+    const resp = await fetch(allIssuesUrl, {
+      headers: { Accept: 'application/vnd.github.v3+json' },
+    });
 
-    const issues = [];
-    const seenIds = new Set();
-
-    if (labelResp.ok) {
-      const labelIssues = await labelResp.json();
-      labelIssues.forEach(issue => {
-        seenIds.add(issue.id);
-        issues.push(issue);
-      });
+    if (!resp.ok) {
+      console.warn(`github-api: GitHub API returned ${resp.status}`);
+      return _pendingRequestsCache || [];
     }
 
-    if (searchResp.ok) {
-      const searchData = await searchResp.json();
-      const searchIssues = searchData.items || [];
-      searchIssues.forEach(issue => {
-        if (!seenIds.has(issue.id)) {
-          seenIds.add(issue.id);
-          issues.push(issue);
-        }
-      });
-    }
+    const allIssues = await resp.json();
 
-    // Sort by created_at descending
-    issues.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+    // Keep only issues whose title starts with our prefix OR that carry the label
+    const issues = allIssues.filter(issue => {
+      const title = (issue.title || '').trim();
+      const hasPrefix = title.startsWith(TITLE_PREFIX);
+      const hasLabel = Array.isArray(issue.labels) &&
+        issue.labels.some(l => (l.name || '') === REQUEST_LABEL);
+      return hasPrefix || hasLabel;
+    });
 
     _pendingRequestsCache = issues.map(issue => ({
       title: issue.title || '',

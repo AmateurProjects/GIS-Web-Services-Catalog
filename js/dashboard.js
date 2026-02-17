@@ -227,7 +227,6 @@ export function renderDashboard() {
       tierOffset += dashLen;
     });
 
-    html += `<text x="21" y="22" class="donut-center-text">${tierTotal}</text>`;
     html += `</svg>`;
 
     html += `<div class="donut-legend">`;

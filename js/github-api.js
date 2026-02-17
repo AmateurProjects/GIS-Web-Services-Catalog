@@ -32,17 +32,42 @@ export async function fetchPendingDatasetRequests(forceRefresh = false) {
   }
 
   try {
-    const url = `${GITHUB_API_BASE}/issues?labels=${encodeURIComponent(REQUEST_LABEL)}&state=open&per_page=50&sort=created&direction=desc`;
-    const resp = await fetch(url, {
-      headers: { Accept: 'application/vnd.github.v3+json' },
-    });
+    // Search by label first, then also by title prefix to catch issues where
+    // the label wasn't applied (GitHub ignores the labels query param for
+    // users without write/triage access to the repo).
+    const byLabelUrl = `${GITHUB_API_BASE}/issues?labels=${encodeURIComponent(REQUEST_LABEL)}&state=open&per_page=50&sort=created&direction=desc`;
+    const bySearchUrl = `https://api.github.com/search/issues?q=${encodeURIComponent(`repo:${GITHUB_OWNER}/${GITHUB_REPO} is:issue is:open in:title "New dataset request:"`)}&per_page=50&sort=created&order=desc`;
 
-    if (!resp.ok) {
-      console.warn(`github-api: GitHub API returned ${resp.status}`);
-      return _pendingRequestsCache || [];
+    const [labelResp, searchResp] = await Promise.all([
+      fetch(byLabelUrl, { headers: { Accept: 'application/vnd.github.v3+json' } }),
+      fetch(bySearchUrl, { headers: { Accept: 'application/vnd.github.v3+json' } }),
+    ]);
+
+    const issues = [];
+    const seenIds = new Set();
+
+    if (labelResp.ok) {
+      const labelIssues = await labelResp.json();
+      labelIssues.forEach(issue => {
+        seenIds.add(issue.id);
+        issues.push(issue);
+      });
     }
 
-    const issues = await resp.json();
+    if (searchResp.ok) {
+      const searchData = await searchResp.json();
+      const searchIssues = searchData.items || [];
+      searchIssues.forEach(issue => {
+        if (!seenIds.has(issue.id)) {
+          seenIds.add(issue.id);
+          issues.push(issue);
+        }
+      });
+    }
+
+    // Sort by created_at descending
+    issues.sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
+
     _pendingRequestsCache = issues.map(issue => ({
       title: issue.title || '',
       body: issue.body || '',
@@ -63,7 +88,7 @@ export async function fetchPendingDatasetRequests(forceRefresh = false) {
  * Build a pre-filled GitHub Issue URL for a new dataset request.
  * Minimal fields: name, description, justification.
  */
-export function buildNewDatasetRequestUrl({ name, description, justification }) {
+export function buildNewDatasetRequestUrl({ name, description, justification, properties = {} }) {
   const title = encodeURIComponent(`New dataset request: ${name || 'Untitled'}`);
 
   const bodyLines = [
@@ -74,11 +99,33 @@ export function buildNewDatasetRequestUrl({ name, description, justification }) 
     `**Description:** ${description || '(not provided)'}`,
     '',
     `**Justification / Use Case:** ${justification || '(not provided)'}`,
+  ];
+
+  // Add optional properties if any were filled in
+  const propLabels = {
+    topics: 'Topic Area',
+    geometry_type: 'Data Type',
+    coverage: 'Geographic Coverage',
+    agency_owner: 'Data Owner / Manager',
+    update_frequency: 'Update Frequency',
+    access_level: 'Access Level',
+    existing_link: 'Existing Link / Source',
+    additional_notes: 'Additional Notes',
+  };
+  const filledProps = Object.entries(properties).filter(([, v]) => v);
+  if (filledProps.length) {
+    bodyLines.push('', '### Additional Details', '');
+    filledProps.forEach(([key, val]) => {
+      bodyLines.push(`**${propLabels[key] || key}:** ${val}`);
+    });
+  }
+
+  bodyLines.push(
     '',
     '---',
     '',
     '*This request was submitted from the GIS Web Services Catalog.*',
-  ];
+  );
 
   const body = encodeURIComponent(bodyLines.join('\n'));
   const labels = encodeURIComponent(REQUEST_LABEL);

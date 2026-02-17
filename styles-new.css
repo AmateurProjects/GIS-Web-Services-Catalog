@@ -2387,17 +2387,11 @@ textarea.dataset-edit-input {
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-soft);
-  max-height: 380px;
-  overflow-y: auto;
 }
 
 .dashboard-table-card .dashboard-chart-title {
-  position: sticky;
-  top: -1rem;
-  background: var(--bg-panel);
-  padding: 0.5rem 0;
-  margin: -1rem 0 0.5rem;
-  z-index: 2;
+  padding: 0 0 0.5rem;
+  margin: 0 0 0.5rem;
 }
 
 .dashboard-mini-table {
@@ -2415,10 +2409,6 @@ textarea.dataset-edit-input {
   color: var(--text-muted);
   border-bottom: 1px solid var(--border-color);
   font-weight: 600;
-  position: sticky;
-  top: 1.2rem;
-  background: var(--bg-panel);
-  z-index: 1;
 }
 
 .dashboard-mini-table td {

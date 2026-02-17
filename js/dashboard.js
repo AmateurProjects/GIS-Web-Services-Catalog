@@ -86,7 +86,7 @@ export function renderDashboard() {
     const lowCompleteness = ds
       .filter(d => d.maturity && typeof d.maturity.completeness === 'number')
       .sort((a, b) => a.maturity.completeness - b.maturity.completeness)
-      .slice(0, 10);
+      .slice(0, 5);
 
     // ── Datasets with coverage gaps (fewest states) ──
     // Exclude 0% coverage — those are often datasets that haven't been analyzed
@@ -99,7 +99,7 @@ export function renderDashboard() {
       })
       .filter(d => d._statesWithData > 0)
       .sort((a, b) => a._statesWithData - b._statesWithData)
-      .slice(0, 10);
+      .slice(0, 5);
 
     // ── Build HTML ──
     let html = '';
@@ -227,8 +227,7 @@ export function renderDashboard() {
       tierOffset += dashLen;
     });
 
-    html += `<text x="21" y="20" class="donut-center-text">${tierTotal}</text>`;
-    html += `<text x="21" y="25" class="donut-center-sublabel">datasets</text>`;
+    html += `<text x="21" y="22" class="donut-center-text">${tierTotal}</text>`;
     html += `</svg>`;
 
     html += `<div class="donut-legend">`;

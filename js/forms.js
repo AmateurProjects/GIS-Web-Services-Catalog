@@ -7,7 +7,7 @@ import { escapeHtml, compactObject, tryParseJson, deepClone } from './utils.js';
 import { animatePanel, staggerCards } from './ui-fx.js';
 import { getAttributeById } from './catalog.js';
 import { buildGithubIssueUrlForNewAttributes } from './github-issues.js';
-import { showAttributesView, goBackToAttributesListOrFirst } from './navigation.js';
+import { goBackToAttributesListOrFirst } from './navigation.js';
 import { ATTRIBUTE_EDIT_FIELDS } from './edit-mode.js';
 
 
@@ -45,15 +45,6 @@ import { ATTRIBUTE_EDIT_FIELDS } from './edit-mode.js';
     };
 
     let html = '';
-
-    // Breadcrumb (Attributes)
-    html += `
-      <nav class="breadcrumb">
-        <button type="button" class="breadcrumb-root" data-breadcrumb="attributes">Attributes</button>
-        <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-current">Add new attribute</span>
-      </nav>
-    `;
 
     html += `<h2>Add a new attribute</h2>`;
     html += `<p class="modal-help">This will open a pre-filled GitHub Issue for review/approval by the catalog owner.</p>`;
@@ -145,10 +136,6 @@ import { ATTRIBUTE_EDIT_FIELDS } from './edit-mode.js';
     // Bounce + stagger cards (same feel as detail pages)
     staggerCards(hostEl);
     animatePanel(hostEl);
-
-    // Breadcrumb root
-    const rootBtn = hostEl.querySelector('button[data-breadcrumb="attributes"]');
-    if (rootBtn) rootBtn.addEventListener('click', showAttributesView);
 
     // Cancel -> back to list/first attribute
     const cancelBtn = hostEl.querySelector('button[data-new-attr-cancel]');

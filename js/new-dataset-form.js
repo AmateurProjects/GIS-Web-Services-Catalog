@@ -6,7 +6,7 @@
 import { els } from './state.js';
 import { escapeHtml } from './utils.js';
 import { animatePanel, staggerCards } from './ui-fx.js';
-import { showDatasetsView, goBackToLastDatasetOrList } from './navigation.js';
+import { goBackToLastDatasetOrList } from './navigation.js';
 import { buildNewDatasetRequestUrl, fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
 import { looksLikeArcGisService, normalizeServiceUrl, parseServiceAndLayerId, fetchServiceJson, fetchLayerJson } from './arcgis-preview.js';
 
@@ -19,15 +19,6 @@ export function renderNewDatasetRequestForm() {
   if (!els.datasetDetailEl) return;
 
   let html = '';
-
-  // Breadcrumb
-  html += `
-    <nav class="breadcrumb">
-      <button type="button" class="breadcrumb-root" data-breadcrumb="datasets">Datasets</button>
-      <span class="breadcrumb-separator">/</span>
-      <span class="breadcrumb-current">Submit new dataset</span>
-    </nav>
-  `;
 
   html += `<h2>Submit a new dataset</h2>`;
   html += `<p class="modal-help">Paste a web service URL to auto-detect service details, or describe the dataset you need. A catalog maintainer will review your submission.</p>`;
@@ -304,10 +295,6 @@ export function renderNewDatasetRequestForm() {
       analyzeBtn.textContent = 'Analyze';
     }
   }
-
-  // ── Wire breadcrumb ──
-  const rootBtn = els.datasetDetailEl.querySelector('button[data-breadcrumb="datasets"]');
-  if (rootBtn) rootBtn.addEventListener('click', showDatasetsView);
 
   // ── Wire cancel ──
   const cancelBtn = els.datasetDetailEl.querySelector('button[data-req-cancel]');

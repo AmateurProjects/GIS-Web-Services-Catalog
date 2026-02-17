@@ -51,15 +51,6 @@ export function renderDatasetDetail(datasetId) {
 
     let html = '';
 
-    // Breadcrumb
-    html += `
-      <nav class="breadcrumb">
-        <button type="button" class="breadcrumb-root" data-breadcrumb="datasets">Datasets</button>
-        <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-current">${escapeHtml(dataset.title || dataset.id)}</span>
-      </nav>
-    `;
-
     html += `<h2>${escapeHtml(dataset.title || dataset.id)}</h2>`;
     if (dataset.description) html += `<p>${escapeHtml(dataset.description)}</p>`;
 
@@ -261,8 +252,6 @@ if (covRefreshBtn) {
         enterDatasetEditMode(dsId, () => renderDatasetDetail(dsId));
       });
     }
-
-
     const rootBtn = els.datasetDetailEl.querySelector('button[data-breadcrumb="datasets"]');
     if (rootBtn) rootBtn.addEventListener('click', showDatasetsView);
 
@@ -411,14 +400,6 @@ export function renderAttributeDetail(attrId) {
 
     let html = '';
 
-    html += `
-      <nav class="breadcrumb">
-        <button type="button" class="breadcrumb-root" data-breadcrumb="attributes">Attributes</button>
-        <span class="breadcrumb-separator">/</span>
-        <span class="breadcrumb-current">${escapeHtml(attribute.id)}</span>
-      </nav>
-    `;
-
     html += `<h2>${escapeHtml(attribute.id)} – ${escapeHtml(attribute.label || '')}</h2>`;
     html += '<div class="card card-attribute-meta">';
     html += `<p><strong>Attribute Field Name:</strong> ${escapeHtml(attribute.id)}</p>`;
@@ -496,7 +477,6 @@ export function renderAttributeDetail(attrId) {
         enterAttributeEditMode(id, () => renderAttributeDetail(id));
       });
     }
-
     const rootBtn = els.attributeDetailEl.querySelector('button[data-breadcrumb="attributes"]');
     if (rootBtn) rootBtn.addEventListener('click', showAttributesView);
 

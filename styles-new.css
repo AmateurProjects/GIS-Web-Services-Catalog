@@ -2947,8 +2947,8 @@ textarea.dataset-edit-input {
 
 .pending-request-link {
   display: flex;
-  align-items: baseline;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 0.15rem;
   padding: 0.5rem 0.25rem;
   color: var(--text-main);
   text-decoration: none;
@@ -2960,8 +2960,58 @@ textarea.dataset-edit-input {
   background: rgba(255,255,255,0.04);
 }
 
+.pending-request-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
 .pending-request-meta {
   font-size: 0.8rem;
   color: var(--text-muted);
   white-space: nowrap;
+}
+
+/* ── Pending Requests in Sidebar ── */
+
+.pending-requests-sidebar {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.pending-sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0 0.25rem 0.35rem;
+}
+
+.pending-sidebar-icon {
+  font-size: 0.9rem;
+}
+
+.pending-sidebar-count {
+  background: rgba(255,255,255,0.08);
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.pending-sidebar-list .pending-request-link {
+  padding: 0.35rem 0.25rem;
+}
+
+.pending-sidebar-list .pending-request-link strong {
+  font-size: 0.82rem;
+}
+
+.pending-sidebar-list .pending-request-desc {
+  font-size: 0.75rem;
 }

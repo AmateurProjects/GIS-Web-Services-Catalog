@@ -6,7 +6,7 @@ import { els } from './state.js';
 import { escapeHtml } from './utils.js';
 import { animatePanel, staggerCards } from './ui-fx.js';
 import { showDatasetsView, goBackToLastDatasetOrList } from './navigation.js';
-import { buildNewDatasetRequestUrl, fetchPendingDatasetRequests, parseRequestedDatasetName } from './github-api.js';
+import { buildNewDatasetRequestUrl, fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
 
 /**
  * Render the minimal new-dataset request form into the dataset detail panel.
@@ -233,12 +233,14 @@ async function loadPendingRequests() {
     let html = `<ul class="pending-requests-list">`;
     requests.forEach(req => {
       const name = parseRequestedDatasetName(req.title);
+      const desc = parseRequestedDescription(req.body);
       const date = req.created_at ? new Date(req.created_at).toLocaleDateString() : '';
       const user = req.user || '';
       html += `
         <li class="pending-request-item">
           <a href="${escapeHtml(req.url)}" target="_blank" rel="noopener" class="pending-request-link">
             <strong>${escapeHtml(name)}</strong>
+            ${desc ? `<span class="pending-request-desc">${escapeHtml(desc)}</span>` : ''}
             <span class="pending-request-meta">#${req.number}${user ? ` by ${escapeHtml(user)}` : ''}${date ? ` · ${date}` : ''}</span>
           </a>
         </li>

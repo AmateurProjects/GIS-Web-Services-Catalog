@@ -133,3 +133,13 @@ export function parseRequestedDatasetName(issueTitle) {
   }
   return issueTitle;
 }
+
+/**
+ * Extract the description from a GitHub issue body.
+ * Looks for "**Description:** <text>" pattern.
+ */
+export function parseRequestedDescription(issueBody) {
+  if (!issueBody) return '';
+  const match = issueBody.match(/\*\*Description:\*\*\s*(.+)/i);
+  return match ? match[1].trim() : '';
+}

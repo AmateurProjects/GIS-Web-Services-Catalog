@@ -5,7 +5,7 @@ import { state, els } from './state.js';
 import { escapeHtml } from './utils.js';
 import { showDatasetsView } from './navigation.js';
 import { applyDashboardFilter } from './filters.js';
-import { fetchPendingDatasetRequests, parseRequestedDatasetName } from './github-api.js';
+import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
 import { checkUrlStatusDetailed } from './url-check.js';
 
 let _renderDatasetDetail = null;
@@ -433,12 +433,14 @@ async function loadDashboardPendingRequests() {
     html += `<ul class="pending-requests-list">`;
     requests.forEach(req => {
       const name = parseRequestedDatasetName(req.title);
+      const desc = parseRequestedDescription(req.body);
       const date = req.created_at ? new Date(req.created_at).toLocaleDateString() : '';
       const user = req.user || '';
       html += `
         <li class="pending-request-item">
           <a href="${escapeHtml(req.url)}" target="_blank" rel="noopener" class="pending-request-link">
             <strong>${escapeHtml(name)}</strong>
+            ${desc ? `<span class="pending-request-desc">${escapeHtml(desc)}</span>` : ''}
             <span class="pending-request-meta">#${req.number}${user ? ` by ${escapeHtml(user)}` : ''}${date ? ` · ${date}` : ''}</span>
           </a>
         </li>

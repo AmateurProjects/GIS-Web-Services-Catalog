@@ -6,6 +6,7 @@ import { getGeometryIconHTML } from './geometry-icons.js';
 import { setActiveListButton } from './ui-fx.js';
 import { getFilteredDatasets, hasAnyFilter } from './filters.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
+import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
 
 // Lazy references to detail renderers — set by app.js to avoid circular import at eval time
 let _renderDatasetDetail = null;
@@ -176,6 +177,67 @@ export function renderDatasetList(filterText) {
 
   // keep active highlight in sync after re-render
   setActiveListButton(els.datasetListEl, (b) => b.getAttribute('data-ds-id') === state.lastSelectedDatasetId);
+
+  // Append pending requests section (async)
+  appendPendingRequestsToList(ft);
+}
+
+/** Append pending dataset requests at the bottom of the layer list. */
+async function appendPendingRequestsToList(filterText) {
+  if (!els.datasetListEl) return;
+
+  // Remove any existing pending section (from a previous render)
+  const existing = els.datasetListEl.querySelector('.pending-requests-sidebar');
+  if (existing) existing.remove();
+
+  try {
+    const requests = await fetchPendingDatasetRequests();
+    if (!requests || !requests.length) return;
+
+    // Filter by search text if present
+    const ft = String(filterText || '').trim().toLowerCase();
+    const filtered = ft
+      ? requests.filter(req => {
+          const name = parseRequestedDatasetName(req.title).toLowerCase();
+          const desc = parseRequestedDescription(req.body).toLowerCase();
+          return name.includes(ft) || desc.includes(ft);
+        })
+      : requests;
+
+    if (!filtered.length) return;
+
+    const section = document.createElement('div');
+    section.className = 'pending-requests-sidebar';
+    section.innerHTML = `
+      <div class="pending-sidebar-header">
+        <span class="pending-sidebar-icon">&#128203;</span>
+        Pending Requests <span class="pending-sidebar-count">${filtered.length}</span>
+      </div>
+    `;
+
+    const list = document.createElement('ul');
+    list.className = 'pending-requests-list pending-sidebar-list';
+
+    filtered.forEach(req => {
+      const name = parseRequestedDatasetName(req.title);
+      const desc = parseRequestedDescription(req.body);
+      const li = document.createElement('li');
+      li.className = 'pending-request-item';
+      li.innerHTML = `
+        <a href="${escapeHtml(req.url)}" target="_blank" rel="noopener" class="pending-request-link" title="Open request on GitHub">
+          <strong>${escapeHtml(name)}</strong>
+          ${desc ? `<span class="pending-request-desc">${escapeHtml(desc.length > 80 ? desc.slice(0, 77) + '…' : desc)}</span>` : ''}
+          <span class="pending-request-meta">#${req.number}</span>
+        </a>
+      `;
+      list.appendChild(li);
+    });
+
+    section.appendChild(list);
+    els.datasetListEl.appendChild(section);
+  } catch (err) {
+    console.warn('Failed to load pending requests for sidebar', err);
+  }
 }
 
 export function renderAttributeList(filterText = '') {

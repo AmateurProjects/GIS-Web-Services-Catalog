@@ -441,7 +441,7 @@ async function loadDashboardPendingRequests() {
           <a href="${escapeHtml(req.url)}" target="_blank" rel="noopener" class="pending-request-link">
             <strong>${escapeHtml(name)}</strong>
             ${desc ? `<span class="pending-request-desc">${escapeHtml(desc)}</span>` : ''}
-            <span class="pending-request-meta">#${req.number}${user ? ` by ${escapeHtml(user)}` : ''}${date ? ` · ${date}` : ''}</span>
+            <span class="pending-request-meta">${user ? `by ${escapeHtml(user)}` : ''}${user && date ? ` \u00b7 ` : ''}${date || ''}</span>
           </a>
         </li>
       `;

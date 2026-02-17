@@ -1582,6 +1582,12 @@ textarea.dataset-edit-input {
   margin-bottom: 0.15rem;
 }
 
+#datasetList ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 /* ================================================================
    DATA SOURCE BADGES (dev helper)
    ================================================================ */

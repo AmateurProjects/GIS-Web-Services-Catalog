@@ -26,6 +26,19 @@ export function registerFilterCallbacks({ renderDatasetList }) {
 
 // ── Filter panel toggle (popover) ──
 let filterPanelOpen = false;
+let _autoHideTimer = null;
+const AUTO_HIDE_MS = 4000;
+
+function startAutoHide() {
+  clearAutoHide();
+  _autoHideTimer = setTimeout(() => {
+    if (filterPanelOpen) closeFilterPanel();
+  }, AUTO_HIDE_MS);
+}
+
+function clearAutoHide() {
+  if (_autoHideTimer) { clearTimeout(_autoHideTimer); _autoHideTimer = null; }
+}
 
 export function toggleFilterPanel() {
   filterPanelOpen ? closeFilterPanel() : openFilterPanel();
@@ -36,10 +49,12 @@ export function openFilterPanel() {
   if (els.datasetFiltersEl) els.datasetFiltersEl.classList.add('is-open');
   const btn = document.getElementById('filterToggleBtn');
   if (btn) btn.classList.add('is-active');
+  startAutoHide();
 }
 
 export function closeFilterPanel() {
   filterPanelOpen = false;
+  clearAutoHide();
   if (els.datasetFiltersEl) els.datasetFiltersEl.classList.remove('is-open');
   const btn = document.getElementById('filterToggleBtn');
   if (btn) btn.classList.remove('is-active');
@@ -64,6 +79,13 @@ export function initFilterToggle() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && filterPanelOpen) closeFilterPanel();
   });
+
+  // Pause auto-hide while hovering the filter panel; restart when leaving
+  const panel = els.datasetFiltersEl;
+  if (panel) {
+    panel.addEventListener('mouseenter', clearAutoHide);
+    panel.addEventListener('mouseleave', () => { if (filterPanelOpen) startAutoHide(); });
+  }
 }
 
 function updateFilterToggleBadge() {

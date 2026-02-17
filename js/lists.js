@@ -226,8 +226,7 @@ async function appendPendingRequestsToList(filterText) {
       li.innerHTML = `
         <a href="${escapeHtml(req.url)}" target="_blank" rel="noopener" class="pending-request-link" title="Open request on GitHub">
           <strong>${escapeHtml(name)}</strong>
-          ${desc ? `<span class="pending-request-desc">${escapeHtml(desc.length > 80 ? desc.slice(0, 77) + '…' : desc)}</span>` : ''}
-          <span class="pending-request-meta">#${req.number}</span>
+
         </a>
       `;
       list.appendChild(li);

@@ -1,7 +1,6 @@
 import { state, els } from './state.js';
 import { escapeHtml } from './utils.js';
 import { getGeometryIconHTML } from './geometry-icons.js';
-import { getMaturityImprovementSuggestions } from './maturity.js';
 import { setActiveListButton } from './ui-fx.js';
 import { runUrlChecks } from './url-check.js';
 import { normalizeServiceUrl, parseServiceAndLayerId, maybeRenderPublicServicePreviewCard, incrementRenderGeneration, getCurrentMapView, setCurrentMapView } from './arcgis-preview.js';
@@ -9,6 +8,7 @@ import { renderCoverageMapCard, getCoverageCache } from './coverage-map.js';
 import { getDatasetById, getAttributeById, getAttributesForDataset, getDatasetsForAttribute } from './catalog.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
 import { enterDatasetEditMode, enterAttributeEditMode } from './edit-mode.js';
+import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
 
 export function renderDatasetDetail(datasetId) {
     if (!els.datasetDetailEl) return;
@@ -149,60 +149,6 @@ export function renderDatasetDetail(datasetId) {
     }
     html += '</div>'; // end Development & Status section
 
-    // === Data Maturity Section ===
-    const maturity = dataset.maturity || {};
-    html += '<div class="manual-section">';
-    html += '<h4 class="manual-section-title">Data Maturity</h4>';
-    
-    const tierLabels = {
-      'bronze': { label: 'Bronze', class: 'tier-bronze', icon: '🥉' },
-      'silver': { label: 'Silver', class: 'tier-silver', icon: '🥈' },
-      'gold': { label: 'Gold', class: 'tier-gold', icon: '🥇' }
-    };
-    const docLabels = {
-      'none': 'None',
-      'minimal': 'Minimal',
-      'partial': 'Partial',
-      'complete': 'Complete'
-    };
-    
-    const tier = maturity.quality_tier || '';
-    const tierInfo = tierLabels[tier] || { label: tier || 'Unknown', class: '', icon: '' };
-    const completeness = maturity.completeness;
-    const docLevel = maturity.documentation || '';
-    const docLabel = docLabels[docLevel] || docLevel || 'Unknown';
-    
-    html += `<div class="maturity-overview">`;
-    html += `<div class="tier-badge-large ${tierInfo.class}">${tierInfo.icon}<span>${escapeHtml(tierInfo.label)}</span></div>`;
-    html += `</div>`;
-    
-    if (completeness !== undefined) {
-      const pct = Math.min(100, Math.max(0, Number(completeness) || 0));
-      html += `
-        <div class="completeness-bar-container">
-          <div class="completeness-label"><strong>Completeness:</strong> ${pct}%</div>
-          <div class="completeness-bar-track">
-            <div class="completeness-bar-fill" style="width: ${pct}%"></div>
-          </div>
-        </div>
-      `;
-    }
-    
-    html += `<p><strong>Documentation:</strong> ${escapeHtml(docLabel)}</p>`;
-
-    // Improvement suggestions based on current tier
-    const improvementSuggestions = getMaturityImprovementSuggestions(tier, completeness, docLevel);
-    if (improvementSuggestions.length > 0) {
-      html += `<div class="maturity-suggestions">`;
-      html += `<div class="suggestions-header"><strong>Suggestions to reach the next tier:</strong></div>`;
-      html += `<ul class="suggestions-list">`;
-      improvementSuggestions.forEach(suggestion => {
-        html += `<li>${escapeHtml(suggestion)}</li>`;
-      });
-      html += `</ul></div>`;
-    }
-    html += '</div>'; // end Data Maturity section
-
     // Edit button at bottom of manual card
     html += `
       <div class="manual-section-actions">
@@ -213,6 +159,9 @@ export function renderDatasetDetail(datasetId) {
     `;
 
     html += '</div>'; // end combined manual card
+
+    // Auto-computed Data Maturity card (initialized after innerHTML is set)
+    html += maturityCardHTML();
 
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
     html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
@@ -263,6 +212,9 @@ html += `
 
     els.datasetDetailEl.innerHTML = html;
     els.datasetDetailEl.classList.remove('hidden');
+
+// Initialize auto-computed maturity card (listens for service data events)
+initMaturityCard(els.datasetDetailEl, dataset, !!dataset.public_web_service);
 
 // Check URL status icons (async)
 runUrlChecks(els.datasetDetailEl);

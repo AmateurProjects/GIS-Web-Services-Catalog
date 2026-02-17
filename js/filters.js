@@ -24,6 +24,65 @@ export function registerFilterCallbacks({ renderDatasetList }) {
   _renderDatasetList = renderDatasetList;
 }
 
+// ── Filter panel toggle (popover) ──
+let filterPanelOpen = false;
+
+export function toggleFilterPanel() {
+  filterPanelOpen ? closeFilterPanel() : openFilterPanel();
+}
+
+export function openFilterPanel() {
+  filterPanelOpen = true;
+  if (els.datasetFiltersEl) els.datasetFiltersEl.classList.add('is-open');
+  const btn = document.getElementById('filterToggleBtn');
+  if (btn) btn.classList.add('is-active');
+}
+
+export function closeFilterPanel() {
+  filterPanelOpen = false;
+  if (els.datasetFiltersEl) els.datasetFiltersEl.classList.remove('is-open');
+  const btn = document.getElementById('filterToggleBtn');
+  if (btn) btn.classList.remove('is-active');
+}
+
+/** Wire filter toggle button, click-outside, and Escape key. Call once from app.js. */
+export function initFilterToggle() {
+  const btn = document.getElementById('filterToggleBtn');
+  if (btn) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleFilterPanel();
+    });
+  }
+  // Close on click outside
+  document.addEventListener('click', (e) => {
+    if (!filterPanelOpen) return;
+    if (e.target.closest('.filter-panel') || e.target.closest('#filterToggleBtn')) return;
+    closeFilterPanel();
+  });
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && filterPanelOpen) closeFilterPanel();
+  });
+}
+
+function updateFilterToggleBadge() {
+  const btn = document.getElementById('filterToggleBtn');
+  if (!btn) return;
+  const total = Object.values(activeFilters).reduce((n, s) => n + s.size, 0);
+  let badge = btn.querySelector('.filter-toggle-badge');
+  if (total > 0) {
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'filter-toggle-badge';
+      btn.appendChild(badge);
+    }
+    badge.textContent = total;
+  } else if (badge) {
+    badge.remove();
+  }
+}
+
 export function getFilteredDatasets(textFilter) {
   const ft = (textFilter || '').trim().toLowerCase();
   let filtered = state.allDatasets;
@@ -235,12 +294,14 @@ export function renderFilterPanel() {
       }
       // Only re-render the chips and dataset list (lightweight)
       renderActiveFilterChips();
+      updateFilterToggleBadge();
       if (_renderDatasetList) _renderDatasetList();
     });
   });
 
-  // ── Active filter chips ──
+  // ── Active filter chips + toggle badge ──
   renderActiveFilterChips();
+  updateFilterToggleBadge();
 }
 
 /** Render only the active-filter chip bar (lightweight, no filter panel rebuild) */

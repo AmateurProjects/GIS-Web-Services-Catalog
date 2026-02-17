@@ -73,6 +73,55 @@ export async function fetchSampleRows(serviceUrl, layerId = 0, n = 8) {
   return fetchJsonWithTimeout(u);
 }
 
+/**
+ * Fetch N truly random rows by picking unique random offsets into the
+ * ordered result set and querying each individually.
+ * Returns an array of attribute objects (may be shorter than n if some fail).
+ */
+export async function fetchRandomSampleRows(serviceUrl, layerId = 0, oidField = 'OBJECTID', totalCount = 0, n = 5) {
+  const base = normalizeServiceUrl(serviceUrl);
+  const parsed = parseServiceAndLayerId(base);
+  const target = parsed.isLayerUrl ? base : `${base}/${layerId}`;
+
+  // If we don't know the total count, try to fetch it
+  if (!totalCount || totalCount < 1) {
+    try {
+      const cp = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
+      const cj = await fetchJsonWithTimeout(`${target}/query?${cp}`, 5000);
+      if (cj && typeof cj.count === 'number') totalCount = cj.count;
+    } catch {}
+  }
+  if (!totalCount || totalCount < 1) return [];
+
+  // Generate n unique random offsets
+  const sampleSize = Math.min(n, totalCount);
+  const offsets = new Set();
+  let safetyCount = sampleSize * 20;
+  while (offsets.size < sampleSize && safetyCount-- > 0) {
+    offsets.add(Math.floor(Math.random() * totalCount));
+  }
+
+  // Fetch each random row individually using resultOffset + orderByFields
+  const rows = await Promise.all([...offsets].map(async (offset) => {
+    try {
+      const params = new URLSearchParams({
+        where: '1=1',
+        outFields: '*',
+        returnGeometry: 'false',
+        resultRecordCount: '1',
+        resultOffset: String(offset),
+        orderByFields: oidField,
+        f: 'json',
+      });
+      const json = await fetchJsonWithTimeout(`${target}/query?${params}`, 5000);
+      if (json?.features?.[0]?.attributes) return json.features[0].attributes;
+    } catch {}
+    return null;
+  }));
+
+  return rows.filter(Boolean);
+}
+
 // Initialize interactive ArcGIS map for dataset preview
 export let currentMapView = null;
 
@@ -224,9 +273,8 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
 
     const upper = url.toUpperCase();
 
-    // Layer fields + sample rows (best-effort)
+    // Layer fields (best-effort)
     let layerJson = null;
-    let sampleJson = null;
     try { layerJson = await fetchLayerJson(fetchBaseUrl, layerId); } catch {}
     // If layerJson came back without fields (e.g. it was a service-root hit),
     // and the original URL already had fields, try the original URL directly.
@@ -236,7 +284,6 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
         if (direct && Array.isArray(direct.fields)) layerJson = direct;
       } catch {}
     }
-    try { sampleJson = await fetchSampleRows(fetchBaseUrl, layerId, 5); } catch {}
 
     // Fetch total record count for sample records display
     let recordCount = null;
@@ -249,6 +296,13 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
 
     // Bail if user navigated to a different dataset while we were fetching
     if (generation !== _renderGeneration) return;
+
+    // Dispatch maturity event: service + layer JSON are ready
+    try {
+      containingEl.dispatchEvent(new CustomEvent('maturity:service-data', {
+        detail: { serviceJson, layerJson },
+      }));
+    } catch (_) {}
 
     // Service description from metadata
     const serviceDescription = serviceJson.serviceDescription || serviceJson.description || '';
@@ -492,6 +546,9 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
         const table = contentEl.querySelector('#fieldsTable');
         if (!table) return;
 
+        // Collector for maturity event
+        const _fieldStatsCollector = [];
+
         // 1) Get total feature count
         let totalCount = 0;
         try {
@@ -547,6 +604,7 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
               const statJson = await fetchJsonWithTimeout(`${target}/query?${statParams}`, 6000);
               const nnCount = (statJson?.features?.[0]?.attributes?.nn_count) ?? totalCount;
               const nullPct = totalCount > 0 ? ((totalCount - nnCount) / totalCount * 100) : 0;
+              _fieldStatsCollector.push({ name: f.name, type: f.type, alias: f.alias || '', nullPct, hasDomain: !!(f.domain && f.domain.type === 'codedValue') });
               nullCell.innerHTML = nullPct > 0
                 ? `<span class="field-stat-bar" style="--pct:${Math.min(nullPct, 100).toFixed(0)}%">${nullPct.toFixed(1)}%</span>`
                 : '<span class="field-stat-zero">0%</span>';
@@ -618,19 +676,67 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
         }
 
         await Promise.all(Array.from({ length: STAT_CONCURRENCY }, processField));
+
+        // Dispatch maturity event: field stats are ready
+        try {
+          containingEl.dispatchEvent(new CustomEvent('maturity:field-stats', {
+            detail: { fieldStats: _fieldStatsCollector, totalCount },
+          }));
+        } catch (_) {}
       }, 50);
     }
 
-    // Sample table
-    if (sampleJson && Array.isArray(sampleJson.features) && sampleJson.features.length) {
-      const rows = sampleJson.features.map(ft => ft.attributes || {}).slice(0, 5);
-      const cols = Object.keys(rows[0] || {}); // show all columns
-      const recordCountText = recordCount !== null ? `${recordCount.toLocaleString()} total records in service.` : '';
-      if (cols.length) {
-        html += `
-          <div class="card" style="margin-top:0.75rem;">
-            <div class="card-header-row"><div style="font-weight:600;">Sample Records</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
-            <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${recordCountText} Showing ${rows.length} randomly selected rows.</p>
+    // Sample Records placeholder — populated asynchronously with truly random rows
+    html += `
+      <div class="card" id="sampleRecordsCard" style="margin-top:0.75rem;">
+        <div class="card-header-row">
+          <div style="font-weight:600;">Sample Records</div>
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span class="data-source-badge data-source-badge-auto">Auto</span>
+            <button type="button" class="btn" data-sample-refresh title="Fetch another random sample" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>
+          </div>
+        </div>
+        <p class="text-muted" data-sample-desc style="margin-bottom:0.5rem;font-size:0.85rem;">
+          ${recordCount !== null ? recordCount.toLocaleString() + ' total records in service.' : ''}
+          Loading random sample\u2026
+        </p>
+        <div data-sample-content>
+          <p class="loading-message" style="font-size:0.85rem;">Selecting random rows\u2026</p>
+        </div>
+      </div>
+    `;
+
+    contentEl.innerHTML = html;
+    statusEl.textContent = 'Preview loaded.';
+
+    // Wire async random sample rows
+    {
+      const sampleCard = contentEl.querySelector('#sampleRecordsCard');
+      if (sampleCard) {
+        const _sOidField = objectIdField || 'OBJECTID';
+        const _sUrl = fetchBaseUrl;
+        const _sLayerId = layerId;
+        const _sCount = recordCount || 0;
+        const _sGen = generation;
+        const _sContent = sampleCard.querySelector('[data-sample-content]');
+        const _sDesc = sampleCard.querySelector('[data-sample-desc]');
+
+        async function loadRandomSample() {
+          if (_sGen !== _renderGeneration) return;
+          _sContent.innerHTML = '<p class="loading-message" style="font-size:0.85rem;">Selecting random rows\u2026</p>';
+
+          const rows = await fetchRandomSampleRows(_sUrl, _sLayerId, _sOidField, _sCount, 5);
+          if (_sGen !== _renderGeneration) return;
+
+          if (!rows.length) {
+            _sContent.innerHTML = '<p class="text-muted" style="font-size:0.85rem;">Could not fetch sample records.</p>';
+            return;
+          }
+
+          const cols = Object.keys(rows[0]);
+          const total = _sCount ? `${_sCount.toLocaleString()} total records in service. ` : '';
+          _sDesc.textContent = `${total}Showing ${rows.length} randomly selected rows.`;
+          _sContent.innerHTML = `
             <div style="overflow:auto;">
               <table>
                 <thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
@@ -639,13 +745,17 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
                 </tbody>
               </table>
             </div>
-          </div>
-        `;
+          `;
+        }
+
+        loadRandomSample();
+
+        const refreshBtn = sampleCard.querySelector('[data-sample-refresh]');
+        if (refreshBtn) {
+          refreshBtn.addEventListener('click', () => loadRandomSample());
+        }
       }
     }
-
-    contentEl.innerHTML = html;
-    statusEl.textContent = 'Preview loaded.';
 
     // Initialize interactive ArcGIS map (use service root for MapImageLayer)
     // Skip for non-spatial tables — there is no geometry to display.

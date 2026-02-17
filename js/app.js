@@ -4,7 +4,7 @@ import { state, els, initElements } from './state.js';
 import { loadCatalog } from './catalog.js';
 import { renderDashboard, registerDashboardCallbacks } from './dashboard.js';
 import { renderDatasetList, renderAttributeList, registerListCallbacks } from './lists.js';
-import { renderFilterPanel, registerFilterCallbacks } from './filters.js';
+import { renderFilterPanel, registerFilterCallbacks, initFilterToggle } from './filters.js';
 import { renderDatasetDetail, renderInlineAttributeDetail, renderAttributeDetail } from './detail.js';
 import { renderNewDatasetRequestForm } from './new-dataset-form.js';
 import { renderNewAttributeCreateForm } from './forms.js';
@@ -101,6 +101,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       btn.textContent = 'Show more';
     }
   });
+
+  // ── Filter panel toggle ──
+  initFilterToggle();
 
   // ── Tab switching ──
   if (els.dashboardTabBtn) els.dashboardTabBtn.addEventListener('click', showDashboardView);

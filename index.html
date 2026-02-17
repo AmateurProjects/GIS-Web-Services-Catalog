@@ -33,14 +33,20 @@
         <div class="toolbar">
           <input id="datasetSearchInput" type="search" placeholder="Search datasets..." />
           <div class="toolbar-actions">
+            <button id="filterToggleBtn" type="button" class="filter-toggle-btn" title="Toggle filters">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;"><path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/></svg>
+              Filters
+            </button>
             <button id="newDatasetBtn" type="button" class="primary-button">
               + Submit new dataset
             </button>
           </div>
         </div>
         <div id="activeFilterChips" class="active-filter-chips"></div>
-        <div id="datasetFilters" class="filter-panel"></div>
-        <div id="datasetList"></div>
+        <div class="sidebar-list-area">
+          <div id="datasetFilters" class="filter-panel"></div>
+          <div id="datasetList"></div>
+        </div>
       </div>
       <div id="datasetDetail" class="detail-panel hidden"></div>
     </section>

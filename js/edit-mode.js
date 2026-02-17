@@ -37,11 +37,6 @@ export const DATASET_EDIT_FIELDS = [
   { key: 'coverage', label: 'Coverage', type: 'select', options: ['nationwide', 'multi_state', 'single_state', 'partial'], section: 'scale' },
   { key: 'web_mercator_compatible', label: 'Web Mercator Compatible', type: 'boolean', section: 'scale' },
   { key: 'performance_notes', label: 'Performance Notes', type: 'textarea', section: 'scale' },
-
-  // Maturity
-  { key: 'maturity.completeness', label: 'Completeness (%)', type: 'number', section: 'maturity' },
-  { key: 'maturity.documentation', label: 'Documentation Level', type: 'select', options: ['none', 'minimal', 'partial', 'complete'], section: 'maturity' },
-  { key: 'maturity.quality_tier', label: 'Quality Tier', type: 'select', options: ['bronze', 'silver', 'gold'], section: 'maturity' },
 ];
 
 export const ATTRIBUTE_EDIT_FIELDS = [
@@ -119,7 +114,6 @@ export function enterDatasetEditMode(datasetId, onDone) {
     catalog: { title: 'Catalog Metadata', fields: [] },
     devstatus: { title: 'Development & Status', fields: [] },
     scale: { title: 'National Scale Suitability', fields: [] },
-    maturity: { title: 'Data Maturity', fields: [] },
   };
   DATASET_EDIT_FIELDS.forEach(f => {
     const s = f.section || 'catalog';

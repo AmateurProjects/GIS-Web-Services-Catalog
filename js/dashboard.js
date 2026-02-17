@@ -5,6 +5,7 @@ import { state, els } from './state.js';
 import { escapeHtml } from './utils.js';
 import { showDatasetsView } from './navigation.js';
 import { applyDashboardFilter } from './filters.js';
+import { fetchPendingDatasetRequests, parseRequestedDatasetName } from './github-api.js';
 
 let _renderDatasetDetail = null;
 export function registerDashboardCallbacks({ renderDatasetDetail }) {
@@ -332,6 +333,19 @@ export function renderDashboard() {
 
     html += `</div>`; // end table-row
 
+    // ── Pending Dataset Requests (loads async) ──
+    html += `
+      <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
+        <div class="dashboard-chart-card" id="dashPendingRequestsCard">
+          <div class="dashboard-chart-title">Pending Dataset Requests</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Open requests awaiting review from the community.</p>
+          <div data-dash-pending-list>
+            <p class="loading-message" style="font-size:0.85rem;">Loading&hellip;</p>
+          </div>
+        </div>
+      </div>
+    `;
+
     // ── Office / Owner breakdown ──
     const officeEntries = Object.entries(officeCounts).sort((a, b) => b[1] - a[1]);
     const maxOffice = Math.max(...officeEntries.map(e => e[1]), 1);
@@ -377,4 +391,44 @@ export function renderDashboard() {
         applyDashboardFilter(group, value);
       });
     });
+
+    // ── Load pending requests async ──
+    loadDashboardPendingRequests();
   }
+
+/** Fetch and render pending dataset requests in the dashboard. */
+async function loadDashboardPendingRequests() {
+  const listEl = els.dashboardContentEl?.querySelector('[data-dash-pending-list]');
+  if (!listEl) return;
+
+  try {
+    const requests = await fetchPendingDatasetRequests();
+
+    if (!requests || !requests.length) {
+      listEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No pending requests. The community hasn\'t submitted any new dataset requests yet.</p>';
+      return;
+    }
+
+    let html = `<div class="pending-requests-dashboard">`;
+    html += `<p style="margin-bottom:0.5rem;font-size:0.85rem;"><strong>${requests.length}</strong> pending request${requests.length !== 1 ? 's' : ''}</p>`;
+    html += `<ul class="pending-requests-list">`;
+    requests.forEach(req => {
+      const name = parseRequestedDatasetName(req.title);
+      const date = req.created_at ? new Date(req.created_at).toLocaleDateString() : '';
+      const user = req.user || '';
+      html += `
+        <li class="pending-request-item">
+          <a href="${escapeHtml(req.url)}" target="_blank" rel="noopener" class="pending-request-link">
+            <strong>${escapeHtml(name)}</strong>
+            <span class="pending-request-meta">#${req.number}${user ? ` by ${escapeHtml(user)}` : ''}${date ? ` · ${date}` : ''}</span>
+          </a>
+        </li>
+      `;
+    });
+    html += `</ul></div>`;
+    listEl.innerHTML = html;
+  } catch (err) {
+    console.warn('Failed to load pending requests for dashboard', err);
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">Could not load pending requests.</p>';
+  }
+}

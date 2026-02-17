@@ -5,8 +5,9 @@ import { loadCatalog } from './catalog.js';
 import { renderDashboard, registerDashboardCallbacks } from './dashboard.js';
 import { renderDatasetList, renderAttributeList, registerListCallbacks } from './lists.js';
 import { renderFilterPanel, registerFilterCallbacks } from './filters.js';
-import { renderDatasetDetail, renderInlineAttributeDetail, renderAttributeDetail, registerDetailCallbacks } from './detail.js';
-import { renderDatasetEditForm, renderNewAttributeCreateForm, renderNewDatasetCreateForm, renderAttributeEditForm, registerFormCallbacks } from './forms.js';
+import { renderDatasetDetail, renderInlineAttributeDetail, renderAttributeDetail } from './detail.js';
+import { renderNewDatasetRequestForm } from './new-dataset-form.js';
+import { renderNewAttributeCreateForm } from './forms.js';
 import { showDashboardView, showDatasetsView, showAttributesView, registerNavigationCallbacks } from './navigation.js';
 
 /** Simple debounce helper */
@@ -40,17 +41,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderDatasetDetail,
   });
 
-  registerDetailCallbacks({
-    renderDatasetEditForm,
-    renderAttributeEditForm,
-  });
-
-  registerFormCallbacks({
-    renderDatasetDetail,
-    renderAttributeDetail,
-    renderInlineAttributeDetail,
-  });
-
   // ── Show loading state ──
   if (els.dashboardContentEl) {
     els.dashboardContentEl.innerHTML = '<p class="loading-message">Loading catalog data&hellip;</p>';
@@ -82,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (newDatasetBtn) {
     newDatasetBtn.addEventListener('click', () => {
       showDatasetsView();
-      renderNewDatasetCreateForm();
+      renderNewDatasetRequestForm();
     });
   }
 

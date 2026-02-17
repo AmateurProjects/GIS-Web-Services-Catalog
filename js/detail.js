@@ -8,13 +8,7 @@ import { normalizeServiceUrl, parseServiceAndLayerId, maybeRenderPublicServicePr
 import { renderCoverageMapCard, getCoverageCache } from './coverage-map.js';
 import { getDatasetById, getAttributeById, getAttributesForDataset, getDatasetsForAttribute } from './catalog.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
-
-let _renderDatasetEditForm = null;
-let _renderAttributeEditForm = null;
-export function registerDetailCallbacks({ renderDatasetEditForm, renderAttributeEditForm }) {
-  _renderDatasetEditForm = renderDatasetEditForm;
-  _renderAttributeEditForm = renderAttributeEditForm;
-}
+import { enterDatasetEditMode, enterAttributeEditMode } from './edit-mode.js';
 
 export function renderDatasetDetail(datasetId) {
     if (!els.datasetDetailEl) return;
@@ -305,7 +299,7 @@ if (covRefreshBtn) {
     if (editBtn) {
       editBtn.addEventListener('click', () => {
         const dsId = editBtn.getAttribute('data-edit-dataset');
-        if (_renderDatasetEditForm) _renderDatasetEditForm(dsId);
+        enterDatasetEditMode(dsId, () => renderDatasetDetail(dsId));
       });
     }
 
@@ -532,7 +526,7 @@ export function renderAttributeDetail(attrId) {
     if (editAttrBtn) {
       editAttrBtn.addEventListener('click', () => {
         const id = editAttrBtn.getAttribute('data-edit-attribute');
-        if (_renderAttributeEditForm) _renderAttributeEditForm(id);
+        enterAttributeEditMode(id, () => renderAttributeDetail(id));
       });
     }
 

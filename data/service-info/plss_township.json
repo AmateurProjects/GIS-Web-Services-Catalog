@@ -1,0 +1,639 @@
+{
+  "generated": "2026-02-22T06:15:41.719Z",
+  "datasetId": "plss_township",
+  "serviceUrl": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/1",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 1000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "PLSS_Township",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "SRVNAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 1000000,
+    "maxScale": 100000,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1766777161724,
+    "definitionExpression": "",
+    "recordCount": 85316,
+    "extent": {
+      "xmin": -179.2304392157341,
+      "ymin": 24.5565824028681,
+      "xmax": 179.89399847874728,
+      "ymax": 71.3898930627991
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "Object ID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "STATEABBR",
+      "alias": "State Abbreviation",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PRINMERCD",
+      "alias": "Principal Meridian Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PRINMER",
+      "alias": "Principal Meridian Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPNO",
+      "alias": "Township Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPFRAC",
+      "alias": "Township Fraction",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPDIR",
+      "alias": "Township Direction",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RANGENO",
+      "alias": "Range Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RANGEFRAC",
+      "alias": "Range Fraction",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RANGEDIR",
+      "alias": "Range Direction",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPDPCD",
+      "alias": "Township Duplicate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PLSSID",
+      "alias": "Township Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPLAB",
+      "alias": "Township Label",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SRVNAME",
+      "alias": "Survey Name for PLSS Areas",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVTYP",
+      "alias": "PLSS Special Survey Type Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVTYPTXT",
+      "alias": "Survey Type Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCEDATE",
+      "alias": "Source Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCEREF",
+      "alias": "Source Doc Link or Reference",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "STEWARD",
+      "alias": "Data Steward for PLSS Township Data",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SECSRVNAME",
+      "alias": "Secondary Survey Name for Ohio Surveys",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "Global ID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "created_user",
+      "alias": "Created User",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "created_date",
+      "alias": "Created Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "last_edited_user",
+      "alias": "Last Edited User",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "last_edited_date",
+      "alias": "Last Edited Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ORIGID",
+      "alias": "ORIGID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PartCount",
+      "alias": "PartCount",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "Object ID",
+      "nullPct": 0,
+      "distinctCount": 85316,
+      "hasDomain": false
+    },
+    {
+      "name": "STATEABBR",
+      "type": "esriFieldTypeString",
+      "alias": "State Abbreviation",
+      "nullPct": 0,
+      "distinctCount": 31,
+      "hasDomain": false
+    },
+    {
+      "name": "PRINMERCD",
+      "type": "esriFieldTypeString",
+      "alias": "Principal Meridian Code",
+      "nullPct": 0,
+      "distinctCount": 42,
+      "hasDomain": false
+    },
+    {
+      "name": "PRINMER",
+      "type": "esriFieldTypeString",
+      "alias": "Principal Meridian Text",
+      "nullPct": 0,
+      "distinctCount": 46,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPNO",
+      "type": "esriFieldTypeString",
+      "alias": "Township Number",
+      "nullPct": 0.3,
+      "distinctCount": 169,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPFRAC",
+      "type": "esriFieldTypeString",
+      "alias": "Township Fraction",
+      "nullPct": 7.3,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPDIR",
+      "type": "esriFieldTypeString",
+      "alias": "Township Direction",
+      "nullPct": 0.3,
+      "distinctCount": 4,
+      "hasDomain": false
+    },
+    {
+      "name": "RANGENO",
+      "type": "esriFieldTypeString",
+      "alias": "Range Number",
+      "nullPct": 0.3,
+      "distinctCount": 232,
+      "hasDomain": false
+    },
+    {
+      "name": "RANGEFRAC",
+      "type": "esriFieldTypeString",
+      "alias": "Range Fraction",
+      "nullPct": 0.3,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "RANGEDIR",
+      "type": "esriFieldTypeString",
+      "alias": "Range Direction",
+      "nullPct": 0.3,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPDPCD",
+      "type": "esriFieldTypeString",
+      "alias": "Township Duplicate",
+      "nullPct": 4.1,
+      "distinctCount": 4,
+      "hasDomain": false
+    },
+    {
+      "name": "PLSSID",
+      "type": "esriFieldTypeString",
+      "alias": "Township Identifier",
+      "nullPct": 0.2,
+      "distinctCount": 84959,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPLAB",
+      "type": "esriFieldTypeString",
+      "alias": "Township Label",
+      "nullPct": 0.3,
+      "distinctCount": 48445,
+      "hasDomain": false
+    },
+    {
+      "name": "SRVNAME",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Name for PLSS Areas",
+      "nullPct": 97.4,
+      "distinctCount": 16,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVTYP",
+      "type": "esriFieldTypeString",
+      "alias": "PLSS Special Survey Type Code",
+      "nullPct": 97.7,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVTYPTXT",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Type Text",
+      "nullPct": 97.1,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCEDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Source Date",
+      "nullPct": 97.4,
+      "distinctCount": 1012,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCEREF",
+      "type": "esriFieldTypeString",
+      "alias": "Source Doc Link or Reference",
+      "nullPct": 95.5,
+      "distinctCount": 6,
+      "hasDomain": false
+    },
+    {
+      "name": "STEWARD",
+      "type": "esriFieldTypeString",
+      "alias": "Data Steward for PLSS Township Data",
+      "nullPct": 94.1,
+      "distinctCount": 4,
+      "hasDomain": false
+    },
+    {
+      "name": "SECSRVNAME",
+      "type": "esriFieldTypeString",
+      "alias": "Secondary Survey Name for Ohio Surveys",
+      "nullPct": 100,
+      "distinctCount": 0,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "Global ID",
+      "nullPct": 0,
+      "distinctCount": 85316,
+      "hasDomain": false
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "Created User",
+      "nullPct": 72.3,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "Created Date",
+      "nullPct": 68.3,
+      "distinctCount": 4,
+      "hasDomain": false
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "Last Edited User",
+      "nullPct": 72.3,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "Last Edited Date",
+      "nullPct": 72.3,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "ORIGID",
+      "type": "esriFieldTypeString",
+      "alias": "ORIGID",
+      "nullPct": 100,
+      "distinctCount": 0,
+      "hasDomain": false
+    },
+    {
+      "name": "PartCount",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "PartCount",
+      "nullPct": 100,
+      "distinctCount": 0,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape Area",
+      "nullPct": 0,
+      "distinctCount": 85303,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape Length",
+      "nullPct": 0,
+      "distinctCount": 85311,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "STATEABBR": "AZ",
+      "PRINMERCD": "14",
+      "PRINMER": "Gila-Salt River Meridian",
+      "TWNSHPNO": "012",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "S",
+      "RANGENO": "021",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "AZ140120S0210W0",
+      "TWNSHPLAB": "12S 21W",
+      "SRVNAME": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "STEWARD": null,
+      "SECSRVNAME": null,
+      "GlobalID": "7bc8375b-0ab0-4c68-857c-6eb7b49777b3",
+      "created_user": null,
+      "created_date": 1619255098000,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "ORIGID": null,
+      "PartCount": null,
+      "Shape__Area": 0.005078915292187958,
+      "Shape__Length": 0.30798856239693084
+    },
+    {
+      "OBJECTID": 2,
+      "STATEABBR": "AZ",
+      "PRINMERCD": "14",
+      "PRINMER": "Gila-Salt River Meridian",
+      "TWNSHPNO": "012",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "S",
+      "RANGENO": "019",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "AZ140120S0190W0",
+      "TWNSHPLAB": "12S 19W",
+      "SRVNAME": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "STEWARD": null,
+      "SECSRVNAME": null,
+      "GlobalID": "30c7cd34-f70b-4dbd-a274-da899f479095",
+      "created_user": null,
+      "created_date": 1619255098000,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "ORIGID": null,
+      "PartCount": null,
+      "Shape__Area": 0.00894312128502861,
+      "Shape__Length": 0.37955091909508526
+    },
+    {
+      "OBJECTID": 3,
+      "STATEABBR": "AZ",
+      "PRINMERCD": "14",
+      "PRINMER": "Gila-Salt River Meridian",
+      "TWNSHPNO": "012",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "S",
+      "RANGENO": "018",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "AZ140120S0180W0",
+      "TWNSHPLAB": "12S 18W",
+      "SRVNAME": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "STEWARD": null,
+      "SECSRVNAME": null,
+      "GlobalID": "c3089857-45bb-4774-8d85-4159a4bf11af",
+      "created_user": null,
+      "created_date": 1619255098000,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "ORIGID": null,
+      "PartCount": null,
+      "Shape__Area": 0.008929676655498042,
+      "Shape__Length": 0.37927058809325803
+    },
+    {
+      "OBJECTID": 4,
+      "STATEABBR": "AZ",
+      "PRINMERCD": "14",
+      "PRINMER": "Gila-Salt River Meridian",
+      "TWNSHPNO": "012",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "S",
+      "RANGENO": "020",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "AZ140120S0200W0",
+      "TWNSHPLAB": "12S 20W",
+      "SRVNAME": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "STEWARD": null,
+      "SECSRVNAME": null,
+      "GlobalID": "9023404b-2ee6-4be0-ad6c-4c361c9084f7",
+      "created_user": null,
+      "created_date": 1619255098000,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "ORIGID": null,
+      "PartCount": null,
+      "Shape__Area": 0.007056219322976176,
+      "Shape__Length": 0.34082374497017365
+    },
+    {
+      "OBJECTID": 5,
+      "STATEABBR": "AZ",
+      "PRINMERCD": "14",
+      "PRINMER": "Gila-Salt River Meridian",
+      "TWNSHPNO": "013",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "S",
+      "RANGENO": "019",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "AZ140130S0190W0",
+      "TWNSHPLAB": "13S 19W",
+      "SRVNAME": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "STEWARD": null,
+      "SECSRVNAME": null,
+      "GlobalID": "45ca5aa9-ed19-44c9-9be0-d3aed7aa2b90",
+      "created_user": null,
+      "created_date": 1619255098000,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "ORIGID": null,
+      "PartCount": null,
+      "Shape__Area": 0.0018379706702944532,
+      "Shape__Length": 0.24591760591841633
+    }
+  ]
+}

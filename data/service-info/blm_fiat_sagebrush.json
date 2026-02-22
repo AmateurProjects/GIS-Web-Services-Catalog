@@ -1,0 +1,96 @@
+{
+  "generated": "2026-02-22T06:15:30.542Z",
+  "datasetId": "blm_fiat_sagebrush",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/wildlife/BLM_FIAT_Sagebrush_Habitat_at_Risk_of_Conifer_Expansion/MapServer/0",
+  "metadata": {
+    "serviceDescription": "A 30 meter integer grid derived from USGS GAP data published in 2010 of sagebrush land cover within 120 meters of conifer land cover.  It is one of several inputs used in the BLM FIAT analysis completed March 2015. FIAT was developed using a process designed to identify strategies that ameliorate threats to Greater Sage-Grouse (GRSG; Centrocercus urophasianus) and their habitats. While the assessment is applicable across the range of sage-grouse, the analysis is limited to Western Association of Fish and Wildlife Management Agencies’(WAFWA) Management Zones III, IV, and V (roughly the Great Basin region) because of the significant issues associated with invasive annual grasses and the high level of wildfires in this region. It incorporates emerging science, regional findings, and local data in identifying management opportunities that counter detrimental ecological trends in wildfire, invasive annual grasses, and conifer expansion. The purpose of the assessment is to identify potential project areas and management strategies in highly valued greater sage-grouse habitats which, if implemented, would reduce the threats to greater sage-grouse.",
+    "copyrightText": "U.S. Department of Interior, Bureau of Land Management (BLM). Data created by the BLM Headquarters (HQ) for field office use.",
+    "author": "",
+    "subject": "The data identifies sagebrush habitat potentially under threat of conifer expansion.  It was created specifically for use in the BLM FIAT analysis.",
+    "keywords": "biota,environment,Fire,Wildlife,Geospatial,FIAT,Fire and Invasive Assessment Tool,Bureau of Land Management,BLM FIAT Assessment Areas,Central Oregon,Northern Great Basin,Snake Salmon Beaverhead,Southern Great Basin,Western Great Basin",
+    "comments": "<DIV STYLE=\"text-align:Left;font-size:12pt\"><DIV><P><SPAN>This Map Service displays a 30 meter integer grid derived from USGS GAP data published in 2010 of sagebrush land cover within 120 meters of conifer land cover.  It is one of several inputs used in the BLM FIAT analysis completed March 2015. FIAT was developed using a process designed to identify strategies that ameliorate threats to Greater Sage-Grouse (GRSG; Centrocercus urophasianus) and their habitats. While the assessment is applicable across the range of sage-grouse, the analysis is limited to Western Association of Fish and Wildlife Management Agencies’(WAFWA) Management Zones III, IV, and V (roughly the Great Basin region) because of the significant issues associated with invasive annual grasses and the high level of wildfires in this region. It incorporates emerging science, regional findings, and local data in identifying management opportunities that counter detrimental ecological trends in wildfire, invasive annual grasses, and conifer expansion. The purpose of the assessment is to identify potential project areas and management strategies in highly valued greater sage-grouse habitats which, if implemented, would reduce the threats to greater sage-grouse.</SPAN></P></DIV></DIV>",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": "",
+    "capabilities": "Query,Map,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM FIAT Sagebrush Habitat at Risk of Conifer Expansion 2015 Integer Raster",
+    "layerType": "Raster Layer",
+    "geometryType": "",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "ConiferExpansion",
+    "supportsStatistics": false,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": null,
+    "extent": {
+      "xmin": -2085345,
+      "ymin": 1767825,
+      "xmax": -1201275,
+      "ymax": 2631165
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Value",
+      "alias": "Value",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Count",
+      "alias": "Count",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ConiferExpansion",
+      "alias": "ConiferExpansion",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "red",
+      "alias": "red",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "green",
+      "alias": "green",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "blue",
+      "alias": "blue",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [],
+  "sampleRows": []
+}

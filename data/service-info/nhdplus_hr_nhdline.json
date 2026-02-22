@@ -1,0 +1,151 @@
+{
+  "generated": "2026-02-22T07:43:19.544Z",
+  "datasetId": "nhdplus_hr_nhdline",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/7",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><p><span>The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p><p></div></div></p>",
+    "copyrightText": "USGS TNM – National Hydrography Dataset Plus High Resolution (NHDPlus HR). Data refreshed October, 2022.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,United States,US,NGP-TNM,REST,WMS",
+    "comments": "The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NHDLine",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolyline",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "GNIS_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": true,
+    "hasM": null,
+    "minScale": 100000,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": null,
+    "extent": {
+      "xmin": -19018247.9308,
+      "ymin": -1617189.7892000005,
+      "xmax": 16233558.501999997,
+      "ymax": 11135637.329499997
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "permanent_identifier",
+      "alias": "Permanent_Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "fdate",
+      "alias": "FDate",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "resolution",
+      "alias": "Resolution",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "gnis_id",
+      "alias": "GNIS_ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "gnis_name",
+      "alias": "GNIS_Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "lengthkm",
+      "alias": "LengthKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ftype",
+      "alias": "FType",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "fcode",
+      "alias": "FCode",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "visibilityfilter",
+      "alias": "VisibilityFilter",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "nhdplusid",
+      "alias": "NHDPlusID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vpuid",
+      "alias": "VPUID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [],
+  "sampleRows": []
+}

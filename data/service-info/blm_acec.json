@@ -1,0 +1,619 @@
+{
+  "generated": "2026-02-22T06:13:39.189Z",
+  "datasetId": "blm_acec",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_ACEC/MapServer/0",
+  "metadata": {
+    "serviceDescription": "This Map Service contains polygon features for designated and historic Areas of Critical Environmental Concern. Areas of Critical Environmental Concern are designated areas that need special attention for environmental degradation.",
+    "copyrightText": "Compiled by the Bureau of Land Management (BLM), Headquarters (HQ)",
+    "author": "",
+    "subject": "This Map Service contains polygon features for designated Areas of Critical Environmental Concern. Areas of Critical Environmental Concern are designated areas that need special attention for environmental degradation.",
+    "keywords": "Bureau of Land Management,BLM,Department of Interior,DOI,Areas of Critical Environmental Concern,ACEC,environment,Western United States",
+    "comments": "This Map Service contains polygon features for designated and historic Areas of Critical Environmental Concern. Areas of Critical Environmental Concern are designated areas that need special attention for environmental degradation.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "ACEC Designated Polygons",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "ACEC_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 1180,
+    "extent": {
+      "xmin": -18463158.911307566,
+      "ymin": 3675983.425671861,
+      "xmax": -11516174.367815776,
+      "ymax": 10900860.623683915
+    }
+  },
+  "fields": [
+    {
+      "name": "NEPA_NUM",
+      "alias": "NEPA Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ACEC_RLVNCE_CUL",
+      "alias": "ACEC Cultural Designation Relevance",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_RLVNCE_FRSC",
+      "alias": "ACEC Fish Resource Designation Relevance",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_RLVNCE_HIS",
+      "alias": "ACEC Historical Designation Relevance",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_RLVNCE_NHAZ",
+      "alias": "ACEC Natural Hazard Designation Relevance",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_RLVNCE_NPRO",
+      "alias": "ACEC Natural Process Designation Relevance",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_RLVNCE_NSYS",
+      "alias": "ACEC Natural System Designation Relevance",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_RLVNCE_SCE",
+      "alias": "ACEC Scenic Designation Relevance",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_RLVNCE_WRSC",
+      "alias": "ACEC Wildlife Resource Designation Relevance",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_IMPRTNCE_QLTS",
+      "alias": "ACEC Qualities Designation Importance Value Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_IMPRTNCE_IMPRTNCE",
+      "alias": "ACEC Importance Designation Importance Value Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_IMPRTNCE_CNTRBTN",
+      "alias": "ACEC Contribution Designation Importance Value Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ACEC_IMPRTNCE_THRT",
+      "alias": "ACEC Threat Designation Importance Value Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "SPCL_MGMT_ATTN_RX_PRTCT",
+      "alias": "ACEC Protect Special Management Attention Prescription",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "SPCL_MGMT_ATTN_RX_PRVNT",
+      "alias": "ACEC Prevent Special Management Attention Prescription",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "ACEC_NAME",
+      "alias": "ACEC Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LUP_NAME",
+      "alias": "Land Use Plan Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ROD_DATE",
+      "alias": "ROD Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "alias": "GIS Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeGUID",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "NEPA_NUM",
+      "type": "esriFieldTypeString",
+      "alias": "NEPA Number",
+      "nullPct": 0,
+      "distinctCount": 81,
+      "hasDomain": false
+    },
+    {
+      "name": "ACEC_RLVNCE_CUL",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Cultural Designation Relevance",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_RLVNCE_FRSC",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Fish Resource Designation Relevance",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_RLVNCE_HIS",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Historical Designation Relevance",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_RLVNCE_NHAZ",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Natural Hazard Designation Relevance",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_RLVNCE_NPRO",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Natural Process Designation Relevance",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_RLVNCE_NSYS",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Natural System Designation Relevance",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_RLVNCE_SCE",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Scenic Designation Relevance",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_RLVNCE_WRSC",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Wildlife Resource Designation Relevance",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_IMPRTNCE_QLTS",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Qualities Designation Importance Value Code",
+      "nullPct": 0,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_IMPRTNCE_IMPRTNCE",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Importance Designation Importance Value Code",
+      "nullPct": 0,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_IMPRTNCE_CNTRBTN",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Contribution Designation Importance Value Code",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ACEC_IMPRTNCE_THRT",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Threat Designation Importance Value Code",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "SPCL_MGMT_ATTN_RX_PRTCT",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Protect Special Management Attention Prescription",
+      "nullPct": 25.9,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "SPCL_MGMT_ATTN_RX_PRVNT",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Prevent Special Management Attention Prescription",
+      "nullPct": 25.9,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 1180,
+      "hasDomain": false
+    },
+    {
+      "name": "ACEC_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "ACEC Name",
+      "nullPct": 0,
+      "distinctCount": 1145,
+      "hasDomain": false
+    },
+    {
+      "name": "LUP_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Land Use Plan Name",
+      "nullPct": 0,
+      "distinctCount": 169,
+      "hasDomain": false
+    },
+    {
+      "name": "ROD_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "ROD Date",
+      "nullPct": 0,
+      "distinctCount": 140,
+      "hasDomain": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Acres",
+      "nullPct": 0,
+      "distinctCount": 1180,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 11,
+      "hasDomain": true
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 1180,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeGUID",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 1180,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Length",
+      "nullPct": 0,
+      "distinctCount": 1180,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Area",
+      "nullPct": 0,
+      "distinctCount": 1180,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "NEPA_NUM": "DOI-BLM-AZ-C030-2017-0042-RMP-EIS",
+      "ACEC_RLVNCE_CUL": "YES",
+      "ACEC_RLVNCE_FRSC": "NO",
+      "ACEC_RLVNCE_HIS": "NO",
+      "ACEC_RLVNCE_NHAZ": "NO",
+      "ACEC_RLVNCE_NPRO": "NO",
+      "ACEC_RLVNCE_NSYS": "YES",
+      "ACEC_RLVNCE_SCE": "NO",
+      "ACEC_RLVNCE_WRSC": "YES",
+      "ACEC_IMPRTNCE_QLTS": "YES",
+      "ACEC_IMPRTNCE_IMPRTNCE": "YES",
+      "ACEC_IMPRTNCE_CNTRBTN": "YES",
+      "ACEC_IMPRTNCE_THRT": "NO",
+      "SPCL_MGMT_ATTN_RX_PRTCT": "YES",
+      "SPCL_MGMT_ATTN_RX_PRVNT": "YES",
+      "OBJECTID": 2,
+      "ACEC_NAME": "BEALE SLOUGH RIPARIAN & CULTURAL ACEC",
+      "LUP_NAME": "Lake Havasu RMP",
+      "ROD_DATE": 1178755200000,
+      "GIS_ACRES": 2205.89940055,
+      "ADMIN_ST": "AZ",
+      "GlobalID": "{023A96CB-F533-4385-AF55-BA1A08D1268E}",
+      "Original_GlobalID": "{9531C108-A6AD-45EC-B5AD-1ADE587CEA1F}",
+      "Shape_Length": 0.29329291386329254,
+      "Shape_Area": 0.0008771381653640615
+    },
+    {
+      "NEPA_NUM": "DOI-BLM-AZ-C010-1995-0001-RMP-EIS",
+      "ACEC_RLVNCE_CUL": "NO",
+      "ACEC_RLVNCE_FRSC": "NO",
+      "ACEC_RLVNCE_HIS": "NO",
+      "ACEC_RLVNCE_NHAZ": "NO",
+      "ACEC_RLVNCE_NPRO": "YES",
+      "ACEC_RLVNCE_NSYS": "YES",
+      "ACEC_RLVNCE_SCE": "NO",
+      "ACEC_RLVNCE_WRSC": "YES",
+      "ACEC_IMPRTNCE_QLTS": "YES",
+      "ACEC_IMPRTNCE_IMPRTNCE": "YES",
+      "ACEC_IMPRTNCE_CNTRBTN": "YES",
+      "ACEC_IMPRTNCE_THRT": "NO",
+      "SPCL_MGMT_ATTN_RX_PRTCT": "YES",
+      "SPCL_MGMT_ATTN_RX_PRVNT": "YES",
+      "OBJECTID": 4,
+      "ACEC_NAME": "HUALAPAI MOUNTAIN RESEARCH NATURAL AREA ACEC",
+      "LUP_NAME": "Kingman RMP",
+      "ROD_DATE": 794534400000,
+      "GIS_ACRES": 4491.94851235,
+      "ADMIN_ST": "AZ",
+      "GlobalID": "{02D4ABF5-924C-4BC7-BDAE-696E00ED0792}",
+      "Original_GlobalID": "{B03D3382-68C0-4909-B3CE-2E7A34ABB230}",
+      "Shape_Length": 0.41565695542258696,
+      "Shape_Area": 0.0017930650760111693
+    },
+    {
+      "NEPA_NUM": "DOI-BLM-AZ-P020-2009-0003-RMP-EIS",
+      "ACEC_RLVNCE_CUL": "YES",
+      "ACEC_RLVNCE_FRSC": "NO",
+      "ACEC_RLVNCE_HIS": "YES",
+      "ACEC_RLVNCE_NHAZ": "NO",
+      "ACEC_RLVNCE_NPRO": "NO",
+      "ACEC_RLVNCE_NSYS": "YES",
+      "ACEC_RLVNCE_SCE": "NO",
+      "ACEC_RLVNCE_WRSC": "YES",
+      "ACEC_IMPRTNCE_QLTS": "YES",
+      "ACEC_IMPRTNCE_IMPRTNCE": "NO",
+      "ACEC_IMPRTNCE_CNTRBTN": "NO",
+      "ACEC_IMPRTNCE_THRT": "NO",
+      "SPCL_MGMT_ATTN_RX_PRTCT": "YES",
+      "SPCL_MGMT_ATTN_RX_PRVNT": "YES",
+      "OBJECTID": 7,
+      "ACEC_NAME": "CUERDA DE LENA ACEC",
+      "LUP_NAME": "Lower Sonoran RMP",
+      "ROD_DATE": 1347580800000,
+      "GIS_ACRES": 59281.0289618,
+      "ADMIN_ST": "AZ",
+      "GlobalID": "{05177401-F653-4660-B72F-C9D3CD1C1220}",
+      "Original_GlobalID": "{31AECB41-8484-461F-A5B2-53193036C62A}",
+      "Shape_Length": 0.6964546811557251,
+      "Shape_Area": 0.02296666019521824
+    },
+    {
+      "NEPA_NUM": "DOI-BLM-AZ-G020-1995-0001-RMP-EIS",
+      "ACEC_RLVNCE_CUL": "NO",
+      "ACEC_RLVNCE_FRSC": "NO",
+      "ACEC_RLVNCE_HIS": "NO",
+      "ACEC_RLVNCE_NHAZ": "NO",
+      "ACEC_RLVNCE_NPRO": "YES",
+      "ACEC_RLVNCE_NSYS": "YES",
+      "ACEC_RLVNCE_SCE": "YES",
+      "ACEC_RLVNCE_WRSC": "YES",
+      "ACEC_IMPRTNCE_QLTS": "YES",
+      "ACEC_IMPRTNCE_IMPRTNCE": "YES",
+      "ACEC_IMPRTNCE_CNTRBTN": "YES",
+      "ACEC_IMPRTNCE_THRT": "NO",
+      "SPCL_MGMT_ATTN_RX_PRTCT": "YES",
+      "SPCL_MGMT_ATTN_RX_PRVNT": "YES",
+      "OBJECTID": 10,
+      "ACEC_NAME": "APPLETON-WHITTELL RESEARCH ACEC",
+      "LUP_NAME": "Las Cienegas RMP",
+      "ROD_DATE": 1059091200000,
+      "GIS_ACRES": 3124.16302956,
+      "ADMIN_ST": "AZ",
+      "GlobalID": "{09DD5849-BA1D-41EE-85D9-E27908EC7F4A}",
+      "Original_GlobalID": "{4EDABDB5-043E-4198-8F3E-6BE30B7A2C38}",
+      "Shape_Length": 0.2612863434526173,
+      "Shape_Area": 0.0012023369971066247
+    },
+    {
+      "NEPA_NUM": "DOI-BLM-AZ-C010-1995-0001-RMP-EIS",
+      "ACEC_RLVNCE_CUL": "NO",
+      "ACEC_RLVNCE_FRSC": "YES",
+      "ACEC_RLVNCE_HIS": "NO",
+      "ACEC_RLVNCE_NHAZ": "NO",
+      "ACEC_RLVNCE_NPRO": "YES",
+      "ACEC_RLVNCE_NSYS": "YES",
+      "ACEC_RLVNCE_SCE": "YES",
+      "ACEC_RLVNCE_WRSC": "YES",
+      "ACEC_IMPRTNCE_QLTS": "YES",
+      "ACEC_IMPRTNCE_IMPRTNCE": "YES",
+      "ACEC_IMPRTNCE_CNTRBTN": "YES",
+      "ACEC_IMPRTNCE_THRT": "NO",
+      "SPCL_MGMT_ATTN_RX_PRTCT": "YES",
+      "SPCL_MGMT_ATTN_RX_PRVNT": "YES",
+      "OBJECTID": 14,
+      "ACEC_NAME": "THREE RIVERS RIPARIAN ACEC",
+      "LUP_NAME": "Kingman RMP",
+      "ROD_DATE": 794534400000,
+      "GIS_ACRES": 31588.57431859,
+      "ADMIN_ST": "AZ",
+      "GlobalID": "{0E8AAD01-7B1C-4404-8861-F49BD9A96E55}",
+      "Original_GlobalID": "{6F008CB9-4AA7-4E20-82BC-467C3F46FB4E}",
+      "Shape_Length": 1.3461101862973484,
+      "Shape_Area": 0.012531729357121378
+    }
+  ]
+}

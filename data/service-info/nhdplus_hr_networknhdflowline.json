@@ -1,0 +1,1779 @@
+{
+  "generated": "2026-02-22T08:33:06.931Z",
+  "datasetId": "nhdplus_hr_networknhdflowline",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/3",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><p><span>The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p><p></div></div></p>",
+    "copyrightText": "USGS TNM – National Hydrography Dataset Plus High Resolution (NHDPlus HR). Data refreshed October, 2022.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,United States,US,NGP-TNM,REST,WMS",
+    "comments": "The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NetworkNHDFlowline",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolyline",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "GNIS_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": true,
+    "hasM": true,
+    "minScale": 100000,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 24958332,
+    "extent": {
+      "xmin": -19018326.996,
+      "ymin": -1617171.4213000014,
+      "xmax": 16233777.558700003,
+      "ymax": 11126837.037100002
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "permanent_identifier",
+      "alias": "Permanent_Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "fdate",
+      "alias": "FDate",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "resolution",
+      "alias": "Resolution",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "gnis_id",
+      "alias": "GNIS_ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "gnis_name",
+      "alias": "GNIS_Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "lengthkm",
+      "alias": "LengthKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "reachcode",
+      "alias": "ReachCode",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "flowdir",
+      "alias": "FlowDir",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "wbarea_permanent_identifier",
+      "alias": "WBArea_Permanent_Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ftype",
+      "alias": "FType",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "fcode",
+      "alias": "FCode",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "mainpath",
+      "alias": "MainPath",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 4
+      },
+      "isKey": false
+    },
+    {
+      "name": "innetwork",
+      "alias": "InNetwork",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "visibilityfilter",
+      "alias": "VisibilityFilter",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "nhdplusid",
+      "alias": "NHDPlusID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vpuid",
+      "alias": "VPUID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "streamleve",
+      "alias": "StreamLevel",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "streamorde",
+      "alias": "StreamOrder",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "streamcalc",
+      "alias": "StreamCalculator",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "fromnode",
+      "alias": "FromNode",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "tonode",
+      "alias": "ToNode",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "hydroseq",
+      "alias": "HydrologicSequence",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "levelpathi",
+      "alias": "LevelPathIdentifier",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "pathlength",
+      "alias": "PathLength",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "terminalpa",
+      "alias": "TerminalPathIdentifier",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "arbolatesu",
+      "alias": "UpstreamCumulativeStreamKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "divergence",
+      "alias": "DivergenceCode",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "startflag",
+      "alias": "IsHeadwater",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "terminalfl",
+      "alias": "IsNetworkEnd",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "uplevelpat",
+      "alias": "UpstreamMainPathLevelPathID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "uphydroseq",
+      "alias": "UpstreamMainPathHydroSeq",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "dnlevel",
+      "alias": "DownstreamMainPathStreamLevel",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "dnlevelpat",
+      "alias": "DownstreamMainPathLevelPathID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "dnhydroseq",
+      "alias": "DownstreamMainPathHydroSeq",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "dnminorhyd",
+      "alias": "DownstreamMinorHydroSequence",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "dndraincou",
+      "alias": "DownstreamDrainageCount",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "frommeas",
+      "alias": "FromMeasure",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "tomeas",
+      "alias": "ToMeasure",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "rtndiv",
+      "alias": "HasReturningDivergence",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "thinner",
+      "alias": "Thinner",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vpuin",
+      "alias": "VPUIn",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "vpuout",
+      "alias": "VPUOut",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "areasqkm",
+      "alias": "AreaSqKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "totdasqkm",
+      "alias": "TotalDrainageAreaSqKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "divdasqkm",
+      "alias": "DivergenceRoutedDrainAreaSqKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "maxelevraw",
+      "alias": "MaximumElevationRaw",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "minelevraw",
+      "alias": "MinimumElevationRaw",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "maxelevsmo",
+      "alias": "MaximumElevationSmoothed",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "minelevsmo",
+      "alias": "MinimumElevationSmoothed",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "slope",
+      "alias": "Slope",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "slopelenkm",
+      "alias": "SlopeLengthKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "elevfixed",
+      "alias": "IsElevationFixed",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "hwtype",
+      "alias": "HeadwaterType",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "hwnodesqkm",
+      "alias": "HeadwaterNodeDrainageAreaSqKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "statusflag",
+      "alias": "StatusFlag",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 4
+      },
+      "isKey": false
+    },
+    {
+      "name": "qama",
+      "alias": "FlowEstARunoffMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vama",
+      "alias": "VelocityARunoffMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qincrama",
+      "alias": "IncrFlowEstARunoffMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qbma",
+      "alias": "FlowEstBExcessETMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vbma",
+      "alias": "VelocityBExcessETMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qincrbma",
+      "alias": "IncrFlowEstBExcessETMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qcma",
+      "alias": "FlowEstCRefGageRegressMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vcma",
+      "alias": "VelocityCRefGageRegressMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qincrcma",
+      "alias": "IncrFlowEstCRefGageRegressMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qdma",
+      "alias": "FlowEstDAdditionRemovalMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vdma",
+      "alias": "VelocityDAdditionRemovalMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qincrdma",
+      "alias": "IncrFlowEstDAdditionRemovalMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qema",
+      "alias": "FlowEstEGageAdjustedMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vema",
+      "alias": "VelocityEGageAdjustedMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qincrema",
+      "alias": "IncrFlowEstEGageAdjustedMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qfma",
+      "alias": "FlowEstFGageSequesterMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qincrfma",
+      "alias": "IncrFlowEstFGageSequesterMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "arqnavma",
+      "alias": "AddRemoveFlowNotAvailableMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "petma",
+      "alias": "CatchmentPotentialETMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qlossma",
+      "alias": "FlowLossFromPotentialETMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qgadjma",
+      "alias": "GageFlowAdjustmentMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "qgnavma",
+      "alias": "GageAdjustmentNotAvailableMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "gageadjma",
+      "alias": "IsGageAdjustedMA",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "avgqadjma",
+      "alias": "GageFlowFlowlineBottomMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "gageidma",
+      "alias": "NWISGageIDMA",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "gageqma",
+      "alias": "GageFlowMA",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "permanent_identifier",
+      "type": "esriFieldTypeString",
+      "alias": "Permanent_Identifier",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "fdate",
+      "type": "esriFieldTypeDate",
+      "alias": "FDate",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "resolution",
+      "type": "esriFieldTypeInteger",
+      "alias": "Resolution",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "gnis_id",
+      "type": "esriFieldTypeString",
+      "alias": "GNIS_ID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "gnis_name",
+      "type": "esriFieldTypeString",
+      "alias": "GNIS_Name",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "lengthkm",
+      "type": "esriFieldTypeDouble",
+      "alias": "LengthKm",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "reachcode",
+      "type": "esriFieldTypeString",
+      "alias": "ReachCode",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "flowdir",
+      "type": "esriFieldTypeInteger",
+      "alias": "FlowDir",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "wbarea_permanent_identifier",
+      "type": "esriFieldTypeString",
+      "alias": "WBArea_Permanent_Identifier",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "ftype",
+      "type": "esriFieldTypeInteger",
+      "alias": "FType",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "fcode",
+      "type": "esriFieldTypeInteger",
+      "alias": "FCode",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "mainpath",
+      "type": "esriFieldTypeInteger",
+      "alias": "MainPath",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "innetwork",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "InNetwork",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "visibilityfilter",
+      "type": "esriFieldTypeInteger",
+      "alias": "VisibilityFilter",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "nhdplusid",
+      "type": "esriFieldTypeDouble",
+      "alias": "NHDPlusID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "vpuid",
+      "type": "esriFieldTypeString",
+      "alias": "VPUID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "streamleve",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "StreamLevel",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "streamorde",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "StreamOrder",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "streamcalc",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "StreamCalculator",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "fromnode",
+      "type": "esriFieldTypeDouble",
+      "alias": "FromNode",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "tonode",
+      "type": "esriFieldTypeDouble",
+      "alias": "ToNode",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "hydroseq",
+      "type": "esriFieldTypeDouble",
+      "alias": "HydrologicSequence",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "levelpathi",
+      "type": "esriFieldTypeDouble",
+      "alias": "LevelPathIdentifier",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "pathlength",
+      "type": "esriFieldTypeDouble",
+      "alias": "PathLength",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "terminalpa",
+      "type": "esriFieldTypeDouble",
+      "alias": "TerminalPathIdentifier",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "arbolatesu",
+      "type": "esriFieldTypeDouble",
+      "alias": "UpstreamCumulativeStreamKm",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "divergence",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "DivergenceCode",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "startflag",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "IsHeadwater",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "terminalfl",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "IsNetworkEnd",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "uplevelpat",
+      "type": "esriFieldTypeDouble",
+      "alias": "UpstreamMainPathLevelPathID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "uphydroseq",
+      "type": "esriFieldTypeDouble",
+      "alias": "UpstreamMainPathHydroSeq",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "dnlevel",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "DownstreamMainPathStreamLevel",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "dnlevelpat",
+      "type": "esriFieldTypeDouble",
+      "alias": "DownstreamMainPathLevelPathID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "dnhydroseq",
+      "type": "esriFieldTypeDouble",
+      "alias": "DownstreamMainPathHydroSeq",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "dnminorhyd",
+      "type": "esriFieldTypeDouble",
+      "alias": "DownstreamMinorHydroSequence",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "dndraincou",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "DownstreamDrainageCount",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "frommeas",
+      "type": "esriFieldTypeDouble",
+      "alias": "FromMeasure",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "tomeas",
+      "type": "esriFieldTypeDouble",
+      "alias": "ToMeasure",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "rtndiv",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "HasReturningDivergence",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "thinner",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Thinner",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "vpuin",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "VPUIn",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "vpuout",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "VPUOut",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "areasqkm",
+      "type": "esriFieldTypeDouble",
+      "alias": "AreaSqKm",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "totdasqkm",
+      "type": "esriFieldTypeDouble",
+      "alias": "TotalDrainageAreaSqKm",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "divdasqkm",
+      "type": "esriFieldTypeDouble",
+      "alias": "DivergenceRoutedDrainAreaSqKm",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "maxelevraw",
+      "type": "esriFieldTypeDouble",
+      "alias": "MaximumElevationRaw",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "minelevraw",
+      "type": "esriFieldTypeDouble",
+      "alias": "MinimumElevationRaw",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "maxelevsmo",
+      "type": "esriFieldTypeDouble",
+      "alias": "MaximumElevationSmoothed",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "minelevsmo",
+      "type": "esriFieldTypeDouble",
+      "alias": "MinimumElevationSmoothed",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "slope",
+      "type": "esriFieldTypeDouble",
+      "alias": "Slope",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "slopelenkm",
+      "type": "esriFieldTypeDouble",
+      "alias": "SlopeLengthKm",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "elevfixed",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "IsElevationFixed",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "hwtype",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "HeadwaterType",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "hwnodesqkm",
+      "type": "esriFieldTypeDouble",
+      "alias": "HeadwaterNodeDrainageAreaSqKm",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "statusflag",
+      "type": "esriFieldTypeString",
+      "alias": "StatusFlag",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "qama",
+      "type": "esriFieldTypeDouble",
+      "alias": "FlowEstARunoffMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "vama",
+      "type": "esriFieldTypeDouble",
+      "alias": "VelocityARunoffMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qincrama",
+      "type": "esriFieldTypeDouble",
+      "alias": "IncrFlowEstARunoffMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qbma",
+      "type": "esriFieldTypeDouble",
+      "alias": "FlowEstBExcessETMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "vbma",
+      "type": "esriFieldTypeDouble",
+      "alias": "VelocityBExcessETMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qincrbma",
+      "type": "esriFieldTypeDouble",
+      "alias": "IncrFlowEstBExcessETMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qcma",
+      "type": "esriFieldTypeDouble",
+      "alias": "FlowEstCRefGageRegressMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "vcma",
+      "type": "esriFieldTypeDouble",
+      "alias": "VelocityCRefGageRegressMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qincrcma",
+      "type": "esriFieldTypeDouble",
+      "alias": "IncrFlowEstCRefGageRegressMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qdma",
+      "type": "esriFieldTypeDouble",
+      "alias": "FlowEstDAdditionRemovalMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "vdma",
+      "type": "esriFieldTypeDouble",
+      "alias": "VelocityDAdditionRemovalMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qincrdma",
+      "type": "esriFieldTypeDouble",
+      "alias": "IncrFlowEstDAdditionRemovalMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qema",
+      "type": "esriFieldTypeDouble",
+      "alias": "FlowEstEGageAdjustedMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "vema",
+      "type": "esriFieldTypeDouble",
+      "alias": "VelocityEGageAdjustedMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qincrema",
+      "type": "esriFieldTypeDouble",
+      "alias": "IncrFlowEstEGageAdjustedMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qfma",
+      "type": "esriFieldTypeDouble",
+      "alias": "FlowEstFGageSequesterMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qincrfma",
+      "type": "esriFieldTypeDouble",
+      "alias": "IncrFlowEstFGageSequesterMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "arqnavma",
+      "type": "esriFieldTypeDouble",
+      "alias": "AddRemoveFlowNotAvailableMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "petma",
+      "type": "esriFieldTypeDouble",
+      "alias": "CatchmentPotentialETMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qlossma",
+      "type": "esriFieldTypeDouble",
+      "alias": "FlowLossFromPotentialETMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qgadjma",
+      "type": "esriFieldTypeDouble",
+      "alias": "GageFlowAdjustmentMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "qgnavma",
+      "type": "esriFieldTypeDouble",
+      "alias": "GageAdjustmentNotAvailableMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "gageadjma",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "IsGageAdjustedMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "avgqadjma",
+      "type": "esriFieldTypeDouble",
+      "alias": "GageFlowFlowlineBottomMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "gageidma",
+      "type": "esriFieldTypeString",
+      "alias": "NWISGageIDMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "gageqma",
+      "type": "esriFieldTypeDouble",
+      "alias": "GageFlowMA",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Length",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "permanent_identifier": "46343574",
+      "fdate": 1331448391000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "lengthkm": 1.008,
+      "reachcode": "03030002008913",
+      "flowdir": 1,
+      "wbarea_permanent_identifier": null,
+      "ftype": 460,
+      "fcode": 46003,
+      "mainpath": 0,
+      "innetwork": 1,
+      "visibilityfilter": 100000,
+      "nhdplusid": 15000500016868,
+      "vpuid": "0303",
+      "streamleve": 7,
+      "streamorde": 1,
+      "streamcalc": 1,
+      "fromnode": 15000500067296,
+      "tonode": 15000500050800,
+      "hydroseq": 15000500082314,
+      "levelpathi": 15000500082314,
+      "pathlength": 356.61652756999996,
+      "terminalpa": 15000500000031,
+      "arbolatesu": 1.008,
+      "divergence": 0,
+      "startflag": 1,
+      "terminalfl": 0,
+      "uplevelpat": 0,
+      "uphydroseq": 0,
+      "dnlevel": 6,
+      "dnlevelpat": 15000500006847,
+      "dnhydroseq": 15000500012245,
+      "dnminorhyd": 0,
+      "dndraincou": 1,
+      "frommeas": 0,
+      "tomeas": 100,
+      "rtndiv": 0,
+      "thinner": null,
+      "vpuin": 0,
+      "vpuout": 0,
+      "areasqkm": 0.47650001000000003,
+      "totdasqkm": 0.47650001000000003,
+      "divdasqkm": 0.47650001000000003,
+      "maxelevraw": 8343,
+      "minelevraw": 7387,
+      "maxelevsmo": 8343,
+      "minelevsmo": 7405,
+      "slope": 0.0103304,
+      "slopelenkm": 0.908,
+      "elevfixed": null,
+      "hwtype": 0,
+      "hwnodesqkm": 0.0099,
+      "statusflag": "A",
+      "qama": 0.202106,
+      "vama": 0.6062551600000001,
+      "qincrama": 0.202106,
+      "qbma": 0.202106,
+      "vbma": 0.6062551600000001,
+      "qincrbma": 0.202106,
+      "qcma": 0.24939168000000003,
+      "vcma": 0.6113708000000001,
+      "qincrcma": 0.24939168000000003,
+      "qdma": 0.24939168000000003,
+      "vdma": 0.6113708000000001,
+      "qincrdma": 0.24939168000000003,
+      "qema": 0.24939168000000003,
+      "vema": 0.6113708000000001,
+      "qincrema": 0.24939168000000003,
+      "qfma": 0.24939168000000003,
+      "qincrfma": 0.24939168000000003,
+      "arqnavma": 0,
+      "petma": 0,
+      "qlossma": 0,
+      "qgadjma": 0,
+      "qgnavma": 0,
+      "gageadjma": 0,
+      "avgqadjma": 0,
+      "gageidma": "0",
+      "gageqma": 0,
+      "Shape_Length": 1240.371624582687
+    },
+    {
+      "OBJECTID": 2,
+      "permanent_identifier": "149068777",
+      "fdate": 1331461811000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "lengthkm": 0.098,
+      "reachcode": "03030007003726",
+      "flowdir": 1,
+      "wbarea_permanent_identifier": null,
+      "ftype": 460,
+      "fcode": 46003,
+      "mainpath": 0,
+      "innetwork": 1,
+      "visibilityfilter": 50000,
+      "nhdplusid": 15000500021719,
+      "vpuid": "0303",
+      "streamleve": 7,
+      "streamorde": 1,
+      "streamcalc": 1,
+      "fromnode": 15000500015165,
+      "tonode": 15000500046373,
+      "hydroseq": 15000500058264,
+      "levelpathi": 15000500058264,
+      "pathlength": 250.56790797000002,
+      "terminalpa": 15000500000031,
+      "arbolatesu": 1.685,
+      "divergence": 0,
+      "startflag": 0,
+      "terminalfl": 0,
+      "uplevelpat": 15000500058264,
+      "uphydroseq": 15000500074989,
+      "dnlevel": 6,
+      "dnlevelpat": 15000500010031,
+      "dnhydroseq": 15000500011469,
+      "dnminorhyd": 0,
+      "dndraincou": 1,
+      "frommeas": 0,
+      "tomeas": 5.83655024,
+      "rtndiv": 0,
+      "thinner": null,
+      "vpuin": 0,
+      "vpuout": 0,
+      "areasqkm": 0.00770001,
+      "totdasqkm": 1.0087,
+      "divdasqkm": 1.0087,
+      "maxelevraw": -9998,
+      "minelevraw": 3183,
+      "maxelevsmo": 3231,
+      "minelevsmo": 3202,
+      "slope": 0.00295918,
+      "slopelenkm": 0.098,
+      "elevfixed": null,
+      "hwtype": null,
+      "hwnodesqkm": null,
+      "statusflag": "A",
+      "qama": 0.44112100000000004,
+      "vama": 0.59919142,
+      "qincrama": 0.003371,
+      "qbma": 0.44112100000000004,
+      "vbma": 0.59919142,
+      "qincrbma": 0.003371,
+      "qcma": 0.53626817,
+      "vcma": 0.60382855,
+      "qincrcma": 0.00402008,
+      "qdma": 0.53626817,
+      "vdma": 0.60382855,
+      "qincrdma": 0.00402008,
+      "qema": 0.53626817,
+      "vema": 0.60382855,
+      "qincrema": 0.00402008,
+      "qfma": 0.53626817,
+      "qincrfma": 0.00402008,
+      "arqnavma": 0,
+      "petma": 0,
+      "qlossma": 0,
+      "qgadjma": 0,
+      "qgnavma": 0,
+      "gageadjma": 0,
+      "avgqadjma": 0,
+      "gageidma": "0",
+      "gageqma": 0,
+      "Shape_Length": 120.62855246953892
+    },
+    {
+      "OBJECTID": 3,
+      "permanent_identifier": "46340262",
+      "fdate": 1331448584000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "lengthkm": 0.597,
+      "reachcode": "03030002008271",
+      "flowdir": 1,
+      "wbarea_permanent_identifier": null,
+      "ftype": 460,
+      "fcode": 46003,
+      "mainpath": 0,
+      "innetwork": 1,
+      "visibilityfilter": 50000,
+      "nhdplusid": 15000500069139,
+      "vpuid": "0303",
+      "streamleve": 7,
+      "streamorde": 1,
+      "streamcalc": 1,
+      "fromnode": 15000500048254,
+      "tonode": 15000500001389,
+      "hydroseq": 15000500038633,
+      "levelpathi": 15000500021976,
+      "pathlength": 401.41852757,
+      "terminalpa": 15000500000031,
+      "arbolatesu": 0.8370000000000001,
+      "divergence": 0,
+      "startflag": 0,
+      "terminalfl": 0,
+      "uplevelpat": 15000500021976,
+      "uphydroseq": 15000500053329,
+      "dnlevel": 7,
+      "dnlevelpat": 15000500021976,
+      "dnhydroseq": 15000500036566,
+      "dnminorhyd": 0,
+      "dndraincou": 1,
+      "frommeas": 0,
+      "tomeas": 71.30451965,
+      "rtndiv": 0,
+      "thinner": null,
+      "vpuin": 0,
+      "vpuout": 0,
+      "areasqkm": 0.2576,
+      "totdasqkm": 0.41779999,
+      "divdasqkm": 0.41779999,
+      "maxelevraw": -9998,
+      "minelevraw": 19480,
+      "maxelevsmo": 20379,
+      "minelevsmo": 19545,
+      "slope": 0.01396985,
+      "slopelenkm": 0.597,
+      "elevfixed": null,
+      "hwtype": null,
+      "hwnodesqkm": null,
+      "statusflag": "A",
+      "qama": 0.16848000000000002,
+      "vama": 0.61036164,
+      "qincrama": 0.103899,
+      "qbma": 0.16848000000000002,
+      "vbma": 0.61036164,
+      "qincrbma": 0.103899,
+      "qcma": 0.20862268,
+      "vcma": 0.61563435,
+      "qincrcma": 0.12717534000000003,
+      "qdma": 0.20862268,
+      "vdma": 0.61563435,
+      "qincrdma": 0.12717534000000003,
+      "qema": 0.20862268,
+      "vema": 0.61563435,
+      "qincrema": 0.12717534000000003,
+      "qfma": 0.20862268,
+      "qincrfma": 0.12717534000000003,
+      "arqnavma": 0,
+      "petma": 0,
+      "qlossma": 0,
+      "qgadjma": 0,
+      "qgnavma": 0,
+      "gageadjma": 0,
+      "avgqadjma": 0,
+      "gageidma": "0",
+      "gageqma": 0,
+      "Shape_Length": 734.4849562761352
+    },
+    {
+      "OBJECTID": 4,
+      "permanent_identifier": "139609470",
+      "fdate": 1331449992000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "lengthkm": 1.342,
+      "reachcode": "03030004004735",
+      "flowdir": 1,
+      "wbarea_permanent_identifier": null,
+      "ftype": 460,
+      "fcode": 46006,
+      "mainpath": 0,
+      "innetwork": 1,
+      "visibilityfilter": 100000,
+      "nhdplusid": 15000500073426,
+      "vpuid": "0303",
+      "streamleve": 7,
+      "streamorde": 2,
+      "streamcalc": 2,
+      "fromnode": 15000500051268,
+      "tonode": 15000500012308,
+      "hydroseq": 15000500025547,
+      "levelpathi": 15000500025547,
+      "pathlength": 318.50052757,
+      "terminalpa": 15000500000031,
+      "arbolatesu": 2.689,
+      "divergence": 0,
+      "startflag": 0,
+      "terminalfl": 0,
+      "uplevelpat": 15000500025547,
+      "uphydroseq": 15000500029222,
+      "dnlevel": 6,
+      "dnlevelpat": 15000500022688,
+      "dnhydroseq": 15000500022688,
+      "dnminorhyd": 0,
+      "dndraincou": 1,
+      "frommeas": 0,
+      "tomeas": 66.02494812,
+      "rtndiv": 0,
+      "thinner": null,
+      "vpuin": 0,
+      "vpuout": 0,
+      "areasqkm": 1.1644,
+      "totdasqkm": 1.8498999900000002,
+      "divdasqkm": 1.8498999900000002,
+      "maxelevraw": -9998,
+      "minelevraw": 9217,
+      "maxelevsmo": 11074,
+      "minelevsmo": 9217,
+      "slope": 0.013837560000000002,
+      "slopelenkm": 1.342,
+      "elevfixed": null,
+      "hwtype": null,
+      "hwnodesqkm": null,
+      "statusflag": "A",
+      "qama": 0.7546550000000001,
+      "vama": 0.7331791700000001,
+      "qincrama": 0.475175,
+      "qbma": 0.7546550000000001,
+      "vbma": 0.7331791700000001,
+      "qincrbma": 0.475175,
+      "qcma": 0.90806317,
+      "vcma": 0.7395943500000001,
+      "qincrcma": 0.5653245100000001,
+      "qdma": 0.90806317,
+      "vdma": 0.7395943500000001,
+      "qincrdma": 0.5653245100000001,
+      "qema": 0.90806317,
+      "vema": 0.7395943500000001,
+      "qincrema": 0.5653245100000001,
+      "qfma": 0.90806317,
+      "qincrfma": 0.5653245100000001,
+      "arqnavma": 0,
+      "petma": 0,
+      "qlossma": 0,
+      "qgadjma": 0,
+      "qgnavma": 0,
+      "gageadjma": 0,
+      "avgqadjma": 0,
+      "gageidma": "0",
+      "gageqma": 0,
+      "Shape_Length": 1643.8342955120374
+    },
+    {
+      "OBJECTID": 5,
+      "permanent_identifier": "149069311",
+      "fdate": 1331461742000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "lengthkm": 0.552,
+      "reachcode": "03030007004828",
+      "flowdir": 1,
+      "wbarea_permanent_identifier": null,
+      "ftype": 460,
+      "fcode": 46003,
+      "mainpath": 0,
+      "innetwork": 1,
+      "visibilityfilter": 50000,
+      "nhdplusid": 15000500078089,
+      "vpuid": "0303",
+      "streamleve": 7,
+      "streamorde": 1,
+      "streamcalc": 1,
+      "fromnode": 15000500054462,
+      "tonode": 15000500023260,
+      "hydroseq": 15000500047337,
+      "levelpathi": 15000500047337,
+      "pathlength": 191.33157359,
+      "terminalpa": 15000500000031,
+      "arbolatesu": 0.777,
+      "divergence": 0,
+      "startflag": 0,
+      "terminalfl": 0,
+      "uplevelpat": 15000500047337,
+      "uphydroseq": 15000500074858,
+      "dnlevel": 6,
+      "dnlevelpat": 15000500021239,
+      "dnhydroseq": 15000500024314,
+      "dnminorhyd": 0,
+      "dndraincou": 1,
+      "frommeas": 0,
+      "tomeas": 70.99816132,
+      "rtndiv": 0,
+      "thinner": null,
+      "vpuin": 0,
+      "vpuout": 0,
+      "areasqkm": 0.12719999,
+      "totdasqkm": 0.4551,
+      "divdasqkm": 0.4551,
+      "maxelevraw": -9998,
+      "minelevraw": 1056,
+      "maxelevsmo": 1211,
+      "minelevsmo": 1070,
+      "slope": 0.00255435,
+      "slopelenkm": 0.552,
+      "elevfixed": null,
+      "hwtype": null,
+      "hwnodesqkm": null,
+      "statusflag": "A",
+      "qama": 0.24022100000000002,
+      "vama": 0.54862905,
+      "qincrama": 0.066946,
+      "qbma": 0.24022100000000002,
+      "vbma": 0.54862905,
+      "qincrbma": 0.066946,
+      "qcma": 0.2954471,
+      "vcma": 0.5526896299999999,
+      "qincrcma": 0.08100199,
+      "qdma": 0.2954471,
+      "vdma": 0.5526896299999999,
+      "qincrdma": 0.08100199,
+      "qema": 0.2954471,
+      "vema": 0.5526896299999999,
+      "qincrema": 0.08100199,
+      "qfma": 0.2954471,
+      "qincrfma": 0.08100199,
+      "arqnavma": 0,
+      "petma": 0,
+      "qlossma": 0,
+      "qgadjma": 0,
+      "qgnavma": 0,
+      "gageadjma": 0,
+      "avgqadjma": 0,
+      "gageidma": "0",
+      "gageqma": 0,
+      "Shape_Length": 675.6071350395838
+    }
+  ]
+}

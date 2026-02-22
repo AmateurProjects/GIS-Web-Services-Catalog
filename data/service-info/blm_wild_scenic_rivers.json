@@ -1,0 +1,346 @@
+{
+  "generated": "2026-02-22T06:13:40.546Z",
+  "datasetId": "blm_wild_scenic_rivers",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WSR/MapServer/0",
+  "metadata": {
+    "serviceDescription": "This Map Service is for displaying the BLM National Landscape Conservation System (NLCS), Wild and Scenic Rivers (WSR) for the Bureau of Land Management (BLM) National Recreation Web mapping project. This data frame contains one layer displaying the NLCS Wild and Scenic Rivers.",
+    "copyrightText": "Bureau of Land Management (BLM), Headquarters (HQ)",
+    "author": "",
+    "subject": "This Map Service is for displaying the BLM National Landscape Conservation System (NLCS), NLCS Wild and Scenic Rivers (WSR) for the Bureau of Land Management (BLM) National Recreation Web mapping project. This data frame contains one layer displaying the NLCS Wild and Scenic Rivers.",
+    "keywords": "BLM National Landscape Conservation System,NLCS,WSR,Wild and Scenic Rivers,Bureau of Land Management,BLM,line",
+    "comments": "This Map Service is for displaying the BLM National Landscape Conservation System (NLCS), Wild and Scenic Rivers (WSR) for the Bureau of Land Management (BLM) National Recreation Web mapping project. This data frame contains one layer displaying the NLCS Wild and Scenic Rivers.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NLCS Wild and Scenic Rivers",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolyline",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "NLCS_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 2077,
+    "extent": {
+      "xmin": -17847112.661000624,
+      "ymin": 3676224.126704502,
+      "xmax": -11683931.929078326,
+      "ymax": 9850274.33552327
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "NLCS_ID",
+      "alias": "NLCS Unique Identifiers",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WSR_CTGY",
+      "alias": "Category",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 9
+      },
+      "isKey": false
+    },
+    {
+      "name": "NLCS_NAME",
+      "alias": "NLCS Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CASEFILE_NO",
+      "alias": "Casefile Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NHD_RCH_CD",
+      "alias": "National Hydrography Dataset Reach Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "COORD_SRC_TYPE",
+      "alias": "Coordinate Source Type Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 16
+      },
+      "isKey": false
+    },
+    {
+      "name": "COORD_SRC2",
+      "alias": "Coordinate Source Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "DEF_FET_TYPE",
+      "alias": "Defining Feature Type Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 9
+      },
+      "isKey": false
+    },
+    {
+      "name": "DEF_FET2",
+      "alias": "Defining Feature Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ACCURACY_FT",
+      "alias": "Accuracy Measurement In Feet",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WSR_SGMNT_NO",
+      "alias": "WSR Segment Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE",
+      "alias": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "NLCS_ID",
+      "type": "esriFieldTypeString",
+      "alias": "NLCS Unique Identifiers",
+      "nullPct": 0,
+      "distinctCount": 201,
+      "hasDomain": false
+    },
+    {
+      "name": "WSR_CTGY",
+      "type": "esriFieldTypeString",
+      "alias": "Category",
+      "nullPct": 0,
+      "distinctCount": 3,
+      "hasDomain": true
+    },
+    {
+      "name": "NLCS_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "NLCS Name",
+      "nullPct": 0,
+      "distinctCount": 224,
+      "hasDomain": false
+    },
+    {
+      "name": "CASEFILE_NO",
+      "type": "esriFieldTypeString",
+      "alias": "Casefile Number",
+      "nullPct": 0,
+      "distinctCount": 111,
+      "hasDomain": false
+    },
+    {
+      "name": "NHD_RCH_CD",
+      "type": "esriFieldTypeString",
+      "alias": "National Hydrography Dataset Reach Code",
+      "nullPct": 0,
+      "distinctCount": 1482,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 7,
+      "hasDomain": true
+    },
+    {
+      "name": "COORD_SRC_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "Coordinate Source Type Code",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "COORD_SRC2",
+      "type": "esriFieldTypeString",
+      "alias": "Coordinate Source Code",
+      "nullPct": 78.9,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "DEF_FET_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "Defining Feature Type Code",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "DEF_FET2",
+      "type": "esriFieldTypeString",
+      "alias": "Defining Feature Code",
+      "nullPct": 85.3,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "ACCURACY_FT",
+      "type": "esriFieldTypeInteger",
+      "alias": "Accuracy Measurement In Feet",
+      "nullPct": 0,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "WSR_SGMNT_NO",
+      "type": "esriFieldTypeString",
+      "alias": "WSR Segment Number",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "alias": "SHAPE",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 345510,
+      "NLCS_ID": "NLCS000835",
+      "WSR_CTGY": "Designated - Wild",
+      "NLCS_NAME": "Roaring River",
+      "CASEFILE_NO": "UNK",
+      "NHD_RCH_CD": "UNK",
+      "ADMIN_ST": "OR",
+      "COORD_SRC_TYPE": "UNK",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": "UNK",
+      "DEF_FET2": null,
+      "ACCURACY_FT": -1,
+      "WSR_SGMNT_NO": "OR00000019"
+    },
+    {
+      "OBJECTID": 345628,
+      "NLCS_ID": "NLCS000823",
+      "WSR_CTGY": "Designated - Recreational",
+      "NLCS_NAME": "Grande Ronde River",
+      "CASEFILE_NO": "UNK",
+      "NHD_RCH_CD": "UNK",
+      "ADMIN_ST": "OR",
+      "COORD_SRC_TYPE": "UNK",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": "UNK",
+      "DEF_FET2": null,
+      "ACCURACY_FT": -1,
+      "WSR_SGMNT_NO": "OR00000086"
+    },
+    {
+      "OBJECTID": 345697,
+      "NLCS_ID": "NLCS000828",
+      "WSR_CTGY": "Designated - Wild",
+      "NLCS_NAME": "Main Owyhee River",
+      "CASEFILE_NO": "UNK",
+      "NHD_RCH_CD": "UNK",
+      "ADMIN_ST": "OR",
+      "COORD_SRC_TYPE": "UNK",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": "UNK",
+      "DEF_FET2": null,
+      "ACCURACY_FT": -1,
+      "WSR_SGMNT_NO": "OR00000110"
+    },
+    {
+      "OBJECTID": 345738,
+      "NLCS_ID": "NLCS000842",
+      "WSR_CTGY": "Designated - Recreational",
+      "NLCS_NAME": "Wallowa River",
+      "CASEFILE_NO": "UNK",
+      "NHD_RCH_CD": "UNK",
+      "ADMIN_ST": "OR",
+      "COORD_SRC_TYPE": "UNK",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": "UNK",
+      "DEF_FET2": null,
+      "ACCURACY_FT": -1,
+      "WSR_SGMNT_NO": "OR00000081"
+    },
+    {
+      "OBJECTID": 347611,
+      "NLCS_ID": "NLCS000836",
+      "WSR_CTGY": "Designated - Recreational",
+      "NLCS_NAME": "Rogue River",
+      "CASEFILE_NO": "UNK",
+      "NHD_RCH_CD": "UNK",
+      "ADMIN_ST": "OR",
+      "COORD_SRC_TYPE": "UNK",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": "UNK",
+      "DEF_FET2": null,
+      "ACCURACY_FT": -1,
+      "WSR_SGMNT_NO": "OR00000091"
+    }
+  ]
+}

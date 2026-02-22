@@ -1,0 +1,580 @@
+{
+  "generated": "2026-02-22T07:18:49.044Z",
+  "datasetId": "nhdplus_hr_nhdplusgage",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/0",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><p><span>The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p><p></div></div></p>",
+    "copyrightText": "USGS TNM – National Hydrography Dataset Plus High Resolution (NHDPlus HR). Data refreshed October, 2022.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,United States,US,NGP-TNM,REST,WMS",
+    "comments": "The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NHDPlusGage",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPoint",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "hydroaddressid",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 5065,
+    "extent": {
+      "xmin": -13847354.6708,
+      "ymin": 3115093.9114000015,
+      "xmax": -7485977.8332,
+      "ymax": 6274907.479099996
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "hydroaddressid",
+      "alias": "HydroAddressID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "addressdate",
+      "alias": "AddressDate",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "featuretype",
+      "alias": "FeatureType",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "onnetwork",
+      "alias": "OnNetwork",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "sourceid",
+      "alias": "SourceID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sourceagency",
+      "alias": "SourceAgency",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sourcedataset",
+      "alias": "SourceDataset",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sourcefeatureurl",
+      "alias": "SourceFeatureURL",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "catchment",
+      "alias": "Catchment",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "hu",
+      "alias": "HU",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "reachcode",
+      "alias": "ReachCode",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "measure",
+      "alias": "Measure",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "reachsmdate",
+      "alias": "ReachSMDate",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "nhdplusid",
+      "alias": "NHDPlusID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vpuid",
+      "alias": "VPUID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "station_nm",
+      "alias": "StationName",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "state_cd",
+      "alias": "StateCode",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "state",
+      "alias": "State",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "latsite",
+      "alias": "LatitudeSite",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "lonsite",
+      "alias": "LongitudeSite",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "dasqmi",
+      "alias": "DrainageAreaSqMi",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "referencegage",
+      "alias": "ReferenceGage",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "class",
+      "alias": "Class",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "classmod",
+      "alias": "ClassMod",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "hydroaddressid",
+      "type": "esriFieldTypeString",
+      "alias": "HydroAddressID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "addressdate",
+      "type": "esriFieldTypeDate",
+      "alias": "AddressDate",
+      "nullPct": 0,
+      "distinctCount": 633,
+      "hasDomain": false
+    },
+    {
+      "name": "featuretype",
+      "type": "esriFieldTypeString",
+      "alias": "FeatureType",
+      "nullPct": 0,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "onnetwork",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "OnNetwork",
+      "nullPct": 100,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "sourceid",
+      "type": "esriFieldTypeString",
+      "alias": "SourceID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "sourceagency",
+      "type": "esriFieldTypeString",
+      "alias": "SourceAgency",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "sourcedataset",
+      "type": "esriFieldTypeString",
+      "alias": "SourceDataset",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "sourcefeatureurl",
+      "type": "esriFieldTypeString",
+      "alias": "SourceFeatureURL",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "catchment",
+      "type": "esriFieldTypeDouble",
+      "alias": "Catchment",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "hu",
+      "type": "esriFieldTypeString",
+      "alias": "HU",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "reachcode",
+      "type": "esriFieldTypeString",
+      "alias": "ReachCode",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "measure",
+      "type": "esriFieldTypeDouble",
+      "alias": "Measure",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "reachsmdate",
+      "type": "esriFieldTypeDate",
+      "alias": "ReachSMDate",
+      "nullPct": 0,
+      "distinctCount": 1680,
+      "hasDomain": false
+    },
+    {
+      "name": "nhdplusid",
+      "type": "esriFieldTypeDouble",
+      "alias": "NHDPlusID",
+      "nullPct": 100,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "vpuid",
+      "type": "esriFieldTypeString",
+      "alias": "VPUID",
+      "nullPct": 100,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "station_nm",
+      "type": "esriFieldTypeString",
+      "alias": "StationName",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "state_cd",
+      "type": "esriFieldTypeString",
+      "alias": "StateCode",
+      "nullPct": 0,
+      "distinctCount": 49,
+      "hasDomain": false
+    },
+    {
+      "name": "state",
+      "type": "esriFieldTypeString",
+      "alias": "State",
+      "nullPct": 0,
+      "distinctCount": 49,
+      "hasDomain": false
+    },
+    {
+      "name": "latsite",
+      "type": "esriFieldTypeDouble",
+      "alias": "LatitudeSite",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "lonsite",
+      "type": "esriFieldTypeDouble",
+      "alias": "LongitudeSite",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "dasqmi",
+      "type": "esriFieldTypeDouble",
+      "alias": "DrainageAreaSqMi",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "referencegage",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "ReferenceGage",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "class",
+      "type": "esriFieldTypeString",
+      "alias": "Class",
+      "nullPct": 79.8,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "classmod",
+      "type": "esriFieldTypeString",
+      "alias": "ClassMod",
+      "nullPct": 79.8,
+      "distinctCount": 2,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "hydroaddressid": "159292189",
+      "addressdate": 1517270400000,
+      "featuretype": "57001",
+      "onnetwork": null,
+      "sourceid": "02146750",
+      "sourceagency": "United States Geological Survey (USGS)",
+      "sourcedataset": "National Water Information System (NWIS)",
+      "sourcefeatureurl": "http://waterdata.usgs.gov/nwis/nwisman/?site_no=02146750",
+      "catchment": 15001500021708,
+      "hu": "030501030107",
+      "reachcode": "03050103000232",
+      "measure": 99.23951000000001,
+      "reachsmdate": 1331424000000,
+      "nhdplusid": null,
+      "vpuid": null,
+      "station_nm": "MCALPINE CR BELOW MCMULLEN CR NR PINEVILLE, NC",
+      "state_cd": "37",
+      "state": "NC",
+      "latsite": 35.0664972,
+      "lonsite": -80.86985,
+      "dasqmi": 92.4,
+      "referencegage": 0,
+      "class": null,
+      "classmod": null
+    },
+    {
+      "OBJECTID": 2,
+      "hydroaddressid": "150631959",
+      "addressdate": 1514419200000,
+      "featuretype": "57001",
+      "onnetwork": null,
+      "sourceid": "12433200",
+      "sourceagency": "United States Geological Survey (USGS)",
+      "sourcedataset": "National Water Information System (NWIS)",
+      "sourcefeatureurl": "http://waterdata.usgs.gov/nwis/nwisman/?site_no=12433200",
+      "catchment": 55001100086307,
+      "hu": "170103070204",
+      "reachcode": "17010307007377",
+      "measure": 21.29731511,
+      "reachsmdate": 1342656000000,
+      "nhdplusid": null,
+      "vpuid": null,
+      "station_nm": "CHAMOKANE CREEK BELOW FALLS NEAR LONG LAKE, WA",
+      "state_cd": "53",
+      "state": "WA",
+      "latsite": 47.8632201,
+      "lonsite": -117.858294,
+      "dasqmi": 179,
+      "referencegage": 0,
+      "class": null,
+      "classmod": null
+    },
+    {
+      "OBJECTID": 3,
+      "hydroaddressid": "150418993",
+      "addressdate": 1439769600000,
+      "featuretype": "57001",
+      "onnetwork": null,
+      "sourceid": "09419756",
+      "sourceagency": "United States Geological Survey (USGS)",
+      "sourcedataset": "National Water Information System (NWIS)",
+      "sourcefeatureurl": "http://waterdata.usgs.gov/nwis/nwisman/?site_no=09419756",
+      "catchment": 40000500157865,
+      "hu": "150100150708",
+      "reachcode": "15010015000169",
+      "measure": 12.91352331,
+      "reachsmdate": 1329696000000,
+      "nhdplusid": null,
+      "vpuid": null,
+      "station_nm": "LAS VEGAS WASH OVERFLOW AT LAKE LAS VEGAS INLET",
+      "state_cd": "32",
+      "state": "NV",
+      "latsite": 36.10247588,
+      "lonsite": -114.934437,
+      "dasqmi": 2190,
+      "referencegage": 0,
+      "class": null,
+      "classmod": null
+    },
+    {
+      "OBJECTID": 4,
+      "hydroaddressid": "150522687",
+      "addressdate": 1616630400000,
+      "featuretype": "57001",
+      "onnetwork": null,
+      "sourceid": "01174565",
+      "sourceagency": "United States Geological Survey (USGS)",
+      "sourcedataset": "National Water Information System (NWIS)",
+      "sourcefeatureurl": "http://waterdata.usgs.gov/nwis/nwisman/?site_no=01174565",
+      "catchment": 10000900005886,
+      "hu": "010802040106",
+      "reachcode": "01080204000542",
+      "measure": 12.05796,
+      "reachsmdate": 1616066395000,
+      "nhdplusid": null,
+      "vpuid": null,
+      "station_nm": "WEST BRANCH SWIFT RIVER NEAR SHUTESBURY, MA",
+      "state_cd": "25",
+      "state": "MA",
+      "latsite": 42.45508906,
+      "lonsite": -72.3817516,
+      "dasqmi": 12.6,
+      "referencegage": 1,
+      "class": "Ref",
+      "classmod": "GAGESII"
+    },
+    {
+      "OBJECTID": 5,
+      "hydroaddressid": "166040904",
+      "addressdate": 1605571200000,
+      "featuretype": "57001",
+      "onnetwork": null,
+      "sourceid": "12121600",
+      "sourceagency": "United States Geological Survey (USGS)",
+      "sourcedataset": "National Water Information System (NWIS)",
+      "sourcefeatureurl": "http://waterdata.usgs.gov/nwis/nwisman/?site_no=12121600",
+      "catchment": 55000800052881,
+      "hu": "171100120201",
+      "reachcode": "17110012000095",
+      "measure": 87.45669,
+      "reachsmdate": 1602676576000,
+      "nhdplusid": null,
+      "vpuid": null,
+      "station_nm": "ISSAQUAH CREEK NEAR MOUTH NEAR ISSAQUAH, WA",
+      "state_cd": "53",
+      "state": "WA",
+      "latsite": 47.55232299,
+      "lonsite": -122.04789749999999,
+      "dasqmi": 56.6,
+      "referencegage": 0,
+      "class": null,
+      "classmod": null
+    }
+  ]
+}

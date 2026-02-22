@@ -1,0 +1,1048 @@
+{
+  "generated": "2026-02-22T06:15:28.988Z",
+  "datasetId": "blm_gtlf_roads_trails",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/transportation/BLM_Natl_GTLF/MapServer/0",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;font-size:12pt'><div><p><span>This data frame contains one layer for the Ground Transportation Linear Features. This is for displaying the GTLF for the Recreation mapping project.</span></p></div></div>",
+    "copyrightText": "Bureau of Land Management (BLM), Headquarters (HQ)",
+    "author": "",
+    "subject": "This is for displaying the GTLF for the Recreation mapping project.",
+    "keywords": "GTLF,Ground Transportation Linear Features,Bureau of Land Management,BLM,motorized,non-motorized",
+    "comments": "<DIV STYLE=\"text-align:Left;font-size:12pt\"><DIV><P><SPAN>This data frame contains one layer for the Ground Transportation Linear Features. This is for displaying the GTLF for the Recreation mapping project.</SPAN></P></DIV></DIV>",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Ground Transportation Linear Feature",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolyline",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "FLTP_CODE",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 10382,
+    "extent": {
+      "xmin": -149.80404597399996,
+      "ymin": 26.948324800000023,
+      "xmax": -80.08037312799993,
+      "ymax": 65.51920211600003
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "FLTP_CODE",
+      "alias": "FLTP Status",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 4
+      },
+      "isKey": false
+    },
+    {
+      "name": "DSTRBTE_EXTRNL_CODE",
+      "alias": "External Distribution Status",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "PLAN_ROUTE_DSGNTN_AUTH",
+      "alias": "Planned Route Designation Authority",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "PLAN_ASSET_CLASS",
+      "alias": "Asset Classification",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 7
+      },
+      "isKey": false
+    },
+    {
+      "name": "PLAN_OHV_ROUTE_DSGNTN",
+      "alias": "Planned OHV Route Designation",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 4
+      },
+      "isKey": false
+    },
+    {
+      "name": "NEPA_DOC_NUM",
+      "alias": "NEPA Document Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ROUTE_PLAN_ID",
+      "alias": "Route Plan ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PLAN_PRMRY_ROUTE_MNGT_OBJTV",
+      "alias": "Planned Primary Route Management Objective",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "PLAN_MODE_TRNSPRT",
+      "alias": "Planned Mode of Transport",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "PLAN_ADD_MODE_TRNSPRT_RSTRT_CD",
+      "alias": "Planned Additional Mode of Transport Restriction Status",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "PLAN_ACCESS_RSTRCT",
+      "alias": "Planned Access Restriction",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 5
+      },
+      "isKey": false
+    },
+    {
+      "name": "PLAN_SEASON_RSTRCT_CODE",
+      "alias": "Planned Seasonal Restriction Status",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "OBSRVE_MODE_TRNSPRT",
+      "alias": "Observed Mode of Transport",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 4
+      },
+      "isKey": false
+    },
+    {
+      "name": "OBSRVE_SRFCE_TYPE",
+      "alias": "Observed Surface Type",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 7
+      },
+      "isKey": false
+    },
+    {
+      "name": "OBSRVE_FUNC_CLASS",
+      "alias": "Observed Functional Class",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 5
+      },
+      "isKey": false
+    },
+    {
+      "name": "OBSRVE_ROUTE_USE_CLASS",
+      "alias": "Observed Route Use Class",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 11
+      },
+      "isKey": false
+    },
+    {
+      "name": "ROUTE_PRMRY_NM",
+      "alias": "Route Primary Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ROUTE_SCNDRY_SPCL_DSGNTN_NM",
+      "alias": "Route Secondary Special Designation Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ROUTE_SPCL_DSGNTN_TYPE",
+      "alias": "Route Special Designation Type",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 4
+      },
+      "isKey": false
+    },
+    {
+      "name": "FAMS_ID",
+      "alias": "FAMS ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EXSTNG_AUTH_CODE",
+      "alias": "Route Existing Authorization Status",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "GIS_MILES",
+      "alias": "GIS Miles",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "BLM_MILES",
+      "alias": "BLM Miles",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "COORD_SRC_TYPE",
+      "alias": "Location Source Type Name",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 16
+      },
+      "isKey": false
+    },
+    {
+      "name": "COORD_SRC2",
+      "alias": "Location Source Description Specific Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "DEF_FET_TYPE",
+      "alias": "Defining Feature Type Name",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 9
+      },
+      "isKey": false
+    },
+    {
+      "name": "DEF_FET2",
+      "alias": "Defining Feature Description Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ACCURACY_FT",
+      "alias": "Line Form Accuracy Measure",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CREATE_BY",
+      "alias": "Created By Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CREATE_DATE",
+      "alias": "Created Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFY_BY",
+      "alias": "Modified By Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFY_DATE",
+      "alias": "Modified Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GLOBALID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "CREATED_USER",
+      "alias": "created_user",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CREATED_DATE",
+      "alias": "created_date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LAST_EDITED_USER",
+      "alias": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LAST_EDITED_DATE",
+      "alias": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Length",
+      "alias": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WEB_DISPLAY",
+      "alias": "WEB_DISPLAY",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "DESCRIPTION",
+      "alias": "DESCRIPTION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PHOTO_BLOB",
+      "alias": "PHOTO_BLOB",
+      "type": "esriFieldTypeBlob",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PHOTO_TEXT",
+      "alias": "PHOTO_TEXT",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PHOTO_LINK",
+      "alias": "PHOTO_LINK",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PHOTO_THUMB",
+      "alias": "PHOTO_THUMB",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "FLTP_CODE",
+      "type": "esriFieldTypeString",
+      "alias": "FLTP Status",
+      "nullPct": 0,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "DSTRBTE_EXTRNL_CODE",
+      "type": "esriFieldTypeString",
+      "alias": "External Distribution Status",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 12,
+      "hasDomain": true
+    },
+    {
+      "name": "PLAN_ROUTE_DSGNTN_AUTH",
+      "type": "esriFieldTypeString",
+      "alias": "Planned Route Designation Authority",
+      "nullPct": 0,
+      "distinctCount": 3,
+      "hasDomain": true
+    },
+    {
+      "name": "PLAN_ASSET_CLASS",
+      "type": "esriFieldTypeString",
+      "alias": "Asset Classification",
+      "nullPct": 34.2,
+      "distinctCount": 17,
+      "hasDomain": true
+    },
+    {
+      "name": "PLAN_OHV_ROUTE_DSGNTN",
+      "type": "esriFieldTypeString",
+      "alias": "Planned OHV Route Designation",
+      "nullPct": 83,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "NEPA_DOC_NUM",
+      "type": "esriFieldTypeString",
+      "alias": "NEPA Document Number",
+      "nullPct": 99.6,
+      "distinctCount": 4,
+      "hasDomain": false
+    },
+    {
+      "name": "ROUTE_PLAN_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Route Plan ID",
+      "nullPct": 98.6,
+      "distinctCount": 40,
+      "hasDomain": false
+    },
+    {
+      "name": "PLAN_PRMRY_ROUTE_MNGT_OBJTV",
+      "type": "esriFieldTypeString",
+      "alias": "Planned Primary Route Management Objective",
+      "nullPct": 77.2,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "PLAN_MODE_TRNSPRT",
+      "type": "esriFieldTypeString",
+      "alias": "Planned Mode of Transport",
+      "nullPct": 64.2,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "PLAN_ADD_MODE_TRNSPRT_RSTRT_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Planned Additional Mode of Transport Restriction Status",
+      "nullPct": 91.1,
+      "distinctCount": 9,
+      "hasDomain": true
+    },
+    {
+      "name": "PLAN_ACCESS_RSTRCT",
+      "type": "esriFieldTypeString",
+      "alias": "Planned Access Restriction",
+      "nullPct": 78,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "PLAN_SEASON_RSTRCT_CODE",
+      "type": "esriFieldTypeString",
+      "alias": "Planned Seasonal Restriction Status",
+      "nullPct": 91.8,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "OBSRVE_MODE_TRNSPRT",
+      "type": "esriFieldTypeString",
+      "alias": "Observed Mode of Transport",
+      "nullPct": 66.9,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "OBSRVE_SRFCE_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "Observed Surface Type",
+      "nullPct": 11.9,
+      "distinctCount": 15,
+      "hasDomain": true
+    },
+    {
+      "name": "OBSRVE_FUNC_CLASS",
+      "type": "esriFieldTypeString",
+      "alias": "Observed Functional Class",
+      "nullPct": 11.9,
+      "distinctCount": 6,
+      "hasDomain": true
+    },
+    {
+      "name": "OBSRVE_ROUTE_USE_CLASS",
+      "type": "esriFieldTypeString",
+      "alias": "Observed Route Use Class",
+      "nullPct": 7.6,
+      "distinctCount": 9,
+      "hasDomain": true
+    },
+    {
+      "name": "ROUTE_PRMRY_NM",
+      "type": "esriFieldTypeString",
+      "alias": "Route Primary Name",
+      "nullPct": 16.2,
+      "distinctCount": 1033,
+      "hasDomain": false
+    },
+    {
+      "name": "ROUTE_SCNDRY_SPCL_DSGNTN_NM",
+      "type": "esriFieldTypeString",
+      "alias": "Route Secondary Special Designation Name",
+      "nullPct": 56.3,
+      "distinctCount": 109,
+      "hasDomain": false
+    },
+    {
+      "name": "ROUTE_SPCL_DSGNTN_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "Route Special Designation Type",
+      "nullPct": 95.3,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "FAMS_ID",
+      "type": "esriFieldTypeString",
+      "alias": "FAMS ID",
+      "nullPct": 87.1,
+      "distinctCount": 16,
+      "hasDomain": false
+    },
+    {
+      "name": "EXSTNG_AUTH_CODE",
+      "type": "esriFieldTypeString",
+      "alias": "Route Existing Authorization Status",
+      "nullPct": 92.7,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "GIS_MILES",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Miles",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "BLM_MILES",
+      "type": "esriFieldTypeDouble",
+      "alias": "BLM Miles",
+      "nullPct": 0,
+      "distinctCount": 696,
+      "hasDomain": false
+    },
+    {
+      "name": "COORD_SRC_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "Location Source Type Name",
+      "nullPct": 0,
+      "distinctCount": 11,
+      "hasDomain": true
+    },
+    {
+      "name": "COORD_SRC2",
+      "type": "esriFieldTypeString",
+      "alias": "Location Source Description Specific Name",
+      "nullPct": 85.9,
+      "distinctCount": 11,
+      "hasDomain": false
+    },
+    {
+      "name": "DEF_FET_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "Defining Feature Type Name",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": true
+    },
+    {
+      "name": "DEF_FET2",
+      "type": "esriFieldTypeString",
+      "alias": "Defining Feature Description Name",
+      "nullPct": 96.9,
+      "distinctCount": 10,
+      "hasDomain": false
+    },
+    {
+      "name": "ACCURACY_FT",
+      "type": "esriFieldTypeInteger",
+      "alias": "Line Form Accuracy Measure",
+      "nullPct": 0,
+      "distinctCount": 6,
+      "hasDomain": false
+    },
+    {
+      "name": "CREATE_BY",
+      "type": "esriFieldTypeString",
+      "alias": "Created By Name",
+      "nullPct": 0,
+      "distinctCount": 13,
+      "hasDomain": false
+    },
+    {
+      "name": "CREATE_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Created Date",
+      "nullPct": 0,
+      "distinctCount": 87,
+      "hasDomain": false
+    },
+    {
+      "name": "MODIFY_BY",
+      "type": "esriFieldTypeString",
+      "alias": "Modified By Name",
+      "nullPct": 0,
+      "distinctCount": 10,
+      "hasDomain": false
+    },
+    {
+      "name": "MODIFY_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Modified Date",
+      "nullPct": 0,
+      "distinctCount": 26,
+      "hasDomain": false
+    },
+    {
+      "name": "GLOBALID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "CREATED_USER",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "nullPct": 27.5,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "CREATED_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "nullPct": 27.8,
+      "distinctCount": 75,
+      "hasDomain": false
+    },
+    {
+      "name": "LAST_EDITED_USER",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "nullPct": 27.8,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "LAST_EDITED_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "nullPct": 27.8,
+      "distinctCount": 138,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Length",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "WEB_DISPLAY",
+      "type": "esriFieldTypeString",
+      "alias": "WEB_DISPLAY",
+      "nullPct": 0.1,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "DESCRIPTION",
+      "type": "esriFieldTypeString",
+      "alias": "DESCRIPTION",
+      "nullPct": 88,
+      "distinctCount": 83,
+      "hasDomain": false
+    },
+    {
+      "name": "PHOTO_BLOB",
+      "type": "esriFieldTypeBlob",
+      "alias": "PHOTO_BLOB",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "PHOTO_TEXT",
+      "type": "esriFieldTypeString",
+      "alias": "PHOTO_TEXT",
+      "nullPct": 98.9,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "PHOTO_LINK",
+      "type": "esriFieldTypeString",
+      "alias": "PHOTO_LINK",
+      "nullPct": 98.8,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "PHOTO_THUMB",
+      "type": "esriFieldTypeString",
+      "alias": "PHOTO_THUMB",
+      "nullPct": 100,
+      "distinctCount": 2,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "FLTP_CODE": "Yes",
+      "DSTRBTE_EXTRNL_CODE": "YES",
+      "ADMIN_ST": "AK",
+      "PLAN_ROUTE_DSGNTN_AUTH": "BLM",
+      "PLAN_ASSET_CLASS": "Transportation System - Trail",
+      "PLAN_OHV_ROUTE_DSGNTN": "Closed",
+      "NEPA_DOC_NUM": "BLM-AK_PT-86-018-1610-028 ROD",
+      "ROUTE_PLAN_ID": "T-8009",
+      "PLAN_PRMRY_ROUTE_MNGT_OBJTV": "Experience",
+      "PLAN_MODE_TRNSPRT": "Non-Motorized",
+      "PLAN_ADD_MODE_TRNSPRT_RSTRT_CD": "No",
+      "PLAN_ACCESS_RSTRCT": "None",
+      "PLAN_SEASON_RSTRCT_CODE": "No",
+      "OBSRVE_MODE_TRNSPRT": "Non-Mechanized",
+      "OBSRVE_SRFCE_TYPE": "Natural Improved",
+      "OBSRVE_FUNC_CLASS": "Resource",
+      "OBSRVE_ROUTE_USE_CLASS": "Non-Mechanized",
+      "ROUTE_PRMRY_NM": "Pinnell Mountain National Recreation Trail",
+      "ROUTE_SCNDRY_SPCL_DSGNTN_NM": "Pinnell Mountain NRT",
+      "ROUTE_SPCL_DSGNTN_TYPE": "National Recreation Trail",
+      "FAMS_ID": "T-8009\r\n",
+      "EXSTNG_AUTH_CODE": "YES",
+      "GIS_MILES": 25.06838644,
+      "BLM_MILES": 0,
+      "COORD_SRC_TYPE": "SRV",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": "ER_SLOPE",
+      "DEF_FET2": "Ridgetop",
+      "ACCURACY_FT": 0,
+      "CREATE_BY": "mfaughn",
+      "CREATE_DATE": -2209161600000,
+      "MODIFY_BY": "chamfler",
+      "MODIFY_DATE": 1428364800000,
+      "GLOBALID": "{893F028A-6B41-4AA4-9B52-EE8F5D1843B2}",
+      "CREATED_USER": "mfaughn",
+      "CREATED_DATE": null,
+      "LAST_EDITED_USER": "chamfler",
+      "LAST_EDITED_DATE": 1428364800000,
+      "SHAPE_Length": 0.6809942747419848,
+      "WEB_DISPLAY": "YES",
+      "DESCRIPTION": "Sweeping mountain vistas and brilliant wildflower displays under the unceasing light of the midnight sun.... the Pinnell Mountain National Recreation Trail, one of Interior Alaska’s premier hiking trails, offers an unforgettable experience whether your v*",
+      "PHOTO_BLOB": null,
+      "PHOTO_TEXT": null,
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": "https://c4.staticflickr.com/4/3878/15320031316_143e6fbc95_m.jpg"
+    },
+    {
+      "OBJECTID": 2,
+      "FLTP_CODE": "No",
+      "DSTRBTE_EXTRNL_CODE": "YES",
+      "ADMIN_ST": "AK",
+      "PLAN_ROUTE_DSGNTN_AUTH": "Unknown",
+      "PLAN_ASSET_CLASS": null,
+      "PLAN_OHV_ROUTE_DSGNTN": null,
+      "NEPA_DOC_NUM": null,
+      "ROUTE_PLAN_ID": null,
+      "PLAN_PRMRY_ROUTE_MNGT_OBJTV": null,
+      "PLAN_MODE_TRNSPRT": null,
+      "PLAN_ADD_MODE_TRNSPRT_RSTRT_CD": null,
+      "PLAN_ACCESS_RSTRCT": null,
+      "PLAN_SEASON_RSTRCT_CODE": null,
+      "OBSRVE_MODE_TRNSPRT": null,
+      "OBSRVE_SRFCE_TYPE": "Unknown",
+      "OBSRVE_FUNC_CLASS": "Unknown",
+      "OBSRVE_ROUTE_USE_CLASS": "Unknown",
+      "ROUTE_PRMRY_NM": null,
+      "ROUTE_SCNDRY_SPCL_DSGNTN_NM": null,
+      "ROUTE_SPCL_DSGNTN_TYPE": null,
+      "FAMS_ID": null,
+      "EXSTNG_AUTH_CODE": "YES",
+      "GIS_MILES": 0.91588969,
+      "BLM_MILES": 0,
+      "COORD_SRC_TYPE": "UNK",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": "UNK",
+      "DEF_FET2": null,
+      "ACCURACY_FT": 0,
+      "CREATE_BY": "gminick",
+      "CREATE_DATE": -2209161600000,
+      "MODIFY_BY": "gminick",
+      "MODIFY_DATE": 1428364800000,
+      "GLOBALID": "{F9597857-7AF0-4E67-A50A-8A76F57FF67F}",
+      "CREATED_USER": null,
+      "CREATED_DATE": null,
+      "LAST_EDITED_USER": null,
+      "LAST_EDITED_DATE": null,
+      "SHAPE_Length": 0.02173485641663015,
+      "WEB_DISPLAY": "YES",
+      "DESCRIPTION": null,
+      "PHOTO_BLOB": null,
+      "PHOTO_TEXT": null,
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null
+    },
+    {
+      "OBJECTID": 3,
+      "FLTP_CODE": "Yes",
+      "DSTRBTE_EXTRNL_CODE": "YES",
+      "ADMIN_ST": "AK",
+      "PLAN_ROUTE_DSGNTN_AUTH": "BLM",
+      "PLAN_ASSET_CLASS": null,
+      "PLAN_OHV_ROUTE_DSGNTN": null,
+      "NEPA_DOC_NUM": null,
+      "ROUTE_PLAN_ID": null,
+      "PLAN_PRMRY_ROUTE_MNGT_OBJTV": null,
+      "PLAN_MODE_TRNSPRT": null,
+      "PLAN_ADD_MODE_TRNSPRT_RSTRT_CD": null,
+      "PLAN_ACCESS_RSTRCT": null,
+      "PLAN_SEASON_RSTRCT_CODE": null,
+      "OBSRVE_MODE_TRNSPRT": null,
+      "OBSRVE_SRFCE_TYPE": "Unknown",
+      "OBSRVE_FUNC_CLASS": "Unknown",
+      "OBSRVE_ROUTE_USE_CLASS": "Unknown",
+      "ROUTE_PRMRY_NM": null,
+      "ROUTE_SCNDRY_SPCL_DSGNTN_NM": null,
+      "ROUTE_SPCL_DSGNTN_TYPE": null,
+      "FAMS_ID": null,
+      "EXSTNG_AUTH_CODE": "YES",
+      "GIS_MILES": 0.24286458,
+      "BLM_MILES": 0,
+      "COORD_SRC_TYPE": " ",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": " ",
+      "DEF_FET2": null,
+      "ACCURACY_FT": 0,
+      "CREATE_BY": "gminick",
+      "CREATE_DATE": -2209161600000,
+      "MODIFY_BY": "gminick",
+      "MODIFY_DATE": 1428364800000,
+      "GLOBALID": "{100BFBB0-7674-4D66-AB88-82EDDBF40BC8}",
+      "CREATED_USER": null,
+      "CREATED_DATE": null,
+      "LAST_EDITED_USER": null,
+      "LAST_EDITED_DATE": null,
+      "SHAPE_Length": 0.005279304295898756,
+      "WEB_DISPLAY": "YES",
+      "DESCRIPTION": null,
+      "PHOTO_BLOB": null,
+      "PHOTO_TEXT": null,
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null
+    },
+    {
+      "OBJECTID": 4,
+      "FLTP_CODE": "Yes",
+      "DSTRBTE_EXTRNL_CODE": "YES",
+      "ADMIN_ST": "AK",
+      "PLAN_ROUTE_DSGNTN_AUTH": "BLM",
+      "PLAN_ASSET_CLASS": null,
+      "PLAN_OHV_ROUTE_DSGNTN": null,
+      "NEPA_DOC_NUM": null,
+      "ROUTE_PLAN_ID": null,
+      "PLAN_PRMRY_ROUTE_MNGT_OBJTV": null,
+      "PLAN_MODE_TRNSPRT": null,
+      "PLAN_ADD_MODE_TRNSPRT_RSTRT_CD": null,
+      "PLAN_ACCESS_RSTRCT": null,
+      "PLAN_SEASON_RSTRCT_CODE": null,
+      "OBSRVE_MODE_TRNSPRT": null,
+      "OBSRVE_SRFCE_TYPE": "Unknown",
+      "OBSRVE_FUNC_CLASS": "Unknown",
+      "OBSRVE_ROUTE_USE_CLASS": "Unknown",
+      "ROUTE_PRMRY_NM": null,
+      "ROUTE_SCNDRY_SPCL_DSGNTN_NM": null,
+      "ROUTE_SPCL_DSGNTN_TYPE": null,
+      "FAMS_ID": null,
+      "EXSTNG_AUTH_CODE": "YES",
+      "GIS_MILES": 0.28099685,
+      "BLM_MILES": 0,
+      "COORD_SRC_TYPE": " ",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": " ",
+      "DEF_FET2": null,
+      "ACCURACY_FT": 0,
+      "CREATE_BY": "gminick",
+      "CREATE_DATE": -2209161600000,
+      "MODIFY_BY": "gminick",
+      "MODIFY_DATE": 1428364800000,
+      "GLOBALID": "{0112F0ED-EEC2-4261-89FB-C0C77EDEC346}",
+      "CREATED_USER": null,
+      "CREATED_DATE": null,
+      "LAST_EDITED_USER": null,
+      "LAST_EDITED_DATE": null,
+      "SHAPE_Length": 0.006671026890892211,
+      "WEB_DISPLAY": "YES",
+      "DESCRIPTION": null,
+      "PHOTO_BLOB": null,
+      "PHOTO_TEXT": null,
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null
+    },
+    {
+      "OBJECTID": 5,
+      "FLTP_CODE": "Yes",
+      "DSTRBTE_EXTRNL_CODE": "YES",
+      "ADMIN_ST": "AK",
+      "PLAN_ROUTE_DSGNTN_AUTH": "BLM",
+      "PLAN_ASSET_CLASS": null,
+      "PLAN_OHV_ROUTE_DSGNTN": null,
+      "NEPA_DOC_NUM": null,
+      "ROUTE_PLAN_ID": null,
+      "PLAN_PRMRY_ROUTE_MNGT_OBJTV": null,
+      "PLAN_MODE_TRNSPRT": null,
+      "PLAN_ADD_MODE_TRNSPRT_RSTRT_CD": null,
+      "PLAN_ACCESS_RSTRCT": null,
+      "PLAN_SEASON_RSTRCT_CODE": null,
+      "OBSRVE_MODE_TRNSPRT": null,
+      "OBSRVE_SRFCE_TYPE": "Unknown",
+      "OBSRVE_FUNC_CLASS": "Unknown",
+      "OBSRVE_ROUTE_USE_CLASS": "Unknown",
+      "ROUTE_PRMRY_NM": null,
+      "ROUTE_SCNDRY_SPCL_DSGNTN_NM": null,
+      "ROUTE_SPCL_DSGNTN_TYPE": null,
+      "FAMS_ID": null,
+      "EXSTNG_AUTH_CODE": "YES",
+      "GIS_MILES": 0.17727802,
+      "BLM_MILES": 0,
+      "COORD_SRC_TYPE": " ",
+      "COORD_SRC2": null,
+      "DEF_FET_TYPE": " ",
+      "DEF_FET2": null,
+      "ACCURACY_FT": 0,
+      "CREATE_BY": "gminick",
+      "CREATE_DATE": -2209161600000,
+      "MODIFY_BY": "gminick",
+      "MODIFY_DATE": 1428364800000,
+      "GLOBALID": "{BB5F361D-36D4-4DEC-8710-4C3D4F6E4032}",
+      "CREATED_USER": null,
+      "CREATED_DATE": null,
+      "LAST_EDITED_USER": null,
+      "LAST_EDITED_DATE": null,
+      "SHAPE_Length": 0.00430883408654001,
+      "WEB_DISPLAY": "YES",
+      "DESCRIPTION": null,
+      "PHOTO_BLOB": null,
+      "PHOTO_TEXT": null,
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null
+    }
+  ]
+}

@@ -1,0 +1,339 @@
+{
+  "generated": "2026-02-22T06:22:01.878Z",
+  "datasetId": "plss_section",
+  "serviceUrl": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/2",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 1000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "PLSS_First_Division",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "",
+    "displayField": "PLSSID",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 100000,
+    "maxScale": 10000,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1766777161724,
+    "definitionExpression": "",
+    "recordCount": 2772049,
+    "extent": {
+      "xmin": -179.2304392157341,
+      "ymin": 24.5565824028681,
+      "xmax": 179.89399847874728,
+      "ymax": 71.3898930627991
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "Object ID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "PLSSID",
+      "alias": "Township Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVID",
+      "alias": "First Division Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVTYP",
+      "alias": "First Division Type Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVTXT",
+      "alias": "First Division Type Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVNO",
+      "alias": "First Division Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVDUP",
+      "alias": "First Division Duplicate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVLAB",
+      "alias": "First Division Label",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVTYP",
+      "alias": "PLSS Special Survey Type Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVTYPTXT",
+      "alias": "Survey Type Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCEDATE",
+      "alias": "Source Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCEREF",
+      "alias": "Source Doc Link or Reference",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "Object ID",
+      "nullPct": 0,
+      "distinctCount": 2772049,
+      "hasDomain": false
+    },
+    {
+      "name": "PLSSID",
+      "type": "esriFieldTypeString",
+      "alias": "Township Identifier",
+      "nullPct": 0,
+      "distinctCount": 83959,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVID",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Identifier",
+      "nullPct": 0,
+      "distinctCount": 2759879,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVTYP",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Type Code",
+      "nullPct": 0,
+      "distinctCount": 14,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVTXT",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Type Text",
+      "nullPct": 0,
+      "distinctCount": 16,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVNO",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Number",
+      "nullPct": 0,
+      "distinctCount": 787,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVDUP",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Duplicate",
+      "nullPct": 3,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVLAB",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Label",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVTYP",
+      "type": "esriFieldTypeString",
+      "alias": "PLSS Special Survey Type Code",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVTYPTXT",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Type Text",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCEDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Source Date",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCEREF",
+      "type": "esriFieldTypeString",
+      "alias": "Source Doc Link or Reference",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape Area",
+      "nullPct": 0,
+      "distinctCount": 2760899,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape Length",
+      "nullPct": 0,
+      "distinctCount": 2771626,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "PLSSID": "CO230470N0100W0",
+      "FRSTDIVID": "CO230470N0100W0SN340",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "34",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "34",
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "Shape__Area": 0.0002647253331815591,
+      "Shape__Length": 0.06598117764693784
+    },
+    {
+      "OBJECTID": 2,
+      "PLSSID": "CO060280S0440W0",
+      "FRSTDIVID": "CO060280S0440W0SN230",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "23",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "23",
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "Shape__Area": 0.00026477817277736904,
+      "Shape__Length": 0.06551886645959232
+    },
+    {
+      "OBJECTID": 3,
+      "PLSSID": "CO230430N0080W0",
+      "FRSTDIVID": "CO230430N0080W0UP060",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "06",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "06",
+      "SURVTYP": "U",
+      "SURVTYPTXT": "Unsurveyed Protracted",
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "Shape__Area": 0.00008589806839154335,
+      "Shape__Length": 0.0389491590220725
+    },
+    {
+      "OBJECTID": 4,
+      "PLSSID": "CO060020N0580W0",
+      "FRSTDIVID": "CO060020N0580W0SN170",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "17",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "17",
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "Shape__Area": 0.00027352935967428493,
+      "Shape__Length": 0.06674991914994473
+    },
+    {
+      "OBJECTID": 5,
+      "PLSSID": "CO060070N0980W0",
+      "FRSTDIVID": "CO060070N0980W0SN190",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "19",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "19",
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SOURCEDATE": null,
+      "SOURCEREF": null,
+      "Shape__Area": 0.0002667755961738294,
+      "Shape__Length": 0.06580981938247998
+    }
+  ]
+}

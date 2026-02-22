@@ -1,0 +1,254 @@
+{
+  "generated": "2026-02-22T08:31:04.576Z",
+  "datasetId": "bia_aian_lands",
+  "serviceUrl": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_National_LAR/MapServer/0",
+  "metadata": {
+    "serviceDescription": "The purpose of the American Indian and Alaska Native Land Area Representation (AIAN-LAR) Geographic Information System (GIS) dataset is to depict the exterior extent of land held in “trust” or “restricted fee” status by the United States for a tribe(s) and individual Indians of federally recognized Tribes. The boundaries are compilations defined by the official land title records of the Bureau of Indian Affairs (BIA) which include treaties, statutes, agreements, executive orders, proclamations, deeds and other land title documents. The AIAN-LAR GIS dataset includes the exterior boundary extent for both the surface and subsurface estate. These data are public information and may be used by various organizations, agencies, units of government (i.e., Federal, state, county, and city), and other entities according the restrictions on appropriate use.  It is strongly recommended that these data be acquired directly from the BIA and not indirectly through some other source, which may have altered or integrated the data for another purpose for which it was not intended. It is also strongly recommended that careful attention be paid to the content of the metadata file associated with these data.  Users are cautioned that digital enlargement of these data to scales greater than that at which they were originally mapped can cause misinterpretation. The AIAN-LAR dataset’s spatial accuracy and attribute information are continuously being updated, improved and as is used at the single authoritative land area boundary data for the BIA mission. Foundational to the AIAN-LAB data is that it topologically aligned where possible and appropriate with the official published version of Bureau of Land Management (BLM) Public Land Survey System (PLSS) Cadastral National Spatial Data Infrastructure (CAD NSDI) GIS Data (See background below). These data are public information and may be used and interpreted by organizations, agencies, units of government, or other entities.  The user, agency or organization has sole responsibility for ensuring the appropriate use, application, integration and republication of these data.  A tribe is a tribe, band, pueblo, community or other federally acknowledged group of Indians. A federally recognized tribe is an American Indian or Alaska Native tribal entity that is recognized as having a government-to-government relationship with the United States, with the responsibilities, powers, limitations, and obligations attached to that designation, and are eligible for funding and services from the BIA. Furthermore, federally recognized tribes are recognized as possessing certain inherent rights of self-government (i.e., tribal sovereignty) and are entitled to receive certain federal benefits, services, and protections because of their special relationship with the United States.  At present, there are 567 federally recognized American Indian and Alaska Native tribes and villages. Not all federally recognized Tribes have a designated land area, land in trust or restricted status and therefore may not have an associated land area represented in the AIAN-LAB. Not all land areas such as public domain allotments are under the jurisdiction or associated with any particular federally recognized tribe. The BIA publishes an updated list of federally recognized tribes in a federal register notice. The most recent federal register notice is located at: https://www.bia.gov/WhoWeAre/BIA/OIS/TribalGovernmentServices/TribalDirectory/",
+    "copyrightText": "Bureau of Indian Affairs, Office of Trust Services, Division of Land Titles and Records, Branch of Geospatial Support. Please feel free to contact us at 1-877-293-9494 geospatial@bia.gov",
+    "author": "",
+    "subject": "",
+    "keywords": "BIA,LAR,Boundaries,LAR Supplemental,Bureau of Indian Affairs,Indian Lands,American Indian Reservations,AIR,Tribal Boundaries,Indian Country,Reservation,First Nations",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Map,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BIA AIAN National LAR",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "LARNAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 335,
+    "extent": {
+      "xmin": -131.66694680499995,
+      "ymin": 25.741516095000065,
+      "xmax": -67.03612545999994,
+      "ymax": 55.29397520500004
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "LARID",
+      "alias": "Land Area Representation (LAR) ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LARNAME",
+      "alias": "Land Area Represention (LAR) Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CLASSIFICATION",
+      "alias": "Classification",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GISACRES",
+      "alias": "GIS Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REGION",
+      "alias": "Region",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape.STArea()",
+      "alias": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape.STLength()",
+      "alias": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 335,
+      "hasDomain": false
+    },
+    {
+      "name": "LARID",
+      "type": "esriFieldTypeString",
+      "alias": "Land Area Representation (LAR) ID",
+      "nullPct": 0,
+      "distinctCount": 335,
+      "hasDomain": false
+    },
+    {
+      "name": "LARNAME",
+      "type": "esriFieldTypeString",
+      "alias": "Land Area Represention (LAR) Name",
+      "nullPct": 0,
+      "distinctCount": 335,
+      "hasDomain": false
+    },
+    {
+      "name": "CLASSIFICATION",
+      "type": "esriFieldTypeString",
+      "alias": "Classification",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "GISACRES",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Acres",
+      "nullPct": 0,
+      "distinctCount": 335,
+      "hasDomain": false
+    },
+    {
+      "name": "REGION",
+      "type": "esriFieldTypeString",
+      "alias": "Region",
+      "nullPct": 0,
+      "distinctCount": 11,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 335,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 2,
+      "LARID": "LAR0002",
+      "LARNAME": "Crow Creek",
+      "CLASSIFICATION": "1",
+      "GISACRES": 575104.58502247,
+      "REGION": "Great Plains",
+      "GlobalID": "{CB8094E7-950A-4A2B-8823-D8C12B86F32A}",
+      "Shape.STArea()": 0.1348065132044198,
+      "Shape.STLength()": 2.5977796579790824
+    },
+    {
+      "OBJECTID": 3,
+      "LARID": "LAR0003",
+      "LARNAME": "Flandreau",
+      "CLASSIFICATION": "1",
+      "GISACRES": 4564.29005658,
+      "REGION": "Great Plains",
+      "GlobalID": "{E8172934-CAD9-4F0D-BE1B-7B3CA18D8918}",
+      "Shape.STArea()": 0.0010708800016784672,
+      "Shape.STLength()": 0.355752068577777
+    },
+    {
+      "OBJECTID": 4,
+      "LARID": "LAR0004",
+      "LARNAME": "Fort Berthold",
+      "CLASSIFICATION": "1",
+      "GISACRES": 2241221.23089149,
+      "REGION": "Great Plains",
+      "GlobalID": "{DCD4527F-DD4A-40C4-8D74-472FFDFE96E2}",
+      "Shape.STArea()": 0.4921770098981425,
+      "Shape.STLength()": 3.306533128666825
+    },
+    {
+      "OBJECTID": 5,
+      "LARID": "LAR0005",
+      "LARNAME": "Lake Traverse (Sisseton)",
+      "CLASSIFICATION": "1",
+      "GISACRES": 232339.62478885,
+      "REGION": "Great Plains",
+      "GlobalID": "{3A5C0E14-F9B6-466E-B063-B741745351A9}",
+      "Shape.STArea()": 0.053071368344272854,
+      "Shape.STLength()": 23.092727826135135
+    },
+    {
+      "OBJECTID": 6,
+      "LARID": "LAR0006",
+      "LARNAME": "Lower Brule",
+      "CLASSIFICATION": "1",
+      "GISACRES": 474565.96301733,
+      "REGION": "Great Plains",
+      "GlobalID": "{9FA6C870-CA10-46ED-BE1D-C23283CA03AE}",
+      "Shape.STArea()": 0.11131538580778408,
+      "Shape.STLength()": 2.48329904836186
+    }
+  ]
+}

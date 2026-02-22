@@ -1,0 +1,297 @@
+{
+  "generated": "2026-02-22T07:23:55.864Z",
+  "datasetId": "nhdplus_hr_nhdpoint",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/2",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><p><span>The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p><p></div></div></p>",
+    "copyrightText": "USGS TNM – National Hydrography Dataset Plus High Resolution (NHDPlus HR). Data refreshed October, 2022.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,United States,US,NGP-TNM,REST,WMS",
+    "comments": "The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NHDPoint",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPoint",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "GNIS_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": true,
+    "hasM": null,
+    "minScale": 100000,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 484774,
+    "extent": {
+      "xmin": -17838299.487999998,
+      "ymin": 1489547.2569999993,
+      "xmax": 16229404.186399996,
+      "ymax": 11059410.688600004
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "permanent_identifier",
+      "alias": "Permanent_Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "fdate",
+      "alias": "FDate",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "resolution",
+      "alias": "Resolution",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "gnis_id",
+      "alias": "GNIS_ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "gnis_name",
+      "alias": "GNIS_Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "reachcode",
+      "alias": "ReachCode",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ftype",
+      "alias": "FType",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "fcode",
+      "alias": "FCode",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "nhdplusid",
+      "alias": "NHDPlusID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vpuid",
+      "alias": "VPUID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "permanent_identifier",
+      "type": "esriFieldTypeString",
+      "alias": "Permanent_Identifier",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "fdate",
+      "type": "esriFieldTypeDate",
+      "alias": "FDate",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "resolution",
+      "type": "esriFieldTypeInteger",
+      "alias": "Resolution",
+      "nullPct": null,
+      "distinctCount": 1,
+      "hasDomain": true
+    },
+    {
+      "name": "gnis_id",
+      "type": "esriFieldTypeString",
+      "alias": "GNIS_ID",
+      "nullPct": 94.1,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "gnis_name",
+      "type": "esriFieldTypeString",
+      "alias": "GNIS_Name",
+      "nullPct": 94.1,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "reachcode",
+      "type": "esriFieldTypeString",
+      "alias": "ReachCode",
+      "nullPct": 92.2,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "ftype",
+      "type": "esriFieldTypeInteger",
+      "alias": "FType",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "fcode",
+      "type": "esriFieldTypeInteger",
+      "alias": "FCode",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "nhdplusid",
+      "type": "esriFieldTypeDouble",
+      "alias": "NHDPlusID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "vpuid",
+      "type": "esriFieldTypeString",
+      "alias": "VPUID",
+      "nullPct": 0,
+      "distinctCount": 254,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "permanent_identifier": "61774507",
+      "fdate": 1037750400000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "reachcode": null,
+      "ftype": 367,
+      "fcode": 36700,
+      "nhdplusid": 10000700109119,
+      "vpuid": "0202"
+    },
+    {
+      "OBJECTID": 2,
+      "permanent_identifier": "66927249",
+      "fdate": 1042675200000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "reachcode": null,
+      "ftype": 458,
+      "fcode": 45800,
+      "nhdplusid": 10000600191509,
+      "vpuid": "0205"
+    },
+    {
+      "OBJECTID": 3,
+      "permanent_identifier": "61781341",
+      "fdate": 1037750400000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "reachcode": null,
+      "ftype": 367,
+      "fcode": 36700,
+      "nhdplusid": 10000700109120,
+      "vpuid": "0202"
+    },
+    {
+      "OBJECTID": 4,
+      "permanent_identifier": "72974864",
+      "fdate": 1046649600000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "reachcode": null,
+      "ftype": 367,
+      "fcode": 36700,
+      "nhdplusid": 41000300147347,
+      "vpuid": "1401"
+    },
+    {
+      "OBJECTID": 5,
+      "permanent_identifier": "61762177",
+      "fdate": 1349395200000,
+      "resolution": 2,
+      "gnis_id": null,
+      "gnis_name": null,
+      "reachcode": null,
+      "ftype": 450,
+      "fcode": 45000,
+      "nhdplusid": 10000700109121,
+      "vpuid": "0202"
+    }
+  ]
+}

@@ -1,0 +1,312 @@
+{
+  "generated": "2026-02-22T06:36:46.559Z",
+  "datasetId": "nhd_point_event",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/1",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><div><p><span>The USGS National Hydrography Dataset (NHD) service from The National Map is a comprehensive set of digital spatial data that encodes information about naturally occurring and constructed bodies of surface water (lakes, ponds, and reservoirs), paths through which water flows (canals, ditches, streams, and rivers), and related entities such as point features (springs, wells, stream gages, and dams). The information encoded about these features includes classification and other characteristics, delineation, geographic name, position and related measures, a \"reach code\" through which other information can be related to the NHD, and the direction of water flow. The network of reach codes delineating water and transported material flow allows users to trace movement in upstream and downstream directions. In addition to this geographic information, the dataset contains metadata that supports the exchange of future updates and improvements to the data. The NHD is available nationwide in two seamless datasets, one based on 1:24,000 (or larger) scale and referred to as high resolution NHD, and the other based on 1:100,000 scale and referred to as medium resolution NHD. The NHD from The National Map supports many applications, such as making maps, geocoding observations, flow modeling, data maintenance, and stewardship. The NHD is commonly combined with other data themes, such as boundaries, elevation, structures, and transportation, to produce general reference base maps. The National Map download client allows free downloads of public domain NHD data in either Esri File Geodatabase or Shapefile formats. For additional information on the NHD, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations.  This dataset is not intended to be used for site-specific regulatory determinations.  Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p></div></div></div>",
+    "copyrightText": "USGS TNM – National Hydrography Dataset.  Data Refreshed January, 2026.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,US,WMS",
+    "comments": "The USGS National Hydrography Dataset (NHD) service from The National Map is a comprehensive set of digital spatial data that encodes information about naturally occurring and constructed bodies of surface water (lakes, ponds, and reservoirs), paths through which water flows (canals, ditches, streams, and rivers), and related entities such as point features (springs, wells, stream gages, and dams). The information encoded about these features includes classification and other characteristics, delineation, geographic name, position and related measures, a \"reach code\" through which other information can be related to the NHD, and the direction of water flow. The network of reach codes delineating water and transported material flow allows users to trace movement in upstream and downstream directions. In addition to this geographic information, the dataset contains metadata that supports the exchange of future updates and improvements to the data. The NHD is available nationwide in two seamless datasets, one based on 1:24,000 (or larger) scale and referred to as high resolution NHD, and the other based on 1:100,000 scale and referred to as medium resolution NHD. The NHD from The National Map supports many applications, such as making maps, geocoding observations, flow modeling, data maintenance, and stewardship. The NHD is commonly combined with other data themes, such as boundaries, elevation, structures, and transportation, to produce general reference base maps. The National Map download client allows free downloads of public domain NHD data in either Esri File Geodatabase or Shapefile formats. For additional information on the NHD, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations.  This dataset is not intended to be used for site-specific regulatory determinations.  Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Point Event",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPoint",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "REACHCODE",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 305000,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 285690,
+    "extent": {
+      "xmin": -19004116.262444068,
+      "ymin": -1610697.2036289982,
+      "xmax": 16228293.979702182,
+      "ymax": 11536807.080047384
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "SHAPE",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EVENTDATE",
+      "alias": "EVENTDATE",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REACHSMDATE",
+      "alias": "REACHSMDATE",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REACHRESOLUTION",
+      "alias": "ReachResolution",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "FEATURECLASSREF",
+      "alias": "FeatureClassRef",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 5
+      },
+      "isKey": false
+    },
+    {
+      "name": "SOURCE_ORIGINATOR",
+      "alias": "SOURCE_ORIGINATOR",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCE_DATADESC",
+      "alias": "SOURCE_DATADESC",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCE_FEATUREID",
+      "alias": "SOURCE_FEATUREID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FEATUREDETAILURL",
+      "alias": "FEATUREDETAILURL",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EVENTTYPE",
+      "alias": "EventType",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 9
+      },
+      "isKey": false
+    },
+    {
+      "name": "REACHCODE",
+      "alias": "Reachcode",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PERMANENT_IDENTIFIER",
+      "alias": "PERMANENT_IDENTIFIER",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FEATURE_PERMANENT_IDENTIFIER",
+      "alias": "FEATURE_PERMANENT_IDENTIFIER",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EVENTOFFSET",
+      "alias": "EVENTOFFSET",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MEASURE",
+      "alias": "MEASURE",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GLOBALID",
+      "alias": "GLOBALID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "EVENTDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "EVENTDATE",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "REACHSMDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "REACHSMDATE",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "REACHRESOLUTION",
+      "type": "esriFieldTypeInteger",
+      "alias": "ReachResolution",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": true
+    },
+    {
+      "name": "FEATURECLASSREF",
+      "type": "esriFieldTypeInteger",
+      "alias": "FeatureClassRef",
+      "nullPct": 46.5,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "SOURCE_ORIGINATOR",
+      "type": "esriFieldTypeString",
+      "alias": "SOURCE_ORIGINATOR",
+      "nullPct": 0,
+      "distinctCount": 10,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCE_DATADESC",
+      "type": "esriFieldTypeString",
+      "alias": "SOURCE_DATADESC",
+      "nullPct": 0.8,
+      "distinctCount": 25,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCE_FEATUREID",
+      "type": "esriFieldTypeString",
+      "alias": "SOURCE_FEATUREID",
+      "nullPct": 0.1,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FEATUREDETAILURL",
+      "type": "esriFieldTypeString",
+      "alias": "FEATUREDETAILURL",
+      "nullPct": 22,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "EVENTTYPE",
+      "type": "esriFieldTypeInteger",
+      "alias": "EventType",
+      "nullPct": 0,
+      "distinctCount": 10,
+      "hasDomain": true
+    },
+    {
+      "name": "REACHCODE",
+      "type": "esriFieldTypeString",
+      "alias": "Reachcode",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "PERMANENT_IDENTIFIER",
+      "type": "esriFieldTypeString",
+      "alias": "PERMANENT_IDENTIFIER",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FEATURE_PERMANENT_IDENTIFIER",
+      "type": "esriFieldTypeString",
+      "alias": "FEATURE_PERMANENT_IDENTIFIER",
+      "nullPct": 94.9,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "EVENTOFFSET",
+      "type": "esriFieldTypeDouble",
+      "alias": "EVENTOFFSET",
+      "nullPct": null,
+      "distinctCount": 166,
+      "hasDomain": false
+    },
+    {
+      "name": "MEASURE",
+      "type": "esriFieldTypeDouble",
+      "alias": "MEASURE",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "GLOBALID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GLOBALID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": []
+}

@@ -1,0 +1,297 @@
+{
+  "generated": "2026-02-22T06:22:12.290Z",
+  "datasetId": "usfws_nwr_boundaries",
+  "serviceUrl": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/National_Wildlife_Refuge_System_Boundaries/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "This data set depicts the external boundary of lands and waters administered by the U.S. Fish and Wildlife Service including National Wildlife Refuges, National Fish Hatcheries, FWS administrative sites, and other conservation areas.",
+    "copyrightText": "U.S. Fish and Wildlife Service, National Wildlife Refuge System, Division of Realty",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract,Sync",
+    "syncEnabled": true,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "FWSBoundaries",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "ORGNAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1767817777629,
+    "definitionExpression": "",
+    "recordCount": 1205,
+    "extent": {
+      "xmin": -180,
+      "ymin": -15.386121427912588,
+      "xmax": 180,
+      "ymax": 70.17063496868676
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "ORGNAME",
+      "alias": "Organization Name",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 1348
+      },
+      "isKey": false
+    },
+    {
+      "name": "ORGCODE",
+      "alias": "Organization Code",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 1656
+      },
+      "isKey": false
+    },
+    {
+      "name": "LIT",
+      "alias": "Station Literal",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 1112
+      },
+      "isKey": false
+    },
+    {
+      "name": "RSL_TYPE",
+      "alias": "RSL Type",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 14
+      },
+      "isKey": false
+    },
+    {
+      "name": "IntReg",
+      "alias": "Interior Region",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "CostCenter",
+      "alias": "CostCenter",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FWSREGION",
+      "alias": "FWS Region",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 8
+      },
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 1205,
+      "hasDomain": false
+    },
+    {
+      "name": "ORGNAME",
+      "type": "esriFieldTypeString",
+      "alias": "Organization Name",
+      "nullPct": 0,
+      "distinctCount": 1027,
+      "hasDomain": true
+    },
+    {
+      "name": "ORGCODE",
+      "type": "esriFieldTypeInteger",
+      "alias": "Organization Code",
+      "nullPct": 0,
+      "distinctCount": 727,
+      "hasDomain": true
+    },
+    {
+      "name": "LIT",
+      "type": "esriFieldTypeString",
+      "alias": "Station Literal",
+      "nullPct": 0,
+      "distinctCount": 1022,
+      "hasDomain": true
+    },
+    {
+      "name": "RSL_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "RSL Type",
+      "nullPct": 0,
+      "distinctCount": 12,
+      "hasDomain": true
+    },
+    {
+      "name": "IntReg",
+      "type": "esriFieldTypeString",
+      "alias": "Interior Region",
+      "nullPct": 0,
+      "distinctCount": 12,
+      "hasDomain": true
+    },
+    {
+      "name": "CostCenter",
+      "type": "esriFieldTypeString",
+      "alias": "CostCenter",
+      "nullPct": 7.4,
+      "distinctCount": 724,
+      "hasDomain": false
+    },
+    {
+      "name": "FWSREGION",
+      "type": "esriFieldTypeString",
+      "alias": "FWS Region",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": true
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 1205,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 1205,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 1205,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "ORGNAME": "YUKON DELTA NATIONAL WILDLIFE REFUGE",
+      "ORGCODE": 74540,
+      "LIT": "YKD",
+      "RSL_TYPE": "NWR",
+      "IntReg": "11",
+      "CostCenter": null,
+      "FWSREGION": "7",
+      "GlobalID": "a8133900-adc9-4623-912b-4f165f091ac6",
+      "Shape__Area": 1.059149566508495,
+      "Shape__Length": 594.3143572965406
+    },
+    {
+      "OBJECTID": 2,
+      "ORGNAME": "ALASKA MARITIME NATIONAL WILDLIFE REFUGE",
+      "ORGCODE": 74500,
+      "LIT": "AKM",
+      "RSL_TYPE": "NWR",
+      "IntReg": "11",
+      "CostCenter": "FF07RAM000",
+      "FWSREGION": "7",
+      "GlobalID": "dfca949b-c0ac-42e5-95b6-c47309eaa461",
+      "Shape__Area": 2.568197810462152,
+      "Shape__Length": 160.5594493463043
+    },
+    {
+      "OBJECTID": 3,
+      "ORGNAME": "CHINCOTEAGUE NATIONAL WILDLIFE REFUGE",
+      "ORGCODE": 51570,
+      "LIT": "CHN",
+      "RSL_TYPE": "NWR",
+      "IntReg": "1",
+      "CostCenter": "FF05RCHN00",
+      "FWSREGION": "5",
+      "GlobalID": "2603e182-f9cd-4c8b-a055-b94108bc9bd6",
+      "Shape__Area": 0.005147458692817963,
+      "Shape__Length": 5.454533372819701
+    },
+    {
+      "OBJECTID": 4,
+      "ORGNAME": "YUKON DELTA NATIONAL WILDLIFE REFUGE",
+      "ORGCODE": 74540,
+      "LIT": "YKD",
+      "RSL_TYPE": "NWR",
+      "IntReg": "11",
+      "CostCenter": "FF07RYKD00",
+      "FWSREGION": "7",
+      "GlobalID": "c9725523-033c-4753-8eba-173069d2ffb6",
+      "Shape__Area": 12.841914772288874,
+      "Shape__Length": 246.45058418627164
+    },
+    {
+      "OBJECTID": 5,
+      "ORGNAME": "ABERNATHY FISH TECHNOLOGY CENTER",
+      "ORGCODE": 13210,
+      "LIT": "AOK",
+      "RSL_TYPE": "FR",
+      "IntReg": "9",
+      "CostCenter": "FF01FABR00",
+      "FWSREGION": "1",
+      "GlobalID": "471c5b7d-3169-4e99-ac2e-68e787a1c91c",
+      "Shape__Area": 0.00005822346838613157,
+      "Shape__Length": 0.06223497515101165
+    }
+  ]
+}

@@ -1,0 +1,300 @@
+{
+  "generated": "2026-02-22T06:13:40.202Z",
+  "datasetId": "blm_wsa",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WLD_WSA/MapServer/1",
+  "metadata": {
+    "serviceDescription": "This Map Service contains generalized polygons that define the boundaries of the BLM National Landscape Conservation System (NLCS) Wilderness Areas and Wilderness Study Areas. \n\nWilderness is a special place where the earth and its community of life are essentially undisturbed; they retain a primeval character, without permanent improvements and generally appear to have been affected primarily by the forces of nature. In 1964, Congress established the National Wilderness Preservation System and designated the first Wilderness Areas in passing the Wilderness Act. The uniquely American idea of wilderness has become an increasingly significant tool to ensure long-term protection of natural landscapes. Wilderness protects the habitat of numerous wildlife species and serves as a biodiversity bank for many species of plants and animals. Wilderness is also a source of clean water. The Federal Land Policy and Management Act of 1976 directed the Bureau to inventory and study its roadless areas for wilderness characteristics. To be designated as a Wilderness Study Area, an area has to have the following characteristics: Size - roadless areas of at least 5,000 acres of public lands or of a manageable size; Naturalness - generally appears to have been affected primarily by the forces of nature; Opportunities - provides outstanding opportunities for solitude or primitive and unconfined types of recreation. In addition, Wilderness Study Areas often have special qualities such as ecological, geological, educational, historical, scientific and scenic values.",
+    "copyrightText": "Bureau of Land Management, Headquarters (HQ)",
+    "author": "",
+    "subject": "This Map Service contains generalized polygons that define the boundaries of the BLM National Landscape Conservation System (NLCS) Wilderness Areas and Wilderness Study Areas.\n\nA Wilderness is a special place where the earth and its community of life are essentially undisturbed; they retain a primeval character, without permanent improvements and generally appear to have been affected primarily by the forces of nature. In 1964, Congress established the National Wilderness Preservation System and designated the first Wilderness Areas in passing the Wilderness Act. The uniquely American idea of wilderness has become an increasingly significant tool to ensure long-term protection of natural landscapes. Wilderness protects the habitat of numerous wildlife species and serves as a biodiversity bank for many species of plants and animals. Wilderness is also a source of clean water. The Federal Land Policy and Management Act of 1976 directed the Bureau to inventory and study its roadless areas for wilderness characteristics. To be designated as a Wilderness Study Area, an area has to have the following characteristics: Size - roadless areas of at least 5,000 acres of public lands or of a manageable size; Naturalness - generally appears to have been affected primarily by the forces of nature; Opportunities - provides outstanding opportunities for solitude or primitive and unconfined types of recreation. In addition, Wilderness Study Areas often have special qualities such as ecological, geological, educational, historical, scientific and scenic values.",
+    "keywords": "NLCS,WLD,WSA,Wilderness,Wilderness Study Area,BLM,Bureau of Land Management,National Landscape Conservation System,polygon",
+    "comments": "This Map Service contains generalized polygons that define the boundaries of the BLM National Landscape Conservation System (NLCS) Wilderness Areas and Wilderness Study Areas.Wilderness is a special place where the earth and its community of life are essentially undisturbed; they retain a primeval character, without permanent improvements and generally appear to have been affected primarily by the forces of nature. In 1964, Congress established the National Wilderness Preservation System and designated the first Wilderness Areas in passing the Wilderness Act. The uniquely American idea of wilderness has become an increasingly significant tool to ensure long-term protection of natural landscapes. Wilderness protects the habitat of numerous wildlife species and serves as a biodiversity bank for many species of plants and animals. Wilderness is also a source of clean water. The Federal Land Policy and Management Act of 1976 directed the Bureau to inventory and study its roadless areas for wilderness characteristics. To be designated as a Wilderness Study Area, an area has to have the following characteristics: Size - roadless areas of at least 5,000 acres of public lands or of a manageable size; Naturalness - generally appears to have been affected primarily by the forces of nature; Opportunities - provides outstanding opportunities for solitude or primitive and unconfined types of recreation. In addition, Wilderness Study Areas often have special qualities such as ecological, geological, educational, historical, scientific and scenic values.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NLCS Wilderness Study Area",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "NLCS_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 1091,
+    "extent": {
+      "xmin": -17366068.325747672,
+      "ymin": 3675978.18545618,
+      "xmax": -11557308.91714477,
+      "ymax": 10764743.613360487
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "NLCS_ID",
+      "alias": "NLCS Unique Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NLCS_NAME",
+      "alias": "NLCS Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CASEFILE_NO",
+      "alias": "Casefile Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WSA_RCMND",
+      "alias": "WSA Recommendation",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "ROD_DATE",
+      "alias": "Record of Decision Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 1091,
+      "hasDomain": false
+    },
+    {
+      "name": "NLCS_ID",
+      "type": "esriFieldTypeString",
+      "alias": "NLCS Unique Identifier",
+      "nullPct": 0.5,
+      "distinctCount": 504,
+      "hasDomain": false
+    },
+    {
+      "name": "NLCS_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "NLCS Name",
+      "nullPct": 3.9,
+      "distinctCount": 501,
+      "hasDomain": false
+    },
+    {
+      "name": "CASEFILE_NO",
+      "type": "esriFieldTypeString",
+      "alias": "Casefile Number",
+      "nullPct": 5.4,
+      "distinctCount": 281,
+      "hasDomain": false
+    },
+    {
+      "name": "WSA_RCMND",
+      "type": "esriFieldTypeString",
+      "alias": "WSA Recommendation",
+      "nullPct": 5.4,
+      "distinctCount": 4,
+      "hasDomain": true
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0.1,
+      "distinctCount": 12,
+      "hasDomain": true
+    },
+    {
+      "name": "ROD_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Record of Decision Date",
+      "nullPct": 0.2,
+      "distinctCount": 25,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 1091,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 1091,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Length",
+      "nullPct": 0,
+      "distinctCount": 1091,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Area",
+      "nullPct": 0,
+      "distinctCount": 1091,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 26777,
+      "NLCS_ID": "NLCS001043",
+      "NLCS_NAME": "El Malpais",
+      "CASEFILE_NO": "NM-ISA-002",
+      "WSA_RCMND": "Non-suitable",
+      "ADMIN_ST": "NM",
+      "ROD_DATE": 682560000000,
+      "GlobalID": "{1E981A8F-2311-49E6-9584-68D2F0F501B6}",
+      "Original_GlobalID": "{F6460469-2A27-4F7C-9DC3-E70B1CCE12D6}",
+      "Shape_Length": 0.13825219566421615,
+      "Shape_Area": 0.0006612568241266645
+    },
+    {
+      "OBJECTID": 26778,
+      "NLCS_ID": "NLCS001043",
+      "NLCS_NAME": "El Malpais",
+      "CASEFILE_NO": "NM-ISA-002",
+      "WSA_RCMND": "Suitable",
+      "ADMIN_ST": "NM",
+      "ROD_DATE": 682560000000,
+      "GlobalID": "{B5D9C1C9-7F1F-4159-949F-CF506832912B}",
+      "Original_GlobalID": "{B11D52C1-4625-4347-87CA-A2E8AD1E1376}",
+      "Shape_Length": 0.13469912019333163,
+      "Shape_Area": 0.000524834781855632
+    },
+    {
+      "OBJECTID": 26779,
+      "NLCS_ID": "NLCS001030",
+      "NLCS_NAME": "Canyons",
+      "CASEFILE_NO": "NM-014-001",
+      "WSA_RCMND": "No recommendation",
+      "ADMIN_ST": "NM",
+      "ROD_DATE": 682560000000,
+      "GlobalID": "{3DCEA685-725C-4979-94D9-B806D352C121}",
+      "Original_GlobalID": "{4BEA2F05-2D6C-4696-833C-DD375FF7618B}",
+      "Shape_Length": 0.10600469855954624,
+      "Shape_Area": 0.0005206626739455568
+    },
+    {
+      "OBJECTID": 26780,
+      "NLCS_ID": "NLCS001035",
+      "NLCS_NAME": "Continental Divide",
+      "CASEFILE_NO": "NM-020-044",
+      "WSA_RCMND": "Non-suitable",
+      "ADMIN_ST": "NM",
+      "ROD_DATE": 682560000000,
+      "GlobalID": "{FCB3A37C-8E33-4EE0-8397-5F54413DF85F}",
+      "Original_GlobalID": "{29DFF2C2-2ADA-44BB-AE9F-861F24DAD6DB}",
+      "Shape_Length": 0.7830143341240131,
+      "Shape_Area": 0.010109376889991766
+    },
+    {
+      "OBJECTID": 26781,
+      "NLCS_ID": "NLCS001043",
+      "NLCS_NAME": "El Malpais",
+      "CASEFILE_NO": "NM-ISA-002",
+      "WSA_RCMND": "Non-suitable",
+      "ADMIN_ST": "NM",
+      "ROD_DATE": 682560000000,
+      "GlobalID": "{CED60ED1-6379-4F80-95C3-775F9C228103}",
+      "Original_GlobalID": "{E34247F3-E3C5-460E-A33B-30264B9A8CCC}",
+      "Shape_Length": 0.06721578217932446,
+      "Shape_Area": 0.0002812754976167393
+    }
+  ]
+}

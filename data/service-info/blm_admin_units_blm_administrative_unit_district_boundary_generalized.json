@@ -1,0 +1,205 @@
+{
+  "generated": "2026-02-22T06:13:36.863Z",
+  "datasetId": "blm_admin_units_blm_administrative_unit_district_boundary_generalized",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/admin_boundaries/BLM_Natl_AdminUnit_Generalized/FeatureServer/2",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;font-size:12pt'><div><div><p><span>Many of the BLM National Datasets cannot be taken offline due to the number of vertices in the dataset. In addition, displaying the data using a Feature Service crashes ArcGIS Server due to complex geometries (ie Godzilla polygons). As a result, it became imperative to generalize the Feature Classes so that they can be used in a Feature Service as well as being taken offline.</span></p><p><span /></p><p><span>Using configuration settings, the user may choose between using a Smoothing algorithm or Simplification algorithm to perform generalization. </span></p><p><span /></p><p><span>Documentation on the Smoothing algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/smooth-polygon.htm</span></p><p><span /></p><p><span>Documentation on the Simplification algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/simplify-polygon.htm</span></p><p><span /></p><p><span>Note: At the time of this writing, only polygon smoothing/simplification is tested. However, Linear datasets are also supported (FEATURE_TYPE)</span></p><p><span /></p><p><span>*Each of the features were generalized except for the labels (anno) and the point feature class in the admu blm webpub dataset. To keep the naming convention the same, we added the _gen after each feature class so this service and the data layers won’t get confused with the other admu services. This service and the underlying data will be kept “in-sync” with national replication. </span></p><p><p><span>Feature level Dataset for the BLM Administrative Unit Boundaries Data Standard. This feature dataset includes both BLM administrative land areas and office locations. Land areas are depicted with polygons for the smallest administrative unit (field offices). Larger administrative units, such as district offices, and administrative states may be derived from these polygons. Office locations at each level are depicted with points.</span></p></div></div></div></p>",
+    "copyrightText": "Bureau of Land Management, Headquarters (HQ)",
+    "author": "",
+    "subject": "This dataset has been generalized in an effort to meet program performance requests and/or requirements within a feature service. The generalized geometry may not reflect the original data perfectly and should be taken into account when running certain analysis types. Changes to the current generalized process are ongoing and this service should not be considered final. This dataset captures and establishes the geographic areas in which the organizational units of the BLM have distinct jurisdictional responsibility for land and resource management activities occurring on the public lands, the maintained rights of the United States (i.e. mineral estate) and actions relating to the Trust responsibilities of the U.S. Government as stipulated in Law or Treaty.  Particularly, this data pertains to the following BLM groups and their purposes: BLM State, District, and Field Office Personnel; most programs and national applications within the BLM; other agencies and the public.",
+    "keywords": "Administrative Units,BLM,Bureau of Land Management,Jurisdiction,Public Lands,Bureau Department of the Interior,DOI,Administrative Units,boundaries,Management,Jurisdiction,ADMU,location,AK,AZ,CA,CO,ID,MT,ND,NE,NM,NV,OR,SD,UT,WA,WY,United States,Western U.S.,polygon,points",
+    "comments": "Many of the BLM National Datasets cannot be taken offline due to the number of vertices in the dataset. In addition, displaying the data using a Feature Service crashes ArcGIS Server due to complex geometries (ie Godzilla polygons). As a result, it became imperative to generalize the Feature Classes so that they can be used in a Feature Service as well as being taken offline.Using configuration settings, the user may choose between using a Smoothing algorithm or Simplification algorithm to perform generalization. Documentation on the Smoothing algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/smooth-polygon.htmDocumentation on the Simplification algorithm can be found here: https://pro.arcgis.com/en/pro-app/latest/tool-reference/cartography/simplify-polygon.htmNote: At the time of this writing, only polygon smoothing/simplification is tested. However, Linear datasets are also supported (FEATURE_TYPE)*Each of the features were generalized except for the labels (anno) and the point feature class in the admu blm webpub dataset. To keep the naming convention the same, we added the _gen after each feature class so this service and the data layers won’t get confused with the other admu services. This service and the underlying data will be kept “in-sync” with national replication. Feature level Dataset for the BLM Administrative Unit Boundaries Data Standard. This feature dataset includes both BLM administrative land areas and office locations. Land areas are depicted with polygons for the smallest administrative unit (field offices). Larger administrative units, such as district offices, and administrative states may be derived from these polygons. Office locations at each level are depicted with points.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Query,Sync,ChangeTracking",
+    "syncEnabled": true,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM Administrative Unit District Boundary Generalized",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "PARENT_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 4646508,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 115,
+    "extent": {
+      "xmin": -19839635.9933,
+      "ymin": 2801774.6000999995,
+      "xmax": 19977966.8529,
+      "ymax": 11536765.394599997
+    }
+  },
+  "fields": [
+    {
+      "name": "PARENT_CD",
+      "alias": "Parent Admin Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 270
+      },
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "PARENT_NAME",
+      "alias": "Parent Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "PARENT_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Parent Admin Code",
+      "nullPct": null,
+      "distinctCount": 115,
+      "hasDomain": true
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": null,
+      "distinctCount": 115,
+      "hasDomain": true
+    },
+    {
+      "name": "PARENT_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Parent Name",
+      "nullPct": null,
+      "distinctCount": 115,
+      "hasDomain": false
+    },
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": null,
+      "distinctCount": 115,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "nullPct": null,
+      "distinctCount": 115,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "nullPct": null,
+      "distinctCount": 115,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": null,
+      "distinctCount": 115,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "PARENT_CD": "ORW00000",
+      "ADMIN_ST": "OR",
+      "PARENT_NAME": "SPOKANE DISTRICT OFFICE",
+      "OBJECTID": 38067,
+      "Shape__Area": 402453539294.18616,
+      "Shape__Length": 2903088.225405266,
+      "GlobalID": "{2020B061-A42F-41B7-9C45-01DF8D827D81}"
+    },
+    {
+      "PARENT_CD": "UTY00000",
+      "ADMIN_ST": "UT",
+      "PARENT_NAME": "Canyon Country",
+      "OBJECTID": 38068,
+      "Shape__Area": 48676283628.871864,
+      "Shape__Length": 1423874.4082728368,
+      "GlobalID": "{BEDDFB62-D34B-4659-A678-33D01F787177}"
+    },
+    {
+      "PARENT_CD": "MTL00000",
+      "ADMIN_ST": "MT",
+      "PARENT_NAME": "NORTH CENTRAL MONTANA DISTRICT OFFICE",
+      "OBJECTID": 38069,
+      "Shape__Area": 252256717813.54443,
+      "Shape__Length": 3027793.222120977,
+      "GlobalID": "{C7F4C5D1-A71E-4995-BC4F-9B548994AE59}"
+    },
+    {
+      "PARENT_CD": "ORN00000",
+      "ADMIN_ST": "OR",
+      "PARENT_NAME": "NW OREGON DISTRICT OFFICE",
+      "OBJECTID": 38070,
+      "Shape__Area": 89384232383.25046,
+      "Shape__Length": 1503686.2139435865,
+      "GlobalID": "{156662D9-AE93-4334-B6AF-65EC26DEE1B6}"
+    },
+    {
+      "PARENT_CD": "ORP00000",
+      "ADMIN_ST": "OR",
+      "PARENT_NAME": "PRINEVILLE DISTRICT OFFICE",
+      "OBJECTID": 38071,
+      "Shape__Area": 103778452544.3848,
+      "Shape__Length": 2025314.2608021207,
+      "GlobalID": "{CCB49963-68B7-4A7F-9D4A-B92AF54F2862}"
+    }
+  ]
+}

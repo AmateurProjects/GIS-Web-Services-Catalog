@@ -1,0 +1,159 @@
+{
+  "generated": "2026-02-22T06:31:06.348Z",
+  "datasetId": "nwi_riparian_riparian_mapping_areas",
+  "serviceUrl": "https://fwsprimary.wim.usgs.gov/server/rest/services/Riparian/MapServer/1",
+  "metadata": {
+    "serviceDescription": "This data set represents the extent, approximate location and type of riparian habitats in the western United States. These data delineate the areal extent of riparian habitats as defined by A System For Mapping Riparian Areas in the United States (USFWS 2009). Certain riparian habitats may be excluded from the National mapping program because of the limitations of aerial imagery as the primary data source used to detect riparian habitats.\n\nDue to the quantity and complexity of the riparian data the riparian data only display at 1:250,000 scale and greater. For wetland information visit www.fws.gov/wetlands/",
+    "copyrightText": "U.S. Fish and Wildlife Service, National Standards and Support Team, wetlands_team@fws.gov",
+    "author": "U.S. Fish and Wildlife Service, National Standards and Support Team, wetlands_team@fws.gov",
+    "subject": "This data set represents the extent, approximate location and type of riparian habitats in the western United States. ",
+    "keywords": "Riparian,Semi-Arid,Woody Vegetation,Western Riparian",
+    "comments": "This data set represents the extent, approximate location and type of riparian habitats in the western United States. These data delineate the areal extent of riparian habitats as defined by A System For Mapping Riparian Areas in the United States (USFWS 2009). Certain riparian habitats may be excluded from the National mapping program because of the limitations of aerial imagery as the primary data source used to detect riparian habitats.\n\nDue to the quantity and complexity of the riparian data the riparian data only display at 1:250,000 scale and greater. For wetland information visit www.fws.gov/wetlands/",
+    "currentVersion": 10.81,
+    "maxRecordCount": 1000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON",
+    "layerName": "Riparian Mapping Areas",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "STATUS",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": null,
+    "extent": {
+      "xmin": -17366146.2647,
+      "ymin": 3675659.403499998,
+      "xmax": -10505802.3078,
+      "ymax": 10673460.3116
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "SHAPE",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PROJECT_NAME",
+      "alias": "PROJECT_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "STATUS",
+      "alias": "STATUS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUPPMAPINFO",
+      "alias": "SUPPMAPINFO",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FGDC_METADATA",
+      "alias": "FGDC_METADATA",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "IMAGE_YR",
+      "alias": "IMAGE_YR",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "IMAGE_DATE",
+      "alias": "IMAGE_DATE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "IMAGE_SCALE",
+      "alias": "IMAGE_SCALE",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ALL_SCALES",
+      "alias": "ALL_SCALES",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EMULSION",
+      "alias": "EMULSION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "COMMENTS",
+      "alias": "COMMENTS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCE_TYPE",
+      "alias": "SOURCE_TYPE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "DATA_SOURCE",
+      "alias": "DATA_SOURCE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [],
+  "sampleRows": []
+}

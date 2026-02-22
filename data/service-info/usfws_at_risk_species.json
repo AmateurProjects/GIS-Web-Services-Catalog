@@ -1,0 +1,200 @@
+{
+  "generated": "2026-02-22T06:22:09.681Z",
+  "datasetId": "usfws_at_risk_species",
+  "serviceUrl": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/At_Risk_Species_Data_Layer_07_23_25_Hosted_view/FeatureServer/2",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 1000,
+    "wkid": 4269,
+    "capabilities": "Query",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "STATE_At_Risk_Finder_dataset_07_23_2024_AGOL_Ver_5",
+    "layerType": "Table",
+    "geometryType": "",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "Common_Name",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": true,
+    "featureCount": null,
+    "lastEditDate": 1770034072571,
+    "definitionExpression": "",
+    "recordCount": 535,
+    "extent": null
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "At_Risk_ID",
+      "alias": "At_Risk_ID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Common_Name",
+      "alias": "Common Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Scientific_Name",
+      "alias": "Scientific Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Taxa",
+      "alias": "Taxa",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 10
+      },
+      "isKey": false
+    },
+    {
+      "name": "atRisk_Status",
+      "alias": "At-Risk Status",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 535,
+      "hasDomain": false
+    },
+    {
+      "name": "At_Risk_ID",
+      "type": "esriFieldTypeDouble",
+      "alias": "At_Risk_ID",
+      "nullPct": 0,
+      "distinctCount": 535,
+      "hasDomain": false
+    },
+    {
+      "name": "Common_Name",
+      "type": "esriFieldTypeString",
+      "alias": "Common Name",
+      "nullPct": 0,
+      "distinctCount": 532,
+      "hasDomain": false
+    },
+    {
+      "name": "Scientific_Name",
+      "type": "esriFieldTypeString",
+      "alias": "Scientific Name",
+      "nullPct": 0,
+      "distinctCount": 531,
+      "hasDomain": false
+    },
+    {
+      "name": "Taxa",
+      "type": "esriFieldTypeString",
+      "alias": "Taxa",
+      "nullPct": 0,
+      "distinctCount": 10,
+      "hasDomain": true
+    },
+    {
+      "name": "atRisk_Status",
+      "type": "esriFieldTypeString",
+      "alias": "At-Risk Status",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 535,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "At_Risk_ID": 1,
+      "Common_Name": "Acute elimia",
+      "Scientific_Name": "Elimia acuta",
+      "Taxa": "Gastropods",
+      "atRisk_Status": "Current",
+      "GlobalID": "ad1e5365-ba5f-41c3-87fd-72323a19ced2"
+    },
+    {
+      "OBJECTID": 2,
+      "At_Risk_ID": 2,
+      "Common_Name": "Alabama hickorynut",
+      "Scientific_Name": "Obovaria unicolor",
+      "Taxa": "Bivalves",
+      "atRisk_Status": "Current",
+      "GlobalID": "dd040e75-6996-4794-9fff-ade0f82a96e3"
+    },
+    {
+      "OBJECTID": 3,
+      "At_Risk_ID": 3,
+      "Common_Name": "Alabama map turtle",
+      "Scientific_Name": "Graptemys pulchra",
+      "Taxa": "Reptiles",
+      "atRisk_Status": "Current",
+      "GlobalID": "f35d13d9-dde4-45e3-9311-4d10f7699790"
+    },
+    {
+      "OBJECTID": 4,
+      "At_Risk_ID": 4,
+      "Common_Name": "Alabama rainbow",
+      "Scientific_Name": "Villosa nebulosa",
+      "Taxa": "Bivalves",
+      "atRisk_Status": "Current",
+      "GlobalID": "0b1b4cb5-bde0-4409-b778-830ac240e1cb"
+    },
+    {
+      "OBJECTID": 5,
+      "At_Risk_ID": 5,
+      "Common_Name": "Alabama spike",
+      "Scientific_Name": "Elliptio arca",
+      "Taxa": "Bivalves",
+      "atRisk_Status": "Current",
+      "GlobalID": "31d55c9a-9f31-41ad-9d46-a49b75f05bc9"
+    }
+  ]
+}

@@ -1,0 +1,277 @@
+{
+  "generated": "2026-02-22T06:13:39.288Z",
+  "datasetId": "blm_wilderness_areas",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_WLD_WSA/MapServer/0",
+  "metadata": {
+    "serviceDescription": "This Map Service contains generalized polygons that define the boundaries of the BLM National Landscape Conservation System (NLCS) Wilderness Areas and Wilderness Study Areas. \n\nWilderness is a special place where the earth and its community of life are essentially undisturbed; they retain a primeval character, without permanent improvements and generally appear to have been affected primarily by the forces of nature. In 1964, Congress established the National Wilderness Preservation System and designated the first Wilderness Areas in passing the Wilderness Act. The uniquely American idea of wilderness has become an increasingly significant tool to ensure long-term protection of natural landscapes. Wilderness protects the habitat of numerous wildlife species and serves as a biodiversity bank for many species of plants and animals. Wilderness is also a source of clean water. The Federal Land Policy and Management Act of 1976 directed the Bureau to inventory and study its roadless areas for wilderness characteristics. To be designated as a Wilderness Study Area, an area has to have the following characteristics: Size - roadless areas of at least 5,000 acres of public lands or of a manageable size; Naturalness - generally appears to have been affected primarily by the forces of nature; Opportunities - provides outstanding opportunities for solitude or primitive and unconfined types of recreation. In addition, Wilderness Study Areas often have special qualities such as ecological, geological, educational, historical, scientific and scenic values.",
+    "copyrightText": "Bureau of Land Management, Headquarters (HQ)",
+    "author": "",
+    "subject": "This Map Service contains generalized polygons that define the boundaries of the BLM National Landscape Conservation System (NLCS) Wilderness Areas and Wilderness Study Areas.\n\nA Wilderness is a special place where the earth and its community of life are essentially undisturbed; they retain a primeval character, without permanent improvements and generally appear to have been affected primarily by the forces of nature. In 1964, Congress established the National Wilderness Preservation System and designated the first Wilderness Areas in passing the Wilderness Act. The uniquely American idea of wilderness has become an increasingly significant tool to ensure long-term protection of natural landscapes. Wilderness protects the habitat of numerous wildlife species and serves as a biodiversity bank for many species of plants and animals. Wilderness is also a source of clean water. The Federal Land Policy and Management Act of 1976 directed the Bureau to inventory and study its roadless areas for wilderness characteristics. To be designated as a Wilderness Study Area, an area has to have the following characteristics: Size - roadless areas of at least 5,000 acres of public lands or of a manageable size; Naturalness - generally appears to have been affected primarily by the forces of nature; Opportunities - provides outstanding opportunities for solitude or primitive and unconfined types of recreation. In addition, Wilderness Study Areas often have special qualities such as ecological, geological, educational, historical, scientific and scenic values.",
+    "keywords": "NLCS,WLD,WSA,Wilderness,Wilderness Study Area,BLM,Bureau of Land Management,National Landscape Conservation System,polygon",
+    "comments": "This Map Service contains generalized polygons that define the boundaries of the BLM National Landscape Conservation System (NLCS) Wilderness Areas and Wilderness Study Areas.Wilderness is a special place where the earth and its community of life are essentially undisturbed; they retain a primeval character, without permanent improvements and generally appear to have been affected primarily by the forces of nature. In 1964, Congress established the National Wilderness Preservation System and designated the first Wilderness Areas in passing the Wilderness Act. The uniquely American idea of wilderness has become an increasingly significant tool to ensure long-term protection of natural landscapes. Wilderness protects the habitat of numerous wildlife species and serves as a biodiversity bank for many species of plants and animals. Wilderness is also a source of clean water. The Federal Land Policy and Management Act of 1976 directed the Bureau to inventory and study its roadless areas for wilderness characteristics. To be designated as a Wilderness Study Area, an area has to have the following characteristics: Size - roadless areas of at least 5,000 acres of public lands or of a manageable size; Naturalness - generally appears to have been affected primarily by the forces of nature; Opportunities - provides outstanding opportunities for solitude or primitive and unconfined types of recreation. In addition, Wilderness Study Areas often have special qualities such as ecological, geological, educational, historical, scientific and scenic values.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NLCS Wilderness Area",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "NLCS_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 306,
+    "extent": {
+      "xmin": -13845342.769596191,
+      "ymin": 3731920.7691705865,
+      "xmax": -11621074.258762654,
+      "ymax": 5849139.652932474
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "NLCS_ID",
+      "alias": "NLCS Unique Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NLCS_NAME",
+      "alias": "NLCS Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CASEFILE_NO",
+      "alias": "Casefile Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "DESIG_DATE",
+      "alias": "Designation Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 306,
+      "hasDomain": false
+    },
+    {
+      "name": "NLCS_ID",
+      "type": "esriFieldTypeString",
+      "alias": "NLCS Unique Identifier",
+      "nullPct": 0,
+      "distinctCount": 267,
+      "hasDomain": false
+    },
+    {
+      "name": "NLCS_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "NLCS Name",
+      "nullPct": 0,
+      "distinctCount": 277,
+      "hasDomain": false
+    },
+    {
+      "name": "CASEFILE_NO",
+      "type": "esriFieldTypeString",
+      "alias": "Casefile Number",
+      "nullPct": 1,
+      "distinctCount": 235,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 9,
+      "hasDomain": true
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 306,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 306,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Length",
+      "nullPct": 0,
+      "distinctCount": 306,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Area",
+      "nullPct": 0,
+      "distinctCount": 306,
+      "hasDomain": false
+    },
+    {
+      "name": "DESIG_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Designation Date",
+      "nullPct": 0.3,
+      "distinctCount": 37,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 3988,
+      "NLCS_ID": "NLCS000177",
+      "NLCS_NAME": "Yolla Bolly-Middle Eel Wilderness",
+      "CASEFILE_NO": "CACA   048525",
+      "ADMIN_ST": "CA",
+      "GlobalID": "{BBD46EB3-D642-4859-8D92-780033E77A5E}",
+      "Original_GlobalID": "{E4250005-6142-4706-A5A6-A22A34ECBF65}",
+      "Shape_Length": 0.4249208179263906,
+      "Shape_Area": 0.0033660984722138133,
+      "DESIG_DATE": 465177600000
+    },
+    {
+      "OBJECTID": 3994,
+      "NLCS_ID": "NLCS000177",
+      "NLCS_NAME": "Yolla Bolly-Middle Eel Wilderness",
+      "CASEFILE_NO": "CACA   04852501",
+      "ADMIN_ST": "CA",
+      "GlobalID": "{DF48BB44-7F67-4DA6-BCC1-F400B2B20737}",
+      "Original_GlobalID": "{BA2BC6BF-93DF-4F08-878F-A138C84BDF3E}",
+      "Shape_Length": 0.1487088945873971,
+      "Shape_Area": 0.00032885272242696707,
+      "DESIG_DATE": 1161043200000
+    },
+    {
+      "OBJECTID": 4026,
+      "NLCS_ID": "NLCS000169",
+      "NLCS_NAME": "Stateline Wilderness",
+      "CASEFILE_NO": "CACA   035121",
+      "ADMIN_ST": "CA",
+      "GlobalID": "{5BF8335A-894D-41AF-A3CD-D89517306360}",
+      "Original_GlobalID": "{5FF5BC21-5FCF-437E-9BFA-D33B78089204}",
+      "Shape_Length": 0.26447830818225654,
+      "Shape_Area": 0.0028002453695294832,
+      "DESIG_DATE": 783561600000
+    },
+    {
+      "OBJECTID": 4049,
+      "NLCS_ID": "NLCS000185",
+      "NLCS_NAME": "Machesna Mountain Wilderness",
+      "CASEFILE_NO": "CACA   050516",
+      "ADMIN_ST": "CA",
+      "GlobalID": "{59867EB2-9BFB-437E-BDF4-5650308FEC4D}",
+      "Original_GlobalID": "{C325BD51-ED50-4ED9-9C31-40BD97A9831C}",
+      "Shape_Length": 0.031150845558684484,
+      "Shape_Area": 0.000049256429334336614,
+      "DESIG_DATE": 465177600000
+    },
+    {
+      "OBJECTID": 4078,
+      "NLCS_ID": "NLCS000178",
+      "NLCS_NAME": "Yuki Wilderness",
+      "CASEFILE_NO": "CACA   048516",
+      "ADMIN_ST": "CA",
+      "GlobalID": "{FAFEBFFE-84C0-465C-B67C-A3595CE7BFC4}",
+      "Original_GlobalID": "{E1441895-C46B-4702-9B7A-5E25911674E3}",
+      "Shape_Length": 0.9105046806473837,
+      "Shape_Area": 0.0076660618429942535,
+      "DESIG_DATE": 1161043200000
+    }
+  ]
+}

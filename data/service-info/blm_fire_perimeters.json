@@ -1,0 +1,766 @@
+{
+  "generated": "2026-02-22T06:15:22.559Z",
+  "datasetId": "blm_fire_perimeters",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/fire/BLM_Natl_FirePerimeter/MapServer/0",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;font-size:12pt'><div><div><p><span>This polygon feature class represents the final spatial extent and boundaries of the BLM Fire History Perimeter: Final Perimeters (FPER). The data is used for vegetation analysis such as habitat suitability, vegetation types and succession. Fire History can be used for current strategy and tactics on fires, fuels management, making forecasts for fire planning, analysis of vegetation and for stabilization and rehabilitation activities after fire. There are internal and external reporting requirements on burned acreage on a daily and annual basis. This will also provide timely updates for public web-services. FPER is not considered a complete or authoritative historic fire perimeter dataset for the BLM or any other agency for any year in its history. Per FA IM-2020-009, the management and certification fire perimeters was transferred to the National Inter-agency Fire Center (NIFC) via the National Incident Feature Service (NIFS) for the year 2020 and beyond. FPER was therefore deprecated following 2019 and will no longer be updated or replicated. </span></p><p><span /></p><p><span>These data are provided by Bureau of Land Management (BLM) “as is” and might contain errors or omissions. The User assumes the entire risk associated with its use of these data and bears all responsibility in determining whether these data are fit for the User’s intended use. The data are not better than the sources from which they were derived, and both scale and accuracy may vary across the data set. These data might not have the accuracy, resolution, completeness, timeliness, or other characteristics appropriate for applications that potential users of the data may contemplate. The User is encouraged to carefully consider the content of the metadata file associated with these data. These data are neither legal documents nor land surveys, and must not be used as such. Official records may be referenced at most BLM offices. Please report any errors in the data to the BLM office from which it was obtained.</span></p></div></div></div>",
+    "copyrightText": "Compiled by the Bureau of Land Management (BLM), National Operations Center (NOC)",
+    "author": "",
+    "subject": "BLM National Final Historic Fire Perimeter Polygons",
+    "keywords": "Fire,Perimeter,Perimeters,Final,History,BLM,DOI,Historic,environment",
+    "comments": "<DIV STYLE=\"text-align:Left;font-size:12pt\"><DIV><DIV><P><SPAN>This polygon feature class represents the final spatial extent and boundaries of the BLM Fire History Perimeter: Final Perimeters (FPER). The data is used for vegetation analysis such as habitat suitability, vegetation types and succession. Fire History can be used for current strategy and tactics on fires, fuels management, making forecasts for fire planning, analysis of vegetation and for stabilization and rehabilitation activities after fire. There are internal and external reporting requirements on burned acreage on a daily and annual basis. This will also provide timely updates for public web-services. FPER is not considered a complete or authoritative historic fire perimeter dataset for the BLM or any other agency for any year in its history. Per FA IM-2020-009, the management and certification fire perimeters was transferred to the National Inter-agency Fire Center (NIFC) via the National Incident Feature Service (NIFS) for the year 2020 and beyond. FPER was therefore deprecated following 2019 and will no longer be updated or replicated. </SPAN></P><P><SPAN /></P><P><SPAN>These data are provided by Bureau of Land Management (BLM) “as is” and might contain errors or omissions. The User assumes the entire risk associated with its use of these data and bears all responsibility in determining whether these data are fit for the User’s intended use. The data are not better than the sources from which they were derived, and both scale and accuracy may vary across the data set. These data might not have the accuracy, resolution, completeness, timeliness, or other characteristics appropriate for applications that potential users of the data may contemplate. The User is encouraged to carefully consider the content of the metadata file associated with these data. These data are neither legal documents nor land surveys, and must not be used as such. Official records may be referenced at most BLM offices. Please report any errors in the data to the BLM office from which it was obtained.</SPAN></P></DIV></DIV></DIV>",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Fire Perimeter Final Poly",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "POO_JRSDCTNL_UNIT_ID",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 24428,
+    "extent": {
+      "xmin": -165.13189642999998,
+      "ymin": 31.332124500000077,
+      "xmax": -101.70799260999996,
+      "ymax": 70.14002995000004
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "POO_JRSDCTNL_UNIT_ID",
+      "alias": "Point of Origin Jurisdictional Unit Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "POO_PRTCT_UNIT_ID",
+      "alias": "Point of Origin Protecting Unit Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RPT_UNIT_ID",
+      "alias": "Reported Unit Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LOCAL_INCDNT_ID",
+      "alias": "Fire Incident Number",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FIRE_CODE_ID",
+      "alias": "Fire Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "INCDNT_NM",
+      "alias": "Incident Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FIRE_DSCVR_CY",
+      "alias": "Fire Discovered Calendar Year",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FIRE_DSCVR_DT",
+      "alias": "Fire Discovered Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FIRE_DSCVR_DT_EST_FLAG",
+      "alias": "Fire Discovered Date Estimated Flag",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FIRE_CNTRL_DT",
+      "alias": "Fire Control Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FIRE_CNTRL_DT_EST_FLAG",
+      "alias": "Fire Control Date Estimated Flag",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FIRE_CAUSE_NM",
+      "alias": "Incident General Cause Name",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 4
+      },
+      "isKey": false
+    },
+    {
+      "name": "CLCTN_MTHD_NM",
+      "alias": "Collection Method",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 15
+      },
+      "isKey": false
+    },
+    {
+      "name": "TOTAL_RPT_ACRES_NR",
+      "alias": "Total Reported Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "alias": "GIS Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CMPLX_NM",
+      "alias": "Complex Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "IRWIN_ID",
+      "alias": "Irwin Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "COMMENT",
+      "alias": "Wildland Fire Perimeter Comments",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "alias": "Administrative Unit Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 270
+      },
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "CREATE_DATE",
+      "alias": "Created Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CREATE_BY",
+      "alias": "Created By Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFY_DATE",
+      "alias": "Modified Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFY_BY",
+      "alias": "Modify By Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "created_user",
+      "alias": "created_user",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "created_date",
+      "alias": "created_date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "last_edited_user",
+      "alias": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "last_edited_date",
+      "alias": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "UNQE_FIRE_ID",
+      "alias": "Unique Fire Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE",
+      "alias": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Length",
+      "alias": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Area",
+      "alias": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "POO_JRSDCTNL_UNIT_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Point of Origin Jurisdictional Unit Identifier",
+      "nullPct": 2.6,
+      "distinctCount": 442,
+      "hasDomain": false
+    },
+    {
+      "name": "POO_PRTCT_UNIT_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Point of Origin Protecting Unit Identifier",
+      "nullPct": 34,
+      "distinctCount": 354,
+      "hasDomain": false
+    },
+    {
+      "name": "RPT_UNIT_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Reported Unit Identifier",
+      "nullPct": 0.5,
+      "distinctCount": 335,
+      "hasDomain": false
+    },
+    {
+      "name": "LOCAL_INCDNT_ID",
+      "type": "esriFieldTypeInteger",
+      "alias": "Fire Incident Number",
+      "nullPct": 0.8,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "FIRE_CODE_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Fire Code",
+      "nullPct": 11.9,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "INCDNT_NM",
+      "type": "esriFieldTypeString",
+      "alias": "Incident Name",
+      "nullPct": 5.2,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "FIRE_DSCVR_CY",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Fire Discovered Calendar Year",
+      "nullPct": 0.1,
+      "distinctCount": 113,
+      "hasDomain": false
+    },
+    {
+      "name": "FIRE_DSCVR_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Fire Discovered Date",
+      "nullPct": 0.7,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "FIRE_DSCVR_DT_EST_FLAG",
+      "type": "esriFieldTypeString",
+      "alias": "Fire Discovered Date Estimated Flag",
+      "nullPct": 0.1,
+      "distinctCount": 7,
+      "hasDomain": false
+    },
+    {
+      "name": "FIRE_CNTRL_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Fire Control Date",
+      "nullPct": 0.5,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "FIRE_CNTRL_DT_EST_FLAG",
+      "type": "esriFieldTypeString",
+      "alias": "Fire Control Date Estimated Flag",
+      "nullPct": 0.1,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "FIRE_CAUSE_NM",
+      "type": "esriFieldTypeString",
+      "alias": "Incident General Cause Name",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": true
+    },
+    {
+      "name": "CLCTN_MTHD_NM",
+      "type": "esriFieldTypeString",
+      "alias": "Collection Method",
+      "nullPct": 0,
+      "distinctCount": 19,
+      "hasDomain": true
+    },
+    {
+      "name": "TOTAL_RPT_ACRES_NR",
+      "type": "esriFieldTypeDouble",
+      "alias": "Total Reported Acres",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Acres",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "CMPLX_NM",
+      "type": "esriFieldTypeString",
+      "alias": "Complex Name",
+      "nullPct": 81.3,
+      "distinctCount": 843,
+      "hasDomain": false
+    },
+    {
+      "name": "IRWIN_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Irwin Identifier",
+      "nullPct": 85.3,
+      "distinctCount": 1885,
+      "hasDomain": false
+    },
+    {
+      "name": "COMMENT",
+      "type": "esriFieldTypeString",
+      "alias": "Wildland Fire Perimeter Comments",
+      "nullPct": 37.8,
+      "distinctCount": 1932,
+      "hasDomain": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative Unit Code",
+      "nullPct": 0.1,
+      "distinctCount": 146,
+      "hasDomain": true
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 12,
+      "hasDomain": true
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "CREATE_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Created Date",
+      "nullPct": 21.4,
+      "distinctCount": 1761,
+      "hasDomain": false
+    },
+    {
+      "name": "CREATE_BY",
+      "type": "esriFieldTypeString",
+      "alias": "Created By Name",
+      "nullPct": 18.1,
+      "distinctCount": 255,
+      "hasDomain": false
+    },
+    {
+      "name": "MODIFY_DATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Modified Date",
+      "nullPct": 22,
+      "distinctCount": 1422,
+      "hasDomain": false
+    },
+    {
+      "name": "MODIFY_BY",
+      "type": "esriFieldTypeString",
+      "alias": "Modify By Name",
+      "nullPct": 18.1,
+      "distinctCount": 59,
+      "hasDomain": false
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "nullPct": 100,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "nullPct": 100,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "nullPct": 100,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "nullPct": 100,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "UNQE_FIRE_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Unique Fire Identifier",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "alias": "SHAPE",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Length",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Area",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 86126,
+      "POO_JRSDCTNL_UNIT_ID": "USIDSTF",
+      "POO_PRTCT_UNIT_ID": "USIDSTF",
+      "RPT_UNIT_ID": "",
+      "LOCAL_INCDNT_ID": 433,
+      "FIRE_CODE_ID": "G45Y",
+      "INCDNT_NM": "8 MILE",
+      "FIRE_DSCVR_CY": 2012,
+      "FIRE_DSCVR_DT": 1344297600000,
+      "FIRE_DSCVR_DT_EST_FLAG": "NO",
+      "FIRE_CNTRL_DT": 1356912000000,
+      "FIRE_CNTRL_DT_EST_FLAG": "YES",
+      "FIRE_CAUSE_NM": "Natural",
+      "CLCTN_MTHD_NM": "GPS-Flight",
+      "TOTAL_RPT_ACRES_NR": 0,
+      "GIS_ACRES": 210.15578676,
+      "CMPLX_NM": "MINIDOKA",
+      "IRWIN_ID": null,
+      "COMMENT": " ",
+      "ADM_UNIT_CD": "IDT02000",
+      "ADMIN_ST": "ID",
+      "GlobalID": "{2A324C46-0F73-4D0D-B76B-F183BA424B21}",
+      "CREATE_DATE": 1344384000000,
+      "CREATE_BY": "UNK",
+      "MODIFY_DATE": 253392451200000,
+      "MODIFY_BY": "UNK",
+      "created_user": null,
+      "created_date": null,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "Original_GlobalID": "{4D31CFCB-9A13-4B22-B786-613DF36CE3E5}",
+      "UNQE_FIRE_ID": "2012--000433",
+      "SHAPE_Length": 0.04730877427238978,
+      "SHAPE_Area": 0.00009270738518982561
+    },
+    {
+      "OBJECTID": 86129,
+      "POO_JRSDCTNL_UNIT_ID": "USIDSTF",
+      "POO_PRTCT_UNIT_ID": "USIDSTF",
+      "RPT_UNIT_ID": "",
+      "LOCAL_INCDNT_ID": 432,
+      "FIRE_CODE_ID": "G43T",
+      "INCDNT_NM": "DEER HOLLOW",
+      "FIRE_DSCVR_CY": 2012,
+      "FIRE_DSCVR_DT": 1344297600000,
+      "FIRE_DSCVR_DT_EST_FLAG": "NO",
+      "FIRE_CNTRL_DT": 1356912000000,
+      "FIRE_CNTRL_DT_EST_FLAG": "YES",
+      "FIRE_CAUSE_NM": "Natural",
+      "CLCTN_MTHD_NM": "GPS-Flight",
+      "TOTAL_RPT_ACRES_NR": 0,
+      "GIS_ACRES": 5437.34686345,
+      "CMPLX_NM": "MINIDOKA",
+      "IRWIN_ID": null,
+      "COMMENT": " ",
+      "ADM_UNIT_CD": "IDT02000",
+      "ADMIN_ST": "ID",
+      "GlobalID": "{04EBACFD-9F29-4BC6-8838-C3C1DD287522}",
+      "CREATE_DATE": 1344643200000,
+      "CREATE_BY": "UNK",
+      "MODIFY_DATE": 253392451200000,
+      "MODIFY_BY": "UNK",
+      "created_user": null,
+      "created_date": null,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "Original_GlobalID": "{68F89D03-2991-4E80-AAC9-76CA2094AE1C}",
+      "UNQE_FIRE_ID": "2012--000432",
+      "SHAPE_Length": 0.3820195559171754,
+      "SHAPE_Area": 0.0023958613600233466
+    },
+    {
+      "OBJECTID": 86135,
+      "POO_JRSDCTNL_UNIT_ID": "USIDSTF",
+      "POO_PRTCT_UNIT_ID": "USIDSTF",
+      "RPT_UNIT_ID": "",
+      "LOCAL_INCDNT_ID": 474,
+      "FIRE_CODE_ID": "G6CZ",
+      "INCDNT_NM": "ENCLOSURE",
+      "FIRE_DSCVR_CY": 2012,
+      "FIRE_DSCVR_DT": 1345075200000,
+      "FIRE_DSCVR_DT_EST_FLAG": "NO",
+      "FIRE_CNTRL_DT": 1356912000000,
+      "FIRE_CNTRL_DT_EST_FLAG": "YES",
+      "FIRE_CAUSE_NM": "Human",
+      "CLCTN_MTHD_NM": "GPS-Flight",
+      "TOTAL_RPT_ACRES_NR": 0,
+      "GIS_ACRES": 233.54137609,
+      "CMPLX_NM": null,
+      "IRWIN_ID": null,
+      "COMMENT": " ",
+      "ADM_UNIT_CD": "IDT03000",
+      "ADMIN_ST": "ID",
+      "GlobalID": "{392881B8-1AA0-4154-A057-C79BD2892496}",
+      "CREATE_DATE": 1345248000000,
+      "CREATE_BY": "UNK",
+      "MODIFY_DATE": 253392451200000,
+      "MODIFY_BY": "UNK",
+      "created_user": null,
+      "created_date": null,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "Original_GlobalID": "{5FCCA90C-B856-4EA7-8775-D9920E789254}",
+      "UNQE_FIRE_ID": "2012--000474",
+      "SHAPE_Length": 0.04332920134262654,
+      "SHAPE_Area": 0.00010541485179813168
+    },
+    {
+      "OBJECTID": 86161,
+      "POO_JRSDCTNL_UNIT_ID": "USIDSTF",
+      "POO_PRTCT_UNIT_ID": "USIDSTF",
+      "RPT_UNIT_ID": "",
+      "LOCAL_INCDNT_ID": 267,
+      "FIRE_CODE_ID": "G1DX",
+      "INCDNT_NM": "BLACK  MINE",
+      "FIRE_DSCVR_CY": 2012,
+      "FIRE_DSCVR_DT": 1341619200000,
+      "FIRE_DSCVR_DT_EST_FLAG": "NO",
+      "FIRE_CNTRL_DT": 1356912000000,
+      "FIRE_CNTRL_DT_EST_FLAG": "YES",
+      "FIRE_CAUSE_NM": "Natural",
+      "CLCTN_MTHD_NM": "GPS-Walked",
+      "TOTAL_RPT_ACRES_NR": 0,
+      "GIS_ACRES": 65.50365948,
+      "CMPLX_NM": null,
+      "IRWIN_ID": null,
+      "COMMENT": "bLACK mine",
+      "ADM_UNIT_CD": "IDI02000",
+      "ADMIN_ST": "ID",
+      "GlobalID": "{53965F36-AC99-4357-A1B6-A0B223A5BB76}",
+      "CREATE_DATE": 1341792000000,
+      "CREATE_BY": "UNK",
+      "MODIFY_DATE": 253392451200000,
+      "MODIFY_BY": "UNK",
+      "created_user": null,
+      "created_date": null,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "Original_GlobalID": "{3C9EB863-371A-4DD2-9E4F-564BF9BFC113}",
+      "UNQE_FIRE_ID": "2012--000267",
+      "SHAPE_Length": 0.050782621368634324,
+      "SHAPE_Area": 0.000028848490012245622
+    },
+    {
+      "OBJECTID": 86167,
+      "POO_JRSDCTNL_UNIT_ID": "USIDSTF",
+      "POO_PRTCT_UNIT_ID": "USIDSTF",
+      "RPT_UNIT_ID": "",
+      "LOCAL_INCDNT_ID": 633,
+      "FIRE_CODE_ID": "G9PK",
+      "INCDNT_NM": "PINE SPRING",
+      "FIRE_DSCVR_CY": 2012,
+      "FIRE_DSCVR_DT": 1349913600000,
+      "FIRE_DSCVR_DT_EST_FLAG": "NO",
+      "FIRE_CNTRL_DT": 1356912000000,
+      "FIRE_CNTRL_DT_EST_FLAG": "YES",
+      "FIRE_CAUSE_NM": "Human",
+      "CLCTN_MTHD_NM": "GPS-Walked",
+      "TOTAL_RPT_ACRES_NR": 0,
+      "GIS_ACRES": 138.09644963,
+      "CMPLX_NM": null,
+      "IRWIN_ID": null,
+      "COMMENT": " ",
+      "ADM_UNIT_CD": "IDT02000",
+      "ADMIN_ST": "ID",
+      "GlobalID": "{F4B1AFAD-C7CE-460D-869F-886779C4CAF1}",
+      "CREATE_DATE": 1350086400000,
+      "CREATE_BY": "UNK",
+      "MODIFY_DATE": 253392451200000,
+      "MODIFY_BY": "UNK",
+      "created_user": null,
+      "created_date": null,
+      "last_edited_user": null,
+      "last_edited_date": null,
+      "Original_GlobalID": "{AC468B25-F3B0-4C0A-A881-51524862FE19}",
+      "UNQE_FIRE_ID": "2012--000633",
+      "SHAPE_Length": 0.0614913782020679,
+      "SHAPE_Area": 0.00006104030748134372
+    }
+  ]
+}

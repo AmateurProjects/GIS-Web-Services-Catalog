@@ -1,0 +1,334 @@
+{
+  "generated": "2026-02-22T06:22:18.425Z",
+  "datasetId": "nwi_wetlands_wetlands_conus_west",
+  "serviceUrl": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/2",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 10.81,
+    "maxRecordCount": 1000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON",
+    "layerName": "Wetlands_CONUS_West",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "Wetlands_CONUS_West.ATTRIBUTE",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 250000,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": null,
+    "extent": {
+      "xmin": -13899346.3779,
+      "ymin": 2838964.7408999987,
+      "xmax": -7575964.161800001,
+      "ymax": 6275278.780599996
+    }
+  },
+  "fields": [
+    {
+      "name": "Wetlands_CONUS_West.OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Wetlands_CONUS_West.Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Wetlands_CONUS_West.ATTRIBUTE",
+      "alias": "ATTRIBUTE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Wetlands_CONUS_West.WETLAND_TYPE",
+      "alias": "WETLAND_TYPE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Wetlands_CONUS_West.ACRES",
+      "alias": "ACRES",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Wetlands_CONUS_West.Shape_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Wetlands_CONUS_West.Shape_Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.ATTRIBUTE",
+      "alias": "ATTRIBUTE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SYSTEM",
+      "alias": "SYSTEM",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SYSTEM_NAME",
+      "alias": "SYSTEM_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SYSTEM_DEFINITION",
+      "alias": "SYSTEM_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SUBSYSTEM",
+      "alias": "SUBSYSTEM",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SUBSYSTEM_NAME",
+      "alias": "SUBSYSTEM_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SUBSYSTEM_DEFINITION",
+      "alias": "SUBSYSTEM_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.CLASS",
+      "alias": "CLASS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.CLASS_NAME",
+      "alias": "CLASS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.CLASS_DEFINITION",
+      "alias": "CLASS_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SUBCLASS",
+      "alias": "SUBCLASS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SUBCLASS_NAME",
+      "alias": "SUBCLASS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SUBCLASS_DEFINITION",
+      "alias": "SUBCLASS_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SPLIT_CLASS",
+      "alias": "SPLIT_CLASS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SPLIT_CLASS_NAME",
+      "alias": "SPLIT_CLASS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SPLIT_CLASS_DEFINITION",
+      "alias": "SPLIT_CLASS_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SPLIT_SUBCLASS",
+      "alias": "SPLIT_SUBCLASS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SPLIT_SUBCLASS_NAME",
+      "alias": "SPLIT_SUBCLASS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.SPLIT_SUBCLASS_DEFINITION",
+      "alias": "SPLIT_SUBCLASS_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.WATER_REGIME",
+      "alias": "WATER_REGIME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.WATER_REGIME_NAME",
+      "alias": "WATER_REGIME_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.WATER_REGIME_SUBGROUP",
+      "alias": "WATER_REGIME_SUBGROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.WATER_REGIME_DEFINITION",
+      "alias": "WATER_REGIME_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER1",
+      "alias": "MODIFIER1",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER1_NAME",
+      "alias": "MODIFIER1_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER1_GROUP",
+      "alias": "MODIFIER1_GROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER1_SUBGROUP",
+      "alias": "MODIFIER1_SUBGROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER1_DEFINITION",
+      "alias": "MODIFIER1_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER2",
+      "alias": "MODIFIER2",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER2_NAME",
+      "alias": "MODIFIER2_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER2_GROUP",
+      "alias": "MODIFIER2_GROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER2_SUBGROUP",
+      "alias": "MODIFIER2_SUBGROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NWI_Wetland_Codes.MODIFIER2_DEFINITION",
+      "alias": "MODIFIER2_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [],
+  "sampleRows": []
+}

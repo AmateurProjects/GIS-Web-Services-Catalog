@@ -1,0 +1,279 @@
+{
+  "generated": "2026-02-22T07:02:57.249Z",
+  "datasetId": "nhd_area_large_scale",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/9",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><div><p><span>The USGS National Hydrography Dataset (NHD) service from The National Map is a comprehensive set of digital spatial data that encodes information about naturally occurring and constructed bodies of surface water (lakes, ponds, and reservoirs), paths through which water flows (canals, ditches, streams, and rivers), and related entities such as point features (springs, wells, stream gages, and dams). The information encoded about these features includes classification and other characteristics, delineation, geographic name, position and related measures, a \"reach code\" through which other information can be related to the NHD, and the direction of water flow. The network of reach codes delineating water and transported material flow allows users to trace movement in upstream and downstream directions. In addition to this geographic information, the dataset contains metadata that supports the exchange of future updates and improvements to the data. The NHD is available nationwide in two seamless datasets, one based on 1:24,000 (or larger) scale and referred to as high resolution NHD, and the other based on 1:100,000 scale and referred to as medium resolution NHD. The NHD from The National Map supports many applications, such as making maps, geocoding observations, flow modeling, data maintenance, and stewardship. The NHD is commonly combined with other data themes, such as boundaries, elevation, structures, and transportation, to produce general reference base maps. The National Map download client allows free downloads of public domain NHD data in either Esri File Geodatabase or Shapefile formats. For additional information on the NHD, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations.  This dataset is not intended to be used for site-specific regulatory determinations.  Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p></div></div></div>",
+    "copyrightText": "USGS TNM – National Hydrography Dataset.  Data Refreshed January, 2026.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,US,WMS",
+    "comments": "The USGS National Hydrography Dataset (NHD) service from The National Map is a comprehensive set of digital spatial data that encodes information about naturally occurring and constructed bodies of surface water (lakes, ponds, and reservoirs), paths through which water flows (canals, ditches, streams, and rivers), and related entities such as point features (springs, wells, stream gages, and dams). The information encoded about these features includes classification and other characteristics, delineation, geographic name, position and related measures, a \"reach code\" through which other information can be related to the NHD, and the direction of water flow. The network of reach codes delineating water and transported material flow allows users to trace movement in upstream and downstream directions. In addition to this geographic information, the dataset contains metadata that supports the exchange of future updates and improvements to the data. The NHD is available nationwide in two seamless datasets, one based on 1:24,000 (or larger) scale and referred to as high resolution NHD, and the other based on 1:100,000 scale and referred to as medium resolution NHD. The NHD from The National Map supports many applications, such as making maps, geocoding observations, flow modeling, data maintenance, and stewardship. The NHD is commonly combined with other data themes, such as boundaries, elevation, structures, and transportation, to produce general reference base maps. The National Map download client allows free downloads of public domain NHD data in either Esri File Geodatabase or Shapefile formats. For additional information on the NHD, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations.  This dataset is not intended to be used for site-specific regulatory determinations.  Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Area - Large Scale",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "GNIS_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": true,
+    "hasM": null,
+    "minScale": 73220,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 211711,
+    "extent": {
+      "xmin": -19951755.68176052,
+      "ymin": -1622985.3666525595,
+      "xmax": 20021551.74725596,
+      "ymax": 11575301.958304644
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "SHAPE",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PERMANENT_IDENTIFIER",
+      "alias": "PERMANENT_IDENTIFIER",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FDATE",
+      "alias": "FDATE",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RESOLUTION",
+      "alias": "Resolution",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "GNIS_ID",
+      "alias": "GNIS_ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GNIS_NAME",
+      "alias": "GNIS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "AREASQKM",
+      "alias": "AREASQKM",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ELEVATION",
+      "alias": "Elevation",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FTYPE",
+      "alias": "FType",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FCODE",
+      "alias": "FCode",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "VISIBILITYFILTER",
+      "alias": "VisibilityFilter",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GLOBALID",
+      "alias": "GLOBALID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "PERMANENT_IDENTIFIER",
+      "type": "esriFieldTypeString",
+      "alias": "PERMANENT_IDENTIFIER",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "FDATE",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "RESOLUTION",
+      "type": "esriFieldTypeInteger",
+      "alias": "Resolution",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": true
+    },
+    {
+      "name": "GNIS_ID",
+      "type": "esriFieldTypeString",
+      "alias": "GNIS_ID",
+      "nullPct": 98.2,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "GNIS_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "GNIS_NAME",
+      "nullPct": 98.2,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "AREASQKM",
+      "type": "esriFieldTypeDouble",
+      "alias": "AREASQKM",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "ELEVATION",
+      "type": "esriFieldTypeDouble",
+      "alias": "Elevation",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FTYPE",
+      "type": "esriFieldTypeInteger",
+      "alias": "FType",
+      "nullPct": null,
+      "distinctCount": 18,
+      "hasDomain": false
+    },
+    {
+      "name": "FCODE",
+      "type": "esriFieldTypeInteger",
+      "alias": "FCode",
+      "nullPct": null,
+      "distinctCount": 28,
+      "hasDomain": false
+    },
+    {
+      "name": "VISIBILITYFILTER",
+      "type": "esriFieldTypeInteger",
+      "alias": "VisibilityFilter",
+      "nullPct": 0,
+      "distinctCount": 9,
+      "hasDomain": true
+    },
+    {
+      "name": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Length",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Area",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "GLOBALID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GLOBALID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": []
+}

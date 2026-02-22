@@ -1,0 +1,559 @@
+{
+  "generated": "2026-02-22T06:14:01.982Z",
+  "datasetId": "blm_oil_gas_leases",
+  "serviceUrl": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Leases/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;font-size:12pt'><p><span>This dataset contains oil and gas leases cases derived from Legal Land Descriptions (LLD) contained in the US Bureau of Land Management's, BLM, Mineral and Land Record System(MLRS) and geocoded (mapped) using the Public Land Survey System (PLSS) derived from the most accurate survey data available through BLM Cadastral Survey workforce. Geospatial representations might be missing for some cases that can not be geocoded using the MLRS algorithm.</span></p><p><span /></p></div>",
+    "copyrightText": "U.S. Department of Interior, Bureau of Land Management (BLM)",
+    "author": "",
+    "subject": "To geospatially represent oil and gas leases case group data within Mineral and Land Records System (MLRS)",
+    "keywords": "Alabama,Alaska,Arizona,Arkansas,Authorization,boundaries,California,Colorado,Connecticut,Delaware,District of Columbia,Eastern States,Energy,Florida,Geology,Georgia,geoscientificInformation,Geospatial,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,land grid,lease,Louisiana,Maine,Management,Maryland,Massachusetts,Michigan,mining,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,permit,planningCadastre,PLSS,Public Land Survey System,Range,Rhode Island,section,South Carolina,South Dakota,Tennessee,Texas,township,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming",
+    "comments": "This dataset contains oil and gas leases cases derived from Legal Land Descriptions (LLD) contained in the US Bureau of Land Management's, BLM, Mineral and Land Record System(MLRS) and geocoded (mapped) using the Public Land Survey System (PLSS) derived from the most accurate survey data available through BLM Cadastral Survey workforce. Geospatial representations might be missing for some cases that can not be geocoded using the MLRS algorithm.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Oil and Gas Leases",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "",
+    "displayField": "CSE_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 465761,
+    "extent": {
+      "xmin": -168.09820176499997,
+      "ymin": 24.560030461000053,
+      "xmax": -72.20521709799993,
+      "ymax": 71.38173433000003
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "ID",
+      "alias": "ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_NAME",
+      "alias": "Case Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "BLM_PROD",
+      "alias": "BLM Product",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_TYPE_NR",
+      "alias": "Case Type Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_NR",
+      "alias": "Case Serial Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LEG_CSE_NR",
+      "alias": "Legacy Case Serial Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SF_ID",
+      "alias": "Salesforce ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_DISP",
+      "alias": "Case Disposition",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SRC",
+      "alias": "Data Source",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "QLTY",
+      "alias": "Data Quality",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_META",
+      "alias": "Case Metadata",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RCRD_ACRS",
+      "alias": "Case Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CMMDTY",
+      "alias": "Commodity",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRMTN",
+      "alias": "Formation",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EFF_DT",
+      "alias": "Effective Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PRDCNG",
+      "alias": "Production Status",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SALE_DT",
+      "alias": "Sales Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Created",
+      "alias": "Created",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Modified",
+      "alias": "Modified",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_STATE",
+      "alias": "Administrative State",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GEO_STATE",
+      "alias": "Geographic State",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EXP_DT",
+      "alias": "Expiration Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "ID",
+      "type": "esriFieldTypeString",
+      "alias": "ID",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Case Name",
+      "nullPct": 17.5,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "BLM_PROD",
+      "type": "esriFieldTypeString",
+      "alias": "BLM Product",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_TYPE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "Case Type Number",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "Case Serial Number",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "LEG_CSE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "Legacy Case Serial Number",
+      "nullPct": 0.1,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "SF_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Salesforce ID",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_DISP",
+      "type": "esriFieldTypeString",
+      "alias": "Case Disposition",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "SRC",
+      "type": "esriFieldTypeString",
+      "alias": "Data Source",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "QLTY",
+      "type": "esriFieldTypeString",
+      "alias": "Data Quality",
+      "nullPct": 0.4,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_META",
+      "type": "esriFieldTypeString",
+      "alias": "Case Metadata",
+      "nullPct": 0.5,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "RCRD_ACRS",
+      "type": "esriFieldTypeDouble",
+      "alias": "Case Acres",
+      "nullPct": 0.4,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "CMMDTY",
+      "type": "esriFieldTypeString",
+      "alias": "Commodity",
+      "nullPct": 15.3,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "FRMTN",
+      "type": "esriFieldTypeString",
+      "alias": "Formation",
+      "nullPct": 100,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "EFF_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Effective Date",
+      "nullPct": 27.2,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "PRDCNG",
+      "type": "esriFieldTypeString",
+      "alias": "Production Status",
+      "nullPct": 0.1,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "SALE_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Sales Date",
+      "nullPct": 98.6,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "Created",
+      "type": "esriFieldTypeDate",
+      "alias": "Created",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "Modified",
+      "type": "esriFieldTypeDate",
+      "alias": "Modified",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_STATE",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "GEO_STATE",
+      "type": "esriFieldTypeString",
+      "alias": "Geographic State",
+      "nullPct": 0,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "EXP_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Expiration Date",
+      "nullPct": 98.7,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Length",
+      "nullPct": 3.8,
+      "distinctCount": 465761,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Area",
+      "nullPct": 3.8,
+      "distinctCount": 465761,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "ID": "1009581153000235008",
+      "CSE_NAME": null,
+      "BLM_PROD": "O&G COMPETITIVE ACQUIRED LEASE POST 1987",
+      "CSE_TYPE_NR": "312022",
+      "CSE_NR": "NDMT105295041",
+      "LEG_CSE_NR": "",
+      "SF_ID": "a023d00000EPlXIAA1",
+      "CSE_DISP": "Authorized",
+      "SRC": "LLD",
+      "QLTY": "0; ",
+      "CSE_META": "ND 05 1470N 1030W 018 A E2NW,NESW",
+      "RCRD_ACRS": 120,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": null,
+      "EFF_DT": 1661990400000,
+      "PRDCNG": null,
+      "SALE_DT": 1656633540000,
+      "Created": 1660694400000,
+      "Modified": 1728154193000,
+      "ADMIN_STATE": "MT",
+      "GEO_STATE": "ND",
+      "EXP_DT": 1977609540000,
+      "Shape__Length": 0.032384611523035185,
+      "Shape__Area": 0.00005797786987179451
+    },
+    {
+      "OBJECTID": 2,
+      "ID": "1062030691866361856",
+      "CSE_NAME": null,
+      "BLM_PROD": "O&G COMPETITIVE ACQUIRED LEASE POST 1987",
+      "CSE_TYPE_NR": "312022",
+      "CSE_NR": "COCO105807267",
+      "LEG_CSE_NR": "",
+      "SF_ID": "a023d00000FEqVjAAL",
+      "CSE_DISP": "Authorized",
+      "SRC": "LLD",
+      "QLTY": "8; , Only mapped PLSS First Div, DOES NOT MATCH PM ANGLES; MIDPOINT, FULLY ATTRIBUTED QUARTER SECTION ALL BUCKETS ARE EQUAL, DOES NOT MATCH PM ANGLES",
+      "CSE_META": "CO 06 0090N 0600W 034 1 EXCL 6.07 ACRES EXCL 6.07 ACRES E2SW;|CO 06 0090N 0600W 034 A SW",
+      "RCRD_ACRS": 153.93,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": null,
+      "EFF_DT": 1180656000000,
+      "PRDCNG": "Held by Actual Production",
+      "SALE_DT": 1155254340000,
+      "Created": 1673222400000,
+      "Modified": 1728154751000,
+      "ADMIN_STATE": "CO",
+      "GEO_STATE": "CO",
+      "EXP_DT": null,
+      "Shape__Length": 0.06729033011090833,
+      "Shape__Area": 0.0002782085191325241
+    },
+    {
+      "OBJECTID": 3,
+      "ID": "1068226391063060480",
+      "CSE_NAME": null,
+      "BLM_PROD": "O&G COMPETITIVE ACQUIRED LEASE POST 1987",
+      "CSE_TYPE_NR": "312022",
+      "CSE_NR": "TXNM105815331",
+      "LEG_CSE_NR": "",
+      "SF_ID": "a023d00000FKJ00AAH",
+      "CSE_DISP": "Authorized",
+      "SRC": null,
+      "QLTY": null,
+      "CSE_META": "TX TX 121 null null 2 F-501,F-502,F-503,F-505A,F-506,F-508,F-522,F-537,F-543,APORTIONOFTRACTF-535,APORTIONOFTRACTF-541",
+      "RCRD_ACRS": 1068.716,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": null,
+      "EFF_DT": 904608000000,
+      "PRDCNG": "Held by Actual Production",
+      "SALE_DT": 901151940000,
+      "Created": 1674691200000,
+      "Modified": 1728154934000,
+      "ADMIN_STATE": "NM",
+      "GEO_STATE": "TX",
+      "EXP_DT": null,
+      "Shape__Length": null,
+      "Shape__Area": null
+    },
+    {
+      "OBJECTID": 4,
+      "ID": "951260375142105106",
+      "CSE_NAME": "",
+      "BLM_PROD": "O&G COMPETITIVE ACQUIRED LEASE POST 1987",
+      "CSE_TYPE_NR": "312022",
+      "CSE_NR": "ALES105300561",
+      "LEG_CSE_NR": "ALES   038997",
+      "SF_ID": "a023d00000ALPOaAAP",
+      "CSE_DISP": "Closed",
+      "SRC": "MIGRATE",
+      "QLTY": "8.3: \n36 sections retrieved\n570 intersected features retrieved, MIDPOINT\nTYPICAL QUARTER SECTION WITH 4 STANDARD LEGALS ATTRIBUTED\nDOES NOT MATCH PM ANGLES\naliquot\n36 sections retrieved\n570 intersected features retrieved\n16 matching sections found\nsection",
+      "CSE_META": "AL 25 0010N 0140E 029 A NWNE|AL 25 0010N 0140E 029 A SW|AL 25 0010N 0140E 029 A NWSE|AL 25 0010N 0140E 029 A S2SE|AL 25 0010N 0140E 030 A W2SE|AL 25 0010N 0140E 030 A SWNW|AL 25 0010N 0140E 030 A E2SW|AL 25 0010N 0140E 030 A NESE|AL 25 0010N 0140E 030 1 ALL",
+      "RCRD_ACRS": 801.25,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": null,
+      "EFF_DT": 591667200000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "Created": 1647043200000,
+      "Modified": 1728149944000,
+      "ADMIN_STATE": "ES",
+      "GEO_STATE": "AL",
+      "EXP_DT": null,
+      "Shape__Length": 0.11289281237943466,
+      "Shape__Area": 0.0003739919404440956
+    },
+    {
+      "OBJECTID": 5,
+      "ID": "951260374940778541",
+      "CSE_NAME": "",
+      "BLM_PROD": "O&G COMPETITIVE ACQUIRED LEASE POST 1987",
+      "CSE_TYPE_NR": "312022",
+      "CSE_NR": "ALES105744819",
+      "LEG_CSE_NR": "ALES   038998",
+      "SF_ID": "a023d00000ALPBSAA5",
+      "CSE_DISP": "Closed",
+      "SRC": "MIGRATE",
+      "QLTY": "0: Map to entire FRSTDIVNO\n",
+      "CSE_META": "AL 25 0020N 0130E 033 9 ALL",
+      "RCRD_ACRS": 639.28,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": null,
+      "EFF_DT": 591667200000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "Created": 1647043200000,
+      "Modified": 1728149927000,
+      "ADMIN_STATE": "ES",
+      "GEO_STATE": "AL",
+      "EXP_DT": null,
+      "Shape__Length": 0.06300919536789207,
+      "Shape__Area": 0.00024632224464581857
+    }
+  ]
+}

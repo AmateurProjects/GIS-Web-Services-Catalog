@@ -1,0 +1,198 @@
+{
+  "generated": "2026-02-22T06:29:24.001Z",
+  "datasetId": "nwi_riparian_riparian",
+  "serviceUrl": "https://fwsprimary.wim.usgs.gov/server/rest/services/Riparian/MapServer/0",
+  "metadata": {
+    "serviceDescription": "This data set represents the extent, approximate location and type of riparian habitats in the western United States. These data delineate the areal extent of riparian habitats as defined by A System For Mapping Riparian Areas in the United States (USFWS 2009). Certain riparian habitats may be excluded from the National mapping program because of the limitations of aerial imagery as the primary data source used to detect riparian habitats.\n\nDue to the quantity and complexity of the riparian data the riparian data only display at 1:250,000 scale and greater. For wetland information visit www.fws.gov/wetlands/",
+    "copyrightText": "U.S. Fish and Wildlife Service, National Standards and Support Team, wetlands_team@fws.gov",
+    "author": "U.S. Fish and Wildlife Service, National Standards and Support Team, wetlands_team@fws.gov",
+    "subject": "This data set represents the extent, approximate location and type of riparian habitats in the western United States. ",
+    "keywords": "Riparian,Semi-Arid,Woody Vegetation,Western Riparian",
+    "comments": "This data set represents the extent, approximate location and type of riparian habitats in the western United States. These data delineate the areal extent of riparian habitats as defined by A System For Mapping Riparian Areas in the United States (USFWS 2009). Certain riparian habitats may be excluded from the National mapping program because of the limitations of aerial imagery as the primary data source used to detect riparian habitats.\n\nDue to the quantity and complexity of the riparian data the riparian data only display at 1:250,000 scale and greater. For wetland information visit www.fws.gov/wetlands/",
+    "currentVersion": 10.81,
+    "maxRecordCount": 1000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON",
+    "layerName": "Riparian",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "ATTRIBUTE",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 250000,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 646447,
+    "extent": {
+      "xmin": -17366144.08,
+      "ymin": 3676122.5529000014,
+      "xmax": -10505802.4824,
+      "ymax": 10568767.589200001
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape",
+      "alias": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ATTRIBUTE",
+      "alias": "ATTRIBUTE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WETLAND_TYPE",
+      "alias": "WETLAND_TYPE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ACRES",
+      "alias": "ACRES",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Length",
+      "alias": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Area",
+      "alias": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "QAQC_CODE",
+      "alias": "QAQC_CODE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GLOBALID",
+      "alias": "GLOBALID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "NWI_ID",
+      "alias": "NWI_ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "SHAPE",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "ATTRIBUTE",
+      "type": "esriFieldTypeString",
+      "alias": "ATTRIBUTE",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "WETLAND_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "WETLAND_TYPE",
+      "nullPct": 0,
+      "distinctCount": 6,
+      "hasDomain": false
+    },
+    {
+      "name": "ACRES",
+      "type": "esriFieldTypeDouble",
+      "alias": "ACRES",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Length",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Area",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "QAQC_CODE",
+      "type": "esriFieldTypeString",
+      "alias": "QAQC_CODE",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "GLOBALID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GLOBALID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "NWI_ID",
+      "type": "esriFieldTypeString",
+      "alias": "NWI_ID",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": []
+}

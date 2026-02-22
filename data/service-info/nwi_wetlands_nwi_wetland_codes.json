@@ -1,0 +1,285 @@
+{
+  "generated": "2026-02-22T06:22:20.234Z",
+  "datasetId": "nwi_wetlands_nwi_wetland_codes",
+  "serviceUrl": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/7",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 10.81,
+    "maxRecordCount": 1000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON",
+    "layerName": "NWI_Wetland_Codes",
+    "layerType": "Table",
+    "geometryType": "",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "SYSTEM_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": null,
+    "extent": {
+      "xmin": -19951755.682,
+      "ymin": -1644316.000500001,
+      "xmax": 20021551.7473,
+      "ymax": 11554273.612999998
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "ATTRIBUTE",
+      "alias": "ATTRIBUTE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SYSTEM",
+      "alias": "SYSTEM",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SYSTEM_NAME",
+      "alias": "SYSTEM_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SYSTEM_DEFINITION",
+      "alias": "SYSTEM_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUBSYSTEM",
+      "alias": "SUBSYSTEM",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUBSYSTEM_NAME",
+      "alias": "SUBSYSTEM_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUBSYSTEM_DEFINITION",
+      "alias": "SUBSYSTEM_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CLASS",
+      "alias": "CLASS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CLASS_NAME",
+      "alias": "CLASS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CLASS_DEFINITION",
+      "alias": "CLASS_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUBCLASS",
+      "alias": "SUBCLASS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUBCLASS_NAME",
+      "alias": "SUBCLASS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUBCLASS_DEFINITION",
+      "alias": "SUBCLASS_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SPLIT_CLASS",
+      "alias": "SPLIT_CLASS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SPLIT_CLASS_NAME",
+      "alias": "SPLIT_CLASS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SPLIT_CLASS_DEFINITION",
+      "alias": "SPLIT_CLASS_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SPLIT_SUBCLASS",
+      "alias": "SPLIT_SUBCLASS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SPLIT_SUBCLASS_NAME",
+      "alias": "SPLIT_SUBCLASS_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SPLIT_SUBCLASS_DEFINITION",
+      "alias": "SPLIT_SUBCLASS_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WATER_REGIME",
+      "alias": "WATER_REGIME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WATER_REGIME_NAME",
+      "alias": "WATER_REGIME_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WATER_REGIME_SUBGROUP",
+      "alias": "WATER_REGIME_SUBGROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WATER_REGIME_DEFINITION",
+      "alias": "WATER_REGIME_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER1",
+      "alias": "MODIFIER1",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER1_NAME",
+      "alias": "MODIFIER1_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER1_GROUP",
+      "alias": "MODIFIER1_GROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER1_SUBGROUP",
+      "alias": "MODIFIER1_SUBGROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER1_DEFINITION",
+      "alias": "MODIFIER1_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER2",
+      "alias": "MODIFIER2",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER2_NAME",
+      "alias": "MODIFIER2_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER2_GROUP",
+      "alias": "MODIFIER2_GROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER2_SUBGROUP",
+      "alias": "MODIFIER2_SUBGROUP",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MODIFIER2_DEFINITION",
+      "alias": "MODIFIER2_DEFINITION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [],
+  "sampleRows": []
+}

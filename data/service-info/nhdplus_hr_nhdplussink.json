@@ -1,0 +1,306 @@
+{
+  "generated": "2026-02-22T07:20:43.365Z",
+  "datasetId": "nhdplus_hr_nhdplussink",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/NHDPlus_HR/MapServer/1",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><p><span>The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p><p></div></div></p>",
+    "copyrightText": "USGS TNM – National Hydrography Dataset Plus High Resolution (NHDPlus HR). Data refreshed October, 2022.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,United States,US,NGP-TNM,REST,WMS",
+    "comments": "The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed The USGS NHDPlus High Resolution service, NHDPlus_HR, a part of The National Map, is a comprehensive set of digital spatial data comprising a nationally seamless network of stream reaches, elevation-based catchment areas, flow surfaces, and value-added attributes that enhance stream network navigation, analysis, and data display. NHDPlus High Resolution (NHDPlus HR) is a scalable geospatial hydrography framework built from the high resolution National Hydrography Dataset, nationally complete Watershed Boundary Dataset, and 3D Elevation Program (3DEP) ? arc-second (10 meter ground spacing) digital elevation model data. The National Map download client allows free downloads of public domain NHDPlus HR data in Esri File Geodatabase format. For additional information on the NHDPlus HR, go to https://www.usgs.gov/national-hydrography/national-hydrography-dataset. See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NHDPlusSink",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPoint",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "PURPCODE",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 100000,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 1194760,
+    "extent": {
+      "xmin": -19011126.5478,
+      "ymin": -1613361.1798,
+      "xmax": 16231107.119400002,
+      "ymax": 10949063.069200002
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "SHAPE",
+      "alias": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "nhdplusid",
+      "alias": "NHDPlusID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "gridcode",
+      "alias": "GridCode",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "purpcode",
+      "alias": "PurposeCode",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 18
+      },
+      "isKey": false
+    },
+    {
+      "name": "featureid",
+      "alias": "FeatureID",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sourcefc",
+      "alias": "SourceFeatureClass",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "rpuid",
+      "alias": "RPUID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "statusflag",
+      "alias": "StatusFlag",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 4
+      },
+      "isKey": false
+    },
+    {
+      "name": "catchment",
+      "alias": "Catchment",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "burn",
+      "alias": "Burn",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 2
+      },
+      "isKey": false
+    },
+    {
+      "name": "vpuid",
+      "alias": "VPUID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "alias": "SHAPE",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "nhdplusid",
+      "type": "esriFieldTypeDouble",
+      "alias": "NHDPlusID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "gridcode",
+      "type": "esriFieldTypeInteger",
+      "alias": "GridCode",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "purpcode",
+      "type": "esriFieldTypeString",
+      "alias": "PurposeCode",
+      "nullPct": 0,
+      "distinctCount": 7,
+      "hasDomain": true
+    },
+    {
+      "name": "featureid",
+      "type": "esriFieldTypeDouble",
+      "alias": "FeatureID",
+      "nullPct": 0.1,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "sourcefc",
+      "type": "esriFieldTypeString",
+      "alias": "SourceFeatureClass",
+      "nullPct": 0.2,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "rpuid",
+      "type": "esriFieldTypeString",
+      "alias": "RPUID",
+      "nullPct": 0,
+      "distinctCount": 247,
+      "hasDomain": false
+    },
+    {
+      "name": "statusflag",
+      "type": "esriFieldTypeString",
+      "alias": "StatusFlag",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "catchment",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Catchment",
+      "nullPct": null,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "burn",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Burn",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "vpuid",
+      "type": "esriFieldTypeString",
+      "alias": "VPUID",
+      "nullPct": 0,
+      "distinctCount": 247,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "nhdplusid": 10000200520782,
+      "gridcode": 274347,
+      "purpcode": "SE",
+      "featureid": 10000200520782,
+      "sourcefc": "NHDFlowline",
+      "rpuid": "0204",
+      "statusflag": "N",
+      "catchment": 1,
+      "burn": 1,
+      "vpuid": "0204"
+    },
+    {
+      "OBJECTID": 2,
+      "nhdplusid": 10000200444125,
+      "gridcode": 208584,
+      "purpcode": "SE",
+      "featureid": 10000200444125,
+      "sourcefc": "NHDFlowline",
+      "rpuid": "0204",
+      "statusflag": "N",
+      "catchment": 1,
+      "burn": 1,
+      "vpuid": "0204"
+    },
+    {
+      "OBJECTID": 3,
+      "nhdplusid": 10000200456910,
+      "gridcode": 208273,
+      "purpcode": "SE",
+      "featureid": 10000200456910,
+      "sourcefc": "NHDFlowline",
+      "rpuid": "0204",
+      "statusflag": "N",
+      "catchment": 1,
+      "burn": 1,
+      "vpuid": "0204"
+    },
+    {
+      "OBJECTID": 4,
+      "nhdplusid": 10000200507567,
+      "gridcode": 206558,
+      "purpcode": "SE",
+      "featureid": 10000200507567,
+      "sourcefc": "NHDFlowline",
+      "rpuid": "0204",
+      "statusflag": "N",
+      "catchment": 1,
+      "burn": 1,
+      "vpuid": "0204"
+    },
+    {
+      "OBJECTID": 5,
+      "nhdplusid": 10000200593868,
+      "gridcode": 197225,
+      "purpcode": "SE",
+      "featureid": 10000200593868,
+      "sourcefc": "NHDFlowline",
+      "rpuid": "0204",
+      "statusflag": "N",
+      "catchment": 1,
+      "burn": 1,
+      "vpuid": "0204"
+    }
+  ]
+}

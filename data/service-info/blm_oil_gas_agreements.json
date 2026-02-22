@@ -1,0 +1,559 @@
+{
+  "generated": "2026-02-22T06:14:05.091Z",
+  "datasetId": "blm_oil_gas_agreements",
+  "serviceUrl": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Oil_and_Gas_Agreements/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;font-size:12pt'><div><div><p><span>This dataset contains oil and gas agreements cases derived from Legal Land Descriptions (LLD) contained in the US Bureau of Land Management's, BLM, Mineral and Land Record System(MLRS) and geocoded (mapped) using the Public Land Survey System (PLSS) derived from the most accurate survey data available through BLM Cadastral Survey workforce. Geospatial representations might be missing for some cases that can not be geocoded using the MLRS algorithm.</span></p><p><span /></p></div></div></div>",
+    "copyrightText": "U.S. Department of Interior, Bureau of Land Management (BLM)",
+    "author": "",
+    "subject": "To geospatially represent oil and gas agreement case group data within Mineral and Land Records System (MLRS)",
+    "keywords": "Alabama,Alaska,Arizona,Arkansas,Authorization,boundaries,California,Colorado,Connecticut,Delaware,District of Columbia,Eastern States,Energy,Florida,Geology,Georgia,geoscientificInformation,Geospatial,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,land grid,lease,Louisiana,Maine,Management,Maryland,Massachusetts,Michigan,mining,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,permit,planningCadastre,PLSS,Public Land Survey System,Range,Rhode Island,section,South Carolina,South Dakota,Tennessee,Texas,township,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming",
+    "comments": "This dataset contains oil and gas agreements cases derived from Legal Land Descriptions (LLD) contained in the US Bureau of Land Management's, BLM, Mineral and Land Record System(MLRS) and geocoded (mapped) using the Public Land Survey System (PLSS) derived from the most accurate survey data available through BLM Cadastral Survey workforce. Geospatial representations might be missing for some cases that can not be geocoded using the MLRS algorithm.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Oil and Gas Agreements",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "",
+    "displayField": "CSE_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 32486,
+    "extent": {
+      "xmin": -161.96429750699997,
+      "ymin": 25.96522469200005,
+      "xmax": -76.11517199999997,
+      "ymax": 71.06444906000007
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "ID",
+      "alias": "ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_NAME",
+      "alias": "Case Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "BLM_PROD",
+      "alias": "BLM Product",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_TYPE_NR",
+      "alias": "Case Type Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_NR",
+      "alias": "Case Serial Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LEG_CSE_NR",
+      "alias": "Legacy Case Serial Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SF_ID",
+      "alias": "Salesforce ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_DISP",
+      "alias": "Case Disposition",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SRC",
+      "alias": "Data Source",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "QLTY",
+      "alias": "Data Quality",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_META",
+      "alias": "Case Metadata",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RCRD_ACRS",
+      "alias": "Case Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CMMDTY",
+      "alias": "Commodity",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRMTN",
+      "alias": "Formation",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EFF_DT",
+      "alias": "Effective Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PRDCNG",
+      "alias": "Production Status",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SALE_DT",
+      "alias": "Sales Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Created",
+      "alias": "Created",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Modified",
+      "alias": "Modified",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_STATE",
+      "alias": "Administrative State",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GEO_STATE",
+      "alias": "Geographic State",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EXP_DT",
+      "alias": "Expiration Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "ID",
+      "type": "esriFieldTypeString",
+      "alias": "ID",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Case Name",
+      "nullPct": 11.9,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "BLM_PROD",
+      "type": "esriFieldTypeString",
+      "alias": "BLM Product",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_TYPE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "Case Type Number",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "Case Serial Number",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "LEG_CSE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "Legacy Case Serial Number",
+      "nullPct": 5,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "SF_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Salesforce ID",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_DISP",
+      "type": "esriFieldTypeString",
+      "alias": "Case Disposition",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "SRC",
+      "type": "esriFieldTypeString",
+      "alias": "Data Source",
+      "nullPct": 0.1,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "QLTY",
+      "type": "esriFieldTypeString",
+      "alias": "Data Quality",
+      "nullPct": 1.4,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_META",
+      "type": "esriFieldTypeString",
+      "alias": "Case Metadata",
+      "nullPct": 0.4,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "RCRD_ACRS",
+      "type": "esriFieldTypeDouble",
+      "alias": "Case Acres",
+      "nullPct": 0.3,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "CMMDTY",
+      "type": "esriFieldTypeString",
+      "alias": "Commodity",
+      "nullPct": 0.6,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "FRMTN",
+      "type": "esriFieldTypeString",
+      "alias": "Formation",
+      "nullPct": 78.1,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "EFF_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Effective Date",
+      "nullPct": 7.6,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "PRDCNG",
+      "type": "esriFieldTypeString",
+      "alias": "Production Status",
+      "nullPct": 2.5,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "SALE_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Sales Date",
+      "nullPct": 100,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "Created",
+      "type": "esriFieldTypeDate",
+      "alias": "Created",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "Modified",
+      "type": "esriFieldTypeDate",
+      "alias": "Modified",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_STATE",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "GEO_STATE",
+      "type": "esriFieldTypeString",
+      "alias": "Geographic State",
+      "nullPct": 0,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "EXP_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Expiration Date",
+      "nullPct": 98,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Length",
+      "nullPct": 1.3,
+      "distinctCount": 32486,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Area",
+      "nullPct": 1.3,
+      "distinctCount": 32486,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "ID": "951260375343431727",
+      "CSE_NAME": "NORTH BLOWHORN CREEK",
+      "BLM_PROD": "O&G API/STATE UNIT AGREEMENT",
+      "CSE_TYPE_NR": "318240",
+      "CSE_NR": "ALES105644533",
+      "LEG_CSE_NR": "ALES   037987X",
+      "SF_ID": "a023d00000ALTn3AAH",
+      "CSE_DISP": "Authorized",
+      "SRC": "MIGRATE",
+      "QLTY": "8.1: No Direct Match, Roll up to Section, MIDPOINT, SECTION CONTAINS 5 OR LESS POLYGONS, DOES NOT MATCH PM ANGLES, No Direct Match, Roll up to Section, No Direct Match, Roll up to Section, No Direct Match, Roll up to Section, No Direct Match, Roll up to ",
+      "CSE_META": "AL 16 0130S 0140W 027 A SWSW,E2SW,SWSWSE | AL 16 0130S 0140W 033 A S2SE | AL 16 0130S 0140W 034 9 ENTIRE SECTION | AL 16 0130S 0140W 035 A SWNW,SW | AL 16 0140S 0140W 002 A W2,W2SE | AL 16 0140S 0140W 003 A N2,W2SE | AL 16 0140S 0140W 004 A E2NE | AL 16 0140S 0",
+      "RCRD_ACRS": 2530,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": null,
+      "EFF_DT": 403488000000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "Created": 1647043200000,
+      "Modified": 1728150312000,
+      "ADMIN_STATE": "ES",
+      "GEO_STATE": "AL",
+      "EXP_DT": null,
+      "Shape__Length": 0.2714253269328127,
+      "Shape__Area": 0.0024310741162620743
+    },
+    {
+      "OBJECTID": 2,
+      "ID": "951260374231941189",
+      "CSE_NAME": "CITRONELLE",
+      "BLM_PROD": "O&G API/STATE UNIT AGREEMENT",
+      "CSE_TYPE_NR": "318240",
+      "CSE_NR": "ALES105661661",
+      "LEG_CSE_NR": "ALES   037988X",
+      "SF_ID": "a023d00000ALSSzAAP",
+      "CSE_DISP": "Authorized",
+      "SRC": "MIGRATE",
+      "QLTY": "8.1: Map to entire section, Map to entire section, No Direct Match, Roll up to Section, No Direct Match, Roll up to Section, MIDPOINT, SECTION CONTAINS 5 OR LESS POLYGONS, MIDPOINT, SECTION CONTAINS 5 OR LESS POLYGONS, No Direct Match, Roll up to Section",
+      "CSE_META": "AL 25 0010N 0020W 005 A W2 | AL 25 0010N 0020W 006 A SWNE,W2NW,SENW,S2 | AL 25 0010N 0020W 007 9 ENTIRE SECTION | AL 25 0010N 0020W 008 A W2,SE,SWNE | AL 25 0010N 0020W 009 A SW | AL 25 0010N 0020W 016 A NW | AL 25 0010N 0020W 017 A E2NE,NWNE,NW,W2SW,NESW | AL",
+      "RCRD_ACRS": 13683.13,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": null,
+      "EFF_DT": -118454400000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "Created": 1647043200000,
+      "Modified": 1728150200000,
+      "ADMIN_STATE": "ES",
+      "GEO_STATE": "AL",
+      "EXP_DT": null,
+      "Shape__Length": 0.46164412027564544,
+      "Shape__Area": 0.008074346191189165
+    },
+    {
+      "OBJECTID": 3,
+      "ID": "951938901532999702",
+      "CSE_NAME": "(NORPLET) UNIT",
+      "BLM_PROD": "O&G API/STATE UNIT AGREEMENT",
+      "CSE_TYPE_NR": "318240",
+      "CSE_NR": "ALES105526044",
+      "LEG_CSE_NR": "ALES   040639X",
+      "SF_ID": "a023d00000ALWlyAAH",
+      "CSE_DISP": "Authorized",
+      "SRC": "LLD",
+      "QLTY": "-10",
+      "CSE_META": "AL 25 0090S 0010W 001 1 TRACTS I-IV, OFFSHORE;~BLKS 76,77,94,95, LOWER;~MOBILE BAY (NORPHLET);~FIELD UNIT, COUNTIES OF;~BALDWIN AND MOBILE;~(SEE CASEFILE).;",
+      "RCRD_ACRS": 20660,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": null,
+      "EFF_DT": 408412800000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "Created": 1647043200000,
+      "Modified": 1728150557000,
+      "ADMIN_STATE": "ES",
+      "GEO_STATE": "AL",
+      "EXP_DT": null,
+      "Shape__Length": null,
+      "Shape__Area": null
+    },
+    {
+      "OBJECTID": 4,
+      "ID": "951260376354258956",
+      "CSE_NAME": "SUGARLOAF MOUNTAIN",
+      "BLM_PROD": "O&G API/STATE UNIT AGREEMENT",
+      "CSE_TYPE_NR": "318240",
+      "CSE_NR": "ARES105679219",
+      "LEG_CSE_NR": "ARES   054604X",
+      "SF_ID": "a023d00000ALhfFAAT",
+      "CSE_DISP": "Authorized",
+      "SRC": "MIGRATE",
+      "QLTY": "0: Map to entire section, MIDPOINT, DOES NOT MATCH PM ANGLES, MIDPOINT, DOES NOT MATCH PM ANGLES, Map to entire section, Map to entire section",
+      "CSE_META": "AR 05 0040N 0310W 019 9 ENTIRE SECTION | AR 05 0040N 0310W 020 9 ENTIRE SECTION | AR 05 0040N 0310W 021 A S2NW,N2SW,SWSW | AR 05 0040N 0310W 028 A W2NW | AR 05 0040N 0310W 029 A N2,SW | AR 05 0040N 0310W 030 9 ENTIRE SECTION",
+      "RCRD_ACRS": 2709.89,
+      "CMMDTY": "Coalbed Methane Gas",
+      "FRMTN": null,
+      "EFF_DT": 1151452800000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "Created": 1647043200000,
+      "Modified": 1728151490000,
+      "ADMIN_STATE": "ES",
+      "GEO_STATE": "AR",
+      "EXP_DT": null,
+      "Shape__Length": 0.14623490212303986,
+      "Shape__Area": 0.0010745677384391193
+    },
+    {
+      "OBJECTID": 5,
+      "ID": "951938901537194071",
+      "CSE_NAME": "ST JOHNS",
+      "BLM_PROD": "O&G API/STATE UNIT AGREEMENT",
+      "CSE_TYPE_NR": "318240",
+      "CSE_NR": "AZAZ105391152",
+      "LEG_CSE_NR": "AZA    035089",
+      "SF_ID": "a023d00000ALh8UAAT",
+      "CSE_DISP": "Closed",
+      "SRC": "LLD/CLS",
+      "QLTY": "8.1: Map to entire section, Map to entire section, Map to entire section, Map to entire section, Map to entire section, Map to entire section, Map to entire section, Map to entire section, Map to entire section, Map to entire section, MIDPOINT, DOES NOT ",
+      "CSE_META": "AZ 14 0080N 0310E 002 9 ENTIRE SECTION, AZ 14 0080N 0310E 003 9 ENTIRE SECTION, AZ 14 0080N 0310E 004 9 ENTIRE SECTION, AZ 14 0080N 0310E 005 A SW, AZ 14 0080N 0310E 005 A S2NE,SE, AZ 14 0080N 0310E 005 A S2NW, AZ 14 0080N 0310E 005 L 1,2,4, AZ 14 0080N ",
+      "RCRD_ACRS": 0,
+      "CMMDTY": "Oil & Gas",
+      "FRMTN": "ALL",
+      "EFF_DT": 1245455940000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "Created": 1647043200000,
+      "Modified": 1728151447000,
+      "ADMIN_STATE": "AZ",
+      "GEO_STATE": "AZ",
+      "EXP_DT": null,
+      "Shape__Length": 1.7494133908609992,
+      "Shape__Area": 0.064756221310836
+    }
+  ]
+}

@@ -1,0 +1,379 @@
+{
+  "generated": "2026-02-22T06:13:46.069Z",
+  "datasetId": "blm_revision_dev_land_use_plans",
+  "serviceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Revision_Development_Land_Use_Plans/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "A subset of land use plans that are under revision or development created from a snapshot of National LUPA layer on April 8, 2021. Data are current as of October, 2024. Boundaries and supporting data were reviewed by BLM state planners for accuracy and currency.",
+    "copyrightText": "BLM | BLM HQ-210",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM_Natl_Land_Use_Plans_RevisionDevelopment",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "LUPName",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": true,
+    "featureCount": null,
+    "lastEditDate": 1743453185063,
+    "definitionExpression": "",
+    "recordCount": 5,
+    "extent": {
+      "xmin": -120.12693729971659,
+      "ymin": 31.783638080433093,
+      "xmax": -95.37179979122737,
+      "ymax": 45.00012196075994
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "MapID",
+      "alias": "MapID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MapType",
+      "alias": "MapType",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LUPName",
+      "alias": "LUPName",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Status",
+      "alias": "Status",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RODdate",
+      "alias": "RODdate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ePLink",
+      "alias": "ePLink",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "AdminSt",
+      "alias": "AdminSt",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NEPAnum",
+      "alias": "NEPAnum",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "created_user",
+      "alias": "created_user",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "created_date",
+      "alias": "created_date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "last_edited_user",
+      "alias": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "last_edited_date",
+      "alias": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "MapID",
+      "type": "esriFieldTypeString",
+      "alias": "MapID",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "MapType",
+      "type": "esriFieldTypeString",
+      "alias": "MapType",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "LUPName",
+      "type": "esriFieldTypeString",
+      "alias": "LUPName",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "Status",
+      "type": "esriFieldTypeString",
+      "alias": "Status",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "RODdate",
+      "type": "esriFieldTypeString",
+      "alias": "RODdate",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "ePLink",
+      "type": "esriFieldTypeString",
+      "alias": "ePLink",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "AdminSt",
+      "type": "esriFieldTypeString",
+      "alias": "AdminSt",
+      "nullPct": 0,
+      "distinctCount": 4,
+      "hasDomain": false
+    },
+    {
+      "name": "NEPAnum",
+      "type": "esriFieldTypeString",
+      "alias": "NEPAnum",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 5,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 16,
+      "MapID": "F",
+      "MapType": "LUPRD",
+      "LUPName": "Carlsbad RMP Revision",
+      "Status": " ",
+      "RODdate": " ",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/64444/510",
+      "AdminSt": "NM",
+      "NEPAnum": "DOI-BLM-NM-P020-2010-0001-RMP-EIS",
+      "GlobalID": "c3cc973c-202c-4121-aedd-ae76976317f3",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453184688,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453184688,
+      "Shape__Area": 2.4350640846341776,
+      "Shape__Length": 8.083983130336904
+    },
+    {
+      "OBJECTID": 17,
+      "MapID": "G",
+      "MapType": "LUPRD",
+      "LUPName": "TriCounty RMP Revision",
+      "Status": " ",
+      "RODdate": " ",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/83982/510",
+      "AdminSt": "NM",
+      "NEPAnum": "DOI-BLM-NM-L000-2005-0002-RMP-EIS",
+      "GlobalID": "9dc53927-32b4-4441-84f7-a230e41c12f2",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453184688,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453184688,
+      "Shape__Area": 3.655906611269529,
+      "Shape__Length": 10.17890267768896
+    },
+    {
+      "OBJECTID": 18,
+      "MapID": "H",
+      "MapType": "LUPRD",
+      "LUPName": "Carson City District RMP Revision",
+      "Status": " ",
+      "RODdate": " ",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/22652/510",
+      "AdminSt": "NV",
+      "NEPAnum": "DOI-BLM-NV-C000-2012-0501-RMP-EIS",
+      "GlobalID": "822f0668-7637-4f91-a73b-11fb7410116b",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453184688,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453184688,
+      "Shape__Area": 3.7736802322542644,
+      "Shape__Length": 11.742574083950823
+    },
+    {
+      "OBJECTID": 19,
+      "MapID": "L",
+      "MapType": "LUPRD",
+      "LUPName": "Cedar City RMP Revision",
+      "Status": " ",
+      "RODdate": " ",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/7100/510",
+      "AdminSt": "UT",
+      "NEPAnum": "DOI-BLM-UT-C010-2011-0001-RMP-EIS",
+      "GlobalID": "86a735f3-8556-4537-bf93-c66ce3b075f3",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453184688,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453184688,
+      "Shape__Area": 1.5589922604244748,
+      "Shape__Length": 5.805957134720493
+    },
+    {
+      "OBJECTID": 21,
+      "MapID": "N",
+      "MapType": "LUPRD",
+      "LUPName": "Newcastle & Nebraska RMPs Revision",
+      "Status": " ",
+      "RODdate": " ",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/2013064/510",
+      "AdminSt": "WY",
+      "NEPAnum": "DOI-BLM-WY-P080-2021-0027-RMP-EIS",
+      "GlobalID": "63c813f5-82ff-46c1-93b6-ef50c624b735",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453184688,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453184688,
+      "Shape__Area": 23.959549523251553,
+      "Shape__Length": 30.996205532108313
+    }
+  ]
+}

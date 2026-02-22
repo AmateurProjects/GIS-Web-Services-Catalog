@@ -1,0 +1,345 @@
+{
+  "generated": "2026-02-22T06:13:56.072Z",
+  "datasetId": "blm_grazing_pastures",
+  "serviceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Grazing_Pasture_Polygons/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "This feature class represents the polygon features that show the boundaries for the BLM Grazing Pastures. These pasture attributes may be duplicated in RAS, but are considered minimum information for unique identification and cartographic purposes. During the physical implementation of Grazing Allotments and Pastures, if an Allotment does not have any associated Pasture information, one Pasture will be created from/matching the Allotment boundary. A code of “99” will be entered into the PAST_NO (Pasture Number) field to indicate that the Pasture polygons are derived and need to be updated with real information by the appropriate office.\nThis national dataset is an aggregation from multiple datasets provided by the BLM Administrative States. Errors and inconsistencies may still be present in the data.",
+    "copyrightText": "BLM Admin State",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM Natl Grazing Pasture Polygons",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "ALLOT_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1771359317489,
+    "definitionExpression": "",
+    "recordCount": 53456,
+    "extent": {
+      "xmin": -124.50451872228848,
+      "ymin": 31.327405542491533,
+      "xmax": -98.90182488425023,
+      "ymax": 49.00022288311993
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "ALLOT_NO",
+      "alias": "Allotment Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ALLOT_NAME",
+      "alias": "Allotment Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PAST_NO",
+      "alias": "Pasture Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PAST_NAME",
+      "alias": "Pasture Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "alias": "GIS Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "ADM_OFC_CD",
+      "alias": "Administrative Office Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "alias": "Administrative Unit code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 270
+      },
+      "isKey": false
+    },
+    {
+      "name": "ST_ALLOT_PAST",
+      "alias": "Managing State Allotment  Pasture Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeGUID",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 53456,
+      "hasDomain": false
+    },
+    {
+      "name": "ALLOT_NO",
+      "type": "esriFieldTypeString",
+      "alias": "Allotment Number",
+      "nullPct": 0,
+      "distinctCount": 10807,
+      "hasDomain": false
+    },
+    {
+      "name": "ALLOT_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Allotment Name",
+      "nullPct": 0,
+      "distinctCount": 17622,
+      "hasDomain": false
+    },
+    {
+      "name": "PAST_NO",
+      "type": "esriFieldTypeString",
+      "alias": "Pasture Number",
+      "nullPct": 0,
+      "distinctCount": 123,
+      "hasDomain": false
+    },
+    {
+      "name": "PAST_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Pasture Name",
+      "nullPct": 0,
+      "distinctCount": 22360,
+      "hasDomain": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Acres",
+      "nullPct": 0,
+      "distinctCount": 53222,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 11,
+      "hasDomain": true
+    },
+    {
+      "name": "ADM_OFC_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative Office Code",
+      "nullPct": 0,
+      "distinctCount": 83,
+      "hasDomain": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative Unit code",
+      "nullPct": 0,
+      "distinctCount": 125,
+      "hasDomain": true
+    },
+    {
+      "name": "ST_ALLOT_PAST",
+      "type": "esriFieldTypeString",
+      "alias": "Managing State Allotment  Pasture Number",
+      "nullPct": 0,
+      "distinctCount": 44840,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 53456,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeGUID",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 53456,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 53400,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 53400,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "ALLOT_NO": "03060",
+      "ALLOT_NAME": "Ohaco",
+      "PAST_NO": "01",
+      "PAST_NAME": "Ohaco",
+      "GIS_ACRES": 63921.145124,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "P01000",
+      "ADM_UNIT_CD": "AZP01000",
+      "ST_ALLOT_PAST": "AZ0306001",
+      "GlobalID": "00275854-de5f-433e-b690-64b0b06c8073",
+      "Original_GlobalID": "da2f387e-97be-4c39-8347-0a358853f3bf",
+      "Shape__Area": 0.025174008440899343,
+      "Shape__Length": 0.7139263193210241
+    },
+    {
+      "OBJECTID": 2,
+      "ALLOT_NO": "04820",
+      "ALLOT_NAME": "Duncan Tank",
+      "PAST_NO": "02",
+      "PAST_NAME": "Back",
+      "GIS_ACRES": 1109.35498388,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "P01000",
+      "ADM_UNIT_CD": "AZA01000",
+      "ST_ALLOT_PAST": "AZ0482002",
+      "GlobalID": "00356b45-8729-49eb-be81-86b368cc3ef0",
+      "Original_GlobalID": "38f34fae-1497-4d71-a3fa-729b2fa74815",
+      "Shape__Area": 0.00045059765625410364,
+      "Shape__Length": 0.08667247085260152
+    },
+    {
+      "OBJECTID": 3,
+      "ALLOT_NO": "04858",
+      "ALLOT_NAME": "Ivanpah",
+      "PAST_NO": "01",
+      "PAST_NAME": "Spring",
+      "GIS_ACRES": 3887.03075233,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "P01000",
+      "ADM_UNIT_CD": "AZA01000",
+      "ST_ALLOT_PAST": "AZ0485801",
+      "GlobalID": "01032716-e9a6-4851-bc4a-e4ec79889512",
+      "Original_GlobalID": "ae03afc7-7f68-4dbc-aa4e-a8bbb24f9f7e",
+      "Shape__Area": 0.001579621873133874,
+      "Shape__Length": 0.17487551488706315
+    },
+    {
+      "OBJECTID": 4,
+      "ALLOT_NO": "04808",
+      "ALLOT_NAME": "Mainstreet",
+      "PAST_NO": "15",
+      "PAST_NAME": "Childers",
+      "GIS_ACRES": 13694.91834605,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "P01000",
+      "ADM_UNIT_CD": "AZA01000",
+      "ST_ALLOT_PAST": "AZ0480815",
+      "GlobalID": "0158cdda-c437-44c8-85f4-4884682b657f",
+      "Original_GlobalID": "db997d27-d841-4842-85ad-996201012dc7",
+      "Shape__Area": 0.005580467191521166,
+      "Shape__Length": 0.3924059849516622
+    },
+    {
+      "OBJECTID": 5,
+      "ALLOT_NO": "06180",
+      "ALLOT_NAME": "Mexican Wash",
+      "PAST_NO": "01",
+      "PAST_NAME": "Mexican Wash",
+      "GIS_ACRES": 19051.233475,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "G01000",
+      "ADM_UNIT_CD": "AZG01000",
+      "ST_ALLOT_PAST": "AZ0618001",
+      "GlobalID": "0161cec6-b90a-4669-9f33-659b30135219",
+      "Original_GlobalID": "39b7dded-2663-4331-b937-f49927125910",
+      "Shape__Area": 0.0075933740795335325,
+      "Shape__Length": 0.5946231847583398
+    }
+  ]
+}

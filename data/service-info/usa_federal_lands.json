@@ -1,0 +1,199 @@
+{
+  "generated": "2026-02-22T06:22:03.254Z",
+  "datasetId": "usa_federal_lands",
+  "serviceUrl": "https://services.arcgis.com/P3ePLMYs2RVChkJx/arcgis/rest/services/USA_Federal_Lands/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "This layer displays lands in the United States managed by six federal agencies.",
+    "copyrightText": "Source: Esri, BLM, DoD, NPS, USFWS, USFS",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Query,Extract,Sync",
+    "syncEnabled": true,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "USA Federal Lands",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "unit_name",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1753371266996,
+    "definitionExpression": "",
+    "recordCount": 176095,
+    "extent": {
+      "xmin": -20037507,
+      "ymin": -1733738,
+      "xmax": 20037507,
+      "ymax": 11521045
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Agency",
+      "alias": "Agency",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "unit_name",
+      "alias": "Unit Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "link",
+      "alias": "Link Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 176095,
+      "hasDomain": false
+    },
+    {
+      "name": "Agency",
+      "type": "esriFieldTypeString",
+      "alias": "Agency",
+      "nullPct": 0,
+      "distinctCount": 6,
+      "hasDomain": false
+    },
+    {
+      "name": "unit_name",
+      "type": "esriFieldTypeString",
+      "alias": "Unit Name",
+      "nullPct": 0,
+      "distinctCount": 2294,
+      "hasDomain": false
+    },
+    {
+      "name": "link",
+      "type": "esriFieldTypeString",
+      "alias": "Link Code",
+      "nullPct": 0,
+      "distinctCount": 554,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0.3,
+      "distinctCount": 118527,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0.3,
+      "distinctCount": 169424,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 176095,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "Agency": "National Park Service",
+      "unit_name": "Hopewell Culture National Historical Park",
+      "link": "https://www.nps.gov/hocu",
+      "Shape__Area": 876896.5,
+      "Shape__Length": 4907.380624823436,
+      "GlobalID": "3eae02d9-96db-46b8-be06-620ab3149938"
+    },
+    {
+      "OBJECTID": 2,
+      "Agency": "National Park Service",
+      "unit_name": "Hopewell Culture National Historical Park",
+      "link": "https://www.nps.gov/hocu",
+      "Shape__Area": 1307268,
+      "Shape__Length": 6199.499316191285,
+      "GlobalID": "ab6ddbc1-80ae-48a3-b2f1-67459045c0cf"
+    },
+    {
+      "OBJECTID": 3,
+      "Agency": "National Park Service",
+      "unit_name": "Hopewell Culture National Historical Park",
+      "link": "https://www.nps.gov/hocu",
+      "Shape__Area": 2135680,
+      "Shape__Length": 6467.998250236664,
+      "GlobalID": "64f5d5ba-3cb0-4386-ae8f-ead1d9b6fad7"
+    },
+    {
+      "OBJECTID": 4,
+      "Agency": "National Park Service",
+      "unit_name": "Hopewell Culture National Historical Park",
+      "link": "https://www.nps.gov/hocu",
+      "Shape__Area": 2489552,
+      "Shape__Length": 6897.98454550675,
+      "GlobalID": "12bb7bf9-56d1-4cc4-bf50-083c6ca198f5"
+    },
+    {
+      "OBJECTID": 5,
+      "Agency": "National Park Service",
+      "unit_name": "Hopewell Culture National Historical Park",
+      "link": "https://www.nps.gov/hocu",
+      "Shape__Area": 2569590.5,
+      "Shape__Length": 9122.791400677223,
+      "GlobalID": "36ead365-68d4-4d44-bbd7-880720528156"
+    }
+  ]
+}

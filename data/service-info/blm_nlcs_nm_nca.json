@@ -1,0 +1,254 @@
+{
+  "generated": "2026-02-22T06:13:38.316Z",
+  "datasetId": "blm_nlcs_nm_nca",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_NLCS_NM_NCA/MapServer/0",
+  "metadata": {
+    "serviceDescription": "This Map Service represents the spatial extent and boundaries of the BLM National Landscape Conservation System (NLCS) National Monuments, National Conservation Areas and Similar Designations. This dataset is a subset of the official national dataset, containing features and attributes intended for public release and has been optimized for online map service performance.  National monuments encompass landscapes of tremendous beauty and diversity, ranging from rugged California coastline to vividly-hued desert canyons. The Antiquities Act of 1906 grants the President authority to designate national monuments in order to protect “objects of historic or scientific interest.” While the President establishes most national monuments, Congress occasionally designate National Monuments to protect certain natural or historic features. National conservation areas (NCAs) and similarly designated lands are designated by Congress to conserve, protect, enhance, and manage public lands for the benefit and enjoyment of present and future generations. The Bureau of Land Management's National Conservation Lands include 19 NCAs and six similarly designated lands in ten states. These lands feature exceptional scientific, cultural, ecological, historical, and recreational values. They differ tremendously in landscape and size, varying from the coastal beauty of California's 20-acre Piedras Blancas Light Station Outstanding Natural Area to the rugged desert vistas of Nevada's 800,000 acre Black Rock Desert-High Rock Canyon Emigrant Trails NCA.",
+    "copyrightText": "Bureau of Land Management (BLM), Headquarters (HQ)",
+    "author": "",
+    "subject": "This map represents the spatial extent and boundaries of the BLM National Landscape Conservation System (NLCS) National Monuments, National Conservation Areas and Similar Designations. This dataset is a subset of the official national dataset, containing features and attributes intended for public release and has been optimized for online map service performance.",
+    "keywords": "NLCS,NCA,NM,National Conservation Areas,National Monuments,Bureau of Land Management,BLM,poly",
+    "comments": "This Map Service represents the spatial extent and boundaries of the BLM National Landscape Conservation System (NLCS) National Monuments, National Conservation Areas and Similar Designations. This dataset is a subset of the official national dataset, containing features and attributes intended for public release and has been optimized for online map service performance.National monuments encompass landscapes of tremendous beauty and diversity, ranging from rugged California coastline to vividly-hued desert canyons. The Antiquities Act of 1906 grants the President authority to designate national monuments in order to protect “objects of historic or scientific interest.” While the President establishes most national monuments, Congress occasionally designate National Monuments to protect certain natural or historic features. National conservation areas (NCAs) and similarly designated lands are designated by Congress to conserve, protect, enhance, and manage public lands for the benefit and enjoyment of present and future generations. The Bureau of Land Management's National Conservation Lands include 19 NCAs and six similarly designated lands in ten states. These lands feature exceptional scientific, cultural, ecological, historical, and recreational values. They differ tremendously in landscape and size, varying from the coastal beauty of California's 20-acre Piedras Blancas Light Station Outstanding Natural Area to the rugged desert vistas of Nevada's 800,000 acre Black Rock Desert-High Rock Canyon Emigrant Trails NCA.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "NLCS National Monuments, National Conservation Areas and Similar Designations Polygons",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "NCA_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": true,
+    "hasM": true,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 57,
+    "extent": {
+      "xmin": -16337173.629642997,
+      "ymin": 3116920.1413104925,
+      "xmax": -8914381.531574301,
+      "ymax": 9834791.198443875
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sma_code",
+      "alias": "sma_code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "STATE_ADMN",
+      "alias": "STATE_ADMN",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "STATE_GEOG",
+      "alias": "STATE_GEOG",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Label",
+      "alias": "Label",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NCA_NAME",
+      "alias": "NCA_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Length",
+      "alias": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape_Area",
+      "alias": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NLCS_ID",
+      "alias": "NLCS_ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 57,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "sma_code",
+      "type": "esriFieldTypeString",
+      "alias": "sma_code",
+      "nullPct": 31.6,
+      "distinctCount": 9,
+      "hasDomain": false
+    },
+    {
+      "name": "STATE_ADMN",
+      "type": "esriFieldTypeString",
+      "alias": "STATE_ADMN",
+      "nullPct": 0,
+      "distinctCount": 11,
+      "hasDomain": false
+    },
+    {
+      "name": "STATE_GEOG",
+      "type": "esriFieldTypeString",
+      "alias": "STATE_GEOG",
+      "nullPct": 28.1,
+      "distinctCount": 11,
+      "hasDomain": false
+    },
+    {
+      "name": "Label",
+      "type": "esriFieldTypeString",
+      "alias": "Label",
+      "nullPct": 28.1,
+      "distinctCount": 42,
+      "hasDomain": false
+    },
+    {
+      "name": "NCA_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "NCA_NAME",
+      "nullPct": 0,
+      "distinctCount": 57,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Length",
+      "nullPct": 0,
+      "distinctCount": 57,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape_Area",
+      "nullPct": 0,
+      "distinctCount": 57,
+      "hasDomain": false
+    },
+    {
+      "name": "NLCS_ID",
+      "type": "esriFieldTypeString",
+      "alias": "NLCS_ID",
+      "nullPct": 0,
+      "distinctCount": 56,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 4,
+      "sma_code": "BLM_MON",
+      "STATE_ADMN": "NM",
+      "STATE_GEOG": "NM",
+      "Label": "Kasha-Katuwe Tent Rocks",
+      "NCA_NAME": "Kasha-Katuwe Tent Rocks National Monument",
+      "Shape_Length": 0.21552958709640047,
+      "Shape_Area": 0.0021768278278055803,
+      "NLCS_ID": "NLCS000523"
+    },
+    {
+      "OBJECTID": 7,
+      "sma_code": "BLM_MON",
+      "STATE_ADMN": "NM",
+      "STATE_GEOG": "NM",
+      "Label": "Prehistoric Trackways",
+      "NCA_NAME": "Prehistoric Trackways National Monument",
+      "Shape_Length": 0.2307899814443578,
+      "Shape_Area": 0.0020405246872118006,
+      "NLCS_ID": "NLCS000524"
+    },
+    {
+      "OBJECTID": 8,
+      "sma_code": "BLM_MON",
+      "STATE_ADMN": "OR",
+      "STATE_GEOG": "WA",
+      "Label": "San Juan Islands",
+      "NCA_NAME": "San Juan Islands National Monument",
+      "Shape_Length": 2.193313427644931,
+      "Shape_Area": 0.21310340016315515,
+      "NLCS_ID": "NLCS002387"
+    },
+    {
+      "OBJECTID": 22,
+      "sma_code": "BLM_NCA",
+      "STATE_ADMN": "NM",
+      "STATE_GEOG": "NM",
+      "Label": "El Malpais",
+      "NCA_NAME": "El Malpais National Conservation Area",
+      "Shape_Length": 5.127555880869542,
+      "Shape_Area": 0.10482523035636161,
+      "NLCS_ID": "NLCS000521"
+    },
+    {
+      "OBJECTID": 55,
+      "sma_code": "BLM_NCA",
+      "STATE_ADMN": "CA",
+      "STATE_GEOG": "CA",
+      "Label": "King Range",
+      "NCA_NAME": "King Range National Conservation Area",
+      "Shape_Length": 1.4795058486785106,
+      "Shape_Area": 0.026563845458384576,
+      "NLCS_ID": "NLCS000312"
+    }
+  ]
+}

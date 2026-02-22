@@ -1,0 +1,399 @@
+{
+  "generated": "2026-02-22T06:13:42.704Z",
+  "datasetId": "blm_land_use_plans_approved_2022",
+  "serviceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_Use_Plans_Approved_2022/FeatureServer/1",
+  "metadata": {
+    "serviceDescription": "A subset of land use plans that have been approved created from a snapshot of National LUPA layer on April 8, 2021. Data are current as of June, 2024. Boundaries and supporting data were reviewed by BLM state planners for accuracy and currency.",
+    "copyrightText": "BLM | BLM HQ-210",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM_Natl_Land_Use_Plans_Approved",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "LUPName",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": true,
+    "featureCount": null,
+    "lastEditDate": 1743453350128,
+    "definitionExpression": "",
+    "recordCount": 174,
+    "extent": {
+      "xmin": -179.14480881977119,
+      "ymin": 24.956376420535435,
+      "xmax": 179.77491306848344,
+      "ymax": 70.62116906719876
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "MapID",
+      "alias": "MapID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "MapType",
+      "alias": "MapType",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LUPName",
+      "alias": "LUPName",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Status",
+      "alias": "Status",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RODdate",
+      "alias": "RODdate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ePLink",
+      "alias": "ePLink",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "AdminSt",
+      "alias": "AdminSt",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NEPAnum",
+      "alias": "NEPAnum",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RODyear",
+      "alias": "RODyear",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "created_user",
+      "alias": "created_user",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "created_date",
+      "alias": "created_date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "last_edited_user",
+      "alias": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "last_edited_date",
+      "alias": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 174,
+      "hasDomain": false
+    },
+    {
+      "name": "MapID",
+      "type": "esriFieldTypeString",
+      "alias": "MapID",
+      "nullPct": 2.3,
+      "distinctCount": 169,
+      "hasDomain": false
+    },
+    {
+      "name": "MapType",
+      "type": "esriFieldTypeString",
+      "alias": "MapType",
+      "nullPct": 0,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "LUPName",
+      "type": "esriFieldTypeString",
+      "alias": "LUPName",
+      "nullPct": 0,
+      "distinctCount": 174,
+      "hasDomain": false
+    },
+    {
+      "name": "Status",
+      "type": "esriFieldTypeString",
+      "alias": "Status",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "RODdate",
+      "type": "esriFieldTypeString",
+      "alias": "RODdate",
+      "nullPct": 0,
+      "distinctCount": 142,
+      "hasDomain": false
+    },
+    {
+      "name": "ePLink",
+      "type": "esriFieldTypeString",
+      "alias": "ePLink",
+      "nullPct": 0,
+      "distinctCount": 164,
+      "hasDomain": false
+    },
+    {
+      "name": "AdminSt",
+      "type": "esriFieldTypeString",
+      "alias": "AdminSt",
+      "nullPct": 0,
+      "distinctCount": 12,
+      "hasDomain": false
+    },
+    {
+      "name": "NEPAnum",
+      "type": "esriFieldTypeString",
+      "alias": "NEPAnum",
+      "nullPct": 0,
+      "distinctCount": 164,
+      "hasDomain": false
+    },
+    {
+      "name": "RODyear",
+      "type": "esriFieldTypeInteger",
+      "alias": "RODyear",
+      "nullPct": 0,
+      "distinctCount": 43,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 174,
+      "hasDomain": false
+    },
+    {
+      "name": "created_user",
+      "type": "esriFieldTypeString",
+      "alias": "created_user",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "created_date",
+      "type": "esriFieldTypeDate",
+      "alias": "created_date",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "last_edited_user",
+      "type": "esriFieldTypeString",
+      "alias": "last_edited_user",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "last_edited_date",
+      "type": "esriFieldTypeDate",
+      "alias": "last_edited_date",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 174,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 174,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "MapID": "10",
+      "MapType": "Approved",
+      "LUPName": "Draanjik RMP",
+      "Status": "Completed",
+      "RODdate": "12/30/2016",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/1100/510",
+      "AdminSt": "AK",
+      "NEPAnum": "DOI-BLM-AK-F020-2008-0001-RMP-EIS",
+      "RODyear": 2016,
+      "GlobalID": "5e34d629-58c1-4977-9863-f45412a5aa39",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453051092,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453051092,
+      "Shape__Area": 6.244969877277072,
+      "Shape__Length": 13.965841991279257
+    },
+    {
+      "OBJECTID": 2,
+      "MapID": "100",
+      "MapType": "Approved",
+      "LUPName": "Butte Field Office Approved RMP",
+      "Status": "Completed",
+      "RODdate": "04/20/2009",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/69645/510",
+      "AdminSt": "MT",
+      "NEPAnum": "DOI-BLM-MT-B070-2008-0002-RMP-EIS",
+      "RODyear": 2009,
+      "GlobalID": "7c5045ce-02b7-4541-811f-2a8030081a6d",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453051092,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453051092,
+      "Shape__Area": 3.3806125961968974,
+      "Shape__Length": 14.833534596257199
+    },
+    {
+      "OBJECTID": 3,
+      "MapID": "101",
+      "MapType": "Approved",
+      "LUPName": "Billings Field Office RMP",
+      "Status": "Completed",
+      "RODdate": "09/21/2015",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/72501/510",
+      "AdminSt": "MT",
+      "NEPAnum": "DOI-BLM-MT-A010-2017-0056-RMP-EIS",
+      "RODyear": 2015,
+      "GlobalID": "fa361662-2c66-48ed-892b-5e662ad9587b",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453051092,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453051092,
+      "Shape__Area": 5.063442335958371,
+      "Shape__Length": 10.628937141082114
+    },
+    {
+      "OBJECTID": 4,
+      "MapID": "102",
+      "MapType": "Approved",
+      "LUPName": "Missoula Field Office RMP and EIS",
+      "Status": "Completed",
+      "RODdate": "01/04/2021",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/58107/510",
+      "AdminSt": "MT",
+      "NEPAnum": "DOI-BLM-MT-B010-2016-0019-RMP-EIS",
+      "RODyear": 2021,
+      "GlobalID": "b0a15954-2f62-48da-a7a2-13a1f9e6136b",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453051092,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453051092,
+      "Shape__Area": 7.326354929689387,
+      "Shape__Length": 17.223329617465993
+    },
+    {
+      "OBJECTID": 5,
+      "MapID": "103",
+      "MapType": "Approved",
+      "LUPName": "Lewistown RMP and EIS",
+      "Status": "Completed",
+      "RODdate": "01/04/2021",
+      "ePLink": "https://eplanning.blm.gov/eplanning-ui/project/38214/510",
+      "AdminSt": "MT",
+      "NEPAnum": "DOI-BLM-MT-L060-2014-0015-RMP-EIS",
+      "RODyear": 2021,
+      "GlobalID": "7c1d603c-5515-459c-908c-7569fc5f60fb",
+      "created_user": "lgolon@blm.gov_BLM_EGIS",
+      "created_date": 1743453051092,
+      "last_edited_user": "lgolon@blm.gov_BLM_EGIS",
+      "last_edited_date": 1743453051092,
+      "Shape__Area": 6.216668187044434,
+      "Shape__Length": 22.18080033217276
+    }
+  ]
+}

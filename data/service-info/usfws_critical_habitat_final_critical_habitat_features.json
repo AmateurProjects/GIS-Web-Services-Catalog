@@ -1,0 +1,579 @@
+{
+  "generated": "2026-02-22T06:22:05.811Z",
+  "datasetId": "usfws_critical_habitat_final_critical_habitat_features",
+  "serviceUrl": "https://services.arcgis.com/QVENGdaPbd4LUkLV/ArcGIS/rest/services/USFWS_Critical_Habitat/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "A specific geographic area(s) that contains features essential for the conservation of a threatened or endangered species and that may require special management and protection.",
+    "copyrightText": "U.S. Fish and Wildlife Service",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 1000,
+    "wkid": 3857,
+    "capabilities": "Query,Extract,Sync",
+    "syncEnabled": true,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Final Critical Habitat Features",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "comname",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1764962272444,
+    "definitionExpression": "",
+    "recordCount": 798,
+    "extent": {
+      "xmin": -19942489.3649,
+      "ymin": -1637234.300999999,
+      "xmax": 20012620.842299998,
+      "ymax": 12525606.828000002
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "singlmulti",
+      "alias": "singlmulti",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "comname",
+      "alias": "comname",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sciname",
+      "alias": "sciname",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "spcode",
+      "alias": "spcode",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vipcode",
+      "alias": "vipcode",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "entity_id",
+      "alias": "entity_id",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "unit",
+      "alias": "unit",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "subunit",
+      "alias": "subunit",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "unitname",
+      "alias": "unitname",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "subunitname",
+      "alias": "subunitname",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "status",
+      "alias": "status",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "leadoffice",
+      "alias": "leadoffice",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "coopoffice",
+      "alias": "coopoffice",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "coopofmore",
+      "alias": "coopofmore",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "fedreg",
+      "alias": "fedreg",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "pubdate",
+      "alias": "pubdate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "effectdate",
+      "alias": "effectdate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "vacatedate",
+      "alias": "vacatedate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "accuracy",
+      "alias": "accuracy",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "source_id",
+      "alias": "source_id",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "objectid_1",
+      "alias": "objectid_1",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "listing_status",
+      "alias": "listing_status",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 798,
+      "hasDomain": false
+    },
+    {
+      "name": "singlmulti",
+      "type": "esriFieldTypeString",
+      "alias": "singlmulti",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "comname",
+      "type": "esriFieldTypeString",
+      "alias": "comname",
+      "nullPct": 0,
+      "distinctCount": 520,
+      "hasDomain": false
+    },
+    {
+      "name": "sciname",
+      "type": "esriFieldTypeString",
+      "alias": "sciname",
+      "nullPct": 0,
+      "distinctCount": 794,
+      "hasDomain": false
+    },
+    {
+      "name": "spcode",
+      "type": "esriFieldTypeString",
+      "alias": "spcode",
+      "nullPct": 0,
+      "distinctCount": 794,
+      "hasDomain": false
+    },
+    {
+      "name": "vipcode",
+      "type": "esriFieldTypeString",
+      "alias": "vipcode",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "entity_id",
+      "type": "esriFieldTypeInteger",
+      "alias": "entity_id",
+      "nullPct": 0,
+      "distinctCount": 798,
+      "hasDomain": false
+    },
+    {
+      "name": "unit",
+      "type": "esriFieldTypeString",
+      "alias": "unit",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "subunit",
+      "type": "esriFieldTypeString",
+      "alias": "subunit",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "unitname",
+      "type": "esriFieldTypeString",
+      "alias": "unitname",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "subunitname",
+      "type": "esriFieldTypeString",
+      "alias": "subunitname",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "status",
+      "type": "esriFieldTypeString",
+      "alias": "status",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "leadoffice",
+      "type": "esriFieldTypeInteger",
+      "alias": "leadoffice",
+      "nullPct": 0,
+      "distinctCount": 55,
+      "hasDomain": false
+    },
+    {
+      "name": "coopoffice",
+      "type": "esriFieldTypeString",
+      "alias": "coopoffice",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "coopofmore",
+      "type": "esriFieldTypeString",
+      "alias": "coopofmore",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "fedreg",
+      "type": "esriFieldTypeString",
+      "alias": "fedreg",
+      "nullPct": 0,
+      "distinctCount": 279,
+      "hasDomain": false
+    },
+    {
+      "name": "pubdate",
+      "type": "esriFieldTypeString",
+      "alias": "pubdate",
+      "nullPct": 0,
+      "distinctCount": 264,
+      "hasDomain": false
+    },
+    {
+      "name": "effectdate",
+      "type": "esriFieldTypeString",
+      "alias": "effectdate",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "vacatedate",
+      "type": "esriFieldTypeString",
+      "alias": "vacatedate",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "accuracy",
+      "type": "esriFieldTypeString",
+      "alias": "accuracy",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "source_id",
+      "type": "esriFieldTypeInteger",
+      "alias": "source_id",
+      "nullPct": 0,
+      "distinctCount": 796,
+      "hasDomain": false
+    },
+    {
+      "name": "objectid_1",
+      "type": "esriFieldTypeInteger",
+      "alias": "objectid_1",
+      "nullPct": 0,
+      "distinctCount": 796,
+      "hasDomain": false
+    },
+    {
+      "name": "listing_status",
+      "type": "esriFieldTypeString",
+      "alias": "listing_status",
+      "nullPct": 0,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 798,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 679,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 679,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 3,
+      "singlmulti": "SINGLE",
+      "comname": "Penasco least chipmunk",
+      "sciname": "Tamias minimus atristriatus",
+      "spcode": "A08G",
+      "vipcode": "V01",
+      "entity_id": 4228,
+      "unit": "Please check current species specific shapefile",
+      "subunit": "Please check current species specific shapefile",
+      "unitname": "Please check current species specific shapefile",
+      "subunitname": "Please check current species specific shapefile",
+      "status": "Final",
+      "leadoffice": 22420,
+      "coopoffice": "Please check current species specific shapefile",
+      "coopofmore": "Please check current species specific shapefile",
+      "fedreg": "89FR99656 99687",
+      "pubdate": "20241210",
+      "effectdate": "Please check current species specific shapefile",
+      "vacatedate": "Please check current species specific shapefile",
+      "accuracy": "Please check current species specific shapefile",
+      "source_id": 2112,
+      "objectid_1": 874,
+      "listing_status": "Endangered",
+      "GlobalID": "7965e4fd-175a-42ce-8d6c-0351892ba7bc",
+      "Shape__Area": 25578036.95703125,
+      "Shape__Length": 129019.76788801342
+    },
+    {
+      "OBJECTID": 8,
+      "singlmulti": "SINGLE",
+      "comname": "Balcones spike",
+      "sciname": "Fusconaia iheringi",
+      "spcode": "F05D",
+      "vipcode": "I01",
+      "entity_id": 11676,
+      "unit": "Please check current species specific shapefile",
+      "subunit": "Please check current species specific shapefile",
+      "unitname": "Please check current species specific shapefile",
+      "subunitname": "Please check current species specific shapefile",
+      "status": "Final",
+      "leadoffice": 21450,
+      "coopoffice": "Please check current species specific shapefile",
+      "coopofmore": "Please check current species specific shapefile",
+      "fedreg": "89FR48034 48130",
+      "pubdate": "20240604",
+      "effectdate": "Please check current species specific shapefile",
+      "vacatedate": "Please check current species specific shapefile",
+      "accuracy": "Please check current species specific shapefile",
+      "source_id": 2092,
+      "objectid_1": 811,
+      "listing_status": "Endangered",
+      "GlobalID": "c9beca02-a5cc-4e33-a293-47fae47f4787",
+      "Shape__Area": 10295266.375,
+      "Shape__Length": 392119.2566132446
+    },
+    {
+      "OBJECTID": 9,
+      "singlmulti": "SINGLE",
+      "comname": "Slenderclaw crayfish",
+      "sciname": "Cambarus cracens",
+      "spcode": "K06B",
+      "vipcode": "I01",
+      "entity_id": 10757,
+      "unit": "Please check current species specific shapefile",
+      "subunit": "Please check current species specific shapefile",
+      "unitname": "Please check current species specific shapefile",
+      "subunitname": "Please check current species specific shapefile",
+      "status": "Final",
+      "leadoffice": 40120,
+      "coopoffice": "Please check current species specific shapefile",
+      "coopofmore": "Please check current species specific shapefile",
+      "fedreg": "86FR50264 50287",
+      "pubdate": "20210908",
+      "effectdate": "Please check current species specific shapefile",
+      "vacatedate": "Please check current species specific shapefile",
+      "accuracy": "Please check current species specific shapefile",
+      "source_id": 1999,
+      "objectid_1": 717,
+      "listing_status": "Endangered",
+      "GlobalID": "63fff503-cc86-4663-ab22-d7f0c49e1947",
+      "Shape__Area": 2523037.29296875,
+      "Shape__Length": 308930.852321431
+    },
+    {
+      "OBJECTID": 10,
+      "singlmulti": "SINGLE",
+      "comname": "Colorado pikeminnow",
+      "sciname": "Ptychocheilus lucius",
+      "spcode": "E006",
+      "vipcode": "V01",
+      "entity_id": 215,
+      "unit": "Please check current species specific shapefile",
+      "subunit": "Please check current species specific shapefile",
+      "unitname": "Please check current species specific shapefile",
+      "subunitname": "Please check current species specific shapefile",
+      "status": "Final",
+      "leadoffice": 65115,
+      "coopoffice": "Please check current species specific shapefile",
+      "coopofmore": "Please check current species specific shapefile",
+      "fedreg": "59FR13374 13400",
+      "pubdate": "19940321",
+      "effectdate": "Please check current species specific shapefile",
+      "vacatedate": "Please check current species specific shapefile",
+      "accuracy": "Please check current species specific shapefile",
+      "source_id": 6,
+      "objectid_1": 1,
+      "listing_status": "Endangered",
+      "GlobalID": "cbe380c6-3790-4e89-865a-33e0bda8b954",
+      "Shape__Area": 436354197.09375,
+      "Shape__Length": 5206682.626995789
+    },
+    {
+      "OBJECTID": 11,
+      "singlmulti": "SINGLE",
+      "comname": "Spreading navarretia",
+      "sciname": "Navarretia fossalis",
+      "spcode": "Q2E7",
+      "vipcode": "P01",
+      "entity_id": 972,
+      "unit": "Please check current species specific shapefile",
+      "subunit": "Please check current species specific shapefile",
+      "unitname": "Please check current species specific shapefile",
+      "subunitname": "Please check current species specific shapefile",
+      "status": "Final",
+      "leadoffice": 11430,
+      "coopoffice": "Please check current species specific shapefile",
+      "coopofmore": "Please check current species specific shapefile",
+      "fedreg": "75FR62192 62255",
+      "pubdate": "20101007",
+      "effectdate": "Please check current species specific shapefile",
+      "vacatedate": "Please check current species specific shapefile",
+      "accuracy": "Please check current species specific shapefile",
+      "source_id": 910,
+      "objectid_1": 74,
+      "listing_status": "Threatened",
+      "GlobalID": "a0b0737d-6001-4a5c-85b1-ea72da2fc231",
+      "Shape__Area": 39378927.74609375,
+      "Shape__Length": 140137.8094082044
+    }
+  ]
+}

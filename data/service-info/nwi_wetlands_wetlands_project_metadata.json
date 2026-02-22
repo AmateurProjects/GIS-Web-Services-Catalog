@@ -1,0 +1,159 @@
+{
+  "generated": "2026-02-22T06:22:19.887Z",
+  "datasetId": "nwi_wetlands_wetlands_project_metadata",
+  "serviceUrl": "https://fwsprimary.wim.usgs.gov/server/rest/services/Wetlands/MapServer/6",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 10.81,
+    "maxRecordCount": 1000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON",
+    "layerName": "Wetlands_Project_Metadata",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "PROJECT_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": null,
+    "extent": {
+      "xmin": -19951755.6819,
+      "ymin": -1644316.000500001,
+      "xmax": 20021551.7473,
+      "ymax": 11554273.6127
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "SHAPE",
+      "alias": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PROJECT_NAME",
+      "alias": "PROJECT_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "STATUS",
+      "alias": "STATUS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUPPMAPINFO",
+      "alias": "SUPPMAPINFO",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FGDC_METADATA",
+      "alias": "FGDC_METADATA",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "DATA_SOURCE",
+      "alias": "DATA_SOURCE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "IMAGE_YR",
+      "alias": "IMAGE_YR",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "IMAGE_DATE",
+      "alias": "IMAGE_DATE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "IMAGE_SCALE",
+      "alias": "IMAGE_SCALE",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ALL_SCALES",
+      "alias": "ALL_SCALES",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EMULSION",
+      "alias": "EMULSION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "COMMENTS",
+      "alias": "COMMENTS",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCE_TYPE",
+      "alias": "SOURCE_TYPE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Length",
+      "alias": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Area",
+      "alias": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [],
+  "sampleRows": []
+}

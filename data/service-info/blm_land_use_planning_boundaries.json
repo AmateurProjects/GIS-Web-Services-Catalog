@@ -1,0 +1,360 @@
+{
+  "generated": "2026-02-22T06:13:55.679Z",
+  "datasetId": "blm_land_use_planning_boundaries",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_LandUsePlanningBoundaries/MapServer/0",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;font-size:12pt'><div><p><span>These are the boundaries of current Land Use Plans.  Represents the spatial extent and boundaries for existing BLM Land Use Planning Area (LUPA) polygons. Land Use Planning Areas are geographic areas within which the BLM will make decisions during a land use planning effort. Land Use Planning Area Boundaries shift from an \"in-progress\" status and become Existing Land Use Planning Areas when the Land Use Plan has been provided and a Record of Decision Date has been established. At this point, these LUPAs are officially \"existing\".  </span></p></div></div>",
+    "copyrightText": "Compiled by the Bureau of Land Management (BLM), Head Quarters (HQ)",
+    "author": "",
+    "subject": "BLM Land Use Planning Boundaries displaying the existing boundaries",
+    "keywords": "BLM,Bureau of Land Management,Department of Interior,DOI,Land Use Planning,LUPA,boundaries,area,decision,Land Use,planning & cadastral,geoscientific,environment,biota,location",
+    "comments": "<DIV STYLE=\"text-align:Left;font-size:12pt\"><DIV><P><SPAN>These are the boundaries of current Land Use Plans.  Represents the spatial extent and boundaries for existing BLM Land Use Planning Area (LUPA) polygons. Land Use Planning Areas are geographic areas within which the BLM will make decisions during a land use planning effort. Land Use Planning Area Boundaries shift from an \"in-progress\" status and become Existing Land Use Planning Areas when the Land Use Plan has been provided and a Record of Decision Date has been established. At this point, these LUPAs are officially \"existing\".  </SPAN></P></DIV></DIV>",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Land Use Planning Area Boundary Existing Polygons",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "LUP_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 196,
+    "extent": {
+      "xmin": -19942308.896108907,
+      "ymin": 2870387.400968095,
+      "xmax": 20012451.780371524,
+      "ymax": 11536799.609544903
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "LUPA_ID",
+      "alias": "LUPA Natl Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PA_LOCAL_ID",
+      "alias": "Local Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LUP_NAME",
+      "alias": "LUP Project Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "alias": "GIS Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LUP_TYPE",
+      "alias": "Type of Land Use Plan",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "LUP_SHT_NM",
+      "alias": "Land Use Plan Short Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ROD_DT",
+      "alias": "Record of Decision Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LUP_URL",
+      "alias": "Land Use Plan URL",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE",
+      "alias": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Length",
+      "alias": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SHAPE_Area",
+      "alias": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 196,
+      "hasDomain": false
+    },
+    {
+      "name": "LUPA_ID",
+      "type": "esriFieldTypeString",
+      "alias": "LUPA Natl Identifier",
+      "nullPct": 0,
+      "distinctCount": 194,
+      "hasDomain": false
+    },
+    {
+      "name": "PA_LOCAL_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Local Identifier",
+      "nullPct": 0,
+      "distinctCount": 62,
+      "hasDomain": false
+    },
+    {
+      "name": "LUP_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "LUP Project Name",
+      "nullPct": 0,
+      "distinctCount": 193,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 12,
+      "hasDomain": true
+    },
+    {
+      "name": "GIS_ACRES",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Acres",
+      "nullPct": 0,
+      "distinctCount": 196,
+      "hasDomain": false
+    },
+    {
+      "name": "LUP_TYPE",
+      "type": "esriFieldTypeString",
+      "alias": "Type of Land Use Plan",
+      "nullPct": 0,
+      "distinctCount": 3,
+      "hasDomain": true
+    },
+    {
+      "name": "LUP_SHT_NM",
+      "type": "esriFieldTypeString",
+      "alias": "Land Use Plan Short Name",
+      "nullPct": 0,
+      "distinctCount": 194,
+      "hasDomain": false
+    },
+    {
+      "name": "ROD_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Record of Decision Date",
+      "nullPct": 0,
+      "distinctCount": 160,
+      "hasDomain": false
+    },
+    {
+      "name": "LUP_URL",
+      "type": "esriFieldTypeString",
+      "alias": "Land Use Plan URL",
+      "nullPct": 0,
+      "distinctCount": 128,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 196,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 196,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "alias": "SHAPE",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Length",
+      "nullPct": 0,
+      "distinctCount": 196,
+      "hasDomain": false
+    },
+    {
+      "name": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Area",
+      "nullPct": 0,
+      "distinctCount": 196,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 14568,
+      "LUPA_ID": "LUPA002016",
+      "PA_LOCAL_ID": "",
+      "LUP_NAME": "Moab",
+      "ADMIN_ST": "UT",
+      "GIS_ACRES": 2759733.61374596,
+      "LUP_TYPE": "RMP",
+      "LUP_SHT_NM": "Moab RMP",
+      "ROD_DT": 1225411200000,
+      "LUP_URL": "https://go.usa.gov/xXhju",
+      "GlobalID": "{086D9DD7-6EA1-4CE6-9166-78A00720038D}",
+      "Original_GlobalID": "7ED6B175093CB03F",
+      "SHAPE_Length": 8.577764632533155,
+      "SHAPE_Area": 1.1594029350340262
+    },
+    {
+      "OBJECTID": 14570,
+      "LUPA_ID": "LUPA002007",
+      "PA_LOCAL_ID": "",
+      "LUP_NAME": "Warm Springs",
+      "ADMIN_ST": "UT",
+      "GIS_ACRES": 3152658.16276295,
+      "LUP_TYPE": "RMP",
+      "LUP_SHT_NM": "Warm Springs RMP",
+      "ROD_DT": 544060800000,
+      "LUP_URL": "https://go.usa.gov/xXhWE",
+      "GlobalID": "{E64CE935-4ED5-4354-BF89-18FDF11F8E7F}",
+      "Original_GlobalID": "B77575BA76F88CB7",
+      "SHAPE_Length": 5.660244079547114,
+      "SHAPE_Area": 1.325536159210659
+    },
+    {
+      "OBJECTID": 14571,
+      "LUPA_ID": "LUPA001404",
+      "PA_LOCAL_ID": "NMF010004",
+      "LUP_NAME": "Kasha-Katuwe Tent Rocks National Monument ",
+      "ADMIN_ST": "NM",
+      "GIS_ACRES": 5403.89159808,
+      "LUP_TYPE": "RMP",
+      "LUP_SHT_NM": "Kasha-Katuwe Tent Rocks RMP",
+      "ROD_DT": 1180051200000,
+      "LUP_URL": "https://www.blm.gov/style/medialib/blm/nm/field_offices/rio_puerco/kktr_plan.Par.92312.File.dat/RODFinal.pdf",
+      "GlobalID": "{9E69F831-649F-4B40-9326-2C0837F893D7}",
+      "Original_GlobalID": "D3ED764BBFD2C6EF",
+      "SHAPE_Length": 0.2155302717231997,
+      "SHAPE_Area": 0.0021766766434914145
+    },
+    {
+      "OBJECTID": 14572,
+      "LUPA_ID": "LUPA001813",
+      "PA_LOCAL_ID": "",
+      "LUP_NAME": "Roseburg District RMP 1995",
+      "ADMIN_ST": "OR",
+      "GIS_ACRES": 2690224.57565019,
+      "LUP_TYPE": "RMP",
+      "LUP_SHT_NM": "Roseburg RMP 1995",
+      "ROD_DT": 802051200000,
+      "LUP_URL": "",
+      "GlobalID": "{7C3C60FB-3AD1-4229-BC4B-A79E5210D1AE}",
+      "Original_GlobalID": "974EE9B5BE981BA9",
+      "SHAPE_Length": 7.402966714370853,
+      "SHAPE_Area": 1.2066840462593937
+    },
+    {
+      "OBJECTID": 14574,
+      "LUPA_ID": "LUPA001020",
+      "PA_LOCAL_ID": "UNK",
+      "LUP_NAME": "Challis RMP",
+      "ADMIN_ST": "ID",
+      "GIS_ACRES": 3501547.81391522,
+      "LUP_TYPE": "RMP",
+      "LUP_SHT_NM": "Challis RMP",
+      "ROD_DT": 933206400000,
+      "LUP_URL": "UNK",
+      "GlobalID": "{5A8AD477-9D63-4E98-9580-0A8389DBCFA3}",
+      "Original_GlobalID": "EDF11158AA53E445",
+      "SHAPE_Length": 8.52506014535912,
+      "SHAPE_Area": 1.599390280383798
+    }
+  ]
+}

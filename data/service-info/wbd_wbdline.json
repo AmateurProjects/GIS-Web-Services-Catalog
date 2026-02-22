@@ -1,0 +1,257 @@
+{
+  "generated": "2026-02-22T08:22:51.920Z",
+  "datasetId": "wbd_wbdline",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/0",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><div><p><span>Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 16 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000). See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p></div></div></div>",
+    "copyrightText": "USGS WBD - Watershed Boundary Dataset. Data refreshed January, 2026.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,REST,WMS",
+    "comments": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 16 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000). See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "WBDLine",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolyline",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "TNMID",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 395291,
+    "extent": {
+      "xmin": -19951755.682,
+      "ymin": -1644316.000599999,
+      "xmax": 20021551.7474,
+      "ymax": 11554273.612599999
+    }
+  },
+  "fields": [
+    {
+      "name": "objectid",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "shape",
+      "alias": "SHAPE",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "tnmid",
+      "alias": "TNMID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "hudigit",
+      "alias": "HUDigit",
+      "type": "esriFieldTypeInteger",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 9
+      },
+      "isKey": false
+    },
+    {
+      "name": "humod",
+      "alias": "HUMod",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "linesource",
+      "alias": "LineSource",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "loaddate",
+      "alias": "LoadDate",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "metasourceid",
+      "alias": "MetaSourceID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "shape_Length",
+      "alias": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "globalid",
+      "alias": "globalid",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "objectid",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "SHAPE",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "tnmid",
+      "type": "esriFieldTypeString",
+      "alias": "TNMID",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "hudigit",
+      "type": "esriFieldTypeInteger",
+      "alias": "HUDigit",
+      "nullPct": 0,
+      "distinctCount": 9,
+      "hasDomain": true
+    },
+    {
+      "name": "humod",
+      "type": "esriFieldTypeString",
+      "alias": "HUMod",
+      "nullPct": 54.7,
+      "distinctCount": 70,
+      "hasDomain": false
+    },
+    {
+      "name": "linesource",
+      "type": "esriFieldTypeString",
+      "alias": "LineSource",
+      "nullPct": 0,
+      "distinctCount": 845,
+      "hasDomain": false
+    },
+    {
+      "name": "loaddate",
+      "type": "esriFieldTypeDate",
+      "alias": "LoadDate",
+      "nullPct": 8.7,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "metasourceid",
+      "type": "esriFieldTypeString",
+      "alias": "MetaSourceID",
+      "nullPct": 55.9,
+      "distinctCount": 1035,
+      "hasDomain": false
+    },
+    {
+      "name": "shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Length",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "globalid",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "globalid",
+      "nullPct": 0,
+      "distinctCount": null,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "objectid": 1,
+      "tnmid": "{D97B6ED3-AC9F-4CC5-B388-FF060EDB5594}",
+      "hudigit": 2,
+      "humod": null,
+      "linesource": "NOAA3NM",
+      "loaddate": 1350305826000,
+      "metasourceid": null,
+      "shape_Length": 66357.43106581994,
+      "globalid": "{66945A51-55E8-4162-B8E1-CC327975B2AD}"
+    },
+    {
+      "objectid": 2,
+      "tnmid": "{0F6B50CB-529F-4AF9-9BA3-2EC3900C5C83}",
+      "hudigit": 2,
+      "humod": null,
+      "linesource": "NOAA3NM",
+      "loaddate": 1350305826000,
+      "metasourceid": null,
+      "shape_Length": 68728.59866841398,
+      "globalid": "{D98AF4E1-0E08-4565-9A90-0E5256502346}"
+    },
+    {
+      "objectid": 3,
+      "tnmid": "{1F6E1B85-8458-4CB1-8E83-0BF168794ADF}",
+      "hudigit": 2,
+      "humod": "NM",
+      "linesource": "NOAA3NM",
+      "loaddate": 1350305826000,
+      "metasourceid": null,
+      "shape_Length": 52188.64645310467,
+      "globalid": "{1381762A-BE77-4A52-A8C9-26BFEF1D336E}"
+    },
+    {
+      "objectid": 4,
+      "tnmid": "{4B209E01-6BF7-44EB-8BE9-8374D6662E6A}",
+      "hudigit": 2,
+      "humod": null,
+      "linesource": "NOAA3NM",
+      "loaddate": 1350305826000,
+      "metasourceid": null,
+      "shape_Length": 18505.380221458083,
+      "globalid": "{F538CC5F-37A6-4FA8-8EE8-6592143F05B7}"
+    },
+    {
+      "objectid": 5,
+      "tnmid": "{8E6D38FB-23CD-46BD-8ACD-76596856C993}",
+      "hudigit": 2,
+      "humod": null,
+      "linesource": "NOAA3NM",
+      "loaddate": 1350305826000,
+      "metasourceid": null,
+      "shape_Length": 21400.670105061436,
+      "globalid": "{34C3B234-8B09-47E6-B957-6AA04E20534B}"
+    }
+  ]
+}

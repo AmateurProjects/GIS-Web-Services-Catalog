@@ -1,0 +1,619 @@
+{
+  "generated": "2026-02-22T06:14:38.689Z",
+  "datasetId": "blm_locatable_notices",
+  "serviceUrl": "https://gis.blm.gov/nlsdb/rest/services/HUB/BLM_Natl_MLRS_Locatable_Notices/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;font-size:12pt'><div><div><p><span>This dataset contains notice level operations for locatable mineral cases derived from Legal Land Descriptions (LLD) contained in the US Bureau of Land Management's, BLM, Mineral and Land Record System(MLRS) and geocoded (mapped) using the Public Land Survey System (PLSS) derived from the most accurate survey data available through BLM Cadastral Survey workforce. Geospatial representations might be missing for some cases that can not be geocoded using the MLRS algorithm. Locatable minerals include all minerals locatable under the 1872 General Mining Law. This data set contains cases for locatable minerals under notice level operations with the case disposition of 'Authorized' or 'Pending'.</span></p></div></div></div>",
+    "copyrightText": "U.S. Department of Interior, Bureau of Land Management (BLM)",
+    "author": "",
+    "subject": "To geospatially represent locatable minerals under notice level operations data within Mineral and Land Records System (MLRS).",
+    "keywords": "Alabama,Alaska,Arizona,Arkansas,Authorization,boundaries,California,Colorado,Connecticut,Delaware,District of Columbia,Eastern States,Energy,Florida,free use,Geology,Georgia,geoscientificInformation,Geospatial,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,land grid,Louisiana,Maine,Management,Maryland,Massachusetts,Michigan,mining,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,permit,planningCadastre,PLSS,Public Land Survey System,Rhode Island,sales,section,South Carolina,South Dakota,Tennessee,Texas,township,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming",
+    "comments": "This dataset contains notice level operations for locatable mineral cases derived from Legal Land Descriptions (LLD) contained in the US Bureau of Land Management's, BLM, Mineral and Land Record System(MLRS) and geocoded (mapped) using the Public Land Survey System (PLSS) derived from the most accurate survey data available through BLM Cadastral Survey workforce. Geospatial representations might be missing for some cases that can not be geocoded using the MLRS algorithm. Locatable minerals include all minerals locatable under the 1872 General Mining Law. This data set contains cases for locatable minerals under notice level operations with the case disposition of 'Authorized' or 'Pending'.",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Locatable Notices",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "",
+    "displayField": "CSE_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 1245,
+    "extent": {
+      "xmin": -167.20634261099997,
+      "ymin": 31.643072408000023,
+      "xmax": -103.79066206099998,
+      "ymax": 67.51895055300008
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "ID",
+      "alias": "ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_STATE",
+      "alias": "Administrative State",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GEO_STATE",
+      "alias": "Geographic State",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "BLM_PROD",
+      "alias": "BLM Product",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_DISP",
+      "alias": "Case Disposition",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_TYPE_NR",
+      "alias": "BLM Product Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_NR",
+      "alias": "Case Serial Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LEG_CSE_NR",
+      "alias": "Legacy Case Serial Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_NAME",
+      "alias": "Geographic Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CMMDTY",
+      "alias": "Commodity",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EFF_DT",
+      "alias": "Effective Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "EXP_DT",
+      "alias": "Expiration Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PRDCNG",
+      "alias": "Production Status",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SALE_DT",
+      "alias": "Sales Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CUST_NM_SEC",
+      "alias": "Business Account Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PCT_INT_SEC",
+      "alias": "Business Account Percent Interest",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "INT_REL_SEC",
+      "alias": "Business Account Interest Relationship",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_DISP_DT",
+      "alias": "Case Disposition Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SRC",
+      "alias": "Data Source",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "QLTY",
+      "alias": "Data Quality",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "CSE_META",
+      "alias": "Case Metadata",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RCRD_ACRS",
+      "alias": "Case Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SF_ID",
+      "alias": "Salesforce ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Created",
+      "alias": "Created",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Modified",
+      "alias": "Modified",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "ID",
+      "type": "esriFieldTypeString",
+      "alias": "ID",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_STATE",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "GEO_STATE",
+      "type": "esriFieldTypeString",
+      "alias": "Geographic State",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "BLM_PROD",
+      "type": "esriFieldTypeString",
+      "alias": "BLM Product",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_DISP",
+      "type": "esriFieldTypeString",
+      "alias": "Case Disposition",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_TYPE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "BLM Product Code",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "Case Serial Number",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "LEG_CSE_NR",
+      "type": "esriFieldTypeString",
+      "alias": "Legacy Case Serial Number",
+      "nullPct": 28.5,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Geographic Name",
+      "nullPct": 10.6,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "CMMDTY",
+      "type": "esriFieldTypeString",
+      "alias": "Commodity",
+      "nullPct": 3.9,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "EFF_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Effective Date",
+      "nullPct": 54.3,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "EXP_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Expiration Date",
+      "nullPct": 40.2,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "PRDCNG",
+      "type": "esriFieldTypeString",
+      "alias": "Production Status",
+      "nullPct": 5.2,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "SALE_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Sales Date",
+      "nullPct": 100,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "CUST_NM_SEC",
+      "type": "esriFieldTypeString",
+      "alias": "Business Account Name",
+      "nullPct": 39,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "PCT_INT_SEC",
+      "type": "esriFieldTypeDouble",
+      "alias": "Business Account Percent Interest",
+      "nullPct": 38.6,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "INT_REL_SEC",
+      "type": "esriFieldTypeString",
+      "alias": "Business Account Interest Relationship",
+      "nullPct": 39,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_DISP_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Case Disposition Date",
+      "nullPct": 22.7,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "SRC",
+      "type": "esriFieldTypeString",
+      "alias": "Data Source",
+      "nullPct": 6.6,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "QLTY",
+      "type": "esriFieldTypeString",
+      "alias": "Data Quality",
+      "nullPct": 7.1,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "CSE_META",
+      "type": "esriFieldTypeString",
+      "alias": "Case Metadata",
+      "nullPct": 7.2,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "RCRD_ACRS",
+      "type": "esriFieldTypeDouble",
+      "alias": "Case Acres",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "SF_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Salesforce ID",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "Created",
+      "type": "esriFieldTypeDate",
+      "alias": "Created",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "Modified",
+      "type": "esriFieldTypeDate",
+      "alias": "Modified",
+      "nullPct": 0,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "nullPct": 8.8,
+      "distinctCount": 1245,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "nullPct": 8.8,
+      "distinctCount": 1245,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 2,
+      "ID": "1237135436963524608",
+      "ADMIN_STATE": "NV",
+      "GEO_STATE": "NV",
+      "BLM_PROD": "SURFACE MANAGEMENT-NOTICE",
+      "CSE_DISP": "Pending",
+      "CSE_TYPE_NR": "380913",
+      "CSE_NR": "NVNV106368101",
+      "LEG_CSE_NR": null,
+      "CSE_NAME": "TX Project",
+      "CMMDTY": "LITHIUM",
+      "EFF_DT": 1717199940000,
+      "EXP_DT": 1779321540000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "CUST_NM_SEC": "ML NEVADA CORP",
+      "PCT_INT_SEC": 100,
+      "INT_REL_SEC": "Claimant",
+      "CSE_DISP_DT": 1717199940000,
+      "SRC": "LLD/CLS",
+      "QLTY": "0; Map to entire FRSTDIVNO; Map to entire FRSTDIVNO; Map to entire FRSTDIVNO; Map to entire FRSTDIVNO",
+      "CSE_META": "NV 21 0440N 0650E 035 9 ALL | NV 21 0440N 0650E 015 9 ALL | NV 21 0440N 0650E 015 9 ALL | NV 21 0440N 0650E 035 9 ALL",
+      "RCRD_ACRS": 1.83,
+      "SF_ID": "a023d00000ITHfyAAH",
+      "Created": 1714953600000,
+      "Modified": 1769120362000,
+      "Shape__Area": 0.0005659993320415077,
+      "Shape__Length": 0.13593282555216635
+    },
+    {
+      "OBJECTID": 3,
+      "ID": "1171147742718836736",
+      "ADMIN_STATE": "UT",
+      "GEO_STATE": "UT",
+      "BLM_PROD": "SURFACE MANAGEMENT-NOTICE",
+      "CSE_DISP": "Pending",
+      "CSE_TYPE_NR": "380913",
+      "CSE_NR": "UTUT106329845",
+      "LEG_CSE_NR": null,
+      "CSE_NAME": "KRAKEN - HARTS POINT EXPLORATION",
+      "CMMDTY": "URANIUM AND OTHER MIN",
+      "EFF_DT": 1699315140000,
+      "EXP_DT": 1801785540000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "CUST_NM_SEC": "KRAKEN ENERGY CORP",
+      "PCT_INT_SEC": 0,
+      "INT_REL_SEC": "Certified Operator",
+      "CSE_DISP_DT": 1699055940000,
+      "SRC": "LLD/CLS",
+      "QLTY": "1; MIDPOINT, TYPICAL QUARTER SECTION WITH 4 STANDARD LEGALS ATTRIBUTED, aliquot; MIDPOINT, TYPICAL QUARTER SECTION WITH 4 STANDARD LEGALS ATTRIBUTED, aliquot",
+      "CSE_META": "UT 26 0310S 0220E 022 A SW | UT 26 0310S 0220E 008 A NE",
+      "RCRD_ACRS": 2.05,
+      "SF_ID": "a023d00000HNuoIAAT",
+      "Created": 1699228800000,
+      "Modified": 1769713421000,
+      "Shape__Area": 0.00013273147474935254,
+      "Shape__Length": 0.06562240035064065
+    },
+    {
+      "OBJECTID": 5,
+      "ID": "1121466416551251813",
+      "ADMIN_STATE": "NV",
+      "GEO_STATE": "NV",
+      "BLM_PROD": "SURFACE MANAGEMENT-NOTICE",
+      "CSE_DISP": "Pending",
+      "CSE_TYPE_NR": "380913",
+      "CSE_NR": "NVNV106127941",
+      "LEG_CSE_NR": "NVN    080556",
+      "CSE_NAME": "DELORDA MINING",
+      "CMMDTY": "To Be Defined",
+      "EFF_DT": null,
+      "EXP_DT": null,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "CUST_NM_SEC": "DELORDA MINING",
+      "PCT_INT_SEC": 0,
+      "INT_REL_SEC": "Operator",
+      "CSE_DISP_DT": 1131148740000,
+      "SRC": "MIGRATE",
+      "QLTY": "1: MIDPOINT\nTYPICAL QUARTER SECTION WITH 4 STANDARD LEGALS ATTRIBUTED\nDOES NOT MATCH PM ANGLES\naliquot\n36 sections retrieved\n625 intersected features retrieved\n16 matching sections found\nsection 33 issimple: False, MIDPOINT\nTYPICAL QUARTER SECTION WITH 4 ",
+      "CSE_META": "NV 21 0140S 0660E 033 A SE|NV 21 0140S 0660E 033 A SW|NV 21 0140S 0660E 034 A SW",
+      "RCRD_ACRS": 400,
+      "SF_ID": "a023d00000GZdHHAA1",
+      "Created": 1687444892000,
+      "Modified": 1728162881000,
+      "Shape__Area": 0.00020520418679284455,
+      "Shape__Length": 0.06987406808385498
+    },
+    {
+      "OBJECTID": 6,
+      "ID": "1200595638555877376",
+      "ADMIN_STATE": "OR",
+      "GEO_STATE": "OR",
+      "BLM_PROD": "SURFACE MANAGEMENT-NOTICE",
+      "CSE_DISP": "Authorized",
+      "CSE_TYPE_NR": "380913",
+      "CSE_NR": "OROR106350763",
+      "LEG_CSE_NR": null,
+      "CSE_NAME": "BEOWULF #1",
+      "CMMDTY": null,
+      "EFF_DT": 1706313540000,
+      "EXP_DT": 1771199940000,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "CUST_NM_SEC": null,
+      "PCT_INT_SEC": null,
+      "INT_REL_SEC": null,
+      "CSE_DISP_DT": 1716249540000,
+      "SRC": "LLD/CLS",
+      "QLTY": "1; MIDPOINT, TYPICAL QUARTER SECTION WITH 4 STANDARD LEGALS ATTRIBUTED, aliquot; MIDPOINT, TYPICAL QUARTER SECTION WITH 4 STANDARD LEGALS ATTRIBUTED, aliquot",
+      "CSE_META": "OR 33 0330S 0240E 014 A SE | OR 33 0330S 0240E 014 A SE",
+      "RCRD_ACRS": 320,
+      "SF_ID": "a023d00000Hs3X4AAJ",
+      "Created": 1706313600000,
+      "Modified": 1752704165000,
+      "Shape__Area": 0.00007303248719710352,
+      "Shape__Length": 0.03457150671120612
+    },
+    {
+      "OBJECTID": 7,
+      "ID": "1121466416551007936",
+      "ADMIN_STATE": "AZ",
+      "GEO_STATE": "AZ",
+      "BLM_PROD": "SURFACE MANAGEMENT-NOTICE",
+      "CSE_DISP": "Authorized",
+      "CSE_TYPE_NR": "380913",
+      "CSE_NR": "AZAZ106086733",
+      "LEG_CSE_NR": "AZA    023709",
+      "CSE_NAME": "BUCK MOUNTAIN MIN #1",
+      "CMMDTY": "Gold",
+      "EFF_DT": null,
+      "EXP_DT": null,
+      "PRDCNG": "Non-Producing",
+      "SALE_DT": null,
+      "CUST_NM_SEC": null,
+      "PCT_INT_SEC": null,
+      "INT_REL_SEC": null,
+      "CSE_DISP_DT": 1054339140000,
+      "SRC": "MIGRATE",
+      "QLTY": "8: 0 intersecting parts\naliquot\n40 sections retrieved\n1003 intersected features retrieved\ntodo handle unclean township\n146 matching sections found\nformerly known as 4.2, 0 intersecting parts\nOnly mapped PLSS First Div\nDOES NOT MATCH PM ANGLES\nTWN CONTAINS",
+      "CSE_META": "AZ 14 0040S 0160E 020 A NWNE|AZ 14 0040S 0160E 020 A S2SE|AZ 14 0050S 0160E 004 A S2|AZ 14 0050S 0160E 005 L 5|AZ 14 0050S 0160E 008 A NE|AZ 14 0050S 0160E 009 A N2N2",
+      "RCRD_ACRS": 1,
+      "SF_ID": "a023d00000GYy8KAAT",
+      "Created": 1687444695000,
+      "Modified": 1728158735000,
+      "Shape__Area": 0.0005076438111134797,
+      "Shape__Length": 0.15811893424614357
+    }
+  ]
+}

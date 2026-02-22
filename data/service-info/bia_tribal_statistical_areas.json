@@ -1,0 +1,214 @@
+{
+  "generated": "2026-02-22T08:31:05.266Z",
+  "datasetId": "bia_tribal_statistical_areas",
+  "serviceUrl": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_Tribal_Statistical_Areas/MapServer/0",
+  "metadata": {
+    "serviceDescription": "In Oklahoma, historic depictions of the land areas representations, as described in 1867-1870, were developed and called Tribal Statistical Areas (TSA) in the AIAN-LAR. These areas are similar to the Bureau of Census Oklahoma Tribal Statistical Areas (OTSA) which are areas used for the collection, tabulation and presentation of decennial census data for the 36 Federally- recognized American Indian tribes located in the state. No legal inference can or should be made from the TSA information in the GIS dataset. Reservation boundary data is limited in authority to those areas where there has been settled Congressional definition or final judicial interpretation of the boundary. Absent settled Congressional definition or final judicial interpretation of a reservation boundary, the BIA recommends consultation with the appropriate tribe and then the BIA to obtain interpretations of the reservation boundary. Reservation boundary data is limited in authority to those areas where there has been settled Congressional definition or final judicial interpretation of the boundary. Absent settled Congressional definition or final judicial interpretation of a reservation boundary, the BIA recommends consultation with the appropriate Tribe and then the BIA to obtain interpretations of the reservation boundary. The land areas and their representations are compilations defined by the official land title records of the Bureau of Indian Affairs (BIA) which include treaties, statutes, Acts of Congress, agreements, executive orders, proclamations, deeds and other land title documents. The trust, restricted, and mixed ownership land area shown here, are suitable only for general spatial reference and do not represent the federal government’s position on the jurisdictional status of Indian country. Ownership and jurisdictional status is subject to change and must be verified with plat books, patents, and deeds in the appropriate federal and state offices.",
+    "copyrightText": "Bureau of Indian Affairs, Office of Trust Services, Division of Land Titles and Records, Branch of Geospatial Support. Please feel free to contact us at geospatial@bia.gov",
+    "author": "",
+    "subject": "",
+    "keywords": "Oklahoma Tribal Statistical Area,OTSA,Oklahoma Historical Boundary,Oklahoma Historical Boundaries,Historical Boundaries,Tribal Historical Boundaries,LAR,Tribal Land,BIA,Bureau of Indian Affairs",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BIA AIAN Tribal Statistical Areas",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "LARNAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 30,
+    "extent": {
+      "xmin": -100.00256906699997,
+      "ymin": 33.61578700000007,
+      "xmax": -94.43066199999998,
+      "ymax": 36.99987278000003
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "TSAID",
+      "alias": "Tribal Statistical Area (TSA) ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LARNAME",
+      "alias": "Land Area Represention (LAR) Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GISACRES",
+      "alias": "GIS Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape.STArea()",
+      "alias": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape.STLength()",
+      "alias": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 30,
+      "hasDomain": false
+    },
+    {
+      "name": "TSAID",
+      "type": "esriFieldTypeString",
+      "alias": "Tribal Statistical Area (TSA) ID",
+      "nullPct": 6.7,
+      "distinctCount": 27,
+      "hasDomain": false
+    },
+    {
+      "name": "LARNAME",
+      "type": "esriFieldTypeString",
+      "alias": "Land Area Represention (LAR) Name",
+      "nullPct": 0,
+      "distinctCount": 30,
+      "hasDomain": false
+    },
+    {
+      "name": "GISACRES",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Acres",
+      "nullPct": 0,
+      "distinctCount": 30,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 30,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape.STArea()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STArea()",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape.STLength()",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape.STLength()",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 401,
+      "TSAID": "930",
+      "LARNAME": "Osage",
+      "GISACRES": 1474540,
+      "GlobalID": "{38116449-2AD8-4473-B94D-D40AF9D4E511}",
+      "Shape.STArea()": 0.60121446739119,
+      "Shape.STLength()": 4.244630789879919
+    },
+    {
+      "OBJECTID": 402,
+      "TSAID": "905",
+      "LARNAME": "Cherokee",
+      "GISACRES": 4456430,
+      "GlobalID": "{3FC4E979-8DEE-4187-9668-500C38FCAF7C}",
+      "Shape.STArea()": 1.8077368026199234,
+      "Shape.STLength()": 8.011649754923559
+    },
+    {
+      "OBJECTID": 403,
+      "TSAID": "908",
+      "LARNAME": "Creek",
+      "GISACRES": 3063060,
+      "GlobalID": "{9CED682D-74C8-49EB-AA92-0E16283B80ED}",
+      "Shape.STArea()": 1.2338102914304887,
+      "Shape.STLength()": 5.929304940418672
+    },
+    {
+      "OBJECTID": 404,
+      "TSAID": "923",
+      "LARNAME": "Seneca-Cayuga",
+      "GISACRES": 53288.3984375,
+      "GlobalID": "{19E66CCE-E08A-4F93-B4F5-543B9555E438}",
+      "Shape.STArea()": 0.021745023753899504,
+      "Shape.STLength()": 0.8311970112443263
+    },
+    {
+      "OBJECTID": 405,
+      "TSAID": "921",
+      "LARNAME": "Eastern Shawnee",
+      "GISACRES": 13266.90039063,
+      "GlobalID": "{D962A2C8-D39C-47E8-B875-D1A2B587751B}",
+      "Shape.STArea()": 0.005424541903579001,
+      "Shape.STLength()": 0.42424460100666445
+    }
+  ]
+}

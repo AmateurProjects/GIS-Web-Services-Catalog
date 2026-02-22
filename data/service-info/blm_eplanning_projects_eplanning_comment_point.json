@@ -1,0 +1,124 @@
+{
+  "generated": "2026-02-22T06:14:55.968Z",
+  "datasetId": "blm_eplanning_projects_eplanning_comment_point",
+  "serviceUrl": "https://gis.blm.gov/arcgis/rest/services/ePlanning/BLM_Natl_Epl_Comment/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "eplanning,comments",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Create,Uploads,Editing",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "ePlanning Comment Point",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPoint",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "",
+    "displayField": "REF_LYR_TITLE",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": true,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": null,
+    "extent": {
+      "xmin": -145.28318562799996,
+      "ymin": 28.051005415000077,
+      "xmax": 109.24803736600006,
+      "ymax": 64.39687603300007
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "REF_LYR_TITLE",
+      "alias": "Reference Layer Title Point",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REF_LYR_URL",
+      "alias": "Reference Layer URL Point",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REF_LYR_ID_FLD",
+      "alias": "Reference Layer Identifier Field Point",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REF_LYR_ID",
+      "alias": "Reference Layer Identifier Point",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REF_LYR_GIS_CHNG",
+      "alias": "Reference Layer GIS Change Point",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "COMMENT_PERIOD_ID",
+      "alias": "Comment Period Identifier Point",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUBMISSION_ID",
+      "alias": "Submission Identifier Point",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SYNCED",
+      "alias": "Synced Point",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SYNCED_DT",
+      "alias": "Synced Date Point",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SUBMISSION_DT",
+      "alias": "SUBMISSION_DT",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [],
+  "sampleRows": []
+}

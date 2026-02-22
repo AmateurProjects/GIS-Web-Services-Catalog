@@ -1,0 +1,819 @@
+{
+  "generated": "2026-02-22T06:15:23.255Z",
+  "datasetId": "blm_lwcf",
+  "serviceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Land_and_Water_Conservation_Fund_LWCF_Polygons/FeatureServer/2",
+  "metadata": {
+    "serviceDescription": "This dataset represents locations for LWCF acquisitions, dissolved by case ID.",
+    "copyrightText": "Bureau of Land Management",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM Natl Land and Water Conservation Fund (LWCF) Polygons",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "",
+    "displayField": "Prjt_Name",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1674063534887,
+    "definitionExpression": "",
+    "recordCount": 1626,
+    "extent": {
+      "xmin": -124.51343421899998,
+      "ymin": 30.407439603000057,
+      "xmax": -88.14078711799993,
+      "ymax": 48.438328796000064
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Case_id",
+      "alias": "Case_id",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SN_Full",
+      "alias": "Serial Number FUll",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Geo_State",
+      "alias": "State",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Prjt_Name",
+      "alias": "Project Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Ref_Num",
+      "alias": "Reference Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Acq_Method",
+      "alias": "Acquisition Method",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Int_Acq",
+      "alias": "Interest Acquired",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Esmt_Rgts",
+      "alias": "Easement Rights Acquired",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Acc_Rgts",
+      "alias": "Access Rights",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Esmt_exp",
+      "alias": "Easment Expires",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Acq_Fund",
+      "alias": "Acquisition Fund",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Fund_Year",
+      "alias": "Fund Source Year",
+      "type": "esriFieldTypeSmallInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Purpose",
+      "alias": "Purpose",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Pmnt_Made",
+      "alias": "Payment Made",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Acq_Value",
+      "alias": "Appraisal Approved",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Width",
+      "alias": "Width",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Length_Feet",
+      "alias": "Length Feet",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Length_Miles",
+      "alias": "Length Miles",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Area_Acq",
+      "alias": "Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Deed_Sign",
+      "alias": "Deed Signed",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Recorded",
+      "alias": "Instrument Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "County_Rec",
+      "alias": "County",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Tax_ID",
+      "alias": "Parcel Tax ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Rsts_Acq",
+      "alias": "Rights Acquired",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NGO_Name",
+      "alias": "Non-Gov Organization Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "NGO_Invol",
+      "alias": "Non-Gov Organization Involvement",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Title_Acpt",
+      "alias": "Date of Title Accepted by U.S.",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Public_Display",
+      "alias": "Public Data Approved",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Source",
+      "alias": "Source",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Other_Funds",
+      "alias": "Other Funds",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Appropriation_Reference",
+      "alias": "Appropriation Reference",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Administrating_Agency",
+      "alias": "Administrating Agency",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Media_Links",
+      "alias": "Media Links",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Photo_Links",
+      "alias": "Photo Links",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ID",
+      "alias": "ID",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 1626,
+      "hasDomain": false
+    },
+    {
+      "name": "Case_id",
+      "type": "esriFieldTypeInteger",
+      "alias": "Case_id",
+      "nullPct": 0,
+      "distinctCount": 1626,
+      "hasDomain": false
+    },
+    {
+      "name": "SN_Full",
+      "type": "esriFieldTypeString",
+      "alias": "Serial Number FUll",
+      "nullPct": 0,
+      "distinctCount": 1624,
+      "hasDomain": false
+    },
+    {
+      "name": "Geo_State",
+      "type": "esriFieldTypeString",
+      "alias": "State",
+      "nullPct": 0,
+      "distinctCount": 12,
+      "hasDomain": false
+    },
+    {
+      "name": "Prjt_Name",
+      "type": "esriFieldTypeString",
+      "alias": "Project Name",
+      "nullPct": 0.9,
+      "distinctCount": 436,
+      "hasDomain": false
+    },
+    {
+      "name": "Ref_Num",
+      "type": "esriFieldTypeString",
+      "alias": "Reference Number",
+      "nullPct": 25.3,
+      "distinctCount": 556,
+      "hasDomain": false
+    },
+    {
+      "name": "Acq_Method",
+      "type": "esriFieldTypeString",
+      "alias": "Acquisition Method",
+      "nullPct": 99,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Int_Acq",
+      "type": "esriFieldTypeString",
+      "alias": "Interest Acquired",
+      "nullPct": 2.2,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "Esmt_Rgts",
+      "type": "esriFieldTypeString",
+      "alias": "Easement Rights Acquired",
+      "nullPct": 2.2,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "Acc_Rgts",
+      "type": "esriFieldTypeString",
+      "alias": "Access Rights",
+      "nullPct": 99.8,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Esmt_exp",
+      "type": "esriFieldTypeString",
+      "alias": "Easment Expires",
+      "nullPct": 99.6,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Acq_Fund",
+      "type": "esriFieldTypeString",
+      "alias": "Acquisition Fund",
+      "nullPct": 0.4,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Fund_Year",
+      "type": "esriFieldTypeSmallInteger",
+      "alias": "Fund Source Year",
+      "nullPct": 100,
+      "distinctCount": 0,
+      "hasDomain": false
+    },
+    {
+      "name": "Purpose",
+      "type": "esriFieldTypeString",
+      "alias": "Purpose",
+      "nullPct": 29.3,
+      "distinctCount": 616,
+      "hasDomain": false
+    },
+    {
+      "name": "Pmnt_Made",
+      "type": "esriFieldTypeString",
+      "alias": "Payment Made",
+      "nullPct": 0,
+      "distinctCount": 861,
+      "hasDomain": false
+    },
+    {
+      "name": "Acq_Value",
+      "type": "esriFieldTypeString",
+      "alias": "Appraisal Approved",
+      "nullPct": 0,
+      "distinctCount": 823,
+      "hasDomain": false
+    },
+    {
+      "name": "Width",
+      "type": "esriFieldTypeString",
+      "alias": "Width",
+      "nullPct": 96.6,
+      "distinctCount": 12,
+      "hasDomain": false
+    },
+    {
+      "name": "Length_Feet",
+      "type": "esriFieldTypeString",
+      "alias": "Length Feet",
+      "nullPct": 97.2,
+      "distinctCount": 31,
+      "hasDomain": false
+    },
+    {
+      "name": "Length_Miles",
+      "type": "esriFieldTypeString",
+      "alias": "Length Miles",
+      "nullPct": 99.5,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "Area_Acq",
+      "type": "esriFieldTypeDouble",
+      "alias": "Area",
+      "nullPct": 0,
+      "distinctCount": 953,
+      "hasDomain": false
+    },
+    {
+      "name": "Deed_Sign",
+      "type": "esriFieldTypeDate",
+      "alias": "Deed Signed",
+      "nullPct": 1.7,
+      "distinctCount": 1325,
+      "hasDomain": false
+    },
+    {
+      "name": "Recorded",
+      "type": "esriFieldTypeString",
+      "alias": "Instrument Number",
+      "nullPct": 0,
+      "distinctCount": 1439,
+      "hasDomain": false
+    },
+    {
+      "name": "County_Rec",
+      "type": "esriFieldTypeString",
+      "alias": "County",
+      "nullPct": 0,
+      "distinctCount": 126,
+      "hasDomain": false
+    },
+    {
+      "name": "Tax_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Parcel Tax ID",
+      "nullPct": 100,
+      "distinctCount": 0,
+      "hasDomain": false
+    },
+    {
+      "name": "Rsts_Acq",
+      "type": "esriFieldTypeString",
+      "alias": "Rights Acquired",
+      "nullPct": 8.5,
+      "distinctCount": 208,
+      "hasDomain": false
+    },
+    {
+      "name": "NGO_Name",
+      "type": "esriFieldTypeString",
+      "alias": "Non-Gov Organization Name",
+      "nullPct": 96.2,
+      "distinctCount": 16,
+      "hasDomain": false
+    },
+    {
+      "name": "NGO_Invol",
+      "type": "esriFieldTypeString",
+      "alias": "Non-Gov Organization Involvement",
+      "nullPct": 100,
+      "distinctCount": 0,
+      "hasDomain": false
+    },
+    {
+      "name": "Title_Acpt",
+      "type": "esriFieldTypeDate",
+      "alias": "Date of Title Accepted by U.S.",
+      "nullPct": 0.2,
+      "distinctCount": 1128,
+      "hasDomain": false
+    },
+    {
+      "name": "Public_Display",
+      "type": "esriFieldTypeString",
+      "alias": "Public Data Approved",
+      "nullPct": 28.3,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Source",
+      "type": "esriFieldTypeString",
+      "alias": "Source",
+      "nullPct": 2,
+      "distinctCount": 4,
+      "hasDomain": false
+    },
+    {
+      "name": "Other_Funds",
+      "type": "esriFieldTypeString",
+      "alias": "Other Funds",
+      "nullPct": 99.6,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "Appropriation_Reference",
+      "type": "esriFieldTypeString",
+      "alias": "Appropriation Reference",
+      "nullPct": 100,
+      "distinctCount": 0,
+      "hasDomain": false
+    },
+    {
+      "name": "Administrating_Agency",
+      "type": "esriFieldTypeString",
+      "alias": "Administrating Agency",
+      "nullPct": 7.1,
+      "distinctCount": 91,
+      "hasDomain": false
+    },
+    {
+      "name": "Media_Links",
+      "type": "esriFieldTypeString",
+      "alias": "Media Links",
+      "nullPct": 23.1,
+      "distinctCount": 18,
+      "hasDomain": false
+    },
+    {
+      "name": "Photo_Links",
+      "type": "esriFieldTypeString",
+      "alias": "Photo Links",
+      "nullPct": 23.1,
+      "distinctCount": 43,
+      "hasDomain": false
+    },
+    {
+      "name": "ID",
+      "type": "esriFieldTypeInteger",
+      "alias": "ID",
+      "nullPct": 99.8,
+      "distinctCount": 1,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 1541,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 1542,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "Case_id": 26520,
+      "SN_Full": "OROR   008879",
+      "Geo_State": "OR",
+      "Prjt_Name": "ROGUE_NWSR",
+      "Ref_Num": "SD-M-2",
+      "Acq_Method": null,
+      "Int_Acq": "Fee",
+      "Esmt_Rgts": "Exclusive",
+      "Acc_Rgts": null,
+      "Esmt_exp": null,
+      "Acq_Fund": "LWCF;",
+      "Fund_Year": null,
+      "Purpose": "RECREATION,21",
+      "Pmnt_Made": "$30,629.0",
+      "Acq_Value": "$30,300.0",
+      "Width": null,
+      "Length_Feet": null,
+      "Length_Miles": null,
+      "Area_Acq": 20.88,
+      "Deed_Sign": 55987200000,
+      "Recorded": "VOL278 PG734",
+      "County_Rec": "JOSEPHINE",
+      "Tax_ID": null,
+      "Rsts_Acq": "ALL MINERALS, ALL SURFACE RIGHTS U.S.",
+      "NGO_Name": null,
+      "NGO_Invol": null,
+      "Title_Acpt": 61776000000,
+      "Public_Display": "Yes",
+      "Source": "CadNSDI",
+      "Other_Funds": null,
+      "Appropriation_Reference": null,
+      "Administrating_Agency": "BLM MEDFORD DO",
+      "Media_Links": "",
+      "Photo_Links": "https://www.flickr.com/search/?user_id=91981596%40N06&view_all=1&text=%22rogue%20wsr%22",
+      "ID": null,
+      "Shape__Area": 0.00029370782658588723,
+      "Shape__Length": 0.07407320464968849
+    },
+    {
+      "OBJECTID": 2,
+      "Case_id": 26939,
+      "SN_Full": "OROR   012878",
+      "Geo_State": "OR",
+      "Prjt_Name": "ROGUE_NWSR",
+      "Ref_Num": "SD-M-19",
+      "Acq_Method": null,
+      "Int_Acq": "Fee",
+      "Esmt_Rgts": "Exclusive",
+      "Acc_Rgts": null,
+      "Esmt_exp": null,
+      "Acq_Fund": "LWCF;",
+      "Fund_Year": null,
+      "Purpose": "RECREATION,81",
+      "Pmnt_Made": "$20.0",
+      "Acq_Value": "$18,000.0",
+      "Width": null,
+      "Length_Feet": null,
+      "Length_Miles": null,
+      "Area_Acq": 80.01,
+      "Deed_Sign": 127094400000,
+      "Recorded": "VOL297 PAGE296",
+      "County_Rec": "JOSEPHINE",
+      "Tax_ID": null,
+      "Rsts_Acq": "ALL SURFACE RIGHTS U.S.",
+      "NGO_Name": null,
+      "NGO_Invol": null,
+      "Title_Acpt": 130118400000,
+      "Public_Display": "Yes",
+      "Source": "CadNSDI",
+      "Other_Funds": null,
+      "Appropriation_Reference": null,
+      "Administrating_Agency": "BLM MEDFORD DO",
+      "Media_Links": "",
+      "Photo_Links": "https://www.flickr.com/search/?user_id=91981596%40N06&view_all=1&text=%22rogue%20wsr%22",
+      "ID": null,
+      "Shape__Area": 0.00003540530315149226,
+      "Shape__Length": 0.02689715132302273
+    },
+    {
+      "OBJECTID": 3,
+      "Case_id": 33014,
+      "SN_Full": "OROR   035131",
+      "Geo_State": "OR",
+      "Prjt_Name": null,
+      "Ref_Num": "RE-M-952",
+      "Acq_Method": null,
+      "Int_Acq": "Easment",
+      "Esmt_Rgts": null,
+      "Acc_Rgts": null,
+      "Esmt_exp": null,
+      "Acq_Fund": "LWCF;",
+      "Fund_Year": null,
+      "Purpose": "RECREATION",
+      "Pmnt_Made": "$4,000.0",
+      "Acq_Value": "$550.0",
+      "Width": "20",
+      "Length_Feet": null,
+      "Length_Miles": "1.634",
+      "Area_Acq": 3.9,
+      "Deed_Sign": null,
+      "Recorded": "80-10996",
+      "County_Rec": "JACKSON",
+      "Tax_ID": null,
+      "Rsts_Acq": null,
+      "NGO_Name": null,
+      "NGO_Invol": null,
+      "Title_Acpt": 400377600000,
+      "Public_Display": "Yes",
+      "Source": "CadNSDI",
+      "Other_Funds": null,
+      "Appropriation_Reference": null,
+      "Administrating_Agency": "BLM MEDFORD DO",
+      "Media_Links": "",
+      "Photo_Links": "",
+      "ID": null,
+      "Shape__Area": 0.00008692200526638771,
+      "Shape__Length": 0.052676114346289084
+    },
+    {
+      "OBJECTID": 4,
+      "Case_id": 33166,
+      "SN_Full": "OROR   016169",
+      "Geo_State": "OR",
+      "Prjt_Name": "PACIFIC CREST TRAIL",
+      "Ref_Num": "RE-M-899",
+      "Acq_Method": null,
+      "Int_Acq": "Easment",
+      "Esmt_Rgts": null,
+      "Acc_Rgts": null,
+      "Esmt_exp": null,
+      "Acq_Fund": "LWCF;",
+      "Fund_Year": null,
+      "Purpose": "RECREATION",
+      "Pmnt_Made": "$0.00",
+      "Acq_Value": "$0.00",
+      "Width": "20",
+      "Length_Feet": "1800",
+      "Length_Miles": null,
+      "Area_Acq": 0.8,
+      "Deed_Sign": 194140800000,
+      "Recorded": "76-07926",
+      "County_Rec": "JACKSON",
+      "Tax_ID": null,
+      "Rsts_Acq": null,
+      "NGO_Name": null,
+      "NGO_Invol": null,
+      "Title_Acpt": 204854400000,
+      "Public_Display": "Yes",
+      "Source": "CadNSDI",
+      "Other_Funds": null,
+      "Appropriation_Reference": null,
+      "Administrating_Agency": "BLM MEDFORD DO",
+      "Media_Links": "",
+      "Photo_Links": "https://www.flickr.com/search/?user_id=91981596%40N06&view_all=1&text=Pacific%20Crest",
+      "ID": null,
+      "Shape__Area": 0.00006945541736058658,
+      "Shape__Length": 0.04809412245992654
+    },
+    {
+      "OBJECTID": 5,
+      "Case_id": 44714,
+      "SN_Full": "IDI    027048",
+      "Geo_State": "ID",
+      "Prjt_Name": "CRUTCHERS CROSSING;KM",
+      "Ref_Num": null,
+      "Acq_Method": null,
+      "Int_Acq": "Fee",
+      "Esmt_Rgts": "Exclusive",
+      "Acc_Rgts": null,
+      "Esmt_exp": null,
+      "Acq_Fund": "LWCF;",
+      "Fund_Year": null,
+      "Purpose": null,
+      "Pmnt_Made": "$100,000.0",
+      "Acq_Value": "$100,000.0",
+      "Width": null,
+      "Length_Feet": null,
+      "Length_Miles": null,
+      "Area_Acq": 160,
+      "Deed_Sign": 620438400000,
+      "Recorded": "INSTR #200293",
+      "County_Rec": "OWYHEE",
+      "Tax_ID": null,
+      "Rsts_Acq": null,
+      "NGO_Name": null,
+      "NGO_Invol": null,
+      "Title_Acpt": 623462400000,
+      "Public_Display": "Yes",
+      "Source": "CadNSDI",
+      "Other_Funds": null,
+      "Appropriation_Reference": null,
+      "Administrating_Agency": "BLM LOWER SNAKE RIVER DIST",
+      "Media_Links": "",
+      "Photo_Links": "",
+      "ID": null,
+      "Shape__Area": 0.00007070655601637554,
+      "Shape__Length": 0.034007667485797456
+    }
+  ]
+}

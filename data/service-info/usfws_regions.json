@@ -1,0 +1,199 @@
+{
+  "generated": "2026-02-22T06:22:13.500Z",
+  "datasetId": "usfws_regions",
+  "serviceUrl": "https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/FWS_Legacy_Regional_Boundaries/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "USFWS Legacy Regional Boundaries",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 1000,
+    "wkid": 4326,
+    "capabilities": "Query,Extract,Sync",
+    "syncEnabled": true,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "FWS Legacy Regional Boundaries",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "REGNAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 10000000,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1770128742784,
+    "definitionExpression": "",
+    "recordCount": 8,
+    "extent": {
+      "xmin": -179.13339233394532,
+      "ymin": 17.67469215500006,
+      "xmax": -64.56616210899995,
+      "ymax": 71.3980483900362
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "REGION",
+      "alias": "REGION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REGNAME",
+      "alias": "REGNAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Region_Number",
+      "alias": "Region_Number",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "REGION",
+      "type": "esriFieldTypeString",
+      "alias": "REGION",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "REGNAME",
+      "type": "esriFieldTypeString",
+      "alias": "REGNAME",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": false
+    },
+    {
+      "name": "Region_Number",
+      "type": "esriFieldTypeInteger",
+      "alias": "Region_Number",
+      "nullPct": 0,
+      "distinctCount": 8,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "REGION": "7",
+      "REGNAME": "Alaska Region",
+      "GlobalID": "99200a63-068c-4321-8758-afd9e799fc63",
+      "Shape__Area": 279.4410767509012,
+      "Shape__Length": 775.3465140199285,
+      "Region_Number": 7
+    },
+    {
+      "OBJECTID": 2,
+      "REGION": "6",
+      "REGNAME": "Mountain Prairie Region",
+      "GlobalID": "d5f6545e-7091-4a93-b917-24e883fc6d09",
+      "Shape__Area": 212.11668601243105,
+      "Shape__Length": 79.69333847536853,
+      "Region_Number": 6
+    },
+    {
+      "OBJECTID": 3,
+      "REGION": "5",
+      "REGNAME": "Northeast Region",
+      "GlobalID": "15a8d7cd-25a0-429d-9a4e-466eb618f137",
+      "Shape__Area": 69.30213494079499,
+      "Shape__Length": 191.97136568185007,
+      "Region_Number": 5
+    },
+    {
+      "OBJECTID": 4,
+      "REGION": "4",
+      "REGNAME": "Southeast Region",
+      "GlobalID": "2b5cc2ae-2d37-4b19-91c0-eeee7a26b727",
+      "Shape__Area": 120.77625754397104,
+      "Shape__Length": 258.4652299281458,
+      "Region_Number": 4
+    },
+    {
+      "OBJECTID": 5,
+      "REGION": "2",
+      "REGNAME": "Southwest Region",
+      "GlobalID": "9f375c8b-76de-475a-a697-22a9525b19c1",
+      "Shape__Area": 143.05758162062875,
+      "Shape__Length": 89.35928296793458,
+      "Region_Number": 2
+    }
+  ]
+}

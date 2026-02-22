@@ -1,0 +1,325 @@
+{
+  "generated": "2026-02-22T06:13:53.667Z",
+  "datasetId": "blm_grazing_allotments",
+  "serviceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Grazing_Allotment_Polygons/FeatureServer/1",
+  "metadata": {
+    "serviceDescription": "The purpose of this polygon feature class is to show BLM Grazing Allotments, which are areas of land designated and managed for livestock grazing. In addition to public lands under the jurisdiction of the Bureau of Land Management, allotments may include private lands, State lands, and lands under the jurisdiction of other federal agencies. This geospatial dataset is supplemental to the Rangeland Administration System (RAS), which is authoritative for BLM grazing allotments (except Alaska). Rangeland Administration System Reports can be accessed from the BLM public reporting application website at reports.blm.gov.",
+    "copyrightText": "BLM Admin State",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM Natl Grazing Allotment Polygons",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "ALLOT_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1771359694774,
+    "definitionExpression": "",
+    "recordCount": 21720,
+    "extent": {
+      "xmin": -124.50451872228848,
+      "ymin": 31.33227408651601,
+      "xmax": -98.90182488425023,
+      "ymax": 49.00022288311993
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "ALLOT_NO",
+      "alias": "Allotment Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ALLOT_NAME",
+      "alias": "Allotment Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "alias": "GIS Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "ADM_OFC_CD",
+      "alias": "Administrative Office Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "alias": "Adminstrative Unit Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 270
+      },
+      "isKey": false
+    },
+    {
+      "name": "ST_ALLOT",
+      "alias": "Managing State Allotment Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ACTIVE_DT",
+      "alias": "Allotment Active Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeGUID",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 21720,
+      "hasDomain": false
+    },
+    {
+      "name": "ALLOT_NO",
+      "type": "esriFieldTypeString",
+      "alias": "Allotment Number",
+      "nullPct": 0,
+      "distinctCount": 10920,
+      "hasDomain": false
+    },
+    {
+      "name": "ALLOT_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Allotment Name",
+      "nullPct": 0,
+      "distinctCount": 17679,
+      "hasDomain": false
+    },
+    {
+      "name": "GIS_ACRES",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Acres",
+      "nullPct": 0,
+      "distinctCount": 21598,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 11,
+      "hasDomain": true
+    },
+    {
+      "name": "ADM_OFC_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative Office Code",
+      "nullPct": 0,
+      "distinctCount": 86,
+      "hasDomain": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Adminstrative Unit Code",
+      "nullPct": 0,
+      "distinctCount": 126,
+      "hasDomain": true
+    },
+    {
+      "name": "ST_ALLOT",
+      "type": "esriFieldTypeString",
+      "alias": "Managing State Allotment Number",
+      "nullPct": 0,
+      "distinctCount": 20898,
+      "hasDomain": false
+    },
+    {
+      "name": "ACTIVE_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "Allotment Active Date",
+      "nullPct": 0,
+      "distinctCount": 140,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 21720,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeGUID",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 21720,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 21712,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 21712,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "ALLOT_NO": "50620",
+      "ALLOT_NAME": "Braidfoot",
+      "GIS_ACRES": 9179.87651692,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "G01000",
+      "ADM_UNIT_CD": "AZG01000",
+      "ST_ALLOT": "AZ50620",
+      "ACTIVE_DT": -2209161600000,
+      "GlobalID": "000da54e-f689-489d-a91f-0b438f71652c",
+      "Original_GlobalID": "85d5d0f1-c094-4667-a68b-c8429f5d5263",
+      "Shape__Area": 0.003558869216021776,
+      "Shape__Length": 0.327037139903407
+    },
+    {
+      "OBJECTID": 2,
+      "ALLOT_NO": "06079",
+      "ALLOT_NAME": "Cottonwood Wash",
+      "GIS_ACRES": 39994.42542724,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "G01000",
+      "ADM_UNIT_CD": "AZG01000",
+      "ST_ALLOT": "AZ06079",
+      "ACTIVE_DT": -2209161600000,
+      "GlobalID": "000ea326-95b7-4420-9d6c-6a1dbe40a37f",
+      "Original_GlobalID": "c8349cfc-8dbc-4be4-a366-a820f9cfdbae",
+      "Shape__Area": 0.01599913703967104,
+      "Shape__Length": 0.9818920736471451
+    },
+    {
+      "OBJECTID": 3,
+      "ALLOT_NO": "00086",
+      "ALLOT_NAME": "Cane Springs",
+      "GIS_ACRES": 85014.12881355,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "C01000",
+      "ADM_UNIT_CD": "AZC01000",
+      "ST_ALLOT": "AZ00086",
+      "ACTIVE_DT": 253392451200000,
+      "GlobalID": "004ad755-c61e-4355-9ad4-87a2e27761e4",
+      "Original_GlobalID": "d2dbaa7b-d7ee-4320-bb7f-c4af4c8da2ea",
+      "Shape__Area": 0.034200344758346546,
+      "Shape__Length": 0.9432237279363235
+    },
+    {
+      "OBJECTID": 4,
+      "ALLOT_NO": "01323",
+      "ALLOT_NAME": "West Mahogany",
+      "GIS_ACRES": 2624.27296828,
+      "ADMIN_ST": "CA",
+      "ADM_OFC_CD": "N02000",
+      "ADM_UNIT_CD": "CAN02000",
+      "ST_ALLOT": "CA01323",
+      "ACTIVE_DT": 253392451200000,
+      "GlobalID": "0063f1c6-67f7-4976-b965-8015c14eb288",
+      "Original_GlobalID": "8a4acb58-f68c-4d3c-9b12-91efcdb8c777",
+      "Shape__Area": 0.001151104621385457,
+      "Shape__Length": 0.36576827847579757
+    },
+    {
+      "OBJECTID": 5,
+      "ALLOT_NO": "06173",
+      "ALLOT_NAME": "Queen Valley",
+      "GIS_ACRES": 287.91809947,
+      "ADMIN_ST": "AZ",
+      "ADM_OFC_CD": "P02000",
+      "ADM_UNIT_CD": "AZP02000",
+      "ST_ALLOT": "AZ06173",
+      "ACTIVE_DT": 253392451200000,
+      "GlobalID": "006b7ee6-b095-41a3-b247-f42aff19cbfc",
+      "Original_GlobalID": "ab9b6c67-394c-426c-84ae-00d498c84db8",
+      "Shape__Area": 0.00011287890038147452,
+      "Shape__Length": 0.06422638576778346
+    }
+  ]
+}

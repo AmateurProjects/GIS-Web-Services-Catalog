@@ -1,0 +1,543 @@
+{
+  "generated": "2026-02-22T06:13:51.468Z",
+  "datasetId": "blm_visual_resource_inventory",
+  "serviceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_Natl_Visual_Resource_Inventory_Classes_Polygon/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "Current policy requires that every acre of BLM land be inventoried for visual values and be assigned one of four VRI classes (Class I, II, III, or IV).  Class I is reserved for those areas where a management decision has been made previously to maintain a natural landscape.  This includes areas such as national wilderness areas, the wild section of national wild and scenic rivers, and other congressionally and administratively designated areas where decisions have been made to preserve a natural landscape. VRI consists of a scenic quality evaluation, sensitivity level analysis, and a delineation of distance zones. Based on a matrix combination of these three factors, BLM-administered lands are placed into one of three visual resource inventory classes (VRI II-IV). These inventory classes represent the relative value of the visual resources, with classes I and II being the most valued, Class III representing a moderate value, and Class IV being of lesser visual value. The inventory classes provide the basis for considering visual values in the resource management planning (RMP) process and constitute the current state of visual resource values as part of the affected environment sections of environmental analyses.",
+    "copyrightText": "BLM Admin State",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM Natl Visual Resource Inventory Classes Polygon",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "VRI_AREA_ID",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1771373042500,
+    "definitionExpression": "",
+    "recordCount": 42432,
+    "extent": {
+      "xmin": -167.84437499199998,
+      "ymin": 31.332107887000063,
+      "xmax": -100.14854492999996,
+      "ymax": 71.38954256300008
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "VRI_AREA_ID",
+      "alias": "Inventory Class Area Unique ID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "ADM_OFC_CD",
+      "alias": "Administrative Office Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "alias": "Administrative Unit Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 270
+      },
+      "isKey": false
+    },
+    {
+      "name": "VRI_AREA_NR",
+      "alias": "VRI Area Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_FO_NM",
+      "alias": "Administrative Field Office Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "VRI_EVAL",
+      "alias": "VRI Class Evaluators",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "VRI_CONTACT",
+      "alias": "VRI Current Contact",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "VRI_ORIG_DT",
+      "alias": "VRI Class Original Assignment Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "VRI_MOD_DT",
+      "alias": "VRI Class Last Modification Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "VRI_CLASS_CODE",
+      "alias": "VRI Class Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 6
+      },
+      "isKey": false
+    },
+    {
+      "name": "VRI_CLASS_TX",
+      "alias": "Explanation for Class Assignment",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "BLM_ACRE",
+      "alias": "BLM Acreage",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SQ_CODE",
+      "alias": "Scenic Quality Rating Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 5
+      },
+      "isKey": false
+    },
+    {
+      "name": "SL_OVRL_RT",
+      "alias": "Sensitivity Level Overall Rating",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 5
+      },
+      "isKey": false
+    },
+    {
+      "name": "VDZ_CODE",
+      "alias": "Visual Distance Zone Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 6
+      },
+      "isKey": false
+    },
+    {
+      "name": "VRI_REHAB_IND",
+      "alias": "Rehabilitation Indicator",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "VRI_SPCL_IND",
+      "alias": "Special Area Indicator",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeGUID",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 42432,
+      "hasDomain": false
+    },
+    {
+      "name": "VRI_AREA_ID",
+      "type": "esriFieldTypeString",
+      "alias": "Inventory Class Area Unique ID",
+      "nullPct": 0,
+      "distinctCount": 42397,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State Code",
+      "nullPct": 0,
+      "distinctCount": 11,
+      "hasDomain": true
+    },
+    {
+      "name": "ADM_OFC_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative Office Code",
+      "nullPct": 0,
+      "distinctCount": 66,
+      "hasDomain": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative Unit Code",
+      "nullPct": 0,
+      "distinctCount": 87,
+      "hasDomain": true
+    },
+    {
+      "name": "VRI_AREA_NR",
+      "type": "esriFieldTypeString",
+      "alias": "VRI Area Number",
+      "nullPct": 0,
+      "distinctCount": 8040,
+      "hasDomain": false
+    },
+    {
+      "name": "ADMIN_FO_NM",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative Field Office Name",
+      "nullPct": 0,
+      "distinctCount": 89,
+      "hasDomain": false
+    },
+    {
+      "name": "VRI_EVAL",
+      "type": "esriFieldTypeString",
+      "alias": "VRI Class Evaluators",
+      "nullPct": 0.2,
+      "distinctCount": 55,
+      "hasDomain": false
+    },
+    {
+      "name": "VRI_CONTACT",
+      "type": "esriFieldTypeString",
+      "alias": "VRI Current Contact",
+      "nullPct": 0,
+      "distinctCount": 77,
+      "hasDomain": false
+    },
+    {
+      "name": "VRI_ORIG_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "VRI Class Original Assignment Date",
+      "nullPct": 0,
+      "distinctCount": 91,
+      "hasDomain": false
+    },
+    {
+      "name": "VRI_MOD_DT",
+      "type": "esriFieldTypeDate",
+      "alias": "VRI Class Last Modification Date",
+      "nullPct": 51.9,
+      "distinctCount": 16,
+      "hasDomain": false
+    },
+    {
+      "name": "VRI_CLASS_CODE",
+      "type": "esriFieldTypeString",
+      "alias": "VRI Class Code",
+      "nullPct": 0,
+      "distinctCount": 6,
+      "hasDomain": true
+    },
+    {
+      "name": "VRI_CLASS_TX",
+      "type": "esriFieldTypeString",
+      "alias": "Explanation for Class Assignment",
+      "nullPct": 21.4,
+      "distinctCount": 76,
+      "hasDomain": false
+    },
+    {
+      "name": "BLM_ACRE",
+      "type": "esriFieldTypeDouble",
+      "alias": "BLM Acreage",
+      "nullPct": 0,
+      "distinctCount": 38067,
+      "hasDomain": false
+    },
+    {
+      "name": "SQ_CODE",
+      "type": "esriFieldTypeString",
+      "alias": "Scenic Quality Rating Code",
+      "nullPct": 0,
+      "distinctCount": 6,
+      "hasDomain": true
+    },
+    {
+      "name": "SL_OVRL_RT",
+      "type": "esriFieldTypeString",
+      "alias": "Sensitivity Level Overall Rating",
+      "nullPct": 0,
+      "distinctCount": 6,
+      "hasDomain": true
+    },
+    {
+      "name": "VDZ_CODE",
+      "type": "esriFieldTypeString",
+      "alias": "Visual Distance Zone Code",
+      "nullPct": 0,
+      "distinctCount": 7,
+      "hasDomain": true
+    },
+    {
+      "name": "VRI_REHAB_IND",
+      "type": "esriFieldTypeString",
+      "alias": "Rehabilitation Indicator",
+      "nullPct": 10.7,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "VRI_SPCL_IND",
+      "type": "esriFieldTypeString",
+      "alias": "Special Area Indicator",
+      "nullPct": 10.2,
+      "distinctCount": 2,
+      "hasDomain": true
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 42432,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeGUID",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 42432,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 41698,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 42013,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "VRI_AREA_ID": "VRIAKA010000441",
+      "ADMIN_ST": "AK",
+      "ADM_OFC_CD": "A01000",
+      "ADM_UNIT_CD": "AKA01000",
+      "VRI_AREA_NR": "0441",
+      "ADMIN_FO_NM": "Anchorage Field Office",
+      "VRI_EVAL": "Unknown",
+      "VRI_CONTACT": "SKuhns",
+      "VRI_ORIG_DT": 1220486400000,
+      "VRI_MOD_DT": null,
+      "VRI_CLASS_CODE": "IV",
+      "VRI_CLASS_TX": null,
+      "BLM_ACRE": 23136.14517,
+      "SQ_CODE": "M",
+      "SL_OVRL_RT": "Missing",
+      "VDZ_CODE": "M",
+      "VRI_REHAB_IND": "NO",
+      "VRI_SPCL_IND": "NO",
+      "GlobalID": "002f5a94-97f2-48ad-9c99-b2e3a734cd85",
+      "Original_GlobalID": "24833f2d-4544-4d1c-87e4-5f01dffae94c",
+      "Shape__Area": 0.020385834407534276,
+      "Shape__Length": 0.9382767330631224
+    },
+    {
+      "OBJECTID": 2,
+      "VRI_AREA_ID": "VRIAKA010000127",
+      "ADMIN_ST": "AK",
+      "ADM_OFC_CD": "A01000",
+      "ADM_UNIT_CD": "AKA01000",
+      "VRI_AREA_NR": "0127",
+      "ADMIN_FO_NM": "Anchorage Field Office",
+      "VRI_EVAL": "Unknown",
+      "VRI_CONTACT": "SKuhns",
+      "VRI_ORIG_DT": 1220486400000,
+      "VRI_MOD_DT": null,
+      "VRI_CLASS_CODE": "II",
+      "VRI_CLASS_TX": null,
+      "BLM_ACRE": 600616.2686,
+      "SQ_CODE": "M",
+      "SL_OVRL_RT": "Low",
+      "VDZ_CODE": "M",
+      "VRI_REHAB_IND": "NO",
+      "VRI_SPCL_IND": "NO",
+      "GlobalID": "006e5e8f-8004-4d2e-8325-45f5ec6a0416",
+      "Original_GlobalID": "b17c3c91-a5aa-4356-87b0-1cb474e68629",
+      "Shape__Area": 0.6103756077291109,
+      "Shape__Length": 8.51454077312183
+    },
+    {
+      "OBJECTID": 3,
+      "VRI_AREA_ID": "VRIAKA010000257",
+      "ADMIN_ST": "AK",
+      "ADM_OFC_CD": "A01000",
+      "ADM_UNIT_CD": "AKA01000",
+      "VRI_AREA_NR": "0257",
+      "ADMIN_FO_NM": "Anchorage Field Office",
+      "VRI_EVAL": "Unknown",
+      "VRI_CONTACT": "SKuhns",
+      "VRI_ORIG_DT": 1220486400000,
+      "VRI_MOD_DT": null,
+      "VRI_CLASS_CODE": "III",
+      "VRI_CLASS_TX": null,
+      "BLM_ACRE": 1329.42932,
+      "SQ_CODE": "M",
+      "SL_OVRL_RT": "High",
+      "VDZ_CODE": "M",
+      "VRI_REHAB_IND": "NO",
+      "VRI_SPCL_IND": "NO",
+      "GlobalID": "00ac70d4-8f36-43b4-aff5-1fd3ad00c5e6",
+      "Original_GlobalID": "1da6298e-9803-4e6b-aa88-071072a292ea",
+      "Shape__Area": 0.0080483352239753,
+      "Shape__Length": 0.5549253010650484
+    },
+    {
+      "OBJECTID": 4,
+      "VRI_AREA_ID": "VRIAKA010000010",
+      "ADMIN_ST": "AK",
+      "ADM_OFC_CD": "A01000",
+      "ADM_UNIT_CD": "AKA01000",
+      "VRI_AREA_NR": "0010",
+      "ADMIN_FO_NM": "Anchorage Field Office",
+      "VRI_EVAL": "Unknown",
+      "VRI_CONTACT": "SKuhns",
+      "VRI_ORIG_DT": 1220486400000,
+      "VRI_MOD_DT": null,
+      "VRI_CLASS_CODE": "II",
+      "VRI_CLASS_TX": null,
+      "BLM_ACRE": 165.8040773,
+      "SQ_CODE": "M",
+      "SL_OVRL_RT": "High",
+      "VDZ_CODE": "M",
+      "VRI_REHAB_IND": "NO",
+      "VRI_SPCL_IND": "NO",
+      "GlobalID": "00c93d0f-de99-48e5-961a-e15a1abcd61b",
+      "Original_GlobalID": "49f7b070-edec-4e55-b419-46697c941f03",
+      "Shape__Area": 0.00017552764711581403,
+      "Shape__Length": 0.06577559286477169
+    },
+    {
+      "OBJECTID": 5,
+      "VRI_AREA_ID": "VRIAKA010000315",
+      "ADMIN_ST": "AK",
+      "ADM_OFC_CD": "A01000",
+      "ADM_UNIT_CD": "AKA01000",
+      "VRI_AREA_NR": "0315",
+      "ADMIN_FO_NM": "Anchorage Field Office",
+      "VRI_EVAL": "Unknown",
+      "VRI_CONTACT": "SKuhns",
+      "VRI_ORIG_DT": 1220486400000,
+      "VRI_MOD_DT": null,
+      "VRI_CLASS_CODE": "III",
+      "VRI_CLASS_TX": null,
+      "BLM_ACRE": 18.90164664,
+      "SQ_CODE": "M",
+      "SL_OVRL_RT": "High",
+      "VDZ_CODE": "M",
+      "VRI_REHAB_IND": "NO",
+      "VRI_SPCL_IND": "NO",
+      "GlobalID": "00ce427f-d981-4e8c-a05c-5d007dfd5ea1",
+      "Original_GlobalID": "8dcba9be-92b3-433f-9f03-399de11048d6",
+      "Shape__Area": 0.000014525334336212836,
+      "Shape__Length": 0.01783407053516353
+    }
+  ]
+}

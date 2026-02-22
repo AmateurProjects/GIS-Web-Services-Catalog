@@ -1,0 +1,428 @@
+{
+  "generated": "2026-02-22T06:15:17.607Z",
+  "datasetId": "blm_recreation_sites",
+  "serviceUrl": "https://services1.arcgis.com/KbxwQRRfWyEYLgp4/arcgis/rest/services/BLM_National_Recreation_Site_Points/FeatureServer/1",
+  "metadata": {
+    "serviceDescription": "These point features depict physical locations for BLM National Recreation Sites. This dataset is based on an interim data standard and will be republished in the future. ",
+    "copyrightText": "BLM Admin State",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "BLM Natl Recreation Site Points",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPoint",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "GlobalID",
+    "displayField": "FET_NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1771371976403,
+    "definitionExpression": "",
+    "recordCount": 9481,
+    "extent": {
+      "xmin": -164.97484999999998,
+      "ymin": 26.948098230000028,
+      "xmax": -77.20836740199996,
+      "ymax": 69.56840966500005
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "FET_TYPE",
+      "alias": "Feature Type",
+      "type": "esriFieldTypeInteger",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FET_SUBTYPE",
+      "alias": "Feature Subtype",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FET_NAME",
+      "alias": "Feature Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "alias": "Administrative Unit Code",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 270
+      },
+      "isKey": false
+    },
+    {
+      "name": "ADMIN_ST",
+      "alias": "Administrative State",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 12
+      },
+      "isKey": false
+    },
+    {
+      "name": "DESCRIPTION",
+      "alias": "DESCRIPTION",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WEB_LINK",
+      "alias": "WEB_LINK",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PHOTO_TEXT",
+      "alias": "PHOTO_TEXT",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "UNIT_NAME",
+      "alias": "UNIT_NAME",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCE",
+      "alias": "SOURCE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "WEB_DISPLAY",
+      "alias": "WEB_DISPLAY",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 3
+      },
+      "isKey": false
+    },
+    {
+      "name": "PHOTO_LINK",
+      "alias": "PHOTO_LINK",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PHOTO_THUMB",
+      "alias": "PHOTO_THUMB",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GlobalID",
+      "alias": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "Original_GlobalID",
+      "alias": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LAT",
+      "alias": "Latitude",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "LONG",
+      "alias": "Longitude",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 9481,
+      "hasDomain": false
+    },
+    {
+      "name": "FET_TYPE",
+      "type": "esriFieldTypeInteger",
+      "alias": "Feature Type",
+      "nullPct": 0,
+      "distinctCount": 14,
+      "hasDomain": false
+    },
+    {
+      "name": "FET_SUBTYPE",
+      "type": "esriFieldTypeString",
+      "alias": "Feature Subtype",
+      "nullPct": 0,
+      "distinctCount": 52,
+      "hasDomain": false
+    },
+    {
+      "name": "FET_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "Feature Name",
+      "nullPct": 0,
+      "distinctCount": 7733,
+      "hasDomain": false
+    },
+    {
+      "name": "ADM_UNIT_CD",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative Unit Code",
+      "nullPct": 0,
+      "distinctCount": 155,
+      "hasDomain": true
+    },
+    {
+      "name": "ADMIN_ST",
+      "type": "esriFieldTypeString",
+      "alias": "Administrative State",
+      "nullPct": 0,
+      "distinctCount": 12,
+      "hasDomain": true
+    },
+    {
+      "name": "DESCRIPTION",
+      "type": "esriFieldTypeString",
+      "alias": "DESCRIPTION",
+      "nullPct": 70.3,
+      "distinctCount": 1190,
+      "hasDomain": false
+    },
+    {
+      "name": "WEB_LINK",
+      "type": "esriFieldTypeString",
+      "alias": "WEB_LINK",
+      "nullPct": 54.2,
+      "distinctCount": 521,
+      "hasDomain": false
+    },
+    {
+      "name": "PHOTO_TEXT",
+      "type": "esriFieldTypeString",
+      "alias": "PHOTO_TEXT",
+      "nullPct": 92.8,
+      "distinctCount": 49,
+      "hasDomain": false
+    },
+    {
+      "name": "UNIT_NAME",
+      "type": "esriFieldTypeString",
+      "alias": "UNIT_NAME",
+      "nullPct": 72,
+      "distinctCount": 136,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCE",
+      "type": "esriFieldTypeString",
+      "alias": "SOURCE",
+      "nullPct": 99,
+      "distinctCount": 93,
+      "hasDomain": false
+    },
+    {
+      "name": "WEB_DISPLAY",
+      "type": "esriFieldTypeString",
+      "alias": "WEB_DISPLAY",
+      "nullPct": 0,
+      "distinctCount": 1,
+      "hasDomain": true
+    },
+    {
+      "name": "PHOTO_LINK",
+      "type": "esriFieldTypeString",
+      "alias": "PHOTO_LINK",
+      "nullPct": 92.8,
+      "distinctCount": 53,
+      "hasDomain": false
+    },
+    {
+      "name": "PHOTO_THUMB",
+      "type": "esriFieldTypeString",
+      "alias": "PHOTO_THUMB",
+      "nullPct": 92.6,
+      "distinctCount": 102,
+      "hasDomain": false
+    },
+    {
+      "name": "GlobalID",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "GlobalID",
+      "nullPct": 0,
+      "distinctCount": 9481,
+      "hasDomain": false
+    },
+    {
+      "name": "Original_GlobalID",
+      "type": "esriFieldTypeString",
+      "alias": "Original_GlobalID",
+      "nullPct": 0,
+      "distinctCount": 9481,
+      "hasDomain": false
+    },
+    {
+      "name": "LAT",
+      "type": "esriFieldTypeDouble",
+      "alias": "Latitude",
+      "nullPct": 0,
+      "distinctCount": 9057,
+      "hasDomain": false
+    },
+    {
+      "name": "LONG",
+      "type": "esriFieldTypeDouble",
+      "alias": "Longitude",
+      "nullPct": 0,
+      "distinctCount": 9118,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 56662,
+      "FET_TYPE": 1,
+      "FET_SUBTYPE": "Visitor Center",
+      "FET_NAME": "UPPER MISSOURI RIVER BREAKS NM INTERPRETIVE CENTER",
+      "ADM_UNIT_CD": "MTL07000",
+      "ADMIN_ST": "MT",
+      "DESCRIPTION": null,
+      "WEB_LINK": null,
+      "PHOTO_TEXT": null,
+      "UNIT_NAME": null,
+      "SOURCE": null,
+      "WEB_DISPLAY": "YES",
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null,
+      "GlobalID": "ff63794c-7dc5-4fd2-a29d-b516a154a64b",
+      "Original_GlobalID": "{547E1736-B806-4B6E-BA9F-95824D407E2E}",
+      "LAT": 47.81018341,
+      "LONG": -110.672967
+    },
+    {
+      "OBJECTID": 56767,
+      "FET_TYPE": 8,
+      "FET_SUBTYPE": "Parking Area",
+      "FET_NAME": "JAMES KIPP RECREATION AREA",
+      "ADM_UNIT_CD": "MTL07000",
+      "ADMIN_ST": "MT",
+      "DESCRIPTION": null,
+      "WEB_LINK": null,
+      "PHOTO_TEXT": null,
+      "UNIT_NAME": null,
+      "SOURCE": null,
+      "WEB_DISPLAY": "YES",
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null,
+      "GlobalID": "264a5dc1-58a0-489d-bc99-1750c3eda6d2",
+      "Original_GlobalID": "{E872D301-EE1C-43E3-A0FD-234025B6A729}",
+      "LAT": 47.62393013,
+      "LONG": -108.6778392
+    },
+    {
+      "OBJECTID": 56812,
+      "FET_TYPE": 4,
+      "FET_SUBTYPE": "Point of Interest",
+      "FET_NAME": "SEINEURS REACH",
+      "ADM_UNIT_CD": "MTL07000",
+      "ADMIN_ST": "MT",
+      "DESCRIPTION": null,
+      "WEB_LINK": null,
+      "PHOTO_TEXT": null,
+      "UNIT_NAME": null,
+      "SOURCE": null,
+      "WEB_DISPLAY": "YES",
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null,
+      "GlobalID": "0d303d07-02ef-4fa9-bcfd-86fc3ea79b32",
+      "Original_GlobalID": "{D01CA9A9-D9D6-4EB5-87DF-567408F1B9C5}",
+      "LAT": 47.880191,
+      "LONG": -110.474
+    },
+    {
+      "OBJECTID": 56824,
+      "FET_TYPE": 8,
+      "FET_SUBTYPE": "Parking Area",
+      "FET_NAME": "POMPEYS PILLAR NATIONAL MONUMENT",
+      "ADM_UNIT_CD": "MTC01000",
+      "ADMIN_ST": "MT",
+      "DESCRIPTION": null,
+      "WEB_LINK": null,
+      "PHOTO_TEXT": null,
+      "UNIT_NAME": null,
+      "SOURCE": null,
+      "WEB_DISPLAY": "YES",
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null,
+      "GlobalID": "62068d6e-1bdc-4d3e-9b40-c69a0fd48cf1",
+      "Original_GlobalID": "{9D8800F9-9262-4C9B-B7BC-DD7D3FDB0CCD}",
+      "LAT": 45.994323,
+      "LONG": -107.999811
+    },
+    {
+      "OBJECTID": 56898,
+      "FET_TYPE": 4,
+      "FET_SUBTYPE": "Point of Interest",
+      "FET_NAME": "WOODHAWK (LOWER)",
+      "ADM_UNIT_CD": "MTL07000",
+      "ADMIN_ST": "MT",
+      "DESCRIPTION": null,
+      "WEB_LINK": null,
+      "PHOTO_TEXT": null,
+      "UNIT_NAME": null,
+      "SOURCE": null,
+      "WEB_DISPLAY": "YES",
+      "PHOTO_LINK": null,
+      "PHOTO_THUMB": null,
+      "GlobalID": "5d1bc707-57bb-46cb-a600-b256f4adbc46",
+      "Original_GlobalID": "{F2368854-2DA8-4D39-AEF8-74363F90622D}",
+      "LAT": 47.74123,
+      "LONG": -108.949
+    }
+  ]
+}

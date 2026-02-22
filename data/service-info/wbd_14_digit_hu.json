@@ -1,0 +1,497 @@
+{
+  "generated": "2026-02-22T08:30:49.633Z",
+  "datasetId": "wbd_14_digit_hu",
+  "serviceUrl": "https://hydro.nationalmap.gov/arcgis/rest/services/wbd/MapServer/7",
+  "metadata": {
+    "serviceDescription": "<div style='text-align:Left;'><div><div><p><span>Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 16 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000). See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.</span></p><p><span /></p><p><span>Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.</span></p></div></div></div>",
+    "copyrightText": "USGS WBD - Watershed Boundary Dataset. Data refreshed January, 2026.",
+    "author": "",
+    "subject": "inlandWaters",
+    "keywords": "a-16,ngda,water – inland,hydrography,NHD,water,drainage,river,stream,canal,ditch,lake,pond,reservoir,swamp,marsh,spring,well,dam,gage,WBD,HU,hydrologic unit,region,subregion,basin,subbasin,watershed,subwatershed,REST,WMS",
+    "comments": "Abstract: This file contains Hydrologic Unit (HU) polygon boundaries for the United States, Puerto Rico, and the U.S. Virgin Islands. The data is a seamless National representation of HU boundaries from 2 to 16 digits compiled from U.S. Geological Survey (USGS) National Hydrography Dataset (NHD) and U.S. Department of Agriculture (USDA) National Resources Conservation Service (NRCS) Watershed Boundary Dataset (WBD) sources. Purpose: This data is intended primarily for geographic display and analysis of regional and national data, and can also be used for illustration purposes at intermediate or small scales (1:250,000 to 1:2,000,000). See https://apps.nationalmap.gov/help/ for assistance with The National Map viewer, download client, services, or metadata.Use Constraints: __ None. All data are open and non-proprietary. However, users should be aware that temporal changes may have occurred since this dataset was collected and that some parts of this data may no longer represent actual conditions. Users should not use this data for critical applications without a full awareness of its limitations. This dataset is not intended to be used for site-specific regulatory determinations. Acknowledgment of the U.S. Geological Survey would be appreciated for products derived from these data.",
+    "currentVersion": 11.3,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Map,Query,Data",
+    "syncEnabled": null,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "14-digit HU",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "",
+    "globalIdField": "",
+    "displayField": "NAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": null,
+    "hasM": null,
+    "minScale": 216672.00001,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": null,
+    "definitionExpression": "",
+    "recordCount": 8149,
+    "extent": {
+      "xmin": -16746227.1952,
+      "ymin": 4548939.065499999,
+      "xmax": -7871602.8805,
+      "ymax": 8745962.221299998
+    }
+  },
+  "fields": [
+    {
+      "name": "objectid",
+      "alias": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "shape",
+      "alias": "Shape",
+      "type": "esriFieldTypeGeometry",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "tnmid",
+      "alias": "TNMID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "metasourceid",
+      "alias": "MetaSourceID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sourcedatadesc",
+      "alias": "SourceDataDesc",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sourceoriginator",
+      "alias": "SourceOriginator",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "sourcefeatureid",
+      "alias": "SourceFeatureID",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "loaddate",
+      "alias": "LoadDate",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "areaacres",
+      "alias": "AreaAcres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "areasqkm",
+      "alias": "AreaSqKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "states",
+      "alias": "States",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "huc14",
+      "alias": "HUC14",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "name",
+      "alias": "Name",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "hutype",
+      "alias": "HUType",
+      "type": "esriFieldTypeString",
+      "domain": {
+        "type": "codedValue",
+        "codedValueCount": 8
+      },
+      "isKey": false
+    },
+    {
+      "name": "humod",
+      "alias": "HUMod",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "noncontributingareaacres",
+      "alias": "NonContributingAreaAcres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "noncontributingareasqkm",
+      "alias": "NonContributingAreaSqKm",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "shape_Length",
+      "alias": "SHAPE_Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "shape_Area",
+      "alias": "SHAPE_Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "referencegnis_ids",
+      "alias": "ReferenceGNIS_IDs",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "tohuc",
+      "alias": "ToHUC",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "globalid",
+      "alias": "globalid",
+      "type": "esriFieldTypeGlobalID",
+      "domain": null,
+      "isKey": true
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "objectid",
+      "type": "esriFieldTypeOID",
+      "alias": "OBJECTID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "shape",
+      "type": "esriFieldTypeGeometry",
+      "alias": "Shape",
+      "nullPct": null,
+      "distinctCount": null,
+      "skipped": true
+    },
+    {
+      "name": "tnmid",
+      "type": "esriFieldTypeString",
+      "alias": "TNMID",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "metasourceid",
+      "type": "esriFieldTypeString",
+      "alias": "MetaSourceID",
+      "nullPct": 3,
+      "distinctCount": 25,
+      "hasDomain": false
+    },
+    {
+      "name": "sourcedatadesc",
+      "type": "esriFieldTypeString",
+      "alias": "SourceDataDesc",
+      "nullPct": 41.9,
+      "distinctCount": 7,
+      "hasDomain": false
+    },
+    {
+      "name": "sourceoriginator",
+      "type": "esriFieldTypeString",
+      "alias": "SourceOriginator",
+      "nullPct": 41.9,
+      "distinctCount": 7,
+      "hasDomain": false
+    },
+    {
+      "name": "sourcefeatureid",
+      "type": "esriFieldTypeString",
+      "alias": "SourceFeatureID",
+      "nullPct": 100,
+      "distinctCount": 2,
+      "hasDomain": false
+    },
+    {
+      "name": "loaddate",
+      "type": "esriFieldTypeDate",
+      "alias": "LoadDate",
+      "nullPct": 6.2,
+      "distinctCount": 1001,
+      "hasDomain": false
+    },
+    {
+      "name": "areaacres",
+      "type": "esriFieldTypeDouble",
+      "alias": "AreaAcres",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "areasqkm",
+      "type": "esriFieldTypeDouble",
+      "alias": "AreaSqKm",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "states",
+      "type": "esriFieldTypeString",
+      "alias": "States",
+      "nullPct": 0,
+      "distinctCount": 15,
+      "hasDomain": false
+    },
+    {
+      "name": "huc14",
+      "type": "esriFieldTypeString",
+      "alias": "HUC14",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "name",
+      "type": "esriFieldTypeString",
+      "alias": "Name",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "hutype",
+      "type": "esriFieldTypeString",
+      "alias": "HUType",
+      "nullPct": 0,
+      "distinctCount": 7,
+      "hasDomain": true
+    },
+    {
+      "name": "humod",
+      "type": "esriFieldTypeString",
+      "alias": "HUMod",
+      "nullPct": 0,
+      "distinctCount": 26,
+      "hasDomain": false
+    },
+    {
+      "name": "noncontributingareaacres",
+      "type": "esriFieldTypeDouble",
+      "alias": "NonContributingAreaAcres",
+      "nullPct": 67.7,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "noncontributingareasqkm",
+      "type": "esriFieldTypeDouble",
+      "alias": "NonContributingAreaSqKm",
+      "nullPct": 67.9,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "shape_Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Length",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "shape_Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "SHAPE_Area",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "referencegnis_ids",
+      "type": "esriFieldTypeString",
+      "alias": "ReferenceGNIS_IDs",
+      "nullPct": 42.2,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "tohuc",
+      "type": "esriFieldTypeString",
+      "alias": "ToHUC",
+      "nullPct": 3.9,
+      "distinctCount": 2000,
+      "hasDomain": false
+    },
+    {
+      "name": "globalid",
+      "type": "esriFieldTypeGlobalID",
+      "alias": "globalid",
+      "nullPct": 0,
+      "distinctCount": 2000,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "objectid": 1,
+      "tnmid": "{DBADAB06-CD8F-499F-AFE7-B3FCAC839E37}",
+      "metasourceid": "{511D2AC8-11BA-45FC-AB98-F69D693D4C44}",
+      "sourcedatadesc": "Watershed Boundary Dataset (WBD)",
+      "sourceoriginator": "Natural Resources and Conservation Service and U.S. Geological Survey",
+      "sourcefeatureid": null,
+      "loaddate": 1723645828000,
+      "areaacres": 3602.39,
+      "areasqkm": 14.58,
+      "states": "AK",
+      "huc14": "19010406040103",
+      "name": "19010406040103-Fairweather Glacier",
+      "hutype": "S",
+      "humod": "GL",
+      "noncontributingareaacres": null,
+      "noncontributingareasqkm": null,
+      "shape_Length": 31711.37426837882,
+      "shape_Area": 54206251.38701782,
+      "referencegnis_ids": "1421836",
+      "tohuc": "19010406040104",
+      "globalid": "{DBADAB06-CD8F-499F-AFE7-B3FCAC839E37}"
+    },
+    {
+      "objectid": 2,
+      "tnmid": "{01BE2BA2-48B9-4F28-8338-90D924F36B3D}",
+      "metasourceid": "{CD36BD9A-DA32-4B42-8CA8-3DDD718252EF}",
+      "sourcedatadesc": null,
+      "sourceoriginator": null,
+      "sourcefeatureid": null,
+      "loaddate": 1610449011000,
+      "areaacres": 3669.25,
+      "areasqkm": 14.85,
+      "states": "AK",
+      "huc14": "19020302140503",
+      "name": "19020302140503",
+      "hutype": "S",
+      "humod": "NM",
+      "noncontributingareaacres": null,
+      "noncontributingareasqkm": null,
+      "shape_Length": 39541.75626967883,
+      "shape_Area": 60801274.00978923,
+      "referencegnis_ids": null,
+      "tohuc": "19020302140504",
+      "globalid": "{3C397E52-6EE7-4AAE-B9E4-5792749D34AF}"
+    },
+    {
+      "objectid": 3,
+      "tnmid": "{479148C1-672C-4834-8DA8-817C3271A35C}",
+      "metasourceid": "{511D2AC8-11BA-45FC-AB98-F69D693D4C44}",
+      "sourcedatadesc": "Watershed Boundary Dataset (WBD)",
+      "sourceoriginator": "Natural Resources and Conservation Service and U.S. Geological Survey",
+      "sourcefeatureid": null,
+      "loaddate": 1723645828000,
+      "areaacres": 10267.9,
+      "areasqkm": 41.55,
+      "states": "AK",
+      "huc14": "19010406060104",
+      "name": "19010406060104-Brady Glacier",
+      "hutype": "S",
+      "humod": "GL",
+      "noncontributingareaacres": null,
+      "noncontributingareasqkm": null,
+      "shape_Length": 52949.871818730324,
+      "shape_Area": 152206551.18980262,
+      "referencegnis_ids": "1420658",
+      "tohuc": "19010406060105",
+      "globalid": "{479148C1-672C-4834-8DA8-817C3271A35C}"
+    },
+    {
+      "objectid": 4,
+      "tnmid": "{B8B1FE21-0C5C-448C-BD2C-5E85A84F8EC3}",
+      "metasourceid": "{511D2AC8-11BA-45FC-AB98-F69D693D4C44}",
+      "sourcedatadesc": "Watershed Boundary Dataset (WBD)",
+      "sourceoriginator": "Natural Resources and Conservation Service and U.S. Geological Survey",
+      "sourcefeatureid": null,
+      "loaddate": 1723645828000,
+      "areaacres": 5451.9,
+      "areasqkm": 22.06,
+      "states": "AK",
+      "huc14": "19010406020201",
+      "name": "19010406020201-Mount Watson",
+      "hutype": "S",
+      "humod": "GL",
+      "noncontributingareaacres": null,
+      "noncontributingareasqkm": null,
+      "shape_Length": 41668.026728425044,
+      "shape_Area": 82977405.87495902,
+      "referencegnis_ids": "1415646",
+      "tohuc": "19010406020203",
+      "globalid": "{B8B1FE21-0C5C-448C-BD2C-5E85A84F8EC3}"
+    },
+    {
+      "objectid": 5,
+      "tnmid": "{F6A631C5-AB15-4562-8847-E4557E7F3859}",
+      "metasourceid": "{CD36BD9A-DA32-4B42-8CA8-3DDD718252EF}",
+      "sourcedatadesc": null,
+      "sourceoriginator": null,
+      "sourcefeatureid": null,
+      "loaddate": 1610449011000,
+      "areaacres": 1531.11,
+      "areasqkm": 6.2,
+      "states": "AK",
+      "huc14": "19020302110302",
+      "name": "19020302110302",
+      "hutype": "S",
+      "humod": "NM",
+      "noncontributingareaacres": null,
+      "noncontributingareasqkm": null,
+      "shape_Length": 26200.766961702673,
+      "shape_Area": 25375281.198736772,
+      "referencegnis_ids": null,
+      "tohuc": "19020302110303",
+      "globalid": "{6A04E8D6-42A5-466E-A200-0FC8517E8B2D}"
+    }
+  ]
+}

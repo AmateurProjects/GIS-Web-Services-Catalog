@@ -1,0 +1,179 @@
+{
+  "generated": "2026-02-22T06:22:14.783Z",
+  "datasetId": "usgs_ungulate_migration",
+  "serviceUrl": "https://services.arcgis.com/U7I2hMhPtOeGx0fs/arcgis/rest/services/Ungulate_Migration/FeatureServer/0",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 2000,
+    "wkid": 3857,
+    "capabilities": "Query",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "Ungulate Migration",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "FID",
+    "globalIdField": "",
+    "displayField": "SPECIES",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": true,
+    "hasM": true,
+    "minScale": 0,
+    "maxScale": 0,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1720815831945,
+    "definitionExpression": "",
+    "recordCount": 117,
+    "extent": {
+      "xmin": -13930619.521800213,
+      "ymin": 3754811.5106543847,
+      "xmax": -11781613.8607,
+      "ymax": 6565958.0728045
+    }
+  },
+  "fields": [
+    {
+      "name": "FID",
+      "alias": "FID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "SPECIES",
+      "alias": "SPECIES",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RANGE",
+      "alias": "RANGE",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "HERD",
+      "alias": "HERD",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "FID",
+      "type": "esriFieldTypeOID",
+      "alias": "FID",
+      "nullPct": 0,
+      "distinctCount": 117,
+      "hasDomain": false
+    },
+    {
+      "name": "SPECIES",
+      "type": "esriFieldTypeString",
+      "alias": "SPECIES",
+      "nullPct": 0,
+      "distinctCount": 3,
+      "hasDomain": false
+    },
+    {
+      "name": "RANGE",
+      "type": "esriFieldTypeString",
+      "alias": "RANGE",
+      "nullPct": 0,
+      "distinctCount": 4,
+      "hasDomain": false
+    },
+    {
+      "name": "HERD",
+      "type": "esriFieldTypeString",
+      "alias": "HERD",
+      "nullPct": 0,
+      "distinctCount": 42,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Area",
+      "nullPct": 0,
+      "distinctCount": 117,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape__Length",
+      "nullPct": 0,
+      "distinctCount": 117,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "FID": 1,
+      "SPECIES": "Elk",
+      "RANGE": "Corridors",
+      "HERD": "East Shasta Valley",
+      "Shape__Area": 1355155857.84375,
+      "Shape__Length": 885897.8106268214
+    },
+    {
+      "FID": 2,
+      "SPECIES": "Elk",
+      "RANGE": "Corridors",
+      "HERD": "Egg Lake",
+      "Shape__Area": 734900902.5234375,
+      "Shape__Length": 706275.3903289007
+    },
+    {
+      "FID": 4,
+      "SPECIES": "Elk",
+      "RANGE": "Corridors",
+      "HERD": "North I40",
+      "Shape__Area": 1059877136.7304688,
+      "Shape__Length": 955903.6777912916
+    },
+    {
+      "FID": 5,
+      "SPECIES": "Elk",
+      "RANGE": "Corridors",
+      "HERD": "San Francisco Peaks",
+      "Shape__Area": 813409913.375,
+      "Shape__Length": 824673.8834599842
+    },
+    {
+      "FID": 6,
+      "SPECIES": "Elk",
+      "RANGE": "Corridors",
+      "HERD": "West Goose Lake",
+      "Shape__Area": 1771719437.8125,
+      "Shape__Length": 1550434.0474016475
+    }
+  ]
+}

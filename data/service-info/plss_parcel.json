@@ -1,0 +1,999 @@
+{
+  "generated": "2026-02-22T06:53:59.468Z",
+  "datasetId": "plss_parcel",
+  "serviceUrl": "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Public_Land_Survey_System_view/FeatureServer/3",
+  "metadata": {
+    "serviceDescription": "",
+    "copyrightText": "",
+    "author": "",
+    "subject": "",
+    "keywords": "",
+    "comments": "",
+    "currentVersion": 11.5,
+    "maxRecordCount": 1000,
+    "wkid": 4269,
+    "capabilities": "Query,Extract",
+    "syncEnabled": false,
+    "supportedQueryFormats": "JSON, geoJSON, PBF",
+    "layerName": "PLSS_Intersected",
+    "layerType": "Feature Layer",
+    "geometryType": "esriGeometryPolygon",
+    "objectIdField": "OBJECTID",
+    "globalIdField": "",
+    "displayField": "SRVNAME",
+    "supportsStatistics": true,
+    "supportsAdvancedQueries": null,
+    "hasAttachments": false,
+    "hasZ": false,
+    "hasM": false,
+    "minScale": 10000,
+    "maxScale": 1000,
+    "editFieldsInfo": false,
+    "featureCount": null,
+    "lastEditDate": 1766777161724,
+    "definitionExpression": "",
+    "recordCount": 26451749,
+    "extent": {
+      "xmin": -179.2304392157341,
+      "ymin": 24.5565824028681,
+      "xmax": 179.89399847874728,
+      "ymax": 71.3898930627991
+    }
+  },
+  "fields": [
+    {
+      "name": "OBJECTID",
+      "alias": "Object ID",
+      "type": "esriFieldTypeOID",
+      "domain": null,
+      "isKey": true
+    },
+    {
+      "name": "STATEABBR",
+      "alias": "State Abbreviation",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PRINMERCD",
+      "alias": "Principal Meridian Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PRINMER",
+      "alias": "Principal Meridian Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPNO",
+      "alias": "Township Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPFRAC",
+      "alias": "Township Fraction",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPDIR",
+      "alias": "Township Direction",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RANGENO",
+      "alias": "Range Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RANGEFRAC",
+      "alias": "Range Fraction",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RANGEDIR",
+      "alias": "Range Direction",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPDPCD",
+      "alias": "Township Duplicate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "PLSSID",
+      "alias": "Township Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "STEWARD",
+      "alias": "Data Steward for PLSS Township Data",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "TWNSHPLAB",
+      "alias": "Township Label",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVID",
+      "alias": "First Division Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVTYP",
+      "alias": "First Division Type Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVTXT",
+      "alias": "First Division Type Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVNO",
+      "alias": "First Division Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVDUP",
+      "alias": "First Division Duplicate",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "FRSTDIVLAB",
+      "alias": "First Division Label",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SECDIVID",
+      "alias": "Second Division Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SECDIVTYP",
+      "alias": "Second Division Type Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SECDIVTXT",
+      "alias": "Second Division Type Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SECDIVNO",
+      "alias": "Second Division Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SECDIVSUF",
+      "alias": "Second Division Suffix",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SECDIVNOTE",
+      "alias": "Second Division Note",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SECDIVLAB",
+      "alias": "Second Division Label",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVID",
+      "alias": "Survey Identifier",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVTYP",
+      "alias": "PLSS Special Survey Type Code",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVTYPTXT",
+      "alias": "Survey Type Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SRVNAME",
+      "alias": "Survey Name for PLSS Areas",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVNO",
+      "alias": "Survey Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVSUF",
+      "alias": "Survey Suffix",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVNOTE",
+      "alias": "Survey Note",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVDIV",
+      "alias": "Special Survey Division",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SURVLAB",
+      "alias": "Survey Label",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "QSEC",
+      "alias": "Quarter Section",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "QQSEC",
+      "alias": "Quarter Quarter Section",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GOVLOT",
+      "alias": "Government Lot Number",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCEREF",
+      "alias": "Source Doc Link or Reference",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "SOURCEDATE",
+      "alias": "Source Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RECRDAREATX",
+      "alias": "Record Area Text",
+      "type": "esriFieldTypeString",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "RECRDAREANO",
+      "alias": "Record Area Number",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "GISACRE",
+      "alias": "GIS Area Acres",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "REVISEDDATE",
+      "alias": "Revised Date",
+      "type": "esriFieldTypeDate",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Area",
+      "alias": "Shape Area",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    },
+    {
+      "name": "Shape__Length",
+      "alias": "Shape Length",
+      "type": "esriFieldTypeDouble",
+      "domain": null,
+      "isKey": false
+    }
+  ],
+  "fieldStats": [
+    {
+      "name": "OBJECTID",
+      "type": "esriFieldTypeOID",
+      "alias": "Object ID",
+      "nullPct": 0,
+      "distinctCount": 26451749,
+      "hasDomain": false
+    },
+    {
+      "name": "STATEABBR",
+      "type": "esriFieldTypeString",
+      "alias": "State Abbreviation",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "PRINMERCD",
+      "type": "esriFieldTypeString",
+      "alias": "Principal Meridian Code",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "PRINMER",
+      "type": "esriFieldTypeString",
+      "alias": "Principal Meridian Text",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPNO",
+      "type": "esriFieldTypeString",
+      "alias": "Township Number",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPFRAC",
+      "type": "esriFieldTypeString",
+      "alias": "Township Fraction",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPDIR",
+      "type": "esriFieldTypeString",
+      "alias": "Township Direction",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "RANGENO",
+      "type": "esriFieldTypeString",
+      "alias": "Range Number",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "RANGEFRAC",
+      "type": "esriFieldTypeString",
+      "alias": "Range Fraction",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "RANGEDIR",
+      "type": "esriFieldTypeString",
+      "alias": "Range Direction",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPDPCD",
+      "type": "esriFieldTypeString",
+      "alias": "Township Duplicate",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "PLSSID",
+      "type": "esriFieldTypeString",
+      "alias": "Township Identifier",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "STEWARD",
+      "type": "esriFieldTypeString",
+      "alias": "Data Steward for PLSS Township Data",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "TWNSHPLAB",
+      "type": "esriFieldTypeString",
+      "alias": "Township Label",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVID",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Identifier",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVTYP",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Type Code",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVTXT",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Type Text",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVNO",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Number",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVDUP",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Duplicate",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "FRSTDIVLAB",
+      "type": "esriFieldTypeString",
+      "alias": "First Division Label",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SECDIVID",
+      "type": "esriFieldTypeString",
+      "alias": "Second Division Identifier",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SECDIVTYP",
+      "type": "esriFieldTypeString",
+      "alias": "Second Division Type Code",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SECDIVTXT",
+      "type": "esriFieldTypeString",
+      "alias": "Second Division Type Text",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SECDIVNO",
+      "type": "esriFieldTypeString",
+      "alias": "Second Division Number",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SECDIVSUF",
+      "type": "esriFieldTypeString",
+      "alias": "Second Division Suffix",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SECDIVNOTE",
+      "type": "esriFieldTypeString",
+      "alias": "Second Division Note",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SECDIVLAB",
+      "type": "esriFieldTypeString",
+      "alias": "Second Division Label",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVID",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Identifier",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVTYP",
+      "type": "esriFieldTypeString",
+      "alias": "PLSS Special Survey Type Code",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVTYPTXT",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Type Text",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SRVNAME",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Name for PLSS Areas",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVNO",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Number",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVSUF",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Suffix",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVNOTE",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Note",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVDIV",
+      "type": "esriFieldTypeString",
+      "alias": "Special Survey Division",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SURVLAB",
+      "type": "esriFieldTypeString",
+      "alias": "Survey Label",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "QSEC",
+      "type": "esriFieldTypeString",
+      "alias": "Quarter Section",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "QQSEC",
+      "type": "esriFieldTypeString",
+      "alias": "Quarter Quarter Section",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "GOVLOT",
+      "type": "esriFieldTypeString",
+      "alias": "Government Lot Number",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCEREF",
+      "type": "esriFieldTypeString",
+      "alias": "Source Doc Link or Reference",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "SOURCEDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Source Date",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "RECRDAREATX",
+      "type": "esriFieldTypeString",
+      "alias": "Record Area Text",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "RECRDAREANO",
+      "type": "esriFieldTypeDouble",
+      "alias": "Record Area Number",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "GISACRE",
+      "type": "esriFieldTypeDouble",
+      "alias": "GIS Area Acres",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "REVISEDDATE",
+      "type": "esriFieldTypeDate",
+      "alias": "Revised Date",
+      "nullPct": null,
+      "distinctCount": null,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Area",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape Area",
+      "nullPct": 0,
+      "distinctCount": 14837868,
+      "hasDomain": false
+    },
+    {
+      "name": "Shape__Length",
+      "type": "esriFieldTypeDouble",
+      "alias": "Shape Length",
+      "nullPct": 0,
+      "distinctCount": 25994777,
+      "hasDomain": false
+    }
+  ],
+  "sampleRows": [
+    {
+      "OBJECTID": 1,
+      "STATEABBR": "CO",
+      "PRINMERCD": "06",
+      "PRINMER": "6th Meridian",
+      "TWNSHPNO": "007",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "S",
+      "RANGENO": "071",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "CO060070S0710W0",
+      "STEWARD": "BLM Cadastral - CO",
+      "TWNSHPLAB": "7S 71W",
+      "FRSTDIVID": "CO060070S0710W0SN300",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "30",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "30",
+      "SECDIVID": "CO060070S0710W0SN300ANWSE",
+      "SECDIVTYP": "A",
+      "SECDIVTXT": "Aliquot Part",
+      "SECDIVNO": "NWSE",
+      "SECDIVSUF": null,
+      "SECDIVNOTE": null,
+      "SECDIVLAB": "NWSE",
+      "SURVID": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SRVNAME": null,
+      "SURVNO": null,
+      "SURVSUF": null,
+      "SURVNOTE": null,
+      "SURVDIV": null,
+      "SURVLAB": null,
+      "QSEC": null,
+      "QQSEC": null,
+      "GOVLOT": null,
+      "SOURCEREF": null,
+      "SOURCEDATE": null,
+      "RECRDAREATX": "40 Acres",
+      "RECRDAREANO": 40,
+      "GISACRE": 46.61571801,
+      "REVISEDDATE": null,
+      "Shape__Area": 0.000019728860479517607,
+      "Shape__Length": 0.01808643097130594
+    },
+    {
+      "OBJECTID": 2,
+      "STATEABBR": "CO",
+      "PRINMERCD": "06",
+      "PRINMER": "6th Meridian",
+      "TWNSHPNO": "011",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "N",
+      "RANGENO": "080",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "CO060110N0800W0",
+      "STEWARD": "BLM Cadastral - CO",
+      "TWNSHPLAB": "11N 80W",
+      "FRSTDIVID": "CO060110N0800W0SN280",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "28",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "28",
+      "SECDIVID": "CO060110N0800W0SN280ANESE",
+      "SECDIVTYP": "A",
+      "SECDIVTXT": "Aliquot Part",
+      "SECDIVNO": "NESE",
+      "SECDIVSUF": null,
+      "SECDIVNOTE": null,
+      "SECDIVLAB": "NESE",
+      "SURVID": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SRVNAME": null,
+      "SURVNO": null,
+      "SURVSUF": null,
+      "SURVNOTE": null,
+      "SURVDIV": null,
+      "SURVLAB": null,
+      "QSEC": null,
+      "QQSEC": null,
+      "GOVLOT": null,
+      "SOURCEREF": null,
+      "SOURCEDATE": null,
+      "RECRDAREATX": "40 Acres",
+      "RECRDAREANO": 40,
+      "GISACRE": 40.94321859,
+      "REVISEDDATE": null,
+      "Shape__Area": 0.000017705965092318365,
+      "Shape__Length": 0.016999214826765918
+    },
+    {
+      "OBJECTID": 3,
+      "STATEABBR": "CO",
+      "PRINMERCD": "06",
+      "PRINMER": "6th Meridian",
+      "TWNSHPNO": "021",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "S",
+      "RANGENO": "054",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "CO060210S0540W0",
+      "STEWARD": "BLM Cadastral - CO",
+      "TWNSHPLAB": "21S 54W",
+      "FRSTDIVID": "CO060210S0540W0SN010",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "01",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "01",
+      "SECDIVID": "CO060210S0540W0SN010ANWSW",
+      "SECDIVTYP": "A",
+      "SECDIVTXT": "Aliquot Part",
+      "SECDIVNO": "NWSW",
+      "SECDIVSUF": null,
+      "SECDIVNOTE": null,
+      "SECDIVLAB": "NWSW",
+      "SURVID": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SRVNAME": null,
+      "SURVNO": null,
+      "SURVSUF": null,
+      "SURVNOTE": null,
+      "SURVDIV": null,
+      "SURVLAB": null,
+      "QSEC": null,
+      "QQSEC": null,
+      "GOVLOT": null,
+      "SOURCEREF": null,
+      "SOURCEDATE": null,
+      "RECRDAREATX": "40 Acres",
+      "RECRDAREANO": 40,
+      "GISACRE": 39.88178409,
+      "REVISEDDATE": null,
+      "Shape__Area": 0.00001661083410908759,
+      "Shape__Length": 0.01643586130527392
+    },
+    {
+      "OBJECTID": 4,
+      "STATEABBR": "CO",
+      "PRINMERCD": "06",
+      "PRINMER": "6th Meridian",
+      "TWNSHPNO": "003",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "S",
+      "RANGENO": "066",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "CO060030S0660W0",
+      "STEWARD": "BLM Cadastral - CO",
+      "TWNSHPLAB": "3S 66W",
+      "FRSTDIVID": "CO060030S0660W0SN220",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "22",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "22",
+      "SECDIVID": "CO060030S0660W0SN220ANESE",
+      "SECDIVTYP": "A",
+      "SECDIVTXT": "Aliquot Part",
+      "SECDIVNO": "NESE",
+      "SECDIVSUF": null,
+      "SECDIVNOTE": null,
+      "SECDIVLAB": "NESE",
+      "SURVID": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SRVNAME": null,
+      "SURVNO": null,
+      "SURVSUF": null,
+      "SURVNOTE": null,
+      "SURVDIV": null,
+      "SURVLAB": null,
+      "QSEC": null,
+      "QQSEC": null,
+      "GOVLOT": null,
+      "SOURCEREF": null,
+      "SOURCEDATE": null,
+      "RECRDAREATX": "40 Acres",
+      "RECRDAREANO": 40,
+      "GISACRE": 39.41739237,
+      "REVISEDDATE": null,
+      "Shape__Area": 0.000016769317880971357,
+      "Shape__Length": 0.016530949386497257
+    },
+    {
+      "OBJECTID": 5,
+      "STATEABBR": "CO",
+      "PRINMERCD": "23",
+      "PRINMER": "New Mexico Meridian",
+      "TWNSHPNO": "047",
+      "TWNSHPFRAC": "0",
+      "TWNSHPDIR": "N",
+      "RANGENO": "019",
+      "RANGEFRAC": "0",
+      "RANGEDIR": "W",
+      "TWNSHPDPCD": "0",
+      "PLSSID": "CO230470N0190W0",
+      "STEWARD": "BLM Cadastral - CO",
+      "TWNSHPLAB": "47N 19W",
+      "FRSTDIVID": "CO230470N0190W0SN080",
+      "FRSTDIVTYP": "SN",
+      "FRSTDIVTXT": "Section",
+      "FRSTDIVNO": "08",
+      "FRSTDIVDUP": "0",
+      "FRSTDIVLAB": "08",
+      "SECDIVID": "CO230470N0190W0SN080ANESW",
+      "SECDIVTYP": "A",
+      "SECDIVTXT": "Aliquot Part",
+      "SECDIVNO": "NESW",
+      "SECDIVSUF": null,
+      "SECDIVNOTE": null,
+      "SECDIVLAB": "NESW",
+      "SURVID": null,
+      "SURVTYP": null,
+      "SURVTYPTXT": null,
+      "SRVNAME": null,
+      "SURVNO": null,
+      "SURVSUF": null,
+      "SURVNOTE": null,
+      "SURVDIV": null,
+      "SURVLAB": null,
+      "QSEC": null,
+      "QQSEC": null,
+      "GOVLOT": null,
+      "SOURCEREF": null,
+      "SOURCEDATE": null,
+      "RECRDAREATX": "40 Acres",
+      "RECRDAREANO": 40,
+      "GISACRE": 40.06569716,
+      "REVISEDDATE": null,
+      "Shape__Area": 0.00001670792516961228,
+      "Shape__Length": 0.016460206532200077
+    }
+  ]
+}

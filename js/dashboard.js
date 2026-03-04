@@ -439,20 +439,29 @@ async function runLiveHealthChecks(summaryEl, listEl, hasWorker) {
   renderHealthResults(results, null, summaryEl, listEl, hasWorker);
 }
 
-/** Wire the health refresh button. */
+/** Wire the health refresh button — drives batch-and-chain from the browser. */
 function wireHealthRefreshBtn(container) {
   const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
   container.querySelectorAll('.health-refresh-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
       if (!workerBase) return;
       btn.disabled = true;
-      btn.textContent = '\u23F3 Scanning\u2026';
       try {
-        const resp = await fetch(`${workerBase}/health/refresh`, { method: 'POST' });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        btn.textContent = '\u2705 Scan started!';
-        setTimeout(() => loadServiceHealthStatus(), 8000);
-        setTimeout(() => { btn.textContent = '\uD83D\uDD04 Refresh Health'; btn.disabled = false; }, 3000);
+        let offset = 0;
+        let done = false;
+        while (!done) {
+          btn.textContent = `\u23F3 Scanning batch ${offset}\u2026`;
+          const resp = await fetch(`${workerBase}/health/refresh?offset=${offset}`, { method: 'POST' });
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const progress = await resp.json();
+          if (progress.error) throw new Error(progress.error);
+          done = progress.done;
+          if (!done) offset = progress.nextOffset;
+        }
+        btn.textContent = '\u2705 Complete!';
+        // Reload health display with the new data
+        setTimeout(() => loadServiceHealthStatus(), 500);
+        setTimeout(() => { btn.textContent = '\uD83D\uDD04 Refresh Health'; btn.disabled = false; }, 2000);
       } catch (e) {
         console.warn('Health refresh failed:', e);
         btn.textContent = '\u274C Failed';
@@ -464,19 +473,27 @@ function wireHealthRefreshBtn(container) {
 
 /** Wire the freshness action buttons (refresh via Worker OR copy CLI command). */
 function wireFreshnessButtons(container) {
-  // Refresh button — calls the Worker
+  const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
+  // Refresh button — drives batch-and-chain from the browser
   container.querySelectorAll('.freshness-refresh-btn').forEach(btn => {
     btn.addEventListener('click', async () => {
-      if (!WORKER_BASE_URL) return;
+      if (!workerBase) return;
       btn.disabled = true;
-      btn.textContent = '⏳ Scanning…';
       try {
-        const resp = await fetch(`${WORKER_BASE_URL.replace(/\/+$/, '')}/freshness/refresh`, { method: 'POST' });
-        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-        btn.textContent = '✅ Scan started!';
-        // Poll for completion then reload the freshness section
-        setTimeout(() => loadDashboardFreshness(), 5000);
-        setTimeout(() => { btn.textContent = '🔄 Refresh Freshness'; btn.disabled = false; }, 3000);
+        let offset = 0;
+        let done = false;
+        while (!done) {
+          btn.textContent = `⏳ Scanning batch ${offset}…`;
+          const resp = await fetch(`${workerBase}/freshness/refresh?offset=${offset}`, { method: 'POST' });
+          if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+          const progress = await resp.json();
+          if (progress.error) throw new Error(progress.error);
+          done = progress.done;
+          if (!done) offset = progress.nextOffset;
+        }
+        btn.textContent = '✅ Complete!';
+        setTimeout(() => loadDashboardFreshness(), 500);
+        setTimeout(() => { btn.textContent = '🔄 Refresh Freshness'; btn.disabled = false; }, 2000);
       } catch (e) {
         console.warn('Freshness refresh failed:', e);
         btn.textContent = '❌ Failed';

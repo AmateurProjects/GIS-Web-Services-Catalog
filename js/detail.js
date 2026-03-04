@@ -78,18 +78,6 @@ export function renderDatasetDetail(datasetId) {
     html += `<h2>${escapeHtml(dataset.title || dataset.id)}</h2>`;
     if (dataset.description) html += `<p>${escapeHtml(dataset.description)}</p>`;
 
-    // Data source legend (dev helper)
-    html += `
-      <div class="card" style="padding:0.6rem 0.85rem; margin-bottom:0.5rem; background:rgba(255,255,255,0.02);">
-        <div style="font-size:0.8rem; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
-          <strong style="color:var(--text-main);">Data Source Legend:</strong>
-          <span><span class="data-source-badge data-source-badge-manual">Manual</span> Entered in catalog.json</span>
-          <span><span class="data-source-badge data-source-badge-auto">Auto</span> Fetched from ArcGIS REST API</span>
-          <span><span class="data-source-badge data-source-badge-hybrid">Hybrid</span> Links manual to auto-detected</span>
-        </div>
-      </div>
-    `;
-
     html += '<div class="card card-meta">';
     html += '<div class="card-header-row"><h3>Dataset Information</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
     

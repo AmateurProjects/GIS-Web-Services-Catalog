@@ -24,6 +24,7 @@ const R2_KEY_PREV = 'freshness-previous.json';
 const R2_KEY_HEALTH = 'health.json';
 const R2_KEY_HEALTH_TASK = 'health-task.json';
 const R2_KEY_FRESHNESS_TASK = 'freshness-task.json';
+const R2_KEY_OVERRIDES = 'catalog-overrides.json';
 const TIMEOUT_MS = 12_000;
 const HEALTH_TIMEOUT_MS = 10_000;
 const CONCURRENCY = 4;
@@ -114,6 +115,17 @@ export default {
       return corsJson(result);
     }
 
+    // ── GET /catalog/overrides.json ──
+    if (request.method === 'GET' && (path === '/catalog/overrides.json' || path === '/catalog/overrides')) {
+      return serveR2Json(env, R2_KEY_OVERRIDES);
+    }
+
+    // ── PATCH /catalog/dataset/:id ──
+    const patchMatch = path.match(/^\/catalog\/dataset\/(.+)$/);
+    if (request.method === 'PATCH' && patchMatch) {
+      return handleDatasetPatch(request, env, decodeURIComponent(patchMatch[1]));
+    }
+
     return corsJson({ error: 'Not found' }, 404);
   },
 
@@ -168,6 +180,76 @@ async function serveStatus(env, key) {
   } catch (_) {
     return corsJson({ exists: true, generated: null });
   }
+}
+
+// ================================================================
+// Handle PATCH /catalog/dataset/:id — admin inline edits
+// ================================================================
+// Stores per-dataset field overrides in R2 (catalog-overrides.json).
+// Body: { fields: { key: value, ... } }
+// Auth: Bearer <ADMIN_TOKEN> (env variable)
+// The overrides file is a simple map: { datasetId: { field: value, ... }, ... }
+// The frontend merges these on top of the base catalog.json at load time.
+
+async function handleDatasetPatch(request, env, datasetId) {
+  // Auth check — ADMIN_TOKEN is required for writes
+  const token = env.ADMIN_TOKEN;
+  if (!token) {
+    return corsJson({ error: 'Admin edits not configured. Set ADMIN_TOKEN env var on the Worker.' }, 501);
+  }
+  const auth = request.headers.get('Authorization') || '';
+  if (auth !== `Bearer ${token}`) {
+    return corsJson({ error: 'Unauthorized' }, 401);
+  }
+
+  // Parse body
+  let body;
+  try {
+    body = await request.json();
+  } catch (_) {
+    return corsJson({ error: 'Invalid JSON body' }, 400);
+  }
+
+  const fields = body?.fields;
+  if (!fields || typeof fields !== 'object' || Array.isArray(fields)) {
+    return corsJson({ error: 'Body must contain { fields: { key: value, ... } }' }, 400);
+  }
+
+  // Load existing overrides
+  let overrides = {};
+  try {
+    const obj = await env.BUCKET.get(R2_KEY_OVERRIDES);
+    if (obj) overrides = JSON.parse(await obj.text());
+  } catch (_) {}
+
+  // Merge — shallow merge per dataset (new fields overwrite, null removes)
+  const existing = overrides[datasetId] || {};
+  for (const [k, v] of Object.entries(fields)) {
+    if (v === null || v === undefined || v === '') {
+      delete existing[k];
+    } else {
+      existing[k] = v;
+    }
+  }
+
+  // Remove dataset entry entirely if no overrides remain
+  if (Object.keys(existing).length === 0) {
+    delete overrides[datasetId];
+  } else {
+    overrides[datasetId] = existing;
+  }
+
+  // Write back
+  await env.BUCKET.put(R2_KEY_OVERRIDES, JSON.stringify(overrides, null, 2), {
+    httpMetadata: { contentType: 'application/json' },
+  });
+
+  return corsJson({
+    ok: true,
+    datasetId,
+    overrides: overrides[datasetId] || {},
+    totalOverriddenDatasets: Object.keys(overrides).length,
+  });
 }
 
 // ================================================================

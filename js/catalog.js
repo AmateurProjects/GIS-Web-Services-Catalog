@@ -1,5 +1,5 @@
 // ====== CATALOG MODULE (shared loader + indexes) ======
-import { CATALOG_URL, GITHUB_NEW_ISSUE_BASE } from './config.js';
+import { CATALOG_URL, GITHUB_NEW_ISSUE_BASE, WORKER_BASE_URL } from './config.js';
 
 let cache = null;
 let indexesBuilt = false;
@@ -14,8 +14,52 @@ export async function loadCatalog() {
     throw new Error(`Failed to load catalog.json: ${resp.status}`);
   }
   cache = await resp.json();
+
+  // Merge R2-stored admin overrides on top of the base catalog
+  await mergeOverrides();
+
   buildIndexes();
   return cache;
+}
+
+/** Fetch catalog-overrides.json from Worker and merge into cached catalog. */
+async function mergeOverrides() {
+  if (!WORKER_BASE_URL || !cache) return;
+  try {
+    const workerBase = WORKER_BASE_URL.replace(/\/+$/, '');
+    const resp = await fetch(`${workerBase}/catalog/overrides.json`);
+    if (!resp.ok) return; // 404 = no overrides yet, that's fine
+    const overrides = await resp.json();
+    if (!overrides || typeof overrides !== 'object') return;
+
+    const datasets = cache.datasets || [];
+    for (const ds of datasets) {
+      const patch = overrides[ds.id];
+      if (!patch || typeof patch !== 'object') continue;
+      for (const [k, v] of Object.entries(patch)) {
+        ds[k] = v;
+      }
+    }
+  } catch (_) {
+    // Silently ignore — overrides are optional
+  }
+}
+
+/**
+ * Apply a local patch to a dataset in-memory (after saving to Worker).
+ * Updates the cached dataset object so the UI reflects changes immediately
+ * without a full page reload.
+ */
+export function applyLocalOverrides(datasetId, fields) {
+  const ds = datasetById[datasetId];
+  if (!ds) return;
+  for (const [k, v] of Object.entries(fields)) {
+    if (v === null || v === undefined || v === '') {
+      delete ds[k];
+    } else {
+      ds[k] = v;
+    }
+  }
 }
 
 function buildIndexes() {

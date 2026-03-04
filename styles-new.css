@@ -3606,3 +3606,138 @@ textarea.dataset-edit-input {
   user-select: none;
 }
 
+/* ================================================================
+   INLINE CLICK-TO-EDIT
+   ================================================================ */
+
+.inline-edit-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+}
+
+.inline-edit-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.inline-edit-label {
+  flex: 0 0 170px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-main);
+  padding-top: 0.2rem;
+}
+
+.inline-edit-cell {
+  flex: 1;
+  min-width: 0;
+}
+
+.inline-edit-cell.editable-field {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0.2rem 0.4rem;
+  transition: background 0.15s;
+}
+
+.inline-edit-cell.editable-field:hover {
+  background: rgba(96, 165, 250, 0.08);
+}
+
+.inline-edit-cell.editable-field:hover .inline-edit-value::after {
+  content: ' ✎';
+  font-size: 0.75rem;
+  color: var(--accent);
+  opacity: 0.7;
+}
+
+.inline-edit-value {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  word-break: break-word;
+}
+
+.inline-edit-value.is-dirty {
+  background: rgba(250, 204, 21, 0.12);
+  border-radius: 3px;
+  padding: 0 3px;
+  border-left: 2px solid var(--amber, #facc15);
+}
+
+.inline-edit-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.inline-edit-input {
+  width: 100%;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.85rem;
+  background: var(--bg-main, #0f172a);
+  color: var(--text-main, #e2e8f0);
+  border: 1px solid var(--accent, #60a5fa);
+  border-radius: 4px;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.inline-edit-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3);
+}
+
+textarea.inline-edit-input {
+  resize: vertical;
+  min-height: 60px;
+}
+
+select.inline-edit-input {
+  cursor: pointer;
+}
+
+.inline-edit-actions {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.inline-edit-ok,
+.inline-edit-cancel {
+  padding: 0.15rem 0.55rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 4px;
+  background: var(--card-bg, #1e293b);
+  color: var(--text-main, #e2e8f0);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.inline-edit-ok:hover {
+  background: var(--green, #22c55e);
+  color: #fff;
+}
+
+.inline-edit-cancel:hover {
+  background: var(--red, #ef4444);
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .inline-edit-row {
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+  .inline-edit-label {
+    flex: none;
+  }
+}
+

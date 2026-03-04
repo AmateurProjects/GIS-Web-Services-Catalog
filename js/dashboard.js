@@ -439,6 +439,26 @@ async function runLiveHealthChecks(summaryEl, listEl, hasWorker) {
   renderHealthResults(results, null, summaryEl, listEl, hasWorker);
 }
 
+// ── Persistent floating toast for refresh progress ──
+let _toastEl = null;
+function showRefreshToast(msg) {
+  if (!_toastEl) {
+    _toastEl = document.createElement('div');
+    _toastEl.id = 'refresh-toast';
+    _toastEl.style.cssText = 'position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;background:var(--card-bg,#1e293b);color:var(--text,#e2e8f0);padding:0.65rem 1.1rem;border-radius:8px;font-size:0.85rem;box-shadow:0 4px 16px rgba(0,0,0,0.4);display:flex;align-items:center;gap:0.5rem;transition:opacity 0.3s;border:1px solid var(--border,#334155);';
+    document.body.appendChild(_toastEl);
+  }
+  _toastEl.textContent = msg;
+  _toastEl.style.opacity = '1';
+  _toastEl.style.display = 'flex';
+}
+function hideRefreshToast() {
+  if (_toastEl) {
+    _toastEl.style.opacity = '0';
+    setTimeout(() => { if (_toastEl) _toastEl.style.display = 'none'; }, 350);
+  }
+}
+
 /** Wire the health refresh button — drives batch-and-chain from the browser. */
 function wireHealthRefreshBtn(container) {
   const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
@@ -450,7 +470,9 @@ function wireHealthRefreshBtn(container) {
         let offset = 0;
         let done = false;
         while (!done) {
-          btn.textContent = `\u23F3 Scanning batch ${offset}\u2026`;
+          const msg = `⏳ Health scan: batch ${offset}…`;
+          btn.textContent = msg;
+          showRefreshToast(msg);
           const resp = await fetch(`${workerBase}/health/refresh?offset=${offset}`, { method: 'POST' });
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
           const progress = await resp.json();
@@ -458,14 +480,15 @@ function wireHealthRefreshBtn(container) {
           done = progress.done;
           if (!done) offset = progress.nextOffset;
         }
-        btn.textContent = '\u2705 Complete!';
-        // Reload health display with the new data
+        btn.textContent = '✅ Complete!';
+        showRefreshToast('✅ Health scan complete!');
         setTimeout(() => loadServiceHealthStatus(), 500);
-        setTimeout(() => { btn.textContent = '\uD83D\uDD04 Refresh Health'; btn.disabled = false; }, 2000);
+        setTimeout(() => { btn.textContent = '🔄 Refresh Health'; btn.disabled = false; hideRefreshToast(); }, 2500);
       } catch (e) {
         console.warn('Health refresh failed:', e);
-        btn.textContent = '\u274C Failed';
-        setTimeout(() => { btn.textContent = '\uD83D\uDD04 Refresh Health'; btn.disabled = false; }, 2000);
+        btn.textContent = '❌ Failed';
+        showRefreshToast('❌ Health scan failed');
+        setTimeout(() => { btn.textContent = '🔄 Refresh Health'; btn.disabled = false; hideRefreshToast(); }, 2500);
       }
     });
   });
@@ -483,7 +506,9 @@ function wireFreshnessButtons(container) {
         let offset = 0;
         let done = false;
         while (!done) {
-          btn.textContent = `⏳ Scanning batch ${offset}…`;
+          const msg = `⏳ Freshness scan: batch ${offset}…`;
+          btn.textContent = msg;
+          showRefreshToast(msg);
           const resp = await fetch(`${workerBase}/freshness/refresh?offset=${offset}`, { method: 'POST' });
           if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
           const progress = await resp.json();
@@ -492,38 +517,18 @@ function wireFreshnessButtons(container) {
           if (!done) offset = progress.nextOffset;
         }
         btn.textContent = '✅ Complete!';
+        showRefreshToast('✅ Freshness scan complete!');
         setTimeout(() => loadDashboardFreshness(), 500);
-        setTimeout(() => { btn.textContent = '🔄 Refresh Freshness'; btn.disabled = false; }, 2000);
+        setTimeout(() => { btn.textContent = '🔄 Refresh Freshness'; btn.disabled = false; hideRefreshToast(); }, 2500);
       } catch (e) {
         console.warn('Freshness refresh failed:', e);
         btn.textContent = '❌ Failed';
-        setTimeout(() => { btn.textContent = '🔄 Refresh Freshness'; btn.disabled = false; }, 2000);
+        showRefreshToast('❌ Freshness scan failed');
+        setTimeout(() => { btn.textContent = '🔄 Refresh Freshness'; btn.disabled = false; hideRefreshToast(); }, 2500);
       }
     });
   });
 
-  // Copy command fallback button
-  const cmd = 'node scripts/generate-freshness.js --write';
-  container.querySelectorAll('.freshness-copy-cmd').forEach(btn => {
-    btn.addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(cmd);
-        const orig = btn.textContent;
-        btn.textContent = '✅ Copied!';
-        setTimeout(() => { btn.textContent = orig; }, 1500);
-      } catch (_) {
-        const tmp = document.createElement('input');
-        tmp.value = cmd;
-        document.body.appendChild(tmp);
-        tmp.select();
-        document.execCommand('copy');
-        document.body.removeChild(tmp);
-        const orig = btn.textContent;
-        btn.textContent = '✅ Copied!';
-        setTimeout(() => { btn.textContent = orig; }, 1500);
-      }
-    });
-  });
 }
 
 /** Load pre-computed freshness data and render dashboard section. */
@@ -551,7 +556,6 @@ async function loadDashboardFreshness() {
   const refreshBtn = hasWorker
     ? `<button type="button" class="btn btn-sm freshness-refresh-btn" title="Trigger a fresh scan via the Worker">🔄 Refresh Freshness</button>`
     : '';
-  const copyBtn = `<button type="button" class="btn btn-sm freshness-copy-cmd" title="Copy CLI command to clipboard">📋 Copy CLI command</button>`;
 
   if (!freshnessData || !freshnessData.datasets || freshnessData.datasets.length === 0) {
     contentEl.innerHTML = `
@@ -559,7 +563,6 @@ async function loadDashboardFreshness() {
         <p>No freshness data available.</p>
         <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
           ${refreshBtn}
-          ${copyBtn}
         </div>
       </div>`;
     wireFreshnessButtons(contentEl);
@@ -629,7 +632,6 @@ async function loadDashboardFreshness() {
   html += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">`;
   html += `<span style="font-size:0.75rem;color:var(--text-muted);">Generated: ${freshnessData.generated ? new Date(freshnessData.generated).toLocaleString() : 'unknown'}</span>`;
   html += refreshBtn;
-  html += copyBtn;
   html += `</div>`;
 
   contentEl.innerHTML = html;

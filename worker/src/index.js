@@ -221,17 +221,25 @@ async function runScan(env, offset = 0) {
   const batch = task.toProcess.slice(offset, offset + FRESHNESS_BATCH_SIZE);
   console.log(`Freshness scan batch: offset=${offset}, batchSize=${batch.length}, total=${task.toProcess.length}`);
 
-  for (const ds of batch) {
-    const stored = task.existing[ds.id] || task.existing[ds.datasetId];
-    const storedCount = stored?.recordCount ?? null;
-    try {
+  // Process freshness datasets in parallel (each dataset does multiple fetches internally)
+  const batchResults = await Promise.allSettled(
+    batch.map(async (ds) => {
+      const stored = task.existing[ds.id] || task.existing[ds.datasetId];
+      const storedCount = stored?.recordCount ?? null;
       const result = await processDataset(ds, storedCount, env);
-      if (result) task.results.push(result);
-    } catch (e) {
-      console.log(`  Error processing ${ds.id}: ${e.message}`);
+      return { ds, result };
+    })
+  );
+  for (let i = 0; i < batchResults.length; i++) {
+    const r = batchResults[i];
+    if (r.status === 'fulfilled') {
+      if (r.value.result) task.results.push(r.value.result);
+    } else {
+      const ds = batch[i];
+      console.log(`  Error processing ${ds.id}: ${r.reason?.message}`);
       task.results.push({
         datasetId: ds.id, lastUpdated: null, signal: 'none',
-        confidence: 'none', details: e.message, signals: [], recordCount: null,
+        confidence: 'none', details: r.reason?.message || 'Unknown error', signals: [], recordCount: null,
       });
     }
   }
@@ -326,16 +334,22 @@ async function runHealthScan(env, offset = 0) {
     task = JSON.parse(await obj.text());
   }
 
-  // Process this batch sequentially (1 fetch per service)
+  // Process this batch in parallel to stay within Worker wall-clock limit
   const batch = task.services.slice(offset, offset + HEALTH_BATCH_SIZE);
   console.log(`Health scan batch: offset=${offset}, batchSize=${batch.length}, total=${task.services.length}`);
 
-  for (const svc of batch) {
-    try {
+  const batchResults = await Promise.allSettled(
+    batch.map(async (svc) => {
       const check = await checkServiceHealth(svc.url);
-      task.results.push({ url: svc.url, datasets: svc.datasets, status: check.status, detail: check.detail });
-    } catch (e) {
-      task.results.push({ url: svc.url, datasets: svc.datasets, status: 'unknown', detail: e.message });
+      return { url: svc.url, datasets: svc.datasets, status: check.status, detail: check.detail };
+    })
+  );
+  for (let i = 0; i < batchResults.length; i++) {
+    const r = batchResults[i];
+    if (r.status === 'fulfilled') {
+      task.results.push(r.value);
+    } else {
+      task.results.push({ url: batch[i].url, datasets: batch[i].datasets, status: 'unknown', detail: r.reason?.message || 'Unknown error' });
     }
   }
 

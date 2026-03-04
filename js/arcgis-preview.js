@@ -31,6 +31,23 @@ export function looksLikeArcGisService(url) {
   return u.includes('/REST/SERVICES/') && (u.includes('/MAPSERVER') || u.includes('/FEATURESERVER') || u.includes('/IMAGESERVER'));
 }
 
+/**
+ * Detect the ArcGIS service type from a URL.
+ * Returns 'MapServer' | 'FeatureServer' | 'ImageServer' | null
+ */
+export function getServiceType(url) {
+  const u = String(url || '').toUpperCase();
+  if (u.includes('/IMAGESERVER')) return 'ImageServer';
+  if (u.includes('/MAPSERVER')) return 'MapServer';
+  if (u.includes('/FEATURESERVER')) return 'FeatureServer';
+  return null;
+}
+
+/** Returns true when the URL points to an ImageServer (raster/imagery service). */
+export function isImageService(url) {
+  return getServiceType(url) === 'ImageServer';
+}
+
 export async function fetchJsonWithTimeout(url, timeoutMs = 4500) {
   const controller = new AbortController();
   const t = setTimeout(() => controller.abort(), timeoutMs);
@@ -53,6 +70,10 @@ export async function fetchLayerJson(serviceUrl, layerId = 0) {
   const base = normalizeServiceUrl(serviceUrl);
   // If the URL already points to a layer endpoint, use it directly
   const parsed = parseServiceAndLayerId(base);
+  // ImageServer has no sublayers — never append a layer ID
+  if (isImageService(base)) {
+    return fetchJsonWithTimeout(`${parsed.serviceUrl}?f=pjson`);
+  }
   const target = parsed.isLayerUrl ? base : `${base}/${layerId}`;
   const u = `${target}?f=pjson`;
   return fetchJsonWithTimeout(u);
@@ -156,22 +177,28 @@ export function initializeArcGISMap(serviceUrl, layerId) {
     "esri/Map",
     "esri/views/MapView",
     "esri/layers/MapImageLayer",
-    "esri/layers/FeatureLayer"
-  ], function(Map, MapView, MapImageLayer, FeatureLayer) {
+    "esri/layers/FeatureLayer",
+    "esri/layers/ImageryLayer"
+  ], function(Map, MapView, MapImageLayer, FeatureLayer, ImageryLayer) {
     try {
-      const upper = serviceUrl.toUpperCase();
+      const svcType = getServiceType(serviceUrl);
       let layer;
 
-      if (upper.includes('/MAPSERVER')) {
+      if (svcType === 'MapServer') {
         // Use MapImageLayer for MapServer
         layer = new MapImageLayer({
           url: serviceUrl
         });
-      } else if (upper.includes('/FEATURESERVER')) {
+      } else if (svcType === 'FeatureServer') {
         // Use FeatureLayer for FeatureServer
         const layerUrl = serviceUrl.replace(/\/FeatureServer\/?$/i, `/FeatureServer/${layerId}`);
         layer = new FeatureLayer({
           url: layerUrl
+        });
+      } else if (svcType === 'ImageServer') {
+        // Use ImageryLayer for ImageServer (raster/imagery services)
+        layer = new ImageryLayer({
+          url: serviceUrl
         });
       } else {
         mapContainer.innerHTML = '<p style="padding:1rem; color:var(--text-muted);">Unsupported service type for interactive map</p>';
@@ -956,8 +983,13 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
       serviceJson = await fetchServiceJson(url);
     }
 
+    const _isImageSvc = isImageService(serviceBaseUrl);
+
     let layerId;
-    if (isLayerUrl) {
+    if (_isImageSvc) {
+      // ImageServer has no sublayers — never resolve a layer ID
+      layerId = null;
+    } else if (isLayerUrl) {
       layerId = parsed.layerId;
     } else {
       layerId = (serviceJson.layers && serviceJson.layers.length)
@@ -968,21 +1000,29 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     const fetchBaseUrl = isLayerUrl ? url : serviceBaseUrl;
 
     let layerJson = null;
-    try { layerJson = await fetchLayerJson(fetchBaseUrl, layerId); } catch {}
-    if ((!layerJson || !Array.isArray(layerJson.fields)) && isLayerUrl) {
-      try {
-        const direct = await fetchServiceJson(url);
-        if (direct && Array.isArray(direct.fields)) layerJson = direct;
-      } catch {}
+    if (_isImageSvc) {
+      // For ImageServer the service-level JSON IS the layer JSON
+      layerJson = serviceJson;
+    } else {
+      try { layerJson = await fetchLayerJson(fetchBaseUrl, layerId); } catch {}
+      if ((!layerJson || !Array.isArray(layerJson.fields)) && isLayerUrl) {
+        try {
+          const direct = await fetchServiceJson(url);
+          if (direct && Array.isArray(direct.fields)) layerJson = direct;
+        } catch {}
+      }
     }
 
+    // Record count — only available for feature/map layers (not ImageServer)
     let recordCount = null;
-    try {
-      const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
-      const countTarget = isLayerUrl ? fetchBaseUrl : `${fetchBaseUrl}/${layerId}`;
-      const countJson = await fetchJsonWithTimeout(`${countTarget}/query?${countParams}`, 5000);
-      if (countJson && typeof countJson.count === 'number') recordCount = countJson.count;
-    } catch {}
+    if (!_isImageSvc) {
+      try {
+        const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
+        const countTarget = isLayerUrl ? fetchBaseUrl : `${fetchBaseUrl}/${layerId}`;
+        const countJson = await fetchJsonWithTimeout(`${countTarget}/query?${countParams}`, 5000);
+        if (countJson && typeof countJson.count === 'number') recordCount = countJson.count;
+      } catch {}
+    }
 
     if (generation !== _renderGeneration) return;
 
@@ -1000,11 +1040,14 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     html += buildMetadataCardHTML(metaProps);
 
     const _isTable = !metaProps.geometryType || metaProps.geometryType.toUpperCase() === 'TABLE';
+    const _isRaster = _isImageSvc || (metaProps.geometryType && metaProps.geometryType.toUpperCase() === 'RASTER');
+
+    // Show map card for spatial + raster layers, but not for TABLE
     if (!_isTable) {
       html += buildMapCardHTML(url, layerId);
     }
 
-    // Fields card (live — stats computed async)
+    // Fields card (live — stats computed async). ImageServer rarely has queryable fields.
     const allFields = (layerJson && Array.isArray(layerJson.fields)) ? layerJson.fields : [];
     if (allFields.length) {
       html += buildFieldsCardHTML(allFields, null, {
@@ -1014,20 +1057,24 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
       });
     }
 
-    // Sample records card (live — async random rows)
-    html += buildSampleCardHTML(null, recordCount);
+    // Sample records card — skip for ImageServer (no /query endpoint)
+    if (!_isImageSvc) {
+      html += buildSampleCardHTML(null, recordCount);
+    }
 
     contentEl.innerHTML = html;
     statusEl.textContent = 'Preview loaded.';
 
-    // Start async field stats
-    if (allFields.length) {
+    // Start async field stats — skip for ImageServer (no /query for stats)
+    if (allFields.length && !_isImageSvc) {
       startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation);
     }
 
-    // Wire sample records refresh and load initial sample
-    const loadSample = wireSampleRefresh(contentEl, fetchBaseUrl, layerId, metaProps.objectIdField, recordCount, generation);
-    if (loadSample) loadSample();
+    // Wire sample records refresh and load initial sample — skip for ImageServer
+    if (!_isImageSvc) {
+      const loadSample = wireSampleRefresh(contentEl, fetchBaseUrl, layerId, metaProps.objectIdField, recordCount, generation);
+      if (loadSample) loadSample();
+    }
 
     // Initialize interactive map
     if (!_isTable) {

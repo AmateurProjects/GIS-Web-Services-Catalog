@@ -1,5 +1,5 @@
 import { escapeHtml } from './utils.js';
-import { normalizeServiceUrl, parseServiceAndLayerId, looksLikeArcGisService, getRenderGeneration } from './arcgis-preview.js';
+import { normalizeServiceUrl, parseServiceAndLayerId, looksLikeArcGisService, getRenderGeneration, isImageService, fetchServiceJson } from './arcgis-preview.js';
 
 // ====== COVERAGE MAP (State-level Intersection Analysis via Census Bureau) ======
 
@@ -347,9 +347,26 @@ export async function renderCoverageMapCard(hostEl, publicServiceUrl, generation
     return;
   }
 
-  // Determine the layer id from the URL
+  // ImageServer is a raster/imagery service — no spatial vector queries available
+  if (isImageService(url)) {
+    statusEl.textContent = 'Coverage analysis is not available for ImageServer (raster) services.';
+    return;
+  }
+
+  // Determine the layer id from the URL (discover from service if not explicit)
   const parsed = parseServiceAndLayerId(url);
-  const layerId = parsed.isLayerUrl ? parsed.layerId : 0;
+  let layerId;
+  if (parsed.isLayerUrl) {
+    layerId = parsed.layerId;
+  } else {
+    // Discover the first layer ID from service metadata
+    try {
+      const svcJson = await fetchServiceJson(parsed.serviceUrl);
+      layerId = (svcJson?.layers?.length) ? (svcJson.layers[0].id ?? 0) : 0;
+    } catch (_) {
+      layerId = 0;
+    }
+  }
 
   // Check session cache (from prior live or pre-computed render)
   const cacheKey = `${url}__${layerId}`;

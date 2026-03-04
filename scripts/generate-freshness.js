@@ -84,6 +84,10 @@ function parseServiceUrl(url) {
   return { base: m[1], layerId: m[2] !== undefined ? Number(m[2]) : null };
 }
 
+function isImageServer(url) {
+  return String(url || '').toUpperCase().includes('/IMAGESERVER');
+}
+
 // ── Date field detection patterns ──
 
 const EDIT_DATE_PATTERNS = [
@@ -131,9 +135,32 @@ async function processDataset(ds, storedRecordCount) {
   const parsed = parseServiceUrl(url);
   if (!parsed) return null;
 
+  const _isImageSvc = isImageServer(url);
   const isLayerUrl = parsed.layerId !== null;
-  const layerId = isLayerUrl ? parsed.layerId : 0;
-  const queryTarget = isLayerUrl ? url : `${parsed.base}/${layerId}`;
+
+  // For ImageServer: no sublayers, use service URL directly.
+  // For Map/FeatureServer without an explicit layer: discover the real first layer ID.
+  let layerId;
+  let queryTarget;
+
+  if (_isImageSvc) {
+    layerId = null;
+    queryTarget = parsed.base;
+  } else if (isLayerUrl) {
+    layerId = parsed.layerId;
+    queryTarget = url;
+  } else {
+    // Discover the first layer ID from the service endpoint
+    try {
+      const svcJson = await fetchRetry(() => fetchJson(`${parsed.base}?f=pjson`, TIMEOUT_MS));
+      layerId = (svcJson && svcJson.layers && svcJson.layers.length)
+        ? (svcJson.layers[0].id ?? 0)
+        : 0;
+    } catch (_) {
+      layerId = 0;
+    }
+    queryTarget = `${parsed.base}/${layerId}`;
+  }
 
   const signals = [];
 
@@ -170,8 +197,11 @@ async function processDataset(ds, storedRecordCount) {
   }
 
   // ── Signal 2: Editor tracking field ──
+  // Skip for ImageServer — no /query endpoint
   const trackingField = layerJson?.editFieldsInfo?.editDateField || layerJson?.editFieldsInfo?.lastEditDateField;
-  if (trackingField) {
+  if (_isImageSvc) {
+    signals.push({ signal: 'editor_tracking', value: null, confidence: 'none', detail: 'Skipped — ImageServer has no query endpoint' });
+  } else if (trackingField) {
     try {
       const maxDate = await queryMaxDate(queryTarget, trackingField);
       signals.push(maxDate
@@ -186,6 +216,10 @@ async function processDataset(ds, storedRecordCount) {
   }
 
   // ── Signal 3: Date field heuristic ──
+  // Skip for ImageServer — no /query endpoint
+  if (_isImageSvc) {
+    signals.push({ signal: 'date_field_heuristic', value: null, confidence: 'none', detail: 'Skipped — ImageServer has no query endpoint' });
+  } else {
   const fields = layerJson?.fields || cachedFields;
   const dateFields = fields
     .filter(f => (f.type || '').toUpperCase().includes('DATE'))
@@ -219,14 +253,18 @@ async function processDataset(ds, storedRecordCount) {
   } else {
     signals.push({ signal: 'date_field_heuristic', value: null, confidence: 'none', detail: 'No date fields' });
   }
+  } // end else (non-ImageServer) for Signal 3
 
   // ── Signal 4: Record count delta ──
+  // Skip for ImageServer — no /query endpoint
   let currentCount = null;
+  if (!_isImageSvc) {
   try {
     const cp = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
     const cj = await fetchRetry(() => fetchJson(`${queryTarget}/query?${cp}`, TIMEOUT_MS));
     currentCount = cj?.count ?? null;
   } catch (_) {}
+  }
 
   if (currentCount !== null && storedRecordCount !== null) {
     const delta = currentCount - storedRecordCount;

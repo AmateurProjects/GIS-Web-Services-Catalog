@@ -39,6 +39,11 @@ function isArcGisRestUrl(url) {
   return u.includes('/REST/SERVICES/') && (u.includes('/MAPSERVER') || u.includes('/FEATURESERVER') || u.includes('/IMAGESERVER'));
 }
 
+// Detect ImageServer URLs (raster/imagery — no /query endpoint)
+function isImageServerUrl(url) {
+  return String(url || '').toUpperCase().includes('/IMAGESERVER');
+}
+
 // Parse ArcGIS service URL into base + optional layer ID
 function parseArcGisUrl(url) {
   const match = url.match(/(.*\/(?:MapServer|FeatureServer|ImageServer))(?:\/(\d+))?/i);
@@ -99,7 +104,15 @@ async function checkArcGisServiceHealth(url) {
     return { status: 'bad', detail: `Service error (${code}): ${msg}` };
   }
 
-  // Step 2: Determine query target
+  // Step 2: For ImageServer, metadata-only check is sufficient (no /query endpoint)
+  if (isImageServerUrl(url)) {
+    if (serviceJson && (serviceJson.currentVersion || serviceJson.name || serviceJson.serviceDataType)) {
+      return { status: 'ok', detail: 'ImageServer serving metadata' };
+    }
+    return { status: 'unknown', detail: 'ImageServer metadata could not be verified' };
+  }
+
+  // Step 3: Determine query target (MapServer / FeatureServer only)
   let queryTarget;
   if (isLayerUrl) {
     queryTarget = url.replace(/\?.*$/, ''); // strip query params

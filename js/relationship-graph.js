@@ -183,7 +183,7 @@ export function renderRelationshipGraph(containerEl, graphData, options = {}) {
   }
 
   const width = options.width || containerEl.clientWidth || 800;
-  const height = options.height || 500;
+  const height = options.height || 600;
   const nodeRadius = options.nodeRadius || 6;
 
   // Simple force simulation (no d3 dependency — basic spring-electric)
@@ -258,8 +258,8 @@ export function renderRelationshipGraph(containerEl, graphData, options = {}) {
     });
   }
 
-  // Render SVG
-  let svg = `<svg class="relationship-graph-svg" viewBox="0 0 ${width} ${height}" width="100%" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
+  // Render SVG — all content inside a <g> for pan/zoom/rotate transforms
+  let svg = `<svg class="relationship-graph-svg" viewBox="0 0 ${width} ${height}" width="100%" height="${height}" xmlns="http://www.w3.org/2000/svg" style="touch-action:none;">`;
 
   // Defs for arrows
   svg += `<defs>
@@ -267,6 +267,8 @@ export function renderRelationshipGraph(containerEl, graphData, options = {}) {
       <polygon points="0 0, 8 3, 0 6" fill="rgba(255,255,255,0.2)"/>
     </marker>
   </defs>`;
+
+  svg += `<g class="graph-world">`;
 
   // Links
   simLinks.forEach(l => {
@@ -286,19 +288,30 @@ export function renderRelationshipGraph(containerEl, graphData, options = {}) {
     svg += `</circle>`;
   });
 
-  // Labels for major nodes (large service groups)
+  // Labels for nodes — major labels always visible; minor labels revealed on zoom
   const groups = new Map();
   simNodes.forEach(n => {
     groups.set(n.group, (groups.get(n.group) || 0) + 1);
   });
   simNodes.forEach(n => {
-    if ((groups.get(n.group) || 0) >= 3) {
-      const truncLabel = n.label.length > 20 ? n.label.slice(0, 17) + '…' : n.label;
-      svg += `<text class="graph-label" x="${n.x}" y="${n.y - nodeRadius - 3}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,0.5)">${escapeHtml(truncLabel)}</text>`;
-    }
+    const isMajor = (groups.get(n.group) || 0) >= 3;
+    const truncLabel = n.label.length > 24 ? n.label.slice(0, 21) + '…' : n.label;
+    const cssClass = isMajor ? 'graph-label graph-label-major' : 'graph-label graph-label-minor';
+    const dispAttr = isMajor ? '' : ' display="none"';
+    svg += `<text class="${cssClass}" x="${n.x}" y="${n.y - nodeRadius - 3}" text-anchor="middle" font-size="8" fill="rgba(255,255,255,${isMajor ? 0.55 : 0.35})"${dispAttr}>${escapeHtml(truncLabel)}</text>`;
   });
 
+  svg += `</g>`; // end .graph-world
   svg += `</svg>`;
+
+  // Toolbar: zoom / pan / rotate controls
+  let toolbar = '<div class="graph-toolbar">';
+  toolbar += '<button class="graph-btn" data-action="zoom-in" title="Zoom in">+</button>';
+  toolbar += '<button class="graph-btn" data-action="zoom-out" title="Zoom out">&minus;</button>';
+  toolbar += '<button class="graph-btn" data-action="rotate-left" title="Rotate left">↺</button>';
+  toolbar += '<button class="graph-btn" data-action="rotate-right" title="Rotate right">↻</button>';
+  toolbar += '<button class="graph-btn" data-action="reset" title="Reset view">⟲</button>';
+  toolbar += '</div>';
 
   // Legend
   let legend = '<div class="graph-legend">';
@@ -310,7 +323,124 @@ export function renderRelationshipGraph(containerEl, graphData, options = {}) {
   });
   legend += '</div>';
 
-  containerEl.innerHTML = svg + legend;
+  // Hint text
+  const hint = '<p class="graph-hint">Scroll to zoom · Drag to pan · Shift+drag to rotate · Click a node to navigate</p>';
+
+  containerEl.innerHTML = toolbar + svg + legend + hint;
+
+  // ── Pan / Zoom / Rotate interaction ──
+
+  const svgEl = containerEl.querySelector('svg.relationship-graph-svg');
+  const worldG = svgEl?.querySelector('g.graph-world');
+  // Expose current scale so hover handlers can stay zoom-aware
+  const viewState = { scale: 1 };
+  if (svgEl && worldG) {
+    let tx = 0, ty = 0;
+    let rotation = 0;
+    const cx = width / 2, cy = height / 2;
+
+    function applyTransform() {
+      const s = viewState.scale;
+      worldG.setAttribute('transform',
+        `translate(${tx},${ty}) rotate(${rotation},${cx},${cy}) scale(${s})`
+      );
+      // Scale line widths inversely so they don't become huge
+      worldG.querySelectorAll('line.graph-link').forEach(l => {
+        const base = l.getAttribute('data-link-type') === 'parent-child' ? 1.5 : 0.8;
+        l.setAttribute('stroke-width', String(base / s));
+      });
+      // Keep node radius visually consistent
+      worldG.querySelectorAll('circle.graph-node').forEach(c => {
+        c.setAttribute('r', String(nodeRadius / s));
+      });
+      // Keep text readable
+      worldG.querySelectorAll('text.graph-label').forEach(t => {
+        t.setAttribute('font-size', String(8 / s));
+      });
+      // Show minor labels only when zoomed in enough
+      const showMinor = s >= 1.8;
+      worldG.querySelectorAll('text.graph-label-minor').forEach(t => {
+        t.setAttribute('display', showMinor ? '' : 'none');
+      });
+    }
+
+    // Wheel → zoom (centered on pointer)
+    svgEl.addEventListener('wheel', e => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+      const newScale = Math.max(0.15, Math.min(12, viewState.scale * zoomFactor));
+
+      // Zoom toward cursor position
+      const rect = svgEl.getBoundingClientRect();
+      const mx = ((e.clientX - rect.left) / rect.width) * width;
+      const my = ((e.clientY - rect.top) / rect.height) * height;
+      tx = mx - zoomFactor * (mx - tx);
+      ty = my - zoomFactor * (my - ty);
+      viewState.scale = newScale;
+      applyTransform();
+    }, { passive: false });
+
+    // Drag → pan (left button) or rotate (shift + left button)
+    let dragging = false;
+    let rotating = false;
+    let lastX = 0, lastY = 0;
+
+    svgEl.addEventListener('pointerdown', e => {
+      if (e.button !== 0) return;
+      svgEl.setPointerCapture(e.pointerId);
+      if (e.shiftKey) {
+        rotating = true;
+      } else {
+        dragging = true;
+      }
+      lastX = e.clientX;
+      lastY = e.clientY;
+      svgEl.style.cursor = rotating ? 'grabbing' : 'move';
+    });
+
+    svgEl.addEventListener('pointermove', e => {
+      if (!dragging && !rotating) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+
+      if (rotating) {
+        rotation += dx * 0.4;
+      } else {
+        // translate in SVG units
+        const rect = svgEl.getBoundingClientRect();
+        tx += (dx / rect.width) * width;
+        ty += (dy / rect.height) * height;
+      }
+      applyTransform();
+    });
+
+    const endDrag = () => {
+      dragging = false;
+      rotating = false;
+      svgEl.style.cursor = '';
+    };
+    svgEl.addEventListener('pointerup', endDrag);
+    svgEl.addEventListener('pointercancel', endDrag);
+
+    // Toolbar button handlers
+    containerEl.querySelectorAll('.graph-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const action = btn.getAttribute('data-action');
+        switch (action) {
+          case 'zoom-in':    viewState.scale = Math.min(12, viewState.scale * 1.3); break;
+          case 'zoom-out':   viewState.scale = Math.max(0.15, viewState.scale / 1.3); break;
+          case 'rotate-left':  rotation -= 15; break;
+          case 'rotate-right': rotation += 15; break;
+          case 'reset':
+            viewState.scale = 1; tx = 0; ty = 0; rotation = 0;
+            break;
+        }
+        applyTransform();
+      });
+    });
+  }
 
   // Wire click events on nodes
   containerEl.querySelectorAll('circle.graph-node').forEach(circle => {
@@ -324,7 +454,8 @@ export function renderRelationshipGraph(containerEl, graphData, options = {}) {
 
     // Hover effect
     circle.addEventListener('mouseenter', () => {
-      circle.setAttribute('r', String(nodeRadius * 1.8));
+      const s = viewState.scale || 1;
+      circle.setAttribute('r', String((nodeRadius * 1.8) / s));
       circle.style.filter = 'brightness(1.4)';
       // Highlight connected links
       const nodeId = circle.getAttribute('data-node-id');
@@ -338,7 +469,8 @@ export function renderRelationshipGraph(containerEl, graphData, options = {}) {
       });
     });
     circle.addEventListener('mouseleave', () => {
-      circle.setAttribute('r', String(nodeRadius));
+      const s = viewState.scale || 1;
+      circle.setAttribute('r', String(nodeRadius / s));
       circle.style.filter = '';
     });
   });

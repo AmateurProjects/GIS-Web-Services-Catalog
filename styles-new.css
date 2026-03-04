@@ -3512,3 +3512,47 @@ textarea.dataset-edit-input {
   font-variant-numeric: tabular-nums;
 }
 
+/* ── Graph toolbar (zoom / rotate controls) ── */
+.graph-toolbar {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.graph-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+
+.graph-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: var(--text-main);
+}
+
+.graph-hint {
+  margin-top: 0.4rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Make graph SVG clip overflow when zoomed */
+.relationship-graph-svg {
+  overflow: hidden;
+  display: block;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.15);
+  user-select: none;
+}
+

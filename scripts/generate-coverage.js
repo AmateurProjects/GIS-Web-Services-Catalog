@@ -281,7 +281,24 @@ async function processDataset(dataset, states) {
   }
 
   const base = parsed.base;
-  const layerId = parsed.layerId !== null ? parsed.layerId : 0;
+
+  // Discover the correct layer ID instead of blindly defaulting to 0
+  let layerId;
+  if (parsed.layerId !== null) {
+    layerId = parsed.layerId;
+  } else {
+    try {
+      const svcJson = await fetchWithRetry(
+        () => fetchJson(`${base}?f=pjson`, TIMEOUT_MS),
+        MAX_RETRIES
+      );
+      layerId = (svcJson && svcJson.layers && svcJson.layers.length)
+        ? (svcJson.layers[0].id ?? 0)
+        : 0;
+    } catch (_) {
+      layerId = 0;
+    }
+  }
 
   const stateCounts = {};
   let idx = 0;

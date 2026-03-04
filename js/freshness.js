@@ -9,7 +9,7 @@
 //
 // Each signal carries a confidence level: high | medium | low | none.
 
-import { normalizeServiceUrl, parseServiceAndLayerId, fetchJsonWithTimeout, fetchServiceJson, fetchLayerJson } from './arcgis-preview.js';
+import { normalizeServiceUrl, parseServiceAndLayerId, fetchJsonWithTimeout, fetchServiceJson, fetchLayerJson, isImageService } from './arcgis-preview.js';
 
 /**
  * FreshnessResult shape:
@@ -76,8 +76,10 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
 
   const parsed = parseServiceAndLayerId(url);
   const serviceUrl = parsed.serviceUrl;
-  const layerId = parsed.isLayerUrl ? parsed.layerId : 0;
-  const queryTarget = parsed.isLayerUrl ? url : `${serviceUrl}/${layerId}`;
+  const _isImageSvc = isImageService(serviceUrl);
+  // ImageServer has no sublayers — don't append a layer ID
+  const layerId = _isImageSvc ? null : (parsed.isLayerUrl ? parsed.layerId : 0);
+  const queryTarget = _isImageSvc ? serviceUrl : (parsed.isLayerUrl ? url : `${serviceUrl}/${layerId}`);
 
   const signals = [];
   let serviceJson = null;
@@ -128,11 +130,14 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   }
 
   // ── Signal 2: Editor tracking date fields (via MAX stat query) ──
+  // Skip for ImageServer — no /query endpoint
   const fields = cachedServiceInfo?.fields || layerJson?.fields || [];
   const editFieldsInfo = layerJson?.editFieldsInfo || cachedServiceInfo?.metadata?.editFieldsInfo;
   const editorDateField = editFieldsInfo?.editDateField || editFieldsInfo?.lastEditDateField;
 
-  if (editorDateField) {
+  if (_isImageSvc) {
+    signals.push({ signal: 'editor_tracking', value: null, confidence: 'none', detail: 'Skipped — ImageServer has no query endpoint' });
+  } else if (editorDateField) {
     try {
       const maxDate = await queryMaxDate(queryTarget, editorDateField);
       if (maxDate) {
@@ -168,6 +173,10 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   }
 
   // ── Signal 3: Common date field heuristics ──
+  // Skip for ImageServer — no /query endpoint
+  if (_isImageSvc) {
+    signals.push({ signal: 'date_field_heuristic', value: null, confidence: 'none', detail: 'Skipped — ImageServer has no query endpoint' });
+  } else {
   const dateFields = fields
     .filter(f => {
       const t = (f.type || '').toUpperCase();
@@ -226,14 +235,18 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
       detail: 'No date-type fields found in schema',
     });
   }
+  } // end else (non-ImageServer) for Signal 3
 
   // ── Signal 4: Record count delta ──
+  // Skip for ImageServer — no /query endpoint
   let currentCount = null;
+  if (!_isImageSvc) {
   try {
     const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
     const countJson = await fetchJsonWithTimeout(`${queryTarget}/query?${countParams}`, 6000);
     currentCount = countJson?.count ?? null;
   } catch (_) { /* skip */ }
+  }
 
   if (currentCount !== null && storedRecordCount !== null) {
     const delta = currentCount - storedRecordCount;

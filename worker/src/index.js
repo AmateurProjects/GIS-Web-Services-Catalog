@@ -22,11 +22,21 @@
 const R2_KEY = 'freshness.json';
 const R2_KEY_PREV = 'freshness-previous.json';
 const R2_KEY_HEALTH = 'health.json';
+const R2_KEY_HEALTH_TASK = 'health-task.json';
+const R2_KEY_FRESHNESS_TASK = 'freshness-task.json';
 const TIMEOUT_MS = 12_000;
 const HEALTH_TIMEOUT_MS = 10_000;
 const CONCURRENCY = 4;
 const MAX_RETRIES = 1;
 const RETRY_DELAY_MS = 2_000;
+
+// ── Batch-and-chain settings ──
+// Cloudflare Workers free plan: 50 outbound fetch() per invocation.
+// We split scans into small batches to stay under this limit.
+// Health: 1 fetch per service → batch of 20 = ~22 subrequests.
+// Freshness: ~4 fetches per dataset → batch of 5 = ~22 subrequests.
+const HEALTH_BATCH_SIZE = 20;
+const FRESHNESS_BATCH_SIZE = 5;
 
 // ── CORS headers applied to every response ──
 const CORS = {
@@ -78,38 +88,49 @@ export default {
 
     // ── POST /freshness/refresh ──
     if (request.method === 'POST' && path === '/freshness/refresh') {
-      // Optional auth — if REFRESH_TOKEN is set, require it
-      if (env.REFRESH_TOKEN) {
+      const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+      // Only check auth on initial trigger (offset=0), not on self-invoked batches
+      if (offset === 0 && env.REFRESH_TOKEN) {
         const auth = request.headers.get('Authorization') || '';
         if (auth !== `Bearer ${env.REFRESH_TOKEN}`) {
           return corsJson({ error: 'Unauthorized' }, 401);
         }
       }
-
-      // Respond immediately with 202, do the scan in the background
-      const scanPromise = runScan(env);
-      ctx.waitUntil(scanPromise);
-      return corsJson({ status: 'accepted', message: 'Freshness scan started. Results will be available shortly.' }, 202);
+      const selfUrl = url.origin;
+      ctx.waitUntil(runScan(env, offset, selfUrl));
+      return corsJson({ status: 'accepted', message: offset === 0 ? 'Freshness scan started (batched).' : `Freshness batch at offset ${offset}.` }, 202);
     }
 
     // ── POST /health/refresh ──
     if (request.method === 'POST' && path === '/health/refresh') {
-      if (env.REFRESH_TOKEN) {
+      const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+      if (offset === 0 && env.REFRESH_TOKEN) {
         const auth = request.headers.get('Authorization') || '';
         if (auth !== `Bearer ${env.REFRESH_TOKEN}`) {
           return corsJson({ error: 'Unauthorized' }, 401);
         }
       }
-      ctx.waitUntil(runHealthScan(env));
-      return corsJson({ status: 'accepted', message: 'Health scan started. Results will be available shortly.' }, 202);
+      const selfUrl = url.origin;
+      ctx.waitUntil(runHealthScan(env, offset, selfUrl));
+      return corsJson({ status: 'accepted', message: offset === 0 ? 'Health scan started (batched).' : `Health batch at offset ${offset}.` }, 202);
     }
 
     return corsJson({ error: 'Not found' }, 404);
   },
 
-  // ── Cron Trigger — runs both scans ──
+  // ── Cron Trigger — kicks off both scans via HTTP (batch-and-chain) ──
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(Promise.all([runScan(env), runHealthScan(env)]));
+    const selfUrl = env.WORKER_URL || '';
+    if (!selfUrl) {
+      console.error('WORKER_URL env var not set — cron cannot trigger scans. Set it to your Worker URL (e.g. https://gis-freshness-worker.screening-app.workers.dev)');
+      return;
+    }
+    ctx.waitUntil(
+      Promise.all([
+        fetch(`${selfUrl}/health/refresh`, { method: 'POST' }),
+        fetch(`${selfUrl}/freshness/refresh`, { method: 'POST' }),
+      ])
+    );
   },
 };
 
@@ -157,176 +178,224 @@ async function serveStatus(env, key) {
 // Run a full freshness scan
 // ================================================================
 
-async function runScan(env) {
-  const catalogUrl = `${(env.CATALOG_BASE_URL || '').replace(/\/+$/, '')}/data/catalog.json`;
+async function runScan(env, offset = 0, selfUrl = '') {
+  let task;
 
-  // Fetch catalog
-  let catalog;
-  try {
-    const resp = await fetch(catalogUrl);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    catalog = await resp.json();
-  } catch (e) {
-    console.error('Failed to fetch catalog.json:', e);
-    return;
-  }
-
-  const datasets = catalog.datasets || [];
-
-  // Load existing freshness data for record count baselines
-  let existing = {};
-  try {
-    const prev = await env.BUCKET.get(R2_KEY);
-    if (prev) {
-      const data = JSON.parse(await prev.text());
-      (data.datasets || []).forEach(d => { existing[d.datasetId] = d; });
+  if (offset === 0) {
+    // ── First batch: fetch catalog and build dataset list ──
+    const catalogUrl = `${(env.CATALOG_BASE_URL || '').replace(/\/+$/, '')}/data/catalog.json`;
+    let catalog;
+    try {
+      const resp = await fetch(catalogUrl);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      catalog = await resp.json();
+    } catch (e) {
+      console.error('Freshness scan: failed to fetch catalog.json:', e);
+      return;
     }
-  } catch (_) {}
 
-  // Filter to ArcGIS REST datasets
-  const toProcess = datasets.filter(ds => {
-    if (!ds.public_web_service) return false;
-    if (!/\/rest\/services\//i.test(ds.public_web_service)) return false;
-    return true;
-  });
+    const datasets = catalog.datasets || [];
 
-  console.log(`Freshness scan: ${toProcess.length} datasets to check`);
-
-  // Process with concurrency
-  const results = [];
-  let idx = 0;
-
-  async function worker() {
-    while (idx < toProcess.length) {
-      const i = idx++;
-      const ds = toProcess[i];
-      const stored = existing[ds.datasetId] || existing[ds.id];
-      const storedCount = stored?.recordCount ?? null;
-      try {
-        const result = await processDataset(ds, storedCount, env);
-        if (result) results.push(result);
-      } catch (e) {
-        console.log(`  Error processing ${ds.id}: ${e.message}`);
-        results.push({
-          datasetId: ds.id,
-          lastUpdated: null,
-          signal: 'none',
-          confidence: 'none',
-          details: e.message,
-          signals: [],
-          recordCount: null,
-        });
+    // Load existing freshness data for record count baselines
+    let existing = {};
+    try {
+      const prev = await env.BUCKET.get(R2_KEY);
+      if (prev) {
+        const data = JSON.parse(await prev.text());
+        (data.datasets || []).forEach(d => { existing[d.datasetId] = d; });
       }
+    } catch (_) {}
+
+    // Filter to ArcGIS REST datasets
+    const toProcess = datasets.filter(ds => {
+      if (!ds.public_web_service) return false;
+      if (!/\/rest\/services\//i.test(ds.public_web_service)) return false;
+      return true;
+    });
+
+    // Store all dataset IDs so we can merge unchecked datasets at finalization
+    const allDatasetIds = datasets.map(ds => ds.id);
+
+    console.log(`Freshness scan: ${toProcess.length} datasets to check in batches of ${FRESHNESS_BATCH_SIZE}`);
+
+    // Clear any stale task from a previous incomplete scan
+    await env.BUCKET.delete(R2_KEY_FRESHNESS_TASK);
+    task = { toProcess, existing, allDatasetIds, results: [] };
+  } else {
+    // ── Subsequent batch: read task state from R2 ──
+    const obj = await env.BUCKET.get(R2_KEY_FRESHNESS_TASK);
+    if (!obj) { console.error('Freshness scan: no task found at offset', offset); return; }
+    task = JSON.parse(await obj.text());
+  }
+
+  // Process this batch (sequentially to control subrequest count)
+  const batch = task.toProcess.slice(offset, offset + FRESHNESS_BATCH_SIZE);
+  console.log(`Freshness scan batch: offset=${offset}, batchSize=${batch.length}, total=${task.toProcess.length}`);
+
+  for (const ds of batch) {
+    const stored = task.existing[ds.id] || task.existing[ds.datasetId];
+    const storedCount = stored?.recordCount ?? null;
+    try {
+      const result = await processDataset(ds, storedCount, env);
+      if (result) task.results.push(result);
+    } catch (e) {
+      console.log(`  Error processing ${ds.id}: ${e.message}`);
+      task.results.push({
+        datasetId: ds.id,
+        lastUpdated: null,
+        signal: 'none',
+        confidence: 'none',
+        details: e.message,
+        signals: [],
+        recordCount: null,
+      });
     }
   }
 
-  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+  const nextOffset = offset + FRESHNESS_BATCH_SIZE;
 
-  // Merge with existing data for datasets we didn't re-check
-  datasets.forEach(ds => {
-    if (!results.find(r => r.datasetId === ds.id) && existing[ds.id]) {
-      results.push(existing[ds.id]);
+  if (nextOffset < task.toProcess.length) {
+    // Store partial results and chain to next batch
+    await env.BUCKET.put(R2_KEY_FRESHNESS_TASK, JSON.stringify(task));
+    if (selfUrl) {
+      console.log(`Freshness scan: chaining to offset=${nextOffset}`);
+      try {
+        await fetch(`${selfUrl}/freshness/refresh?offset=${nextOffset}`, { method: 'POST' });
+      } catch (e) {
+        console.error('Freshness scan: chain fetch failed:', e.message);
+      }
+    } else {
+      console.error('Freshness scan: no selfUrl — cannot chain next batch');
     }
-  });
+  } else {
+    // ── Finalize: merge with existing data and write freshness.json ──
+    // Include existing data for datasets we didn't re-check
+    task.allDatasetIds.forEach(id => {
+      if (!task.results.find(r => r.datasetId === id) && task.existing[id]) {
+        task.results.push(task.existing[id]);
+      }
+    });
 
-  const output = {
-    generated: new Date().toISOString(),
-    totalChecked: toProcess.length,
-    datasets: results,
-  };
+    const output = {
+      generated: new Date().toISOString(),
+      totalChecked: task.toProcess.length,
+      datasets: task.results,
+    };
 
-  // Archive previous version then write new one
-  try {
-    const prev = await env.BUCKET.get(R2_KEY);
-    if (prev) {
-      await env.BUCKET.put(R2_KEY_PREV, prev.body);
-    }
-  } catch (_) {}
+    // Archive previous version then write new one
+    try {
+      const prev = await env.BUCKET.get(R2_KEY);
+      if (prev) {
+        await env.BUCKET.put(R2_KEY_PREV, prev.body);
+      }
+    } catch (_) {}
 
-  await env.BUCKET.put(R2_KEY, JSON.stringify(output, null, 2), {
-    httpMetadata: { contentType: 'application/json' },
-  });
+    await env.BUCKET.put(R2_KEY, JSON.stringify(output, null, 2), {
+      httpMetadata: { contentType: 'application/json' },
+    });
+    await env.BUCKET.delete(R2_KEY_FRESHNESS_TASK);
 
-  // Log summary
-  const confCounts = { high: 0, medium: 0, low: 0, none: 0 };
-  results.forEach(r => { confCounts[r.confidence] = (confCounts[r.confidence] || 0) + 1; });
-  console.log(`Freshness scan complete: high=${confCounts.high} medium=${confCounts.medium} low=${confCounts.low} none=${confCounts.none}`);
+    // Log summary
+    const confCounts = { high: 0, medium: 0, low: 0, none: 0 };
+    task.results.forEach(r => { confCounts[r.confidence] = (confCounts[r.confidence] || 0) + 1; });
+    console.log(`Freshness scan complete: high=${confCounts.high} medium=${confCounts.medium} low=${confCounts.low} none=${confCounts.none}`);
+  }
 }
 
 // ================================================================
 // Run a full health scan (mirrors js/url-check.js, server-side)
 // ================================================================
 
-async function runHealthScan(env) {
-  const catalogUrl = `${(env.CATALOG_BASE_URL || '').replace(/\/+$/, '')}/data/catalog.json`;
+async function runHealthScan(env, offset = 0, selfUrl = '') {
+  let task;
 
-  let catalog;
-  try {
-    const resp = await fetch(catalogUrl);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    catalog = await resp.json();
-  } catch (e) {
-    console.error('Health scan: failed to fetch catalog.json:', e);
-    return;
-  }
-
-  const datasets = catalog.datasets || [];
-
-  // Build unique service URL map (same logic as dashboard.js)
-  const serviceMap = new Map();
-  datasets.forEach(d => {
-    const url = d.public_web_service;
-    if (!url) return;
-    const key = d._parent_service || url;
-    if (!serviceMap.has(key)) {
-      serviceMap.set(key, { url: key, datasets: [] });
+  if (offset === 0) {
+    // ── First batch: fetch catalog and build service list ──
+    const catalogUrl = `${(env.CATALOG_BASE_URL || '').replace(/\/+$/, '')}/data/catalog.json`;
+    let catalog;
+    try {
+      const resp = await fetch(catalogUrl);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      catalog = await resp.json();
+    } catch (e) {
+      console.error('Health scan: failed to fetch catalog.json:', e);
+      return;
     }
-    serviceMap.get(key).datasets.push({ id: d.id, title: d._layer_name || d.title || d.id });
-  });
 
-  const services = [...serviceMap.values()];
-  console.log(`Health scan: ${services.length} unique services to check`);
-
-  const results = [];
-  let idx = 0;
-
-  async function worker() {
-    while (idx < services.length) {
-      const i = idx++;
-      const svc = services[i];
-      try {
-        const check = await checkServiceHealth(svc.url);
-        results.push({ url: svc.url, datasets: svc.datasets, status: check.status, detail: check.detail });
-      } catch (e) {
-        results.push({ url: svc.url, datasets: svc.datasets, status: 'unknown', detail: e.message });
+    const datasets = catalog.datasets || [];
+    const serviceMap = new Map();
+    datasets.forEach(d => {
+      const url = d.public_web_service;
+      if (!url) return;
+      const key = d._parent_service || url;
+      if (!serviceMap.has(key)) {
+        serviceMap.set(key, { url: key, datasets: [] });
       }
+      serviceMap.get(key).datasets.push({ id: d.id, title: d._layer_name || d.title || d.id });
+    });
+
+    // Clear any stale task from a previous incomplete scan
+    await env.BUCKET.delete(R2_KEY_HEALTH_TASK);
+    task = { services: [...serviceMap.values()], results: [] };
+  } else {
+    // ── Subsequent batch: read task state from R2 ──
+    const obj = await env.BUCKET.get(R2_KEY_HEALTH_TASK);
+    if (!obj) { console.error('Health scan: no task found at offset', offset); return; }
+    task = JSON.parse(await obj.text());
+  }
+
+  // Process this batch (sequentially — 1 fetch per service)
+  const batch = task.services.slice(offset, offset + HEALTH_BATCH_SIZE);
+  console.log(`Health scan batch: offset=${offset}, batchSize=${batch.length}, total=${task.services.length}`);
+
+  for (const svc of batch) {
+    try {
+      const check = await checkServiceHealth(svc.url);
+      task.results.push({ url: svc.url, datasets: svc.datasets, status: check.status, detail: check.detail });
+    } catch (e) {
+      task.results.push({ url: svc.url, datasets: svc.datasets, status: 'unknown', detail: e.message });
     }
   }
 
-  await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+  const nextOffset = offset + HEALTH_BATCH_SIZE;
 
-  // Tally
-  let okCount = 0, badCount = 0, unknownCount = 0;
-  results.forEach(r => {
-    if (r.status === 'ok') okCount++;
-    else if (r.status === 'bad') badCount++;
-    else unknownCount++;
-  });
+  if (nextOffset < task.services.length) {
+    // Store partial results and chain to next batch
+    await env.BUCKET.put(R2_KEY_HEALTH_TASK, JSON.stringify(task));
+    if (selfUrl) {
+      console.log(`Health scan: chaining to offset=${nextOffset}`);
+      try {
+        await fetch(`${selfUrl}/health/refresh?offset=${nextOffset}`, { method: 'POST' });
+      } catch (e) {
+        console.error('Health scan: chain fetch failed:', e.message);
+      }
+    } else {
+      console.error('Health scan: no selfUrl — cannot chain next batch');
+    }
+  } else {
+    // ── Finalize: tally and write health.json ──
+    let okCount = 0, badCount = 0, unknownCount = 0;
+    task.results.forEach(r => {
+      if (r.status === 'ok') okCount++;
+      else if (r.status === 'bad') badCount++;
+      else unknownCount++;
+    });
 
-  const output = {
-    generated: new Date().toISOString(),
-    totalChecked: services.length,
-    ok: okCount,
-    bad: badCount,
-    unknown: unknownCount,
-    services: results,
-  };
+    const output = {
+      generated: new Date().toISOString(),
+      totalChecked: task.services.length,
+      ok: okCount,
+      bad: badCount,
+      unknown: unknownCount,
+      services: task.results,
+    };
 
-  await env.BUCKET.put(R2_KEY_HEALTH, JSON.stringify(output, null, 2), {
-    httpMetadata: { contentType: 'application/json' },
-  });
-
-  console.log(`Health scan complete: ok=${okCount} bad=${badCount} unknown=${unknownCount}`);
+    await env.BUCKET.put(R2_KEY_HEALTH, JSON.stringify(output, null, 2), {
+      httpMetadata: { contentType: 'application/json' },
+    });
+    await env.BUCKET.delete(R2_KEY_HEALTH_TASK);
+    console.log(`Health scan complete: ok=${okCount} bad=${badCount} unknown=${unknownCount}`);
+  }
 }
 
 // ================================================================
@@ -353,52 +422,23 @@ async function checkArcGisHealth(url) {
   const parsed = parseServiceUrl(url);
   if (!parsed) return { status: 'bad', detail: 'Could not parse ArcGIS REST URL' };
 
-  // Step 1: Fetch service JSON
-  let serviceJson;
+  // Single-fetch health check: verify service metadata is accessible.
+  // Skips the query step to conserve subrequests within Cloudflare's limit.
   try {
-    serviceJson = await fetchJson(`${parsed.base}?f=pjson`, HEALTH_TIMEOUT_MS);
+    const target = parsed.layerId !== null ? url.replace(/\?.*$/, '') : parsed.base;
+    const serviceJson = await fetchJson(`${target}?f=pjson`, HEALTH_TIMEOUT_MS);
+
+    if (serviceJson?.error) {
+      return { status: 'bad', detail: `Service error (${serviceJson.error.code || ''}): ${serviceJson.error.message || 'Unknown'}` };
+    }
+
+    if (serviceJson.currentVersion || serviceJson.name || serviceJson.serviceDataType || serviceJson.layers || serviceJson.type) {
+      return { status: 'ok', detail: `Service responding (v${serviceJson.currentVersion || '?'})` };
+    }
+
+    return { status: 'unknown', detail: 'Response missing expected ArcGIS fields' };
   } catch (e) {
     return { status: 'bad', detail: `Service unreachable: ${e.message}` };
-  }
-
-  if (serviceJson?.error) {
-    return { status: 'bad', detail: `Service error (${serviceJson.error.code || ''}): ${serviceJson.error.message || 'Unknown'}` };
-  }
-
-  // ImageServer: metadata-only check
-  if (isImageServer(url)) {
-    if (serviceJson && (serviceJson.currentVersion || serviceJson.name || serviceJson.serviceDataType)) {
-      return { status: 'ok', detail: 'ImageServer serving metadata' };
-    }
-    return { status: 'unknown', detail: 'ImageServer metadata could not be verified' };
-  }
-
-  // Step 2: Determine query target
-  let queryTarget;
-  if (parsed.layerId !== null) {
-    queryTarget = url.replace(/\?.*$/, '');
-  } else {
-    const layers = serviceJson.layers || [];
-    const firstId = layers.length ? (layers[0].id ?? 0) : 0;
-    queryTarget = `${parsed.base}/${firstId}`;
-  }
-
-  // Step 3: Query returnCountOnly
-  try {
-    const countParams = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
-    const countJson = await fetchJson(`${queryTarget}/query?${countParams}`, HEALTH_TIMEOUT_MS);
-
-    if (countJson?.error) {
-      return { status: 'bad', detail: `Query failed (${countJson.error.code || ''}): ${countJson.error.message || ''}` };
-    }
-    if (typeof countJson?.count === 'number') {
-      return countJson.count > 0
-        ? { status: 'ok', detail: `Serving data (${countJson.count.toLocaleString()} features)` }
-        : { status: 'bad', detail: 'Service responds but contains 0 features' };
-    }
-    return { status: 'unknown', detail: 'Count query returned unexpected format' };
-  } catch (e) {
-    return { status: 'unknown', detail: `Metadata reachable but query failed: ${e.message}` };
   }
 }
 

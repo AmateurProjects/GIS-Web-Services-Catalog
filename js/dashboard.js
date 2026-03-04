@@ -111,10 +111,10 @@ export function renderDashboard() {
     html += `
       <div class="dashboard-header">
         <h2>Catalog Dashboard</h2>
-        <p>BLM GIS service health, maturity &amp; coverage at a glance.</p>
+        <p>Enterprise overview of BLM GIS web service health, maturity, and coverage.</p>
         <div class="dashboard-export-row">
-          <button type="button" class="btn btn-export btn-sm" data-dash-export="dcat">📤 DCAT-US</button>
-          <button type="button" class="btn btn-export btn-sm" data-dash-export="schema">📤 Schema.org</button>
+          <button type="button" class="btn btn-export btn-sm" data-dash-export="dcat">📤 Export DCAT-US</button>
+          <button type="button" class="btn btn-export btn-sm" data-dash-export="schema">📤 Export Schema.org</button>
         </div>
       </div>
     `;
@@ -347,6 +347,7 @@ export function renderDashboard() {
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
         <div class="dashboard-chart-card" id="dashServiceHealthCard">
           <div class="dashboard-chart-title">Service Health</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Live reachability check of all cataloged web service endpoints.</p>
           <div data-dash-health-summary class="service-health-summary"></div>
           <div data-dash-health-list>
             <p class="loading-message" style="font-size:0.85rem;">Checking services\u2026</p>
@@ -360,6 +361,7 @@ export function renderDashboard() {
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
         <div class="dashboard-chart-card" id="dashFreshnessCard">
           <div class="dashboard-chart-title">🕐 Data Freshness</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Last-updated detection across all cataloged datasets (from pre-computed analysis).</p>
           <div data-dash-freshness-content>
             <p class="loading-message" style="font-size:0.85rem;">Loading freshness data&hellip;</p>
           </div>
@@ -372,6 +374,7 @@ export function renderDashboard() {
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
         <div class="dashboard-chart-card" id="dashPendingRequestsCard">
           <div class="dashboard-chart-title">Pending Dataset Requests</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Open requests awaiting review from the community.</p>
           <div data-dash-pending-list>
             <p class="loading-message" style="font-size:0.85rem;">Loading&hellip;</p>
           </div>

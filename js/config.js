@@ -4,4 +4,4 @@ export const GITHUB_NEW_ISSUE_BASE = 'https://github.com/AmateurProjects/Public-
 // Cloudflare Worker base URL for freshness & health data (R2-backed).
 // Set to '' to fall back to local data/ files and live browser checks.
 // Example: 'https://gis-freshness-worker.your-subdomain.workers.dev'
-export const WORKER_BASE_URL = '';
+export const WORKER_BASE_URL = 'https://gis-freshness-worker.screening-app.workers.dev';

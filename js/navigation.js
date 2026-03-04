@@ -3,6 +3,7 @@
 import { state, els } from './state.js';
 import { getDatasetById } from './catalog.js';
 import { getCurrentMapView } from './arcgis-preview.js';
+import { isFieldIndexLoaded, loadFieldData, getFieldList } from './field-explorer.js';
 
 // Lazy imports to break circular dependencies — these modules import from navigation.js too.
 // ES modules handle this fine because all calls are from event handlers, not at import time.
@@ -61,6 +62,10 @@ export function showDatasetsView() {
   }
 }
 
+// Lazy reference to renderAttributeList — imported lazily to avoid circular deps
+let _renderAttributeList = null;
+export function registerAttributeListCallback(fn) { _renderAttributeList = fn; }
+
 export function showAttributesView() {
   cleanupMapView();
   hideAllViews();
@@ -68,6 +73,11 @@ export function showAttributesView() {
   if (els.attributesTabBtn) els.attributesTabBtn.classList.add('active');
   // Clear dataset hash when leaving dataset view
   if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
+
+  // Trigger field data loading if not yet loaded (renderAttributeList handles the UX)
+  if (!isFieldIndexLoaded() && _renderAttributeList) {
+    _renderAttributeList();
+  }
 }
 
 export function goBackToLastDatasetOrList() {
@@ -85,9 +95,18 @@ export function goBackToLastDatasetOrList() {
 
 export function goBackToAttributesListOrFirst() {
   showAttributesView();
+  // Try manual attributes first
   if (state.allAttributes && state.allAttributes.length) {
     if (_renderAttributeDetail) _renderAttributeDetail(state.allAttributes[0].id);
     return;
+  }
+  // Try field explorer data
+  if (isFieldIndexLoaded()) {
+    const fields = getFieldList();
+    if (fields.length && _renderAttributeDetail) {
+      _renderAttributeDetail(fields[0].name);
+      return;
+    }
   }
   els.attributeDetailEl && els.attributeDetailEl.classList.add('hidden');
 }

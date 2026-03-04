@@ -7,10 +7,24 @@ import { setActiveListButton } from './ui-fx.js';
 import { getFilteredDatasets, hasAnyFilter } from './filters.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
 import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
+import {
+  isFieldIndexLoaded as _isFieldIndexLoaded,
+  isFieldIndexLoading as _isFieldIndexLoading,
+  loadFieldData as _loadFieldData,
+  getFieldList as _getFieldList,
+  searchFields as _searchFields,
+  shortTypeName as _shortTypeName,
+  typeColor as _typeColor,
+} from './field-explorer.js';
 
 // Lazy references to detail renderers — set by app.js to avoid circular import at eval time
 let _renderDatasetDetail = null;
 let _renderAttributeDetail = null;
+
+// Track last selected field for highlight
+let _lastSelectedFieldName = null;
+
+export function setLastSelectedFieldName(name) { _lastSelectedFieldName = name; }
 
 export function registerListCallbacks({ renderDatasetDetail, renderAttributeDetail }) {
   _renderDatasetDetail = renderDatasetDetail;
@@ -241,40 +255,140 @@ async function appendPendingRequestsToList(filterText) {
 
 export function renderAttributeList(filterText = '') {
   if (!els.attributeListEl) return;
-  const ft = filterText.trim().toLowerCase();
 
-  const filtered = !ft
-    ? state.allAttributes
-    : state.allAttributes.filter((attr) => {
-      const haystack = [attr.id, attr.label, attr.definition].filter(Boolean).join(' ').toLowerCase();
-      return haystack.includes(ft);
+  // ── Manual attributes from catalog.json (legacy path) ──
+  if (state.allAttributes && state.allAttributes.length > 0) {
+    const ft = String(filterText || '').trim().toLowerCase();
+    const filtered = !ft
+      ? state.allAttributes
+      : state.allAttributes.filter((attr) => {
+        const haystack = [attr.id, attr.label, attr.definition].filter(Boolean).join(' ').toLowerCase();
+        return haystack.includes(ft);
+      });
+
+    if (!filtered.length) {
+      els.attributeListEl.innerHTML = '<p style="padding:0.5rem;color:var(--text-muted);">No attributes match your search.</p>';
+      return;
+    }
+
+    const list = document.createElement('ul');
+    filtered.forEach((attr) => {
+      const li = document.createElement('li');
+      li.className = 'list-item attribute-item';
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'list-item-button';
+      btn.setAttribute('data-attr-id', attr.id);
+      btn.textContent = `${attr.id} – ${attr.label || ''}`;
+      btn.addEventListener('click', () => {
+        showAttributesView();
+        if (_renderAttributeDetail) _renderAttributeDetail(attr.id);
+      });
+      li.appendChild(btn);
+      list.appendChild(li);
     });
-
-  if (!filtered.length) {
-    els.attributeListEl.innerHTML = '<p>No attributes found.</p>';
+    els.attributeListEl.innerHTML = '';
+    els.attributeListEl.appendChild(list);
     return;
   }
 
+  // ── Field Explorer path (aggregated from service-info files) ──
+  if (!_isFieldIndexLoaded()) {
+    // If not loaded yet and not loading, trigger load
+    if (!_isFieldIndexLoading()) {
+      els.attributeListEl.innerHTML = `
+        <div class="field-loading-container">
+          <p class="loading-message">Loading field data from service info\u2026</p>
+          <div class="field-loading-progress">
+            <div class="completeness-bar-track" style="height:4px;">
+              <div class="completeness-bar-fill field-loading-bar" style="width:0%;background:var(--accent);transition:width 300ms;"></div>
+            </div>
+            <span class="field-loading-label" style="font-size:0.78rem;color:var(--text-muted);margin-top:0.25rem;">0 / ?</span>
+          </div>
+        </div>`;
+      _loadFieldData((done, total) => {
+        const bar = els.attributeListEl?.querySelector('.field-loading-bar');
+        const label = els.attributeListEl?.querySelector('.field-loading-label');
+        if (bar) bar.style.width = `${Math.round((done / total) * 100)}%`;
+        if (label) label.textContent = `${done} / ${total} datasets`;
+      }).then(() => {
+        renderAttributeList(filterText);
+        // Auto-select the first field
+        const list = _getFieldList();
+        if (list.length && _renderAttributeDetail) {
+          _renderAttributeDetail(list[0].name);
+        }
+      });
+    } else {
+      els.attributeListEl.innerHTML = '<p class="loading-message">Loading field data\u2026</p>';
+    }
+    return;
+  }
+
+  const ft = String(filterText || '').trim().toLowerCase();
+  const filtered = _searchFields(ft || '');
+
+  // Result count
+  const allFields = _getFieldList();
+  let countHtml = '';
+  if (ft) {
+    countHtml = `<div class="filter-result-count">Showing <strong>${filtered.length}</strong> of ${allFields.length} fields</div>`;
+  }
+
+  if (!filtered.length) {
+    els.attributeListEl.innerHTML = countHtml + '<p style="padding:0.5rem;color:var(--text-muted);">No fields match your search.</p>';
+    return;
+  }
+
+  const container = document.createElement('div');
+  if (countHtml) {
+    const countDiv = document.createElement('div');
+    countDiv.innerHTML = countHtml;
+    container.appendChild(countDiv.firstElementChild);
+  }
+
+  // Summary header
+  const summaryEl = document.createElement('div');
+  summaryEl.className = 'field-list-summary';
+  summaryEl.innerHTML = `<span class="field-list-total">${allFields.length} unique fields</span> across ${(state.allDatasets || []).length} datasets`;
+  container.appendChild(summaryEl);
+
   const list = document.createElement('ul');
-  filtered.forEach((attr) => {
+  list.className = 'field-list';
+
+  filtered.forEach(field => {
     const li = document.createElement('li');
-    li.className = 'list-item attribute-item';
+    li.className = 'list-item field-item';
 
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'list-item-button';
-    btn.setAttribute('data-attr-id', attr.id);
-    btn.textContent = `${attr.id} – ${attr.label || ''}`;
+    btn.className = 'list-item-button field-list-button';
+    btn.setAttribute('data-field-name', field.name);
+
+    const shortType = _shortTypeName(field.primaryType);
+    const color = _typeColor(shortType);
+
+    btn.innerHTML = `
+      <span class="field-list-name">${escapeHtml(field.name)}</span>
+      <span class="field-list-meta">
+        <span class="field-type-badge" style="background:${color}">${escapeHtml(shortType)}</span>
+        <span class="field-dataset-count" title="${field.datasetCount} dataset${field.datasetCount !== 1 ? 's' : ''}">${field.datasetCount}</span>
+      </span>
+    `;
 
     btn.addEventListener('click', () => {
       showAttributesView();
-      if (_renderAttributeDetail) _renderAttributeDetail(attr.id);
+      if (_renderAttributeDetail) _renderAttributeDetail(field.name);
     });
 
     li.appendChild(btn);
     list.appendChild(li);
   });
 
+  container.appendChild(list);
   els.attributeListEl.innerHTML = '';
-  els.attributeListEl.appendChild(list);
+  els.attributeListEl.appendChild(container);
+
+  // Highlight active field
+  setActiveListButton(els.attributeListEl, (b) => b.getAttribute('data-field-name') === _lastSelectedFieldName);
 }

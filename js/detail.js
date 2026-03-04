@@ -10,6 +10,30 @@ import { showDatasetsView, showAttributesView } from './navigation.js';
 import { enterDatasetEditMode, enterAttributeEditMode } from './edit-mode.js';
 import { applyDashboardFilter } from './filters.js';
 import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
+import { getFieldInfo, shortTypeName, typeColor, isFieldIndexLoaded } from './field-explorer.js';
+import { setLastSelectedFieldName } from './lists.js';
+import { detectFreshness, getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor } from './freshness.js';
+import { exportButtonsHTML, wireExportButtons } from './metadata-export.js';
+
+// ── Freshness data cache (loaded from data/freshness.json once) ──
+let _freshnessIndex = null;  // { datasets: [...] } or null
+let _freshnessIndexLoading = false;
+
+async function loadFreshnessIndex() {
+  if (_freshnessIndex) return _freshnessIndex;
+  if (_freshnessIndexLoading) return null;
+  _freshnessIndexLoading = true;
+  try {
+    const resp = await fetch('data/freshness.json');
+    if (resp.ok) {
+      _freshnessIndex = await resp.json();
+    }
+  } catch (_) { /* no pre-computed data */ }
+  _freshnessIndexLoading = false;
+  return _freshnessIndex;
+}
+
+export function getFreshnessIndex() { return _freshnessIndex; }
 
 export function renderDatasetDetail(datasetId) {
     if (!els.datasetDetailEl) return;
@@ -169,6 +193,20 @@ export function renderDatasetDetail(datasetId) {
     html += '<div data-cov-content></div>';
     html += '</div>';
 
+    // Freshness / last-updated card (async)
+    html += `
+      <div class="card card-freshness" id="freshnessCard" style="border-left:4px solid var(--text-muted);">
+        <div class="card-header-row"><h3>🕐 Data Freshness</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+        <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.5rem;">Multi-signal detection of when this dataset was last updated.</p>
+        <div data-freshness-content>
+          <p class="loading-message" style="font-size:0.85rem;">Detecting freshness…</p>
+        </div>
+      </div>
+    `;
+
+    // Metadata Export card
+    html += exportButtonsHTML(dataset.id);
+
     // Attributes + inline attribute details - only show if dataset has attributes
     if (attrs.length > 0) {
       html += `
@@ -271,7 +309,108 @@ if (covRefreshBtn) {
       });
     });
 
+    // ── Freshness detection (async) ──
+    loadFreshnessCard(els.datasetDetailEl, dataset, currentGeneration);
+
+    // ── Wire metadata export buttons ──
+    wireExportButtons(els.datasetDetailEl);
+
   }
+
+/**
+ * Load and render the freshness card for a dataset.
+ * Tries pre-computed data/freshness.json first, then falls back to live detection.
+ */
+async function loadFreshnessCard(hostEl, dataset, generation) {
+  const contentEl = hostEl.querySelector('[data-freshness-content]');
+  const cardEl = hostEl.querySelector('#freshnessCard');
+  if (!contentEl) return;
+
+  let result = null;
+
+  // Try pre-computed freshness index first
+  const index = await loadFreshnessIndex();
+  if (index && index.datasets) {
+    const precomputed = index.datasets.find(d => d.datasetId === dataset.id);
+    if (precomputed) {
+      result = precomputed;
+    }
+  }
+
+  // Fall back to live detection if no pre-computed data and URL is available
+  if (!result && dataset.public_web_service) {
+    contentEl.innerHTML = '<p class="loading-message" style="font-size:0.85rem;">Running live freshness detection…</p>';
+    try {
+      result = await detectFreshness(dataset.public_web_service);
+    } catch (e) {
+      contentEl.innerHTML = `<p style="font-size:0.85rem;color:var(--text-muted);">Freshness detection failed: ${escapeHtml(e.message)}</p>`;
+      return;
+    }
+  }
+
+  if (!result) {
+    contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">No web service URL — freshness detection not available.</p>';
+    return;
+  }
+
+  // Render freshness result
+  const confMeta = getConfidenceMeta(result.confidence);
+  const age = formatFreshnessAge(result.lastUpdated);
+  const ageColor = freshnessColor(result.lastUpdated);
+
+  // Update card border color based on freshness
+  if (cardEl) cardEl.style.borderLeftColor = ageColor;
+
+  let html = '';
+
+  // Main freshness display
+  html += '<div class="freshness-result">';
+  html += `<div class="freshness-main-row">`;
+  html += `<div class="freshness-age" style="color:${ageColor};">${escapeHtml(age)}</div>`;
+  html += `<div class="freshness-confidence">
+    <span class="freshness-conf-dot" style="color:${confMeta.color};">${confMeta.icon}</span>
+    ${escapeHtml(confMeta.label)}
+  </div>`;
+  html += `</div>`;
+
+  if (result.lastUpdated) {
+    const d = new Date(result.lastUpdated);
+    html += `<div class="freshness-date">${d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</div>`;
+  }
+
+  html += `<div class="freshness-signal">Detected via: <strong>${escapeHtml(getSignalLabel(result.signal))}</strong></div>`;
+  if (result.details) {
+    html += `<div class="freshness-detail">${escapeHtml(result.details)}</div>`;
+  }
+
+  // Signal breakdown
+  if (result.signals && result.signals.length > 0) {
+    html += `<details class="freshness-signals-details">`;
+    html += `<summary>All signals (${result.signals.length})</summary>`;
+    html += `<table class="freshness-signals-table">`;
+    html += `<thead><tr><th>Signal</th><th>Value</th><th>Confidence</th></tr></thead><tbody>`;
+    result.signals.forEach(s => {
+      const cm = getConfidenceMeta(s.confidence);
+      const val = s.value || '—';
+      html += `<tr>
+        <td>${escapeHtml(getSignalLabel(s.signal))}</td>
+        <td style="font-size:0.8rem;">${escapeHtml(typeof val === 'string' && val.length > 40 ? val.slice(0, 37) + '…' : String(val))}</td>
+        <td><span style="color:${cm.color};">${cm.icon}</span> ${escapeHtml(cm.label)}</td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+    html += `</details>`;
+  }
+
+  // Record count
+  if (result.recordCount !== null && result.recordCount !== undefined) {
+    html += `<div class="freshness-record-count">Record count: <strong>${result.recordCount.toLocaleString()}</strong></div>`;
+  }
+
+  html += '</div>';
+
+  contentEl.innerHTML = html;
+}
 
 export function renderInlineAttributeDetail(attrId) {
     if (!els.datasetDetailEl) return;
@@ -379,24 +518,184 @@ export function renderInlineAttributeDetail(attrId) {
     });
   }
 
-export function renderAttributeDetail(attrId) {
+export function renderAttributeDetail(attrIdOrFieldName) {
     if (!els.attributeDetailEl) return;
 
   // Browsing existing attributes should not animate.
-  // Also make sure no prior FX classes linger from edit/create flows.
   els.attributeDetailEl.classList.remove('fx-enter', 'fx-animating');
 
-   // highlight active attribute in sidebar (if list is rendered)
-   setActiveListButton(els.attributeListEl, (b) => b.getAttribute('data-attr-id') === attrId);
+  // ── Try legacy manual attribute first ──
+  const attribute = getAttributeById(attrIdOrFieldName);
+  if (attribute) {
+    _renderLegacyAttributeDetail(attribute);
+    return;
+  }
 
-    const attribute = getAttributeById(attrId);
-    if (!attribute) {
-      els.attributeDetailEl.classList.remove('hidden');
-      els.attributeDetailEl.innerHTML = `<p>Attribute not found: ${escapeHtml(attrId)}</p>`;
+  // ── Field Explorer path: show cross-dataset field info ──
+  if (isFieldIndexLoaded()) {
+    const fieldInfo = getFieldInfo(attrIdOrFieldName);
+    if (fieldInfo) {
+      _renderFieldExplorerDetail(fieldInfo);
       return;
     }
+  }
 
-    const datasets = getDatasetsForAttribute(attrId);
+  // Not found in either
+  els.attributeDetailEl.classList.remove('hidden');
+  els.attributeDetailEl.innerHTML = `<p style="padding:1rem;color:var(--text-muted);">Field not found: ${escapeHtml(attrIdOrFieldName)}</p>`;
+}
+
+function _renderFieldExplorerDetail(field) {
+  setLastSelectedFieldName(field.name);
+
+  // Highlight active field in sidebar
+  setActiveListButton(els.attributeListEl, (b) => b.getAttribute('data-field-name') === field.name);
+
+  const shortType = shortTypeName(field.primaryType);
+  const tColor = typeColor(shortType);
+  const hasMultipleTypes = field.types.length > 1;
+
+  let html = '';
+
+  // Header
+  html += `<h2 class="field-detail-title">${escapeHtml(field.name)}</h2>`;
+  if (field.primaryAlias && field.primaryAlias !== field.name) {
+    html += `<p class="field-detail-alias">${escapeHtml(field.primaryAlias)}</p>`;
+  }
+
+  // Overview stats card
+  html += '<div class="card card-field-overview">';
+  html += '<h3>Field Overview</h3>';
+  html += '<div class="field-stats-row">';
+
+  // Dataset count
+  html += `
+    <div class="field-stat">
+      <div class="field-stat-value" style="color:var(--accent);">${field.datasetCount}</div>
+      <div class="field-stat-label">Dataset${field.datasetCount !== 1 ? 's' : ''}</div>
+    </div>`;
+
+  // Primary type
+  html += `
+    <div class="field-stat">
+      <div class="field-stat-value"><span class="field-type-badge" style="background:${tColor};font-size:0.9rem;">${escapeHtml(shortType)}</span></div>
+      <div class="field-stat-label">Primary Type</div>
+    </div>`;
+
+  // Avg null %
+  if (field.avgNullPct !== null && field.avgNullPct !== undefined) {
+    const nullColor = field.avgNullPct < 10 ? 'var(--green)' : field.avgNullPct < 40 ? 'var(--amber)' : 'var(--red)';
+    html += `
+      <div class="field-stat">
+        <div class="field-stat-value" style="color:${nullColor};">${field.avgNullPct}%</div>
+        <div class="field-stat-label">Avg Null Rate</div>
+      </div>`;
+  }
+
+  // Domain
+  if (field.hasDomain) {
+    html += `
+      <div class="field-stat">
+        <div class="field-stat-value" style="color:var(--purple);">Yes</div>
+        <div class="field-stat-label">Has Domain</div>
+      </div>`;
+  }
+
+  html += '</div>'; // end field-stats-row
+
+  // Type consistency warning
+  if (hasMultipleTypes) {
+    html += `<div class="field-type-warning">
+      <strong>\u26A0 Type inconsistency:</strong> This field uses different types across datasets:
+      ${field.types.map(t => {
+        const st = shortTypeName(t);
+        return `<span class="field-type-badge" style="background:${typeColor(st)}">${escapeHtml(st)}</span>`;
+      }).join(' ')}
+    </div>`;
+  }
+
+  // Alias variants
+  if (field.aliases.length > 1) {
+    html += `<div class="field-alias-variants">
+      <strong>Alias variants:</strong> ${field.aliases.map(a => `<code>${escapeHtml(a)}</code>`).join(', ')}
+    </div>`;
+  }
+
+  html += '</div>'; // end overview card
+
+  // Dataset table card
+  html += '<div class="card card-field-datasets">';
+  html += `<h3>Datasets Using This Field <span class="field-dataset-table-count">${field.datasetCount}</span></h3>`;
+
+  if (field.datasets.length) {
+    html += `
+      <div class="field-dataset-table-wrapper">
+      <table class="field-dataset-table">
+        <thead>
+          <tr>
+            <th>Dataset</th>
+            <th>Type</th>
+            <th>Alias</th>
+            <th>Null %</th>
+            <th>Distinct</th>
+            <th>Domain</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+    field.datasets.forEach(d => {
+      const st = shortTypeName(d.type);
+      const tc = typeColor(st);
+      const nullVal = d.nullPct !== null && d.nullPct !== undefined ? `${d.nullPct}%` : '\u2014';
+      const nullColor = d.nullPct !== null
+        ? (d.nullPct < 10 ? 'var(--green)' : d.nullPct < 40 ? 'var(--amber)' : 'var(--red)')
+        : 'var(--text-muted)';
+      const distinctVal = d.distinctCount !== null && d.distinctCount !== undefined ? d.distinctCount.toLocaleString() : '\u2014';
+      const domainVal = d.hasDomain ? '\u2713' : '\u2014';
+      const domainColor = d.hasDomain ? 'var(--purple)' : 'var(--text-muted)';
+
+      html += `
+        <tr>
+          <td><button type="button" class="link-button" data-dataset-id="${escapeHtml(d.datasetId)}" title="${escapeHtml(d.datasetTitle)}">${escapeHtml(
+            d.datasetTitle.length > 45 ? d.datasetTitle.slice(0, 42) + '\u2026' : d.datasetTitle
+          )}</button></td>
+          <td><span class="field-type-badge field-type-badge-sm" style="background:${tc}">${escapeHtml(st)}</span></td>
+          <td style="color:var(--text-muted);font-size:0.82rem;">${escapeHtml(d.alias)}</td>
+          <td style="color:${nullColor};font-weight:600;">${nullVal}</td>
+          <td style="font-variant-numeric:tabular-nums;">${distinctVal}</td>
+          <td style="color:${domainColor};text-align:center;">${domainVal}</td>
+        </tr>`;
+    });
+
+    html += `
+        </tbody>
+      </table>
+      </div>`;
+  } else {
+    html += '<p style="color:var(--text-muted);">No datasets found.</p>';
+  }
+
+  html += '</div>'; // end datasets card
+
+  els.attributeDetailEl.innerHTML = html;
+  els.attributeDetailEl.classList.remove('hidden');
+
+  // Wire dataset links
+  els.attributeDetailEl.querySelectorAll('button[data-dataset-id]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dsId = btn.getAttribute('data-dataset-id');
+      showDatasetsView();
+      state.lastSelectedDatasetId = dsId;
+      renderDatasetDetail(dsId);
+    });
+  });
+}
+
+function _renderLegacyAttributeDetail(attribute) {
+   // highlight active attribute in sidebar (if list is rendered)
+   setActiveListButton(els.attributeListEl, (b) => b.getAttribute('data-attr-id') === attribute.id);
+
+    const datasets = getDatasetsForAttribute(attribute.id);
 
     let html = '';
 

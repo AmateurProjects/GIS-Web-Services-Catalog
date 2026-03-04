@@ -7,6 +7,10 @@ import { showDatasetsView } from './navigation.js';
 import { applyDashboardFilter } from './filters.js';
 import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
 import { checkUrlStatusDetailed } from './url-check.js';
+import { formatFreshnessAge, freshnessColor, getConfidenceMeta } from './freshness.js';
+import { getFreshnessIndex } from './detail.js';
+import { downloadCatalogDcat, downloadCatalogSchemaOrg } from './metadata-export.js';
+import { buildRelationshipGraph, getGraphStats, renderRelationshipGraph, renderGraphStats } from './relationship-graph.js';
 
 let _renderDatasetDetail = null;
 export function registerDashboardCallbacks({ renderDatasetDetail }) {
@@ -109,6 +113,10 @@ export function renderDashboard() {
       <div class="dashboard-header">
         <h2>Catalog Dashboard</h2>
         <p>Enterprise overview of BLM GIS web service health, maturity, and coverage.</p>
+        <div class="dashboard-export-row">
+          <button type="button" class="btn btn-export btn-sm" data-dash-export="dcat">📤 Export DCAT-US</button>
+          <button type="button" class="btn btn-export btn-sm" data-dash-export="schema">📤 Export Schema.org</button>
+        </div>
       </div>
     `;
 
@@ -349,6 +357,31 @@ export function renderDashboard() {
       </div>
     `;
 
+    // ── Data Freshness Overview (async) ──
+    html += `
+      <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
+        <div class="dashboard-chart-card" id="dashFreshnessCard">
+          <div class="dashboard-chart-title">🕐 Data Freshness</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Last-updated detection across all cataloged datasets (from pre-computed analysis).</p>
+          <div data-dash-freshness-content>
+            <p class="loading-message" style="font-size:0.85rem;">Loading freshness data&hellip;</p>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // ── Dataset Relationship Graph ──
+    html += `
+      <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
+        <div class="dashboard-chart-card" id="dashRelationshipCard">
+          <div class="dashboard-chart-title">🔗 Dataset Relationships</div>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Force-directed graph showing service-level and topic-level relationships between datasets.</p>
+          <div data-dash-graph-stats></div>
+          <div data-dash-graph-container style="min-height:350px;"></div>
+        </div>
+      </div>
+    `;
+
     // ── Pending Dataset Requests (loads async) ──
     html += `
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
@@ -408,11 +441,26 @@ export function renderDashboard() {
       });
     });
 
+    // ── Wire up catalog export buttons ──
+    els.dashboardContentEl.querySelectorAll('button[data-dash-export]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const fmt = btn.getAttribute('data-dash-export');
+        if (fmt === 'dcat') downloadCatalogDcat();
+        else if (fmt === 'schema') downloadCatalogSchemaOrg();
+      });
+    });
+
     // ── Load pending requests async ──
     loadDashboardPendingRequests();
 
     // ── Load service health checks async ──
     loadServiceHealthStatus();
+
+    // ── Load freshness overview async ──
+    loadDashboardFreshness();
+
+    // ── Render relationship graph ──
+    renderDashboardRelationshipGraph();
   }
 
 /** Fetch and render pending dataset requests in the dashboard. */
@@ -571,6 +619,129 @@ async function loadServiceHealthStatus() {
 
   // Wire dataset links in health table
   listEl.querySelectorAll('button[data-dash-ds]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const dsId = btn.getAttribute('data-dash-ds');
+      showDatasetsView();
+      state.lastSelectedDatasetId = dsId;
+      if (_renderDatasetDetail) _renderDatasetDetail(dsId);
+    });
+  });
+}
+
+/** Render the dataset relationship graph in the dashboard. */
+function renderDashboardRelationshipGraph() {
+  const statsEl = els.dashboardContentEl?.querySelector('[data-dash-graph-stats]');
+  const containerEl = els.dashboardContentEl?.querySelector('[data-dash-graph-container]');
+  if (!containerEl) return;
+
+  const graphData = buildRelationshipGraph(state.allDatasets);
+  const stats = getGraphStats(graphData);
+
+  renderGraphStats(statsEl, stats);
+  renderRelationshipGraph(containerEl, graphData, {
+    width: containerEl.clientWidth || 900,
+    height: Math.min(500, Math.max(350, graphData.nodes.length * 3)),
+  });
+
+  // Wire node clicks → navigate to dataset
+  containerEl.addEventListener('graph-node-click', (e) => {
+    const dsId = e.detail?.datasetId;
+    if (dsId) {
+      showDatasetsView();
+      state.lastSelectedDatasetId = dsId;
+      if (_renderDatasetDetail) _renderDatasetDetail(dsId);
+    }
+  });
+}
+
+/** Load pre-computed freshness data and render dashboard section. */
+async function loadDashboardFreshness() {
+  const contentEl = els.dashboardContentEl?.querySelector('[data-dash-freshness-content]');
+  if (!contentEl) return;
+
+  // Try loading freshness.json
+  let freshnessData = getFreshnessIndex();
+  if (!freshnessData) {
+    try {
+      const resp = await fetch('data/freshness.json');
+      if (resp.ok) freshnessData = await resp.json();
+    } catch (_) {}
+  }
+
+  if (!freshnessData || !freshnessData.datasets || freshnessData.datasets.length === 0) {
+    contentEl.innerHTML = `
+      <p style="color:var(--text-muted);font-size:0.85rem;">
+        No pre-computed freshness data available. Run <code>node scripts/generate-freshness.js --write</code> to generate it.
+      </p>`;
+    return;
+  }
+
+  const results = freshnessData.datasets;
+  const ds = state.allDatasets;
+
+  // Stats
+  const total = results.length;
+  const withDate = results.filter(r => r.lastUpdated);
+  const fresh90 = withDate.filter(r => (new Date() - new Date(r.lastUpdated)) < 90 * 24 * 3600000);
+  const stale365 = withDate.filter(r => (new Date() - new Date(r.lastUpdated)) > 365 * 24 * 3600000);
+  const confCounts = { high: 0, medium: 0, low: 0, none: 0 };
+  results.forEach(r => confCounts[r.confidence] = (confCounts[r.confidence] || 0) + 1);
+
+  let html = '';
+
+  // KPI row
+  html += `<div class="freshness-kpi-row">`;
+  html += `<span class="freshness-kpi"><span class="freshness-kpi-value" style="color:var(--green);">${fresh90.length}</span> Fresh (&lt;90d)</span>`;
+  html += `<span class="freshness-kpi"><span class="freshness-kpi-value" style="color:var(--red);">${stale365.length}</span> Stale (&gt;1y)</span>`;
+  html += `<span class="freshness-kpi"><span class="freshness-kpi-value" style="color:var(--accent);">${withDate.length}</span> Detected</span>`;
+  html += `<span class="freshness-kpi"><span class="freshness-kpi-value" style="color:var(--text-muted);">${total - withDate.length}</span> Unknown</span>`;
+  html += `</div>`;
+
+  // Confidence breakdown
+  html += `<div class="freshness-conf-row" style="margin:0.5rem 0;">`;
+  ['high', 'medium', 'low', 'none'].forEach(c => {
+    const cm = getConfidenceMeta(c);
+    html += `<span style="font-size:0.8rem;color:${cm.color};margin-right:1rem;">${cm.icon} ${cm.label}: ${confCounts[c] || 0}</span>`;
+  });
+  html += `</div>`;
+
+  // Build combined table: stalest datasets first
+  const tableItems = withDate
+    .sort((a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated))
+    .slice(0, 10)
+    .map(r => {
+      const dataset = ds.find(d => d.id === r.datasetId);
+      return { ...r, dataset };
+    });
+
+  if (tableItems.length) {
+    html += `<div class="freshness-table-label" style="margin-top:0.5rem;font-size:0.8rem;color:var(--text-muted);">Stalest datasets (oldest first)</div>`;
+    html += `<table class="dashboard-mini-table freshness-table"><thead><tr><th>Dataset</th><th>Last Updated</th><th>Age</th><th>Signal</th><th>Confidence</th></tr></thead><tbody>`;
+    tableItems.forEach(r => {
+      const label = r.dataset?._layer_name || r.dataset?.title || r.datasetId;
+      const truncLabel = label.length > 40 ? label.slice(0, 37) + '…' : label;
+      const age = formatFreshnessAge(r.lastUpdated);
+      const ageColor = freshnessColor(r.lastUpdated);
+      const cm = getConfidenceMeta(r.confidence);
+      const dateStr = r.lastUpdated ? new Date(r.lastUpdated).toLocaleDateString() : '—';
+
+      html += `<tr>`;
+      html += `<td><button type="button" class="dash-link" data-dash-ds="${escapeHtml(r.datasetId)}" title="${escapeHtml(label)}">${escapeHtml(truncLabel)}</button></td>`;
+      html += `<td style="font-size:0.82rem;">${dateStr}</td>`;
+      html += `<td style="color:${ageColor};font-weight:600;">${escapeHtml(age)}</td>`;
+      html += `<td style="font-size:0.8rem;">${escapeHtml(r.signal || '—')}</td>`;
+      html += `<td><span style="color:${cm.color};">${cm.icon}</span> ${escapeHtml(cm.label)}</td>`;
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+
+  html += `<p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Generated: ${freshnessData.generated ? new Date(freshnessData.generated).toLocaleString() : 'unknown'}</p>`;
+
+  contentEl.innerHTML = html;
+
+  // Wire dataset links
+  contentEl.querySelectorAll('button[data-dash-ds]').forEach(btn => {
     btn.addEventListener('click', () => {
       const dsId = btn.getAttribute('data-dash-ds');
       showDatasetsView();

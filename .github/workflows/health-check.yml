@@ -1,0 +1,115 @@
+name: Service Health Check
+
+on:
+  schedule:
+    # Run daily at 06:00 UTC
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      create_issues:
+        description: 'Create GitHub Issues for consecutive failures'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run health check
+        id: check
+        run: node scripts/health-check.js --write
+        continue-on-error: true
+
+      - name: Commit health history
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet data/health-history.json 2>/dev/null; then
+            echo "No changes to commit"
+          else
+            git add data/health-history.json
+            git commit -m "chore: update health-history.json [skip ci]"
+            git push
+          fi
+
+      - name: Create issue for consecutive failures
+        if: steps.check.outcome == 'failure' || inputs.create_issues == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const history = JSON.parse(fs.readFileSync('data/health-history.json', 'utf8'));
+            const runs = history.runs || [];
+            if (runs.length < 2) return;
+
+            const latest = runs[runs.length - 1];
+            const previous = runs[runs.length - 2];
+            const prevDown = new Set(
+              previous.services
+                .filter(s => s.status === 'down' || s.status === 'error')
+                .map(s => s.url)
+            );
+
+            const consecutiveDown = latest.services.filter(
+              s => (s.status === 'down' || s.status === 'error') && prevDown.has(s.url)
+            );
+
+            if (consecutiveDown.length === 0) {
+              console.log('No consecutive failures — skipping issue creation.');
+              return;
+            }
+
+            // Check for existing open issue
+            const { data: existingIssues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'service-health',
+              state: 'open',
+              per_page: 1,
+            });
+
+            let body = `## 🚨 Service Health Alert\n\n`;
+            body += `**${consecutiveDown.length}** service(s) have been down on consecutive health checks.\n\n`;
+            body += `| Service URL | Status | Detail | Affected Datasets |\n`;
+            body += `|---|---|---|---|\n`;
+            consecutiveDown.forEach(s => {
+              const datasets = (s.datasets || []).slice(0, 3).join(', ');
+              const more = s.datasets.length > 3 ? ` +${s.datasets.length - 3} more` : '';
+              body += `| ${s.url.slice(0, 80)} | ${s.status} | ${s.detail} | ${datasets}${more} |\n`;
+            });
+            body += `\n**Checked at:** ${latest.timestamp}\n`;
+            body += `**Total services:** ${latest.summary.total} (${latest.summary.healthy} healthy, ${latest.summary.down} down)\n`;
+
+            if (existingIssues.length > 0) {
+              // Update existing issue with a new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existingIssues[0].number,
+                body: body,
+              });
+              console.log(`Updated issue #${existingIssues[0].number}`);
+            } else {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: `🚨 ${consecutiveDown.length} service(s) down on consecutive health checks`,
+                body: body,
+                labels: ['service-health', 'automated'],
+              });
+              console.log('Created new health alert issue.');
+            }

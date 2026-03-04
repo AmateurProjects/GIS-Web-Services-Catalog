@@ -8,7 +8,7 @@ import { renderFilterPanel, registerFilterCallbacks, initFilterToggle } from './
 import { renderDatasetDetail, renderInlineAttributeDetail, renderAttributeDetail } from './detail.js';
 import { renderNewDatasetRequestForm } from './new-dataset-form.js';
 import { renderNewAttributeCreateForm } from './forms.js';
-import { showDashboardView, showDatasetsView, showAttributesView, registerNavigationCallbacks } from './navigation.js';
+import { showDashboardView, showDatasetsView, showAttributesView, registerNavigationCallbacks, registerAttributeListCallback } from './navigation.js';
 
 /** Simple debounce helper */
 function debounce(fn, ms) {
@@ -41,6 +41,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderDatasetDetail,
   });
 
+  // Register attribute list callback for navigation (triggers field loading on tab visit)
+  registerAttributeListCallback(renderAttributeList);
+
   // ── Show loading state ──
   if (els.dashboardContentEl) {
     els.dashboardContentEl.innerHTML = '<p class="loading-message">Loading catalog data&hellip;</p>';
@@ -49,7 +52,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     els.datasetListEl.innerHTML = '<p class="loading-message">Loading&hellip;</p>';
   }
   if (els.attributeListEl) {
-    els.attributeListEl.innerHTML = '<p class="loading-message">Loading&hellip;</p>';
+    els.attributeListEl.innerHTML = '<p class="loading-message" style="font-size:0.85rem;">Click the Attributes tab to explore fields across all datasets.</p>';
   }
 
   // ── Load catalog data ──
@@ -124,7 +127,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ── Initial render ──
   renderDatasetList();
-  renderAttributeList();
+  // Note: Attribute list renders lazily when tab is visited (triggers field data loading)
 
   // ── Hash-based deep linking ──
   function navigateFromHash() {

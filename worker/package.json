@@ -1,0 +1,13 @@
+{
+  "name": "gis-freshness-worker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker that scans ArcGIS services for freshness and stores results in R2",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

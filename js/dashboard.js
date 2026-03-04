@@ -10,6 +10,7 @@ import { checkUrlStatusDetailed } from './url-check.js';
 import { formatFreshnessAge, freshnessColor, getConfidenceMeta } from './freshness.js';
 import { getFreshnessIndex } from './detail.js';
 import { downloadCatalogDcat, downloadCatalogSchemaOrg } from './metadata-export.js';
+import { WORKER_BASE_URL } from './config.js';
 
 let _renderDatasetDetail = null;
 export function registerDashboardCallbacks({ renderDatasetDetail }) {
@@ -22,87 +23,18 @@ export function renderDashboard() {
     const ds = state.allDatasets;
     const totalDatasets = ds.length;
 
-    // ── Unique parent services ──
-    const parentServices = new Set();
-    ds.forEach(d => {
-      if (d._parent_service) parentServices.add(d._parent_service);
-      else if (d.public_web_service) parentServices.add(d.public_web_service);
-    });
-    const totalServices = parentServices.size;
-
-    // ── Stage counts ──
-    const stageCounts = { planned: 0, in_development: 0, qa: 0, production: 0, deprecated: 0, unknown: 0 };
-    ds.forEach(d => {
-      const s = d.development_stage || 'unknown';
-      if (stageCounts[s] !== undefined) stageCounts[s]++;
-      else stageCounts.unknown++;
-    });
-
-    // ── Tier counts ──
-    const tierCounts = { gold: 0, silver: 0, bronze: 0, unassigned: 0 };
-    ds.forEach(d => {
-      const t = (d.maturity && d.maturity.quality_tier) || '';
-      if (tierCounts[t] !== undefined) tierCounts[t]++;
-      else tierCounts.unassigned++;
-    });
-
-    // ── Geometry type counts ──
-    const geomCounts = {};
-    ds.forEach(d => {
-      const g = (d.geometry_type || 'UNKNOWN').toUpperCase();
-      geomCounts[g] = (geomCounts[g] || 0) + 1;
-    });
-
-    // ── Coverage analysis ──
-    let datasetsWithCoverage = 0;
-    let nationwideCoverage = 0;
-    let partialCoverage = 0;
-    let noCoverageData = 0;
-    ds.forEach(d => {
-      if (d._coverage && d._coverage.states) {
-        datasetsWithCoverage++;
-        if (d._coverage.statesWithData >= 45) nationwideCoverage++;
-        else partialCoverage++;
-      } else {
-        noCoverageData++;
-      }
-    });
-
-    // ── Average completeness ──
-    let compSum = 0, compCount = 0;
-    ds.forEach(d => {
-      if (d.maturity && typeof d.maturity.completeness === 'number') {
-        compSum += d.maturity.completeness;
-        compCount++;
-      }
-    });
-    const avgCompleteness = compCount > 0 ? Math.round(compSum / compCount) : 0;
-
     // ── Agency / Office breakdown ──
-    const officeCounts = {};
+    // Group datasets by agency_owner, then by office_owner within each agency
+    const agencyMap = {}; // { agency: { total, offices: { office: count } } }
     ds.forEach(d => {
-      const o = d.office_owner || 'Unknown';
-      officeCounts[o] = (officeCounts[o] || 0) + 1;
+      const agency = d.agency_owner || 'Unknown';
+      const office = d.office_owner || '';
+      if (!agencyMap[agency]) agencyMap[agency] = { total: 0, offices: {} };
+      agencyMap[agency].total++;
+      if (office) {
+        agencyMap[agency].offices[office] = (agencyMap[agency].offices[office] || 0) + 1;
+      }
     });
-
-    // ── Datasets sorted by completeness (lowest first — attention needed) ──
-    const lowCompleteness = ds
-      .filter(d => d.maturity && typeof d.maturity.completeness === 'number')
-      .sort((a, b) => a.maturity.completeness - b.maturity.completeness)
-      .slice(0, 5);
-
-    // ── Datasets with coverage gaps (fewest states) ──
-    // Exclude 0% coverage — those are often datasets that haven't been analyzed
-    // or have non-spatial data, not necessarily real gaps.
-    const coverageGaps = ds
-      .filter(d => d._coverage && d._coverage.states && d.coverage === 'nationwide')
-      .map(d => {
-        const statesWithData = d._coverage.statesWithData || 0;
-        return { ...d, _statesWithData: statesWithData };
-      })
-      .filter(d => d._statesWithData > 0)
-      .sort((a, b) => a._statesWithData - b._statesWithData)
-      .slice(0, 5);
 
     // ── Build HTML ──
     let html = '';
@@ -111,7 +43,7 @@ export function renderDashboard() {
     html += `
       <div class="dashboard-header">
         <h2>Catalog Dashboard</h2>
-        <p>Enterprise overview of BLM GIS web service health, maturity, and coverage.</p>
+        <p>${totalDatasets} datasets across ${Object.keys(agencyMap).length} agencies.</p>
         <div class="dashboard-export-row">
           <button type="button" class="btn btn-export btn-sm" data-dash-export="dcat">📤 Export DCAT-US</button>
           <button type="button" class="btn btn-export btn-sm" data-dash-export="schema">📤 Export Schema.org</button>
@@ -119,238 +51,15 @@ export function renderDashboard() {
       </div>
     `;
 
-    // ── KPI Cards ──
-    html += `<div class="dashboard-kpi-row">`;
-
-    // Total Datasets
-    html += `
-      <div class="kpi-card">
-        <div class="kpi-card-accent" style="background: var(--accent);"></div>
-        <div class="kpi-value" style="color: var(--accent);">${totalDatasets}</div>
-        <div class="kpi-label">Total Datasets</div>
-        <div class="kpi-sublabel">${totalServices} service${totalServices !== 1 ? 's' : ''}</div>
-      </div>
-    `;
-
-    // Production
-    html += `
-      <div class="kpi-card" data-dash-filter="stage" data-dash-value="production">
-        <div class="kpi-card-accent" style="background: var(--green);"></div>
-        <div class="kpi-value" style="color: var(--green);">${stageCounts.production}</div>
-        <div class="kpi-label">Production</div>
-        <div class="kpi-sublabel">${totalDatasets > 0 ? Math.round(stageCounts.production / totalDatasets * 100) : 0}% of catalog</div>
-      </div>
-    `;
-
-    // Gold Tier
-    html += `
-      <div class="kpi-card" data-dash-filter="tier" data-dash-value="gold">
-        <div class="kpi-card-accent" style="background: #fde047;"></div>
-        <div class="kpi-value" style="color: #fde047;">${tierCounts.gold}</div>
-        <div class="kpi-label">Gold Tier</div>
-        <div class="kpi-sublabel">${tierCounts.silver} silver · ${tierCounts.bronze} bronze</div>
-      </div>
-    `;
-
-    // Average Completeness
-    html += `
-      <div class="kpi-card">
-        <div class="kpi-card-accent" style="background: var(--purple);"></div>
-        <div class="kpi-value" style="color: var(--purple);">${avgCompleteness}%</div>
-        <div class="kpi-label">Avg Completeness</div>
-        <div class="kpi-sublabel">${compCount} dataset${compCount !== 1 ? 's' : ''} scored</div>
-      </div>
-    `;
-
-    // Coverage
-    html += `
-      <div class="kpi-card" data-dash-filter="coverage" data-dash-value="nationwide">
-        <div class="kpi-card-accent" style="background: #4CAF50;"></div>
-        <div class="kpi-value" style="color: #4CAF50;">${datasetsWithCoverage}</div>
-        <div class="kpi-label">Coverage Analyzed</div>
-        <div class="kpi-sublabel">${nationwideCoverage} nationwide · ${noCoverageData} pending</div>
-      </div>
-    `;
-
-    html += `</div>`; // end kpi-row
-
-    // ── Charts Row ──
-    html += `<div class="dashboard-charts-row">`;
-
-    // 1) Development Stage bar chart
-    const stageEntries = [
-      { key: 'production', label: 'Production', color: 'rgba(16,185,129,0.7)' },
-      { key: 'qa', label: 'QA / Testing', color: 'rgba(139,92,246,0.7)' },
-      { key: 'in_development', label: 'In Development', color: 'rgba(245,158,11,0.7)' },
-      { key: 'planned', label: 'Planned', color: 'rgba(107,114,128,0.7)' },
-      { key: 'deprecated', label: 'Deprecated', color: 'rgba(239,68,68,0.7)' },
-      { key: 'unknown', label: 'Unknown', color: 'rgba(255,255,255,0.15)' },
-    ];
-    const maxStage = Math.max(...stageEntries.map(e => stageCounts[e.key] || 0), 1);
-
-    html += `<div class="dashboard-chart-card">`;
-    html += `<div class="dashboard-chart-title">Development Stage</div>`;
-    html += `<div class="hbar-chart">`;
-    stageEntries.forEach(e => {
-      const count = stageCounts[e.key] || 0;
-      if (count === 0 && e.key === 'unknown') return;
-      const pct = (count / maxStage) * 100;
-      html += `
-        <div class="hbar-row" data-dash-filter="stage" data-dash-value="${e.key}">
-          <span class="hbar-label">${e.label}</span>
-          <div class="hbar-track">
-            <div class="hbar-fill" style="width:${pct.toFixed(1)}%; background:${e.color};"></div>
-          </div>
-          <span class="hbar-count">${count}</span>
-        </div>
-      `;
-    });
-    html += `</div></div>`;
-
-    // 2) Quality Tier donut chart
-    const tierEntries = [
-      { key: 'gold', label: 'Gold', color: '#fde047' },
-      { key: 'silver', label: 'Silver', color: '#d4d4d4' },
-      { key: 'bronze', label: 'Bronze', color: '#d4a574' },
-      { key: 'unassigned', label: 'Unassigned', color: 'rgba(255,255,255,0.15)' },
-    ];
-    const tierTotal = tierEntries.reduce((s, e) => s + (tierCounts[e.key] || 0), 0) || 1;
-    const circumference = 2 * Math.PI * 15.9155;
-
-    html += `<div class="dashboard-chart-card">`;
-    html += `<div class="dashboard-chart-title">Quality Tier</div>`;
-    html += `<div class="donut-chart-container">`;
-    html += `<svg class="donut-svg" viewBox="0 0 42 42">`;
-    html += `<circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="3.5"/>`;
-
-    let tierOffset = 0;
-    tierEntries.forEach(e => {
-      const count = tierCounts[e.key] || 0;
-      if (count === 0) return;
-      const pct = count / tierTotal;
-      const dashLen = pct * circumference;
-      const dashGap = circumference - dashLen;
-      html += `<circle class="donut-segment" cx="21" cy="21" r="15.9155" fill="none" stroke="${e.color}" stroke-width="3.5" stroke-dasharray="${dashLen.toFixed(2)} ${dashGap.toFixed(2)}" stroke-dashoffset="${(-tierOffset).toFixed(2)}" transform="rotate(-90 21 21)"/>`;
-      tierOffset += dashLen;
-    });
-
-    html += `</svg>`;
-
-    html += `<div class="donut-legend">`;
-    tierEntries.forEach(e => {
-      const count = tierCounts[e.key] || 0;
-      html += `<div class="donut-legend-item" data-dash-filter="tier" data-dash-value="${e.key}"><span class="donut-legend-swatch" style="background:${e.color}"></span>${e.label}<span class="donut-legend-count">${count}</span></div>`;
-    });
-    html += `</div></div></div>`;
-
-    // 3) Geometry Types bar chart
-    const geomEntries = Object.entries(geomCounts).sort((a, b) => b[1] - a[1]);
-    const maxGeom = Math.max(...geomEntries.map(e => e[1]), 1);
-    const geomColors = {
-      'POINT': 'rgba(52,211,153,0.7)',
-      'POLYGON': 'rgba(91,163,245,0.7)',
-      'POLYLINE': 'rgba(16,185,129,0.7)',
-      'TABLE': 'rgba(251,191,36,0.7)',
-      'MULTIPOINT': 'rgba(52,211,153,0.5)',
-      'MULTIPATCH': 'rgba(192,132,252,0.7)',
-    };
-
-    html += `<div class="dashboard-chart-card">`;
-    html += `<div class="dashboard-chart-title">Geometry Types</div>`;
-    html += `<div class="hbar-chart">`;
-    geomEntries.forEach(([geom, count]) => {
-      const pct = (count / maxGeom) * 100;
-      const color = geomColors[geom] || 'rgba(255,255,255,0.2)';
-      html += `
-        <div class="hbar-row" data-dash-filter="geometry" data-dash-value="${escapeHtml(geom)}">
-          <span class="hbar-label">${escapeHtml(geom)}</span>
-          <div class="hbar-track">
-            <div class="hbar-fill" style="width:${pct.toFixed(1)}%; background:${color};"></div>
-          </div>
-          <span class="hbar-count">${count}</span>
-        </div>
-      `;
-    });
-    html += `</div></div>`;
-
-    html += `</div>`; // end charts-row
-
-    // ── Tables Row ──
-    html += `<div class="dashboard-table-row">`;
-
-    // 1) Datasets needing attention (lowest completeness)
-    html += `<div class="dashboard-table-card">`;
-    html += `<div class="dashboard-chart-title">Needs Attention — Lowest Completeness</div>`;
-    if (lowCompleteness.length) {
-      html += `<table class="dashboard-mini-table"><thead><tr><th>Dataset</th><th>Stage</th><th>Tier</th><th>Complete</th></tr></thead><tbody>`;
-      lowCompleteness.forEach(d => {
-        const comp = d.maturity.completeness;
-        const stage = d.development_stage || 'unknown';
-        const tier = (d.maturity && d.maturity.quality_tier) || '';
-        const stageClass = { planned: 'planned', in_development: 'dev', qa: 'qa', production: 'prod', deprecated: 'deprecated' }[stage] || 'planned';
-        const tierClass = tier || 'bronze';
-        const label = d._layer_name || d.title || d.id;
-        html += `<tr>
-          <td><button type="button" class="dash-link" data-dash-ds="${escapeHtml(d.id)}" title="${escapeHtml(d.title || d.id)}">${escapeHtml(label.length > 40 ? label.slice(0, 37) + '…' : label)}</button></td>
-          <td><span class="dash-stage dash-stage-${stageClass}">${escapeHtml(stage.replace('_', ' '))}</span></td>
-          <td>${tier ? `<span class="dash-tier dash-tier-${tierClass}">${escapeHtml(tier)}</span>` : '<span style="color:var(--text-muted)">—</span>'}</td>
-          <td>
-            <div style="display:flex;align-items:center;gap:0.4rem;">
-              <div style="flex:1;height:6px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;"><div style="height:100%;width:${comp}%;background:${comp < 50 ? 'var(--red)' : comp < 80 ? 'var(--amber)' : 'var(--green)'};border-radius:3px;"></div></div>
-              <span style="font-size:0.78rem;font-weight:600;color:${comp < 50 ? 'var(--red)' : comp < 80 ? 'var(--amber)' : 'var(--green)'}">${comp}%</span>
-            </div>
-          </td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-    } else {
-      html += `<p style="color:var(--text-muted);font-size:0.85rem;">No completeness data available yet.</p>`;
-    }
-    html += `</div>`;
-
-    // 2) Coverage gaps (nationwide datasets with fewest states)
-    html += `<div class="dashboard-table-card">`;
-    html += `<div class="dashboard-chart-title">Coverage Gaps — Nationwide Datasets</div>`;
-    if (coverageGaps.length) {
-      html += `<table class="dashboard-mini-table"><thead><tr><th>Dataset</th><th>States</th><th>Coverage</th></tr></thead><tbody>`;
-      coverageGaps.forEach(d => {
-        const stateData = d._coverage.states || {};
-        const statesWithData = d._statesWithData;
-        const totalStates = Object.keys(stateData).length || 51;
-        const label = d._layer_name || d.title || d.id;
-
-        // Mini coverage bar (51 tiny segments)
-        const sortedStates = Object.entries(stateData).sort((a, b) => a[0].localeCompare(b[0]));
-        let covBarHtml = '<div class="coverage-gap-bar" title="' + statesWithData + ' of ' + totalStates + ' states">';
-        sortedStates.forEach(([abbr, count]) => {
-          const color = count > 0 ? 'rgba(91,163,245,0.7)' : 'rgba(255,255,255,0.08)';
-          covBarHtml += `<div class="coverage-gap-segment" style="background:${color};" title="${abbr}: ${count}"></div>`;
-        });
-        covBarHtml += '</div>';
-
-        html += `<tr>
-          <td><button type="button" class="dash-link" data-dash-ds="${escapeHtml(d.id)}" title="${escapeHtml(d.title || d.id)}">${escapeHtml(label.length > 35 ? label.slice(0, 32) + '…' : label)}</button></td>
-          <td style="font-weight:600;color:${statesWithData < 30 ? 'var(--red)' : statesWithData < 45 ? 'var(--amber)' : 'var(--green)'}">${statesWithData}/${totalStates}</td>
-          <td style="min-width:120px;">${covBarHtml}</td>
-        </tr>`;
-      });
-      html += `</tbody></table>`;
-    } else {
-      html += `<p style="color:var(--text-muted);font-size:0.85rem;">No nationwide datasets with coverage data yet.</p>`;
-    }
-    html += `</div>`;
-
-    html += `</div>`; // end table-row
-
     // ── Service Health Status (async) ──
     html += `
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
         <div class="dashboard-chart-card" id="dashServiceHealthCard">
           <div class="dashboard-chart-title">Service Health</div>
-          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Live reachability check of all cataloged web service endpoints.</p>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Reachability check of all cataloged web service endpoints.</p>
           <div data-dash-health-summary class="service-health-summary"></div>
           <div data-dash-health-list>
-            <p class="loading-message" style="font-size:0.85rem;">Checking services\u2026</p>
+            <p class="loading-message" style="font-size:0.85rem;">Loading health data\u2026</p>
           </div>
         </div>
       </div>
@@ -382,25 +91,73 @@ export function renderDashboard() {
       </div>
     `;
 
-    // ── Office / Owner breakdown ──
-    const officeEntries = Object.entries(officeCounts).sort((a, b) => b[1] - a[1]);
-    const maxOffice = Math.max(...officeEntries.map(e => e[1]), 1);
+    // ── Datasets by Agency / Office ──
+    const agencyColors = {
+      'BLM': 'rgba(91,163,245,0.7)',
+      'USGS': 'rgba(52,211,153,0.7)',
+      'FEMA': 'rgba(245,158,11,0.7)',
+      'USFWS': 'rgba(192,132,252,0.7)',
+      'USFS': 'rgba(16,185,129,0.7)',
+      'BIA': 'rgba(251,191,36,0.7)',
+    };
+    const agencyEntries = Object.entries(agencyMap).sort((a, b) => b[1].total - a[1].total);
+    const maxAgency = Math.max(...agencyEntries.map(([, v]) => v.total), 1);
 
     html += `<div class="dashboard-charts-row" style="grid-template-columns: 1fr;">`;
     html += `<div class="dashboard-chart-card">`;
-    html += `<div class="dashboard-chart-title">Datasets by Office Owner</div>`;
+    html += `<div class="dashboard-chart-title">Datasets by Agency &amp; Office</div>`;
     html += `<div class="hbar-chart">`;
-    officeEntries.forEach(([office, count]) => {
-      const pct = (count / maxOffice) * 100;
+    agencyEntries.forEach(([agency, info]) => {
+      const pct = (info.total / maxAgency) * 100;
+      const color = agencyColors[agency] || 'rgba(255,255,255,0.25)';
+      const officeKeys = Object.keys(info.offices);
+      const hasOffices = officeKeys.length > 0;
+      const agencyId = agency.replace(/[^a-zA-Z0-9]/g, '_');
+
       html += `
-        <div class="hbar-row" data-dash-filter="office" data-dash-value="${escapeHtml(office)}">
-          <span class="hbar-label">${escapeHtml(office)}</span>
+        <div class="hbar-row" data-dash-agency-row="${escapeHtml(agencyId)}" style="cursor:default;">
+          <span class="hbar-label" style="font-weight:600;color:var(--text-main);">${escapeHtml(agency)}</span>
           <div class="hbar-track">
-            <div class="hbar-fill" style="width:${pct.toFixed(1)}%; background:rgba(192,132,252,0.6);"></div>
+            <div class="hbar-fill" style="width:${pct.toFixed(1)}%; background:${color};"></div>
           </div>
-          <span class="hbar-count">${count}</span>
+          <span class="hbar-count">${info.total}</span>
+          ${hasOffices ? `<button type="button" class="agency-toggle-btn" data-agency-toggle="${escapeHtml(agencyId)}" title="Show offices">▶</button>` : ''}
         </div>
       `;
+
+      // Sub-rows for offices (collapsed by default)
+      if (hasOffices) {
+        const officeEntries = Object.entries(info.offices).sort((a, b) => b[1] - a[1]);
+        const maxOffice = Math.max(...officeEntries.map(e => e[1]), 1);
+        html += `<div class="agency-offices-group" data-agency-offices="${escapeHtml(agencyId)}" style="display:none;padding-left:1rem;">`;
+        officeEntries.forEach(([office, count]) => {
+          const oPct = (count / maxOffice) * 100;
+          html += `
+            <div class="hbar-row" data-dash-filter="office" data-dash-value="${escapeHtml(office)}" style="margin-bottom:0.15rem;">
+              <span class="hbar-label" style="font-size:0.78rem;">${escapeHtml(office)}</span>
+              <div class="hbar-track" style="height:16px;">
+                <div class="hbar-fill" style="width:${oPct.toFixed(1)}%; background:${color}; opacity:0.6;"></div>
+              </div>
+              <span class="hbar-count" style="font-size:0.78rem;">${count}</span>
+            </div>
+          `;
+        });
+        // Datasets with no office_owner in this agency
+        const unassignedCount = info.total - Object.values(info.offices).reduce((s, c) => s + c, 0);
+        if (unassignedCount > 0) {
+          const uPct = (unassignedCount / maxOffice) * 100;
+          html += `
+            <div class="hbar-row" style="margin-bottom:0.15rem;opacity:0.6;">
+              <span class="hbar-label" style="font-size:0.78rem;font-style:italic;">No office assigned</span>
+              <div class="hbar-track" style="height:16px;">
+                <div class="hbar-fill" style="width:${uPct.toFixed(1)}%; background:rgba(255,255,255,0.15);"></div>
+              </div>
+              <span class="hbar-count" style="font-size:0.78rem;">${unassignedCount}</span>
+            </div>
+          `;
+        }
+        html += `</div>`;
+      }
     });
     html += `</div></div></div>`;
 
@@ -425,6 +182,18 @@ export function renderDashboard() {
         const group = el.getAttribute('data-dash-filter');
         const value = el.getAttribute('data-dash-value');
         applyDashboardFilter(group, value);
+      });
+    });
+
+    // ── Wire agency toggle buttons ──
+    els.dashboardContentEl.querySelectorAll('button[data-agency-toggle]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const agencyId = btn.getAttribute('data-agency-toggle');
+        const group = els.dashboardContentEl.querySelector(`[data-agency-offices="${agencyId}"]`);
+        if (!group) return;
+        const isOpen = group.style.display !== 'none';
+        group.style.display = isOpen ? 'none' : 'block';
+        btn.textContent = isOpen ? '▶' : '▼';
       });
     });
 
@@ -487,69 +256,37 @@ async function loadDashboardPendingRequests() {
   }
 }
 
-/** Check all unique service URLs and display results in the dashboard. */
+/** Check all unique service URLs and display results in the dashboard.
+ *  If Worker is configured, loads cached health.json from R2 first.
+ *  Falls back to live browser-based checks. */
 async function loadServiceHealthStatus() {
   const summaryEl = els.dashboardContentEl?.querySelector('[data-dash-health-summary]');
   const listEl = els.dashboardContentEl?.querySelector('[data-dash-health-list]');
   if (!listEl) return;
 
-  const ds = state.allDatasets;
+  const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
+  const hasWorker = !!workerBase;
 
-  // Build unique service URL map: url → { url, datasets: [{ id, title }] }
-  const serviceMap = new Map();
-  ds.forEach(d => {
-    const url = d.public_web_service;
-    if (!url) return;
-    // Use the parent service URL if available, otherwise the dataset URL directly
-    const key = d._parent_service || url;
-    if (!serviceMap.has(key)) {
-      serviceMap.set(key, { url: key, datasets: [] });
-    }
-    serviceMap.get(key).datasets.push({ id: d.id, title: d._layer_name || d.title || d.id });
-  });
+  // Try loading cached health from Worker (R2)
+  let healthData = null;
+  if (hasWorker) {
+    try {
+      const resp = await fetch(`${workerBase}/health.json`);
+      if (resp.ok) healthData = await resp.json();
+    } catch (_) {}
+  }
 
-  const services = [...serviceMap.values()];
-  if (!services.length) {
-    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No web services configured in the catalog.</p>';
-    if (summaryEl) summaryEl.innerHTML = '';
+  if (healthData && healthData.services && healthData.services.length > 0) {
+    renderHealthResults(healthData.services, healthData, summaryEl, listEl, hasWorker);
     return;
   }
 
-  // Show progress bar
-  let checked = 0;
-  const total = services.length;
-  function updateProgress() {
-    if (!summaryEl) return;
-    summaryEl.innerHTML = `
-      <div class="health-progress">
-        <span class="health-progress-label">Checking ${checked} / ${total} services\u2026</span>
-        <div class="completeness-bar-track" style="height:6px;">
-          <div class="completeness-bar-fill" style="width:${Math.round((checked / total) * 100)}%;background:var(--accent);transition:width 300ms;"></div>
-        </div>
-      </div>
-    `;
-  }
-  updateProgress();
+  // Fallback: live browser-based checks (original behaviour)
+  runLiveHealthChecks(summaryEl, listEl, hasWorker);
+}
 
-  // Check all services with concurrency limit
-  const CONCURRENCY = 4;
-  const results = new Array(services.length);
-  let idx = 0;
-
-  async function worker() {
-    while (idx < services.length) {
-      const i = idx++;
-      const svc = services[i];
-      // Use the raw service URL — checkUrlStatusDetailed handles ArcGIS REST query internally
-      const result = await checkUrlStatusDetailed(svc.url);
-      results[i] = { ...svc, status: result.status, detail: result.detail || '' };
-      checked++;
-      updateProgress();
-    }
-  }
-
-  await Promise.all(Array.from({ length: CONCURRENCY }, worker));
-
+/** Shared HTML renderer for health results (used by both cached & live paths). */
+function renderHealthResults(results, meta, summaryEl, listEl, hasWorker) {
   // Tally
   let okCount = 0, badCount = 0, unknownCount = 0;
   results.forEach(r => {
@@ -557,52 +294,64 @@ async function loadServiceHealthStatus() {
     else if (r.status === 'bad') badCount++;
     else unknownCount++;
   });
+  const total = results.length;
 
-  // Summary badges
+  // Summary badges + refresh button
   if (summaryEl) {
-    summaryEl.innerHTML = `
+    let sumHtml = `
       <div class="health-kpi-row">
         <span class="health-kpi health-kpi-ok"><span class="health-kpi-value">${okCount}</span> Serving Data</span>
         <span class="health-kpi health-kpi-bad"><span class="health-kpi-value">${badCount}</span> Not Serving</span>
         <span class="health-kpi health-kpi-unknown"><span class="health-kpi-value">${unknownCount}</span> Uncertain</span>
         <span class="health-kpi" style="color:var(--text-muted);"><span class="health-kpi-value">${total}</span> Total</span>
-      </div>
-    `;
+      </div>`;
+    if (meta?.generated || hasWorker) {
+      sumHtml += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.35rem;flex-wrap:wrap;">`;
+      if (meta?.generated) {
+        sumHtml += `<span style="font-size:0.75rem;color:var(--text-muted);">Scanned: ${new Date(meta.generated).toLocaleString()}</span>`;
+      }
+      if (hasWorker) {
+        sumHtml += `<button type="button" class="btn btn-sm health-refresh-btn" title="Trigger a new health scan via the Worker">🔄 Refresh Health</button>`;
+      }
+      sumHtml += `</div>`;
+    }
+    summaryEl.innerHTML = sumHtml;
+    wireHealthRefreshBtn(summaryEl);
   }
 
   // Sort: bad first, then unknown, then ok
   const statusOrder = { bad: 0, unknown: 1, ok: 2 };
-  results.sort((a, b) => (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1));
+  const sorted = [...results].sort((a, b) => (statusOrder[a.status] ?? 1) - (statusOrder[b.status] ?? 1));
 
-  // Table
+  const problemResults = sorted.filter(r => r.status !== 'ok');
+  const healthyResults = sorted.filter(r => r.status === 'ok');
+
+  const tableHead = `<table class="dashboard-mini-table service-health-table"><thead><tr><th>Status</th><th>Service Endpoint</th><th>Detail</th><th>Datasets</th></tr></thead><tbody>`;
+  const tableEnd = `</tbody></table>`;
+
   let html = '';
-  html += `<table class="dashboard-mini-table service-health-table"><thead><tr><th>Status</th><th>Service Endpoint</th><th>Detail</th><th>Datasets</th></tr></thead><tbody>`;
-  results.forEach(r => {
-    const statusIcon = r.status === 'ok'
-      ? '<span class="health-dot health-dot-ok" title="Serving data">\u25CF</span>'
-      : r.status === 'bad'
-        ? '<span class="health-dot health-dot-bad" title="Not serving data">\u25CF</span>'
-        : '<span class="health-dot health-dot-unknown" title="Cannot verify">\u25CF</span>';
-    const statusLabel = r.status === 'ok' ? 'Healthy' : r.status === 'bad' ? 'Down' : '???';
-    const shortUrl = r.url.replace(/^https?:\/\//, '').replace(/\/+$/, '');
-    const truncUrl = shortUrl.length > 60 ? shortUrl.slice(0, 57) + '\u2026' : shortUrl;
-    const dsCount = r.datasets.length;
-    const dsNames = r.datasets.slice(0, 3).map(d => escapeHtml(d.title)).join(', ');
-    const more = dsCount > 3 ? ` +${dsCount - 3} more` : '';
-    const detailText = r.detail ? escapeHtml(r.detail) : '';
+  if (problemResults.length) {
+    html += tableHead;
+    problemResults.forEach(r => { html += healthRow(r); });
+    html += tableEnd;
+  } else {
+    html += `<p style="font-size:0.85rem;color:var(--green);font-weight:600;margin-bottom:0.5rem;">All services are healthy.</p>`;
+  }
 
-    html += `<tr class="health-row health-row-${r.status}">`;
-    html += `<td class="health-status-cell">${statusIcon} ${statusLabel}</td>`;
-    html += `<td><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" class="health-url" title="${escapeHtml(r.url)}">${escapeHtml(truncUrl)}</a></td>`;
-    html += `<td class="health-detail-cell" style="font-size:0.8rem;color:var(--text-muted);max-width:220px;">${detailText}</td>`;
-    html += `<td class="health-ds-cell">${dsNames}${more}</td>`;
-    html += `</tr>`;
-  });
-  html += `</tbody></table>`;
+  if (healthyResults.length) {
+    html += `<details class="healthy-services-details" style="margin-top:0.75rem;">`;
+    html += `<summary style="cursor:pointer;font-size:0.85rem;color:var(--text-muted);user-select:none;">`;
+    html += `<span class="health-dot health-dot-ok">\u25CF</span> ${healthyResults.length} healthy service${healthyResults.length !== 1 ? 's' : ''} \u2014 click to expand`;
+    html += `</summary>`;
+    html += tableHead;
+    healthyResults.forEach(r => { html += healthRow(r); });
+    html += tableEnd;
+    html += `</details>`;
+  }
 
   listEl.innerHTML = html;
 
-  // Wire dataset links in health table
+  // Wire dataset links
   listEl.querySelectorAll('button[data-dash-ds]').forEach(btn => {
     btn.addEventListener('click', () => {
       const dsId = btn.getAttribute('data-dash-ds');
@@ -613,13 +362,166 @@ async function loadServiceHealthStatus() {
   });
 }
 
+/** Render a single health table row. */
+function healthRow(r) {
+  const statusIcon = r.status === 'ok'
+    ? '<span class="health-dot health-dot-ok" title="Serving data">\u25CF</span>'
+    : r.status === 'bad'
+      ? '<span class="health-dot health-dot-bad" title="Not serving data">\u25CF</span>'
+      : '<span class="health-dot health-dot-unknown" title="Cannot verify">\u25CF</span>';
+  const statusLabel = r.status === 'ok' ? 'Healthy' : r.status === 'bad' ? 'Down' : '???';
+  const shortUrl = r.url.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  const truncUrl = shortUrl.length > 60 ? shortUrl.slice(0, 57) + '\u2026' : shortUrl;
+  const dsCount = r.datasets ? r.datasets.length : 0;
+  const dsNames = r.datasets ? r.datasets.slice(0, 3).map(d => escapeHtml(d.title)).join(', ') : '';
+  const more = dsCount > 3 ? ` +${dsCount - 3} more` : '';
+  const detailText = r.detail ? escapeHtml(r.detail) : '';
+
+  let row = `<tr class="health-row health-row-${r.status}">`;
+  row += `<td class="health-status-cell">${statusIcon} ${statusLabel}</td>`;
+  row += `<td><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" class="health-url" title="${escapeHtml(r.url)}">${escapeHtml(truncUrl)}</a></td>`;
+  row += `<td class="health-detail-cell" style="font-size:0.8rem;color:var(--text-muted);max-width:220px;">${detailText}</td>`;
+  row += `<td class="health-ds-cell">${dsNames}${more}</td>`;
+  row += `</tr>`;
+  return row;
+}
+
+/** Live browser-based health checks (fallback when Worker is not configured). */
+async function runLiveHealthChecks(summaryEl, listEl, hasWorker) {
+  const ds = state.allDatasets;
+
+  const serviceMap = new Map();
+  ds.forEach(d => {
+    const url = d.public_web_service;
+    if (!url) return;
+    const key = d._parent_service || url;
+    if (!serviceMap.has(key)) serviceMap.set(key, { url: key, datasets: [] });
+    serviceMap.get(key).datasets.push({ id: d.id, title: d._layer_name || d.title || d.id });
+  });
+
+  const services = [...serviceMap.values()];
+  if (!services.length) {
+    listEl.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No web services configured in the catalog.</p>';
+    if (summaryEl) summaryEl.innerHTML = '';
+    return;
+  }
+
+  let checked = 0;
+  const total = services.length;
+  function updateProgress() {
+    if (!summaryEl) return;
+    summaryEl.innerHTML = `
+      <div class="health-progress">
+        <span class="health-progress-label">Checking ${checked} / ${total} services\u2026</span>
+        <div class="completeness-bar-track" style="height:6px;">
+          <div class="completeness-bar-fill" style="width:${Math.round((checked / total) * 100)}%;background:var(--accent);transition:width 300ms;"></div>
+        </div>
+      </div>`;
+  }
+  updateProgress();
+
+  const LIVE_CONCURRENCY = 4;
+  const results = new Array(services.length);
+  let idx = 0;
+
+  async function worker() {
+    while (idx < services.length) {
+      const i = idx++;
+      const svc = services[i];
+      const result = await checkUrlStatusDetailed(svc.url);
+      results[i] = { ...svc, status: result.status, detail: result.detail || '' };
+      checked++;
+      updateProgress();
+    }
+  }
+
+  await Promise.all(Array.from({ length: LIVE_CONCURRENCY }, worker));
+  renderHealthResults(results, null, summaryEl, listEl, hasWorker);
+}
+
+/** Wire the health refresh button. */
+function wireHealthRefreshBtn(container) {
+  const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
+  container.querySelectorAll('.health-refresh-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!workerBase) return;
+      btn.disabled = true;
+      btn.textContent = '\u23F3 Scanning\u2026';
+      try {
+        const resp = await fetch(`${workerBase}/health/refresh`, { method: 'POST' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        btn.textContent = '\u2705 Scan started!';
+        setTimeout(() => loadServiceHealthStatus(), 8000);
+        setTimeout(() => { btn.textContent = '\uD83D\uDD04 Refresh Health'; btn.disabled = false; }, 3000);
+      } catch (e) {
+        console.warn('Health refresh failed:', e);
+        btn.textContent = '\u274C Failed';
+        setTimeout(() => { btn.textContent = '\uD83D\uDD04 Refresh Health'; btn.disabled = false; }, 2000);
+      }
+    });
+  });
+}
+
+/** Wire the freshness action buttons (refresh via Worker OR copy CLI command). */
+function wireFreshnessButtons(container) {
+  // Refresh button — calls the Worker
+  container.querySelectorAll('.freshness-refresh-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (!WORKER_BASE_URL) return;
+      btn.disabled = true;
+      btn.textContent = '⏳ Scanning…';
+      try {
+        const resp = await fetch(`${WORKER_BASE_URL.replace(/\/+$/, '')}/freshness/refresh`, { method: 'POST' });
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        btn.textContent = '✅ Scan started!';
+        // Poll for completion then reload the freshness section
+        setTimeout(() => loadDashboardFreshness(), 5000);
+        setTimeout(() => { btn.textContent = '🔄 Refresh Freshness'; btn.disabled = false; }, 3000);
+      } catch (e) {
+        console.warn('Freshness refresh failed:', e);
+        btn.textContent = '❌ Failed';
+        setTimeout(() => { btn.textContent = '🔄 Refresh Freshness'; btn.disabled = false; }, 2000);
+      }
+    });
+  });
+
+  // Copy command fallback button
+  const cmd = 'node scripts/generate-freshness.js --write';
+  container.querySelectorAll('.freshness-copy-cmd').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(cmd);
+        const orig = btn.textContent;
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      } catch (_) {
+        const tmp = document.createElement('input');
+        tmp.value = cmd;
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
+        const orig = btn.textContent;
+        btn.textContent = '✅ Copied!';
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      }
+    });
+  });
+}
+
 /** Load pre-computed freshness data and render dashboard section. */
 async function loadDashboardFreshness() {
   const contentEl = els.dashboardContentEl?.querySelector('[data-dash-freshness-content]');
   if (!contentEl) return;
 
-  // Try loading freshness.json
+  // Try loading from Worker (R2) first, then fall back to local file
   let freshnessData = getFreshnessIndex();
+  if (!freshnessData && WORKER_BASE_URL) {
+    try {
+      const resp = await fetch(`${WORKER_BASE_URL.replace(/\/+$/, '')}/freshness.json`);
+      if (resp.ok) freshnessData = await resp.json();
+    } catch (_) {}
+  }
   if (!freshnessData) {
     try {
       const resp = await fetch('data/freshness.json');
@@ -627,11 +529,23 @@ async function loadDashboardFreshness() {
     } catch (_) {}
   }
 
+  // Build action buttons — show refresh if Worker is configured, always show copy
+  const hasWorker = !!WORKER_BASE_URL;
+  const refreshBtn = hasWorker
+    ? `<button type="button" class="btn btn-sm freshness-refresh-btn" title="Trigger a fresh scan via the Worker">🔄 Refresh Freshness</button>`
+    : '';
+  const copyBtn = `<button type="button" class="btn btn-sm freshness-copy-cmd" title="Copy CLI command to clipboard">📋 Copy CLI command</button>`;
+
   if (!freshnessData || !freshnessData.datasets || freshnessData.datasets.length === 0) {
     contentEl.innerHTML = `
-      <p style="color:var(--text-muted);font-size:0.85rem;">
-        No pre-computed freshness data available. Run <code>node scripts/generate-freshness.js --write</code> to generate it.
-      </p>`;
+      <div style="color:var(--text-muted);font-size:0.85rem;">
+        <p>No freshness data available.</p>
+        <div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;">
+          ${refreshBtn}
+          ${copyBtn}
+        </div>
+      </div>`;
+    wireFreshnessButtons(contentEl);
     return;
   }
 
@@ -695,9 +609,14 @@ async function loadDashboardFreshness() {
     html += `</tbody></table>`;
   }
 
-  html += `<p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">Generated: ${freshnessData.generated ? new Date(freshnessData.generated).toLocaleString() : 'unknown'}</p>`;
+  html += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">`;
+  html += `<span style="font-size:0.75rem;color:var(--text-muted);">Generated: ${freshnessData.generated ? new Date(freshnessData.generated).toLocaleString() : 'unknown'}</span>`;
+  html += refreshBtn;
+  html += copyBtn;
+  html += `</div>`;
 
   contentEl.innerHTML = html;
+  wireFreshnessButtons(contentEl);
 
   // Wire dataset links
   contentEl.querySelectorAll('button[data-dash-ds]').forEach(btn => {

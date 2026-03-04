@@ -1,0 +1,46 @@
+# ================================================================
+# Cloudflare Worker — Freshness Scanner
+# ================================================================
+# Generates & serves data/freshness.json from R2 storage.
+#
+# Setup
+# ─────
+# 1. Create an R2 bucket:
+#      wrangler r2 bucket create gis-catalog-data
+#
+# 2. (Optional) Set a CORS-friendly custom domain or route in [env.production].
+#
+# 3. Deploy:
+#      cd worker
+#      npx wrangler deploy
+#
+# Endpoints
+# ─────────
+#   GET  /freshness.json          → serves cached results from R2
+#   POST /freshness/refresh       → triggers a full scan, stores in R2, returns results
+#   GET  /freshness/status        → returns last-generated timestamp from R2
+#
+# Scheduled (Cron Trigger)
+# ────────────────────────
+# A daily cron trigger refreshes the data automatically.
+# ================================================================
+
+name = "gis-freshness-worker"
+main = "src/index.js"
+compatibility_date = "2024-09-01"
+
+# ── R2 binding ──
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "gis-catalog-data"
+
+# ── Cron trigger — runs daily at 06:00 UTC ──
+[triggers]
+crons = ["0 6 * * *"]
+
+# ── Environment variables ──
+[vars]
+# The public URL where catalog.json is served (GitHub Pages, Netlify, etc.)
+CATALOG_BASE_URL = "https://amateurprojects.github.io/GIS-Web-Services-Catalog"
+# Optional shared secret — set via `wrangler secret put REFRESH_TOKEN`
+# REFRESH_TOKEN = ""

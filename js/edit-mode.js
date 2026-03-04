@@ -1,6 +1,6 @@
 // edit-mode.js — Inline click-to-edit for dataset detail pages.
-// Click "Edit" to enter edit mode. Each field value becomes clickable.
-// Click a value → inline input appears. A floating save bar tracks pending changes.
+// Each field value is always clickable — no separate "edit mode" step.
+// Click a value → inline input appears with ✓/✕. Save button appears when changes exist.
 // Save → PATCH to Cloudflare Worker → R2 overlay → immediate effect.
 
 import { els } from './state.js';
@@ -71,13 +71,13 @@ let _pendingChanges = {};   // { fieldKey: newValue }
 let _originalValues = {};   // { fieldKey: originalValue }
 let _activeDatasetId = null;
 let _onDoneCallback = null;
-let _saveBarEl = null;
+let _cardEl = null;          // reference to card element containing save button
 
 function resetPending() {
   _pendingChanges = {};
   _originalValues = {};
   _activeDatasetId = null;
-  hideSaveBar();
+  hideSaveButton();
 }
 
 function recordChange(key, newValue, originalValue) {
@@ -91,7 +91,7 @@ function recordChange(key, newValue, originalValue) {
     _pendingChanges[key] = newValue;
   }
   _originalValues[key] = originalValue;
-  updateSaveBar();
+  updateSaveButton();
 }
 
 function normalizeValue(key, val) {
@@ -105,43 +105,26 @@ function getPendingCount() {
   return Object.keys(_pendingChanges).length;
 }
 
-// ── Floating save bar ──
+// ── In-card save button management ──
 
-function createSaveBar() {
-  if (_saveBarEl) return _saveBarEl;
-  _saveBarEl = document.createElement('div');
-  _saveBarEl.id = 'inline-edit-save-bar';
-  _saveBarEl.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9998;background:var(--card-bg,#1e293b);border-top:2px solid var(--accent,#60a5fa);padding:0.6rem 1.2rem;display:none;align-items:center;justify-content:space-between;gap:1rem;box-shadow:0 -4px 16px rgba(0,0,0,0.4);';
-  document.body.appendChild(_saveBarEl);
-  return _saveBarEl;
-}
-
-function updateSaveBar() {
-  const bar = createSaveBar();
+function updateSaveButton() {
+  if (!_cardEl) return;
+  const area = _cardEl.querySelector('.dataset-save-actions');
+  if (!area) return;
   const count = getPendingCount();
   if (count === 0) {
-    bar.style.display = 'none';
+    area.style.display = 'none';
     return;
   }
-  bar.style.display = 'flex';
-  bar.innerHTML = `
-    <span style="font-size:0.9rem;color:var(--text-main,#e2e8f0);">
-      <strong>${count}</strong> unsaved change${count !== 1 ? 's' : ''}
-    </span>
-    <div style="display:flex;gap:0.5rem;">
-      <button type="button" class="btn" id="editDiscardBtn">Discard</button>
-      <button type="button" class="btn primary" id="editSaveBtn">💾 Save changes</button>
-    </div>
-  `;
-  bar.querySelector('#editDiscardBtn').addEventListener('click', () => {
-    resetPending();
-    if (_onDoneCallback) _onDoneCallback();
-  });
-  bar.querySelector('#editSaveBtn').addEventListener('click', () => saveChanges());
+  area.style.display = 'flex';
+  const countEl = area.querySelector('.edit-change-count');
+  if (countEl) countEl.textContent = `${count} unsaved change${count !== 1 ? 's' : ''}`;
 }
 
-function hideSaveBar() {
-  if (_saveBarEl) _saveBarEl.style.display = 'none';
+function hideSaveButton() {
+  if (!_cardEl) return;
+  const area = _cardEl.querySelector('.dataset-save-actions');
+  if (area) area.style.display = 'none';
 }
 
 // ── Save to Worker ──
@@ -160,8 +143,7 @@ async function saveChanges() {
   if (!token) token = promptAdminToken();
   if (!token) return;
 
-  const bar = createSaveBar();
-  const saveBtn = bar.querySelector('#editSaveBtn');
+  const saveBtn = _cardEl?.querySelector('[data-save-edits]');
   if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Saving…'; }
 
   // Build the fields payload — parse types properly
@@ -198,7 +180,7 @@ async function saveChanges() {
       } else {
         alert(`Save failed: ${result.error || resp.statusText}`);
       }
-      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save changes'; }
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save'; }
       return;
     }
 
@@ -209,7 +191,7 @@ async function saveChanges() {
     if (_onDoneCallback) _onDoneCallback();
   } catch (e) {
     alert(`Save failed: ${e.message}`);
-    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save changes'; }
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save'; }
   }
 }
 
@@ -251,6 +233,8 @@ function renderInlineInput(fieldDef, val) {
 
 function activateField(cell, fieldDef, dataset) {
   if (cell.classList.contains('is-editing')) return;
+  // Save original HTML so we can restore on cancel
+  cell._savedHTML = cell.innerHTML;
   cell.classList.add('is-editing');
 
   const val = dataset[fieldDef.key];
@@ -269,104 +253,73 @@ function activateField(cell, fieldDef, dataset) {
   const input = cell.querySelector('[data-inline-key]');
   if (input) input.focus();
 
-  // Confirm
+  // Confirm — record change, show updated value or restore if no actual change
   cell.querySelector('.inline-edit-ok').addEventListener('click', () => {
     const raw = input.value;
     recordChange(fieldDef.key, raw, originalVal);
-    // Show updated display value
-    const newDisplayVal = raw === '' ? originalVal : raw;
     const isPending = _pendingChanges.hasOwnProperty(fieldDef.key);
     cell.classList.remove('is-editing');
-    cell.innerHTML = `<span class="inline-edit-value${isPending ? ' is-dirty' : ''}">${displayValue(fieldDef, fieldDef.type === 'csv' ? parseCsvList(raw || '') : (fieldDef.type === 'boolean' ? (raw === 'true' ? true : raw === 'false' ? false : newDisplayVal) : newDisplayVal))}</span>`;
-    cell.classList.add('editable-field');
+    if (isPending) {
+      // Show updated value as plain text with dirty highlight
+      const displayVal = fieldDef.type === 'csv' ? parseCsvList(raw || '').join(', ')
+        : fieldDef.type === 'boolean' ? (raw === 'true' ? 'Yes' : raw === 'false' ? 'No' : raw)
+        : (raw || '');
+      const escaped = displayVal ? escapeHtml(displayVal) : '<span style="color:var(--text-muted);font-style:italic;">—</span>';
+      cell.innerHTML = `<span class="inline-edit-value is-dirty">${escaped}</span>`;
+    } else {
+      // No actual change — restore original HTML
+      cell.innerHTML = cell._savedHTML;
+    }
     wireFieldClick(cell, fieldDef, dataset);
   });
 
-  // Cancel
+  // Cancel — restore original HTML
   cell.querySelector('.inline-edit-cancel').addEventListener('click', () => {
     cell.classList.remove('is-editing');
-    const isPending = _pendingChanges.hasOwnProperty(fieldDef.key);
-    cell.innerHTML = `<span class="inline-edit-value${isPending ? ' is-dirty' : ''}">${displayValue(fieldDef, val)}</span>`;
-    cell.classList.add('editable-field');
+    cell.innerHTML = cell._savedHTML;
     wireFieldClick(cell, fieldDef, dataset);
   });
 }
 
 function wireFieldClick(cell, fieldDef, dataset) {
-  cell.addEventListener('click', function handler() {
+  function handler(e) {
+    // Don't activate editing if user clicks a link or button inside the cell
+    if (e.target.closest('a') || e.target.closest('button')) return;
     cell.removeEventListener('click', handler);
     activateField(cell, fieldDef, dataset);
-  }, { once: true });
+  }
+  cell.addEventListener('click', handler);
 }
 
-// ── Dataset In-Place Edit ──
+// ── Wire dataset inline editing (always-on, no edit mode toggle) ──
 
 /**
- * Enter edit mode for a dataset's manual card.
- * Transforms each field value in the existing card to be clickable/editable.
- * @param {string} datasetId
- * @param {function} onDone - callback to re-render detail (exit edit mode)
+ * Wire click-to-edit on all editable fields in the Dataset Information card.
+ * Called after the detail page renders. Each field value is immediately clickable.
+ * @param {object} dataset - the dataset object
+ * @param {function} onDone - callback to re-render detail after save
  */
-export function enterDatasetEditMode(datasetId, onDone) {
+export function wireDatasetInlineEdit(dataset, onDone) {
   const cardMeta = els.datasetDetailEl?.querySelector('.card.card-meta');
   if (!cardMeta) return;
 
-  const dataset = getDatasetById(datasetId);
-  if (!dataset) return;
-
   resetPending();
-  _activeDatasetId = datasetId;
+  _activeDatasetId = dataset.id;
   _onDoneCallback = onDone;
+  _cardEl = cardMeta;
 
-  // Group fields by section
-  const sections = {
-    catalog: { title: 'Catalog Metadata', fields: [] },
-    devstatus: { title: 'Development & Status', fields: [] },
-    scale: { title: 'National Scale Suitability', fields: [] },
-  };
-  DATASET_EDIT_FIELDS.forEach(f => {
-    const s = f.section || 'catalog';
-    if (sections[s]) sections[s].fields.push(f);
-  });
-
-  let html = '';
-  html += '<div class="card-header-row"><h3>Dataset Information</h3><span class="inline-edit-badge">✏️ Editing</span></div>';
-  html += '<p style="font-size:0.8rem;color:var(--text-muted);margin:0.25rem 0 0.75rem;">Click any field value to edit it. Save all changes at once when done.</p>';
-
-  Object.values(sections).forEach(sec => {
-    if (!sec.fields.length) return;
-    html += `<div class="manual-section">`;
-    html += `<h4 class="manual-section-title">${escapeHtml(sec.title)}</h4>`;
-    sec.fields.forEach(f => {
-      const val = dataset[f.key];
-      html += `<div class="inline-edit-row">
-        <span class="inline-edit-label">${escapeHtml(f.label)}</span>
-        <span class="inline-edit-cell editable-field" data-field-key="${escapeHtml(f.key)}">
-          <span class="inline-edit-value">${displayValue(f, val)}</span>
-        </span>
-      </div>`;
-    });
-    html += `</div>`;
-  });
-
-  html += `
-    <div class="manual-section-actions">
-      <button type="button" class="btn" data-edit-cancel>Exit edit mode</button>
-    </div>
-  `;
-
-  cardMeta.innerHTML = html;
-  cardMeta.classList.add('is-editing');
-
-  // Wire each field cell for click-to-edit
-  cardMeta.querySelectorAll('.inline-edit-cell[data-field-key]').forEach(cell => {
+  // Wire click-to-edit on all editable cells
+  cardMeta.querySelectorAll('.editable-field[data-field-key]').forEach(cell => {
     const key = cell.getAttribute('data-field-key');
     const fieldDef = DATASET_EDIT_FIELDS.find(f => f.key === key);
     if (fieldDef) wireFieldClick(cell, fieldDef, dataset);
   });
 
-  // Wire cancel
-  cardMeta.querySelector('[data-edit-cancel]')?.addEventListener('click', () => {
+  // Wire save/discard buttons
+  const saveBtn = cardMeta.querySelector('[data-save-edits]');
+  const discardBtn = cardMeta.querySelector('[data-discard-edits]');
+  if (saveBtn) saveBtn.addEventListener('click', () => saveChanges());
+  if (discardBtn) discardBtn.addEventListener('click', () => {
     resetPending();
     if (onDone) onDone();
   });

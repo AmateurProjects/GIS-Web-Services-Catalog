@@ -7,7 +7,7 @@ import { normalizeServiceUrl, parseServiceAndLayerId, maybeRenderPublicServicePr
 import { renderCoverageMapCard, getCoverageCache } from './coverage-map.js';
 import { getDatasetById, getAttributeById, getAttributesForDataset, getDatasetsForAttribute } from './catalog.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
-import { enterDatasetEditMode, enterAttributeEditMode } from './edit-mode.js';
+import { wireDatasetInlineEdit, enterAttributeEditMode } from './edit-mode.js';
 import { applyDashboardFilter } from './filters.js';
 import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
 import { getFieldInfo, shortTypeName, typeColor, isFieldIndexLoaded } from './field-explorer.js';
@@ -78,64 +78,59 @@ export function renderDatasetDetail(datasetId) {
     html += `<h2>${escapeHtml(dataset.title || dataset.id)}</h2>`;
     if (dataset.description) html += `<p>${escapeHtml(dataset.description)}</p>`;
 
+    // Helper for simple editable field rows
+    const ef = (label, key, val) => {
+      const isEmpty = val === undefined || val === null || val === '';
+      const display = isEmpty ? '<span style="color:var(--text-muted);font-style:italic;">—</span>' : escapeHtml(String(val));
+      return `<div class="inline-edit-row"><span class="inline-edit-label">${label}</span><span class="inline-edit-cell editable-field" data-field-key="${key}"><span class="inline-edit-value">${display}</span></span></div>`;
+    };
+
     html += '<div class="card card-meta">';
     html += '<div class="card-header-row"><h3>Dataset Information</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
     
     // === Catalog Metadata Section ===
     html += '<div class="manual-section">';
     html += '<h4 class="manual-section-title">Catalog Metadata</h4>';
-    html += `<p><strong>Geometry Type:</strong> ${geomIconHtml}${escapeHtml(dataset.geometry_type || '')}</p>`;
-    html += `<p><strong>Agency Owner:</strong> ${escapeHtml(dataset.agency_owner || '')}</p>`;
-    html += `<p><strong>Office Owner:</strong> ${escapeHtml(dataset.office_owner || '')}</p>`;
-    html += `<p><strong>Contact Email:</strong> ${escapeHtml(dataset.contact_email || '')}</p>`;
+    html += `<div class="inline-edit-row"><span class="inline-edit-label">Geometry Type</span><span class="inline-edit-cell editable-field" data-field-key="geometry_type"><span class="inline-edit-value">${geomIconHtml}${escapeHtml(dataset.geometry_type || '')}</span></span></div>`;
+    html += ef('Database Object Name', 'objname', dataset.objname);
+    html += ef('Agency Owner', 'agency_owner', dataset.agency_owner);
+    html += ef('Office Owner', 'office_owner', dataset.office_owner);
+    html += ef('Contact Email', 'contact_email', dataset.contact_email);
 
-    html += `<p><strong>Topics:</strong> ${Array.isArray(dataset.topics)
-      ? dataset.topics.map((t) => `<button type="button" class="pill pill-topic pill-clickable" data-topic-filter="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join(' ')
-      : ''
-      }</p>`;
+    const topicsHtml = Array.isArray(dataset.topics) && dataset.topics.length
+      ? dataset.topics.map(t => `<button type="button" class="pill pill-topic pill-clickable" data-topic-filter="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join(' ')
+      : '<span style="color:var(--text-muted);font-style:italic;">—</span>';
+    html += `<div class="inline-edit-row"><span class="inline-edit-label">Topics</span><span class="inline-edit-cell editable-field" data-field-key="topics"><span class="inline-edit-value">${topicsHtml}</span></span></div>`;
 
-    html += `<p><strong>Update Frequency:</strong> ${escapeHtml(dataset.update_frequency || '')}</p>`;
-    html += `<p><strong>Access Level:</strong> ${escapeHtml(dataset.access_level || '')}</p>`;
+    html += ef('Update Frequency', 'update_frequency', dataset.update_frequency);
+    html += ef('Access Level', 'access_level', dataset.access_level);
 
- html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dataset.public_web_service || '')}" data-url-status="idle">
-   <strong>Public Web Service:</strong>
-   <span class="url-status-icon" aria-hidden="true"></span>
-   ${dataset.public_web_service
-     ? `<a href="${dataset.public_web_service}" target="_blank" rel="noopener">${escapeHtml(dataset.public_web_service)}</a>`
-     : ''
-   }
- </p>`;
+    html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.public_web_service || '')}" data-url-status="idle"><span class="inline-edit-label">Public Web Service</span><span class="inline-edit-cell editable-field" data-field-key="public_web_service"><span class="inline-edit-value"><span class="url-status-icon" aria-hidden="true"></span>${
+      dataset.public_web_service
+        ? `<a href="${dataset.public_web_service}" target="_blank" rel="noopener">${escapeHtml(dataset.public_web_service)}</a>`
+        : '<span style="color:var(--text-muted);font-style:italic;">—</span>'
+    }</span></span></div>`;
 
- html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dataset.internal_web_service || '')}" data-url-status="idle">
-   <strong>Internal Web Service:</strong>
-   <span class="url-status-icon" aria-hidden="true"></span>
-   ${dataset.internal_web_service
-     ? `<a href="${dataset.internal_web_service}" target="_blank" rel="noopener">${escapeHtml(dataset.internal_web_service)}</a>`
-     : ''
-   }
- </p>`;
+    html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.internal_web_service || '')}" data-url-status="idle"><span class="inline-edit-label">Internal Web Service</span><span class="inline-edit-cell editable-field" data-field-key="internal_web_service"><span class="inline-edit-value"><span class="url-status-icon" aria-hidden="true"></span>${
+      dataset.internal_web_service
+        ? `<a href="${dataset.internal_web_service}" target="_blank" rel="noopener">${escapeHtml(dataset.internal_web_service)}</a>`
+        : '<span style="color:var(--text-muted);font-style:italic;">—</span>'
+    }</span></span></div>`;
 
- if (dataset.data_standard) {
-   const dsVal = dataset.data_standard;
-   const isUrl = /^https?:\/\//i.test(dsVal);
-   if (isUrl) {
-     html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dsVal)}" data-url-status="idle">
-       <strong>Data Standard:</strong>
-       <span class="url-status-icon" aria-hidden="true"></span>
-       <a href="${escapeHtml(dsVal)}" target="_blank" rel="noopener">${escapeHtml(dsVal)}</a>
-     </p>`;
-   } else {
-     html += `<p><strong>Data Standard:</strong> ${escapeHtml(dsVal)}</p>`;
-   }
- }
+    if (dataset.data_standard && /^https?:\/\//i.test(dataset.data_standard)) {
+      html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.data_standard)}" data-url-status="idle"><span class="inline-edit-label">Data Standard</span><span class="inline-edit-cell editable-field" data-field-key="data_standard"><span class="inline-edit-value"><span class="url-status-icon" aria-hidden="true"></span><a href="${escapeHtml(dataset.data_standard)}" target="_blank" rel="noopener">${escapeHtml(dataset.data_standard)}</a></span></span></div>`;
+    } else {
+      html += ef('Data Standard', 'data_standard', dataset.data_standard);
+    }
 
-    if (dataset.notes) html += `<p><strong>Notes:</strong> ${escapeHtml(dataset.notes)}</p>`;
+    html += ef('Projection', 'projection', dataset.projection);
+    html += ef('Notes', 'notes', dataset.notes);
     html += '</div>'; // end Catalog Metadata section
 
     // === Development & Status Section ===
     html += '<div class="manual-section">';
     html += '<h4 class="manual-section-title">Development & Status</h4>';
-    
+
     const stageLabels = {
       'planned': { label: 'Planned', class: 'stage-planned' },
       'in_development': { label: 'In Development', class: 'stage-dev' },
@@ -145,28 +140,35 @@ export function renderDatasetDetail(datasetId) {
     };
     const stage = dataset.development_stage || 'unknown';
     const stageInfo = stageLabels[stage] || { label: stage, class: '' };
-    
-    html += `<p><strong>Development Stage:</strong> <span class="stage-badge ${stageInfo.class}">${escapeHtml(stageInfo.label)}</span></p>`;
-    
-    if (dataset.target_release_date) {
-      html += `<p><strong>Target Release Date:</strong> ${escapeHtml(dataset.target_release_date)}</p>`;
-    }
-    
-    if (Array.isArray(dataset.blockers) && dataset.blockers.length) {
-      html += `<p><strong>Blockers:</strong></p><ul>`;
-      dataset.blockers.forEach(b => { html += `<li>${escapeHtml(b)}</li>`; });
-      html += `</ul>`;
-    }
+    html += `<div class="inline-edit-row"><span class="inline-edit-label">Development Stage</span><span class="inline-edit-cell editable-field" data-field-key="development_stage"><span class="inline-edit-value"><span class="stage-badge ${stageInfo.class}">${escapeHtml(stageInfo.label)}</span></span></span></div>`;
+
+    html += ef('Target Release Date', 'target_release_date', dataset.target_release_date);
+
+    const blockersDisplay = Array.isArray(dataset.blockers) && dataset.blockers.length
+      ? escapeHtml(dataset.blockers.join(', '))
+      : '<span style="color:var(--text-muted);font-style:italic;">—</span>';
+    html += `<div class="inline-edit-row"><span class="inline-edit-label">Blockers</span><span class="inline-edit-cell editable-field" data-field-key="blockers"><span class="inline-edit-value">${blockersDisplay}</span></span></div>`;
+
     html += '</div>'; // end Development & Status section
 
-    // Edit button at bottom of manual card
-    html += `
-      <div class="manual-section-actions">
-        <button type="button" class="suggest-button" data-edit-dataset="${escapeHtml(dataset.id)}">
-          Edit
-        </button>
+    // === National Scale Suitability Section ===
+    html += '<div class="manual-section">';
+    html += '<h4 class="manual-section-title">National Scale Suitability</h4>';
+    html += ef('Scale Suitability', 'scale_suitability', dataset.scale_suitability);
+    html += ef('Coverage', 'coverage', dataset.coverage);
+    const wmcVal = dataset.web_mercator_compatible === true ? 'Yes' : dataset.web_mercator_compatible === false ? 'No' : null;
+    html += ef('Web Mercator Compatible', 'web_mercator_compatible', wmcVal);
+    html += ef('Performance Notes', 'performance_notes', dataset.performance_notes);
+    html += '</div>'; // end Scale section
+
+    // Save button area (hidden by default, shown when edits are pending)
+    html += `<div class="manual-section-actions dataset-save-actions" style="display:none;">
+      <span class="edit-change-count" style="font-size:0.85rem;color:var(--text-muted);"></span>
+      <div style="display:flex;gap:0.5rem;">
+        <button type="button" class="btn" data-discard-edits>Discard</button>
+        <button type="button" class="btn primary" data-save-edits>💾 Save</button>
       </div>
-    `;
+    </div>`;
 
     html += '</div>'; // end combined manual card
 
@@ -271,13 +273,9 @@ if (covRefreshBtn) {
   });
 }
 
-    const editBtn = els.datasetDetailEl.querySelector('button[data-edit-dataset]');
-    if (editBtn) {
-      editBtn.addEventListener('click', () => {
-        const dsId = editBtn.getAttribute('data-edit-dataset');
-        enterDatasetEditMode(dsId, () => renderDatasetDetail(dsId));
-      });
-    }
+    // Wire inline edit on all editable fields in the Dataset Information card
+    wireDatasetInlineEdit(dataset, () => renderDatasetDetail(datasetId));
+
     const rootBtn = els.datasetDetailEl.querySelector('button[data-breadcrumb="datasets"]');
     if (rootBtn) rootBtn.addEventListener('click', showDatasetsView);
 

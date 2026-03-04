@@ -3741,3 +3741,9 @@ select.inline-edit-input {
   }
 }
 
+/* Save/Discard action bar inside the card */
+.dataset-save-actions {
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}

@@ -58,18 +58,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Subtle noise texture overlay */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.018;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 256px 256px;
-}
+/* Noise texture removed — cleaner for readability */
 
 /* ── Custom scrollbar ── */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -126,20 +115,14 @@ h1 {
   gap: 0.5rem;
 }
 
-/* Animated accent dot */
+/* Accent dot — static, no pulse */
 h1::before {
   content: "";
   width: 8px;
   height: 8px;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 8px var(--accent-glow);
-  animation: pulse-dot 2.5s ease-in-out 1 forwards;
-}
-
-@keyframes pulse-dot {
-  0%,100% { opacity: 1; box-shadow: 0 0 8px var(--accent-glow); }
-  50%     { opacity: 0.5; box-shadow: 0 0 16px var(--accent-glow); }
+  box-shadow: 0 0 6px var(--accent-glow);
 }
 
 nav { display: flex; gap: 0.4rem; }
@@ -169,22 +152,7 @@ nav { display: flex; gap: 0.4rem; }
   border-color: var(--accent);
   color: #000;
   font-weight: 600;
-  box-shadow: 0 0 12px var(--accent-glow);
-}
-
-/* Shine sweep on active tab */
-.tab-button.active::after {
-  content: "";
-  position: absolute;
-  top: 0; left: -75%;
-  width: 50%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
-  animation: tab-shine 0.8s ease-in-out 1 forwards;
-}
-
-@keyframes tab-shine {
-  0%   { left: -75%; }
-  100% { left: 125%; }
+  box-shadow: 0 0 8px var(--accent-glow);
 }
 
 /* ================================================================
@@ -396,10 +364,7 @@ input[type="search"]:focus {
   font-size: 1.4rem;
   font-weight: 700;
   letter-spacing: -0.01em;
-  background: linear-gradient(135deg, var(--text-main) 60%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-main);
 }
 
 .detail-panel h3 {
@@ -422,6 +387,36 @@ input[type="search"]:focus {
 }
 
 .detail-panel li { margin-bottom: 0.2rem; }
+
+/* ── Detail description (truncated + full) ── */
+.detail-description {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+  margin: 0 0 0.5rem;
+}
+.detail-description-full {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.detail-description .show-more-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0;
+}
+.detail-description .show-more-btn:hover {
+  text-decoration: underline;
+}
+
+/* ── URL truncation ── */
+.url-truncated {
+  font-size: 0.82rem;
+  word-break: break-all;
+}
 
 /* ================================================================
    URL CHECK ICONS
@@ -459,7 +454,7 @@ input[type="search"]:focus {
 .url-check-row[data-url-status="idle"]     .url-status-icon::before { content: "🔗"; }
 
 /* ================================================================
-   FX: PANEL TRANSITIONS
+   FX: PANEL TRANSITIONS (simplified — minimal motion)
    ================================================================ */
 
 html.fx-no-scroll,
@@ -468,34 +463,35 @@ body.fx-no-scroll { overflow: hidden !important; }
 .detail-panel.fx-animating { overflow: hidden !important; }
 
 .detail-panel.fx-enter {
-  animation: panelIn 380ms var(--ease-out-expo);
+  animation: panelIn 250ms ease-out;
 }
 
 @keyframes panelIn {
-  0%   { opacity: 0; transform: translateY(12px) scale(0.98); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 
+/* Card entrance: fade only, no motion */
 .detail-panel.fx-enter .card,
 .detail-panel.fx-enter .detail-section {
-  animation: cardIn 450ms var(--ease-out-expo) both;
+  animation: cardIn 200ms ease-out both;
 }
 
 @keyframes cardIn {
-  0%   { opacity: 0; transform: translateY(14px) scale(0.97); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
 }
 
 /* Stagger delay helpers */
-.fx-d1 { animation-delay:  40ms !important; }
-.fx-d2 { animation-delay:  80ms !important; }
-.fx-d3 { animation-delay: 120ms !important; }
-.fx-d4 { animation-delay: 160ms !important; }
-.fx-d5 { animation-delay: 200ms !important; }
-.fx-d6 { animation-delay: 240ms !important; }
-.fx-d7 { animation-delay: 280ms !important; }
-.fx-d8 { animation-delay: 320ms !important; }
-.fx-d9 { animation-delay: 360ms !important; }
+.fx-d1 { animation-delay:  30ms !important; }
+.fx-d2 { animation-delay:  60ms !important; }
+.fx-d3 { animation-delay:  90ms !important; }
+.fx-d4 { animation-delay: 120ms !important; }
+.fx-d5 { animation-delay: 150ms !important; }
+.fx-d6 { animation-delay: 180ms !important; }
+.fx-d7 { animation-delay: 210ms !important; }
+.fx-d8 { animation-delay: 240ms !important; }
+.fx-d9 { animation-delay: 270ms !important; }
 
 /* ================================================================
    CARDS & SECTIONS
@@ -505,22 +501,16 @@ body.fx-no-scroll { overflow: hidden !important; }
 .detail-section {
   margin-top: 0.65rem;
   padding: 0.85rem 1rem;
-  background: var(--glass-bg);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
+  background: rgba(255,255,255,0.035);
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-soft);
-  transition: transform 200ms var(--ease-out-expo),
-              border-color 200ms,
-              box-shadow 200ms;
+  transition: border-color 200ms;
 }
 
 .card:hover,
 .detail-section:hover {
-  transform: translateY(-2px);
-  border-color: rgba(91,163,245,0.2);
-  box-shadow: var(--glow-accent);
+  border-color: rgba(91,163,245,0.15);
 }
 
 .card p strong,
@@ -615,22 +605,11 @@ a:hover { color: var(--accent-hover); text-decoration: underline; }
 
 .suggest-button:hover {
   background: var(--accent-hover);
-  transform: translateY(-1px) scale(1.02);
-  box-shadow: var(--glow-accent-strong);
   text-decoration: none;
 }
 
-/* Shine ripple on hover */
-.suggest-button::after {
-  content: "";
-  position: absolute;
-  top: 0; left: -100%;
-  width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 400ms var(--ease-out-expo);
-}
-
-.suggest-button:hover::after { left: 130%; }
+/* Removed shine ripple — too distracting */
+.suggest-button::after { display: none; }
 
 .card-actions {
   display: flex;
@@ -815,13 +794,13 @@ code {
 .geom-icon-list  { width: 1.35rem; height: 1.35rem; margin-right: 0.45rem; }
 .geom-icon-inline { width: 1.15rem; height: 1.15rem; }
 
-/* ── Unified icon color ── */
+/* ── Per-type icon colors (restored for quick scanning) ── */
 .geom-type-point,
-.geom-type-multipoint,
-.geom-type-line,
-.geom-type-polygon,
-.geom-type-table,
-.geom-type-raster     { color: var(--accent); filter: drop-shadow(0 0 4px var(--accent-glow)); }
+.geom-type-multipoint { color: #34d399; }
+.geom-type-line       { color: #60a5fa; }
+.geom-type-polygon    { color: var(--accent); }
+.geom-type-table      { color: #fbbf24; }
+.geom-type-raster     { color: var(--purple); }
 .geom-type-unknown    { color: var(--text-muted); opacity: 0.6; }
 
 /* ================================================================
@@ -1197,19 +1176,9 @@ textarea.dataset-edit-input {
   overflow: hidden;
 }
 
-/* Gold tier shimmer */
+/* Gold tier — static highlight, no shimmer */
 .tier-gold::after {
-  content: "";
-  position: absolute;
-  top: 0; left: -100%;
-  width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.15), transparent);
-  animation: gold-shimmer 1.5s ease-in-out 1 forwards;
-}
-
-@keyframes gold-shimmer {
-  0%   { left: -100%; }
-  100% { left: 200%; }
+  display: none;
 }
 
 .maturity-overview {
@@ -1242,23 +1211,6 @@ textarea.dataset-edit-input {
   background: linear-gradient(90deg, var(--green) 0%, #6ee7b7 100%);
   border-radius: 999px;
   transition: width 600ms var(--ease-out-expo);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Animated shine on completeness bar */
-.completeness-bar-fill::after {
-  content: "";
-  position: absolute;
-  top: 0; left: -100%;
-  width: 60%; height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  animation: bar-shine 1.2s ease-in-out 1 forwards;
-}
-
-@keyframes bar-shine {
-  0%   { left: -100%; }
-  100% { left: 200%; }
 }
 
 /* ================================================================
@@ -1339,13 +1291,7 @@ textarea.dataset-edit-input {
   background: rgba(255,255,255,0.04);
   border: 1px solid var(--border-color);
   border-radius: 999px;
-  animation: pulse-subtle 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse-subtle {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.5; }
-}
+  /* No infinite animation — static badge */
 
 .maturity-subscores {
   display: flex;
@@ -2168,10 +2114,7 @@ textarea.dataset-edit-input {
   font-weight: 700;
   margin: 0 0 0.25rem;
   letter-spacing: -0.01em;
-  background: linear-gradient(135deg, var(--text-main) 60%, var(--accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-main);
 }
 
 .dashboard-header p {
@@ -2190,24 +2133,21 @@ textarea.dataset-edit-input {
 }
 
 .kpi-card {
-  padding: 1rem 1.1rem;
+  padding: 0.85rem 1rem;
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-soft);
-  transition: transform 200ms var(--ease-out-expo),
-              border-color 200ms,
-              box-shadow 200ms;
+  transition: border-color 200ms;
   position: relative;
   overflow: hidden;
 }
 
 .kpi-card:hover {
-  transform: translateY(-3px);
   border-color: rgba(91,163,245,0.25);
-  box-shadow: var(--glow-accent);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
 }
 
 .kpi-card-accent {
@@ -2259,15 +2199,11 @@ textarea.dataset-edit-input {
   border-radius: var(--radius-lg);
   border: 1px solid var(--glass-border);
   box-shadow: var(--shadow-soft);
-  transition: transform 200ms var(--ease-out-expo),
-              border-color 200ms,
-              box-shadow 200ms;
+  transition: border-color 200ms;
 }
 
 .dashboard-chart-card:hover {
-  transform: translateY(-2px);
   border-color: rgba(91,163,245,0.2);
-  box-shadow: var(--glow-accent);
 }
 
 .dashboard-chart-title {
@@ -2918,7 +2854,7 @@ textarea.dataset-edit-input {
 }
 
 .kpi-card[data-dash-filter]:hover {
-  box-shadow: var(--glow-accent-strong);
+  box-shadow: 0 2px 16px rgba(91,163,245,0.15);
 }
 
 .hbar-row[data-dash-filter]:hover {
@@ -3556,3 +3492,74 @@ textarea.dataset-edit-input {
   user-select: none;
 }
 
+/* ================================================================
+   ADHD-FRIENDLY ENHANCEMENTS
+   ================================================================ */
+
+/* ── Global focus-visible ring for keyboard navigation ── */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+details summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Stronger active states (immediate feedback) ── */
+button:active,
+.list-item-button:active {
+  opacity: 0.85;
+}
+
+/* ── Remove generic button hover scale (distracting) ── */
+button:hover {
+  transform: none;
+}
+
+/* ── Section dividers in dashboard for visual chunking ── */
+.dashboard-charts-row + .dashboard-charts-row,
+.dashboard-table-row + .dashboard-charts-row {
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* ── Improve list item active state visibility ── */
+.list-item-button.is-active {
+  background: rgba(91, 163, 245, 0.12);
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+
+/* ── Tighter card spacing in detail view ── */
+.detail-panel .card + .card {
+  margin-top: 0.5rem;
+}
+
+/* ── Metadata grid tweaks for compact scanning ── */
+.metadata-grid {
+  gap: 0.5rem 0.75rem;
+  padding: 0.6rem;
+}
+
+.metadata-item .metadata-value {
+  font-weight: 500;
+}
+
+/* ── Better visual weight for h3 section titles ── */
+.card h3 {
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+/* ── Compact freshness age display ── */
+.freshness-age {
+  font-size: 1.3rem;
+}
+
+/* ── Tighter KPI value for smaller screens ── */
+.kpi-value {
+  font-size: 1.75rem;
+}

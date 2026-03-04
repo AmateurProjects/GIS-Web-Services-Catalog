@@ -76,56 +76,60 @@ export function renderDatasetDetail(datasetId) {
     let html = '';
 
     html += `<h2>${escapeHtml(dataset.title || dataset.id)}</h2>`;
-    if (dataset.description) html += `<p>${escapeHtml(dataset.description)}</p>`;
-
-    // Data source legend (dev helper)
-    html += `
-      <div class="card" style="padding:0.6rem 0.85rem; margin-bottom:0.5rem; background:rgba(255,255,255,0.02);">
-        <div style="font-size:0.8rem; color:var(--text-muted); display:flex; flex-wrap:wrap; gap:1rem; align-items:center;">
-          <strong style="color:var(--text-main);">Data Source Legend:</strong>
-          <span><span class="data-source-badge data-source-badge-manual">Manual</span> Entered in catalog.json</span>
-          <span><span class="data-source-badge data-source-badge-auto">Auto</span> Fetched from ArcGIS REST API</span>
-          <span><span class="data-source-badge data-source-badge-hybrid">Hybrid</span> Links manual to auto-detected</span>
-        </div>
-      </div>
-    `;
+    if (dataset.description) {
+      const desc = dataset.description;
+      const truncDesc = desc.length > 200 ? desc.slice(0, 197) + '…' : desc;
+      if (desc.length > 200) {
+        html += `<p class="detail-description">${escapeHtml(truncDesc)} <button type="button" class="show-more-btn" data-show-full-desc>Show more</button></p>`;
+        html += `<p class="detail-description detail-description-full hidden">${escapeHtml(desc)}</p>`;
+      } else {
+        html += `<p class="detail-description">${escapeHtml(desc)}</p>`;
+      }
+    }
 
     html += '<div class="card card-meta">';
     html += '<div class="card-header-row"><h3>Dataset Information</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
     
-    // === Catalog Metadata Section ===
-    html += '<div class="manual-section">';
-    html += '<h4 class="manual-section-title">Catalog Metadata</h4>';
-    html += `<p><strong>Geometry Type:</strong> ${geomIconHtml}${escapeHtml(dataset.geometry_type || '')}</p>`;
-    html += `<p><strong>Agency Owner:</strong> ${escapeHtml(dataset.agency_owner || '')}</p>`;
-    html += `<p><strong>Office Owner:</strong> ${escapeHtml(dataset.office_owner || '')}</p>`;
-    html += `<p><strong>Contact Email:</strong> ${escapeHtml(dataset.contact_email || '')}</p>`;
+    // === Quick-glance metadata grid ===
+    html += '<div class="metadata-grid">';
+    html += `<div class="metadata-item"><span class="metadata-label">Geometry</span><span class="metadata-value">${geomIconHtml}${escapeHtml(dataset.geometry_type || '—')}</span></div>`;
+    html += `<div class="metadata-item"><span class="metadata-label">Stage</span><span class="metadata-value">${(() => {
+      const stageLabels = {'planned':'Planned','in_development':'In Dev','qa':'QA','production':'Prod','deprecated':'Deprecated'};
+      const s = dataset.development_stage || 'unknown';
+      const sl = stageLabels[s] || s;
+      const sc = {'planned':'stage-planned','in_development':'stage-dev','qa':'stage-qa','production':'stage-prod','deprecated':'stage-deprecated'}[s] || '';
+      return `<span class="stage-badge ${sc}">${escapeHtml(sl)}</span>`;
+    })()}</span></div>`;
+    html += `<div class="metadata-item"><span class="metadata-label">Agency</span><span class="metadata-value">${escapeHtml(dataset.agency_owner || '—')}</span></div>`;
+    html += `<div class="metadata-item"><span class="metadata-label">Office</span><span class="metadata-value">${escapeHtml(dataset.office_owner || '—')}</span></div>`;
+    html += `<div class="metadata-item"><span class="metadata-label">Update Freq</span><span class="metadata-value">${escapeHtml(dataset.update_frequency || '—')}</span></div>`;
+    html += `<div class="metadata-item"><span class="metadata-label">Access</span><span class="metadata-value">${escapeHtml(dataset.access_level || '—')}</span></div>`;
+    if (dataset.contact_email) {
+      html += `<div class="metadata-item"><span class="metadata-label">Contact</span><span class="metadata-value">${escapeHtml(dataset.contact_email)}</span></div>`;
+    }
+    html += '</div>';
 
-    html += `<p><strong>Topics:</strong> ${Array.isArray(dataset.topics)
-      ? dataset.topics.map((t) => `<button type="button" class="pill pill-topic pill-clickable" data-topic-filter="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join(' ')
-      : ''
-      }</p>`;
-
-    html += `<p><strong>Update Frequency:</strong> ${escapeHtml(dataset.update_frequency || '')}</p>`;
-    html += `<p><strong>Access Level:</strong> ${escapeHtml(dataset.access_level || '')}</p>`;
+    // Topics row
+    if (Array.isArray(dataset.topics) && dataset.topics.length) {
+      html += `<div style="margin-top:0.5rem;"><strong style="font-size:0.78rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;">Topics</strong> ${dataset.topics.map((t) => `<button type="button" class="pill pill-topic pill-clickable" data-topic-filter="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join(' ')}</div>`;
+    }
 
  html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dataset.public_web_service || '')}" data-url-status="idle">
-   <strong>Public Web Service:</strong>
+   <strong>Service URL:</strong>
    <span class="url-status-icon" aria-hidden="true"></span>
    ${dataset.public_web_service
-     ? `<a href="${dataset.public_web_service}" target="_blank" rel="noopener">${escapeHtml(dataset.public_web_service)}</a>`
-     : ''
+     ? `<a href="${dataset.public_web_service}" target="_blank" rel="noopener" class="url-truncated" title="${escapeHtml(dataset.public_web_service)}">${escapeHtml(dataset.public_web_service.replace(/^https?:\/\//, '').slice(0, 60))}${dataset.public_web_service.length > 67 ? '…' : ''}</a>`
+     : '<span class="text-muted">—</span>'
    }
  </p>`;
 
- html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dataset.internal_web_service || '')}" data-url-status="idle">
-   <strong>Internal Web Service:</strong>
-   <span class="url-status-icon" aria-hidden="true"></span>
-   ${dataset.internal_web_service
-     ? `<a href="${dataset.internal_web_service}" target="_blank" rel="noopener">${escapeHtml(dataset.internal_web_service)}</a>`
-     : ''
-   }
- </p>`;
+ if (dataset.internal_web_service) {
+   html += `<p class="url-check-row" data-url-check-row data-url="${escapeHtml(dataset.internal_web_service)}" data-url-status="idle">
+     <strong>Internal URL:</strong>
+     <span class="url-status-icon" aria-hidden="true"></span>
+     <a href="${dataset.internal_web_service}" target="_blank" rel="noopener" class="url-truncated" title="${escapeHtml(dataset.internal_web_service)}">${escapeHtml(dataset.internal_web_service.replace(/^https?:\/\//, '').slice(0, 60))}${dataset.internal_web_service.length > 67 ? '…' : ''}</a>
+   </p>`;
+ }
 
  if (dataset.data_standard) {
    const dsVal = dataset.data_standard;
@@ -142,34 +146,21 @@ export function renderDatasetDetail(datasetId) {
  }
 
     if (dataset.notes) html += `<p><strong>Notes:</strong> ${escapeHtml(dataset.notes)}</p>`;
-    html += '</div>'; // end Catalog Metadata section
 
-    // === Development & Status Section ===
-    html += '<div class="manual-section">';
-    html += '<h4 class="manual-section-title">Development & Status</h4>';
-    
-    const stageLabels = {
-      'planned': { label: 'Planned', class: 'stage-planned' },
-      'in_development': { label: 'In Development', class: 'stage-dev' },
-      'qa': { label: 'QA/Testing', class: 'stage-qa' },
-      'production': { label: 'Production', class: 'stage-prod' },
-      'deprecated': { label: 'Deprecated', class: 'stage-deprecated' }
-    };
-    const stage = dataset.development_stage || 'unknown';
-    const stageInfo = stageLabels[stage] || { label: stage, class: '' };
-    
-    html += `<p><strong>Development Stage:</strong> <span class="stage-badge ${stageInfo.class}">${escapeHtml(stageInfo.label)}</span></p>`;
-    
-    if (dataset.target_release_date) {
-      html += `<p><strong>Target Release Date:</strong> ${escapeHtml(dataset.target_release_date)}</p>`;
+    // === Blockers & Release (only if relevant) ===
+    if (dataset.target_release_date || (Array.isArray(dataset.blockers) && dataset.blockers.length)) {
+      html += '<div class="manual-section">';
+      html += '<h4 class="manual-section-title">Status Details</h4>';
+      if (dataset.target_release_date) {
+        html += `<p><strong>Target Release:</strong> ${escapeHtml(dataset.target_release_date)}</p>`;
+      }
+      if (Array.isArray(dataset.blockers) && dataset.blockers.length) {
+        html += `<p><strong>Blockers:</strong></p><ul>`;
+        dataset.blockers.forEach(b => { html += `<li>${escapeHtml(b)}</li>`; });
+        html += `</ul>`;
+      }
+      html += '</div>';
     }
-    
-    if (Array.isArray(dataset.blockers) && dataset.blockers.length) {
-      html += `<p><strong>Blockers:</strong></p><ul>`;
-      dataset.blockers.forEach(b => { html += `<li>${escapeHtml(b)}</li>`; });
-      html += `</ul>`;
-    }
-    html += '</div>'; // end Development & Status section
 
     // Edit button at bottom of manual card
     html += `
@@ -188,7 +179,7 @@ export function renderDatasetDetail(datasetId) {
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
     html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
     html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><div style="display:flex;align-items:center;gap:0.5rem;"><span class="data-source-badge data-source-badge-auto">Auto</span><button type="button" class="btn" data-cov-refresh title="Re-run live coverage analysis" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button></div></div>';
-    html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 2 km inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
+    html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.8rem;">State-level spatial coverage via Census TIGER boundaries (2 km buffer, approximate counts).</p>';
     html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
     html += '<div data-cov-content></div>';
     html += '</div>';
@@ -197,7 +188,6 @@ export function renderDatasetDetail(datasetId) {
     html += `
       <div class="card card-freshness" id="freshnessCard" style="border-left:4px solid var(--text-muted);">
         <div class="card-header-row"><h3>🕐 Data Freshness</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>
-        <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.5rem;">Multi-signal detection of when this dataset was last updated.</p>
         <div data-freshness-content>
           <p class="loading-message" style="font-size:0.85rem;">Detecting freshness…</p>
         </div>
@@ -290,6 +280,20 @@ if (covRefreshBtn) {
         enterDatasetEditMode(dsId, () => renderDatasetDetail(dsId));
       });
     }
+
+    // Wire "Show more" for truncated descriptions
+    const showMoreBtn = els.datasetDetailEl.querySelector('button[data-show-full-desc]');
+    if (showMoreBtn) {
+      showMoreBtn.addEventListener('click', () => {
+        const truncEl = showMoreBtn.parentElement;
+        const fullEl = truncEl.nextElementSibling;
+        if (truncEl && fullEl) {
+          truncEl.classList.add('hidden');
+          fullEl.classList.remove('hidden');
+        }
+      });
+    }
+
     const rootBtn = els.datasetDetailEl.querySelector('button[data-breadcrumb="datasets"]');
     if (rootBtn) rootBtn.addEventListener('click', showDatasetsView);
 

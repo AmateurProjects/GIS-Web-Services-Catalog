@@ -10,7 +10,6 @@ import { checkUrlStatusDetailed } from './url-check.js';
 import { formatFreshnessAge, freshnessColor, getConfidenceMeta } from './freshness.js';
 import { getFreshnessIndex } from './detail.js';
 import { downloadCatalogDcat, downloadCatalogSchemaOrg } from './metadata-export.js';
-import { buildRelationshipGraph, getGraphStats, renderRelationshipGraph, renderGraphStats } from './relationship-graph.js';
 
 let _renderDatasetDetail = null;
 export function registerDashboardCallbacks({ renderDatasetDetail }) {
@@ -112,10 +111,10 @@ export function renderDashboard() {
     html += `
       <div class="dashboard-header">
         <h2>Catalog Dashboard</h2>
-        <p>Enterprise overview of BLM GIS web service health, maturity, and coverage.</p>
+        <p>BLM GIS service health, maturity &amp; coverage at a glance.</p>
         <div class="dashboard-export-row">
-          <button type="button" class="btn btn-export btn-sm" data-dash-export="dcat">📤 Export DCAT-US</button>
-          <button type="button" class="btn btn-export btn-sm" data-dash-export="schema">📤 Export Schema.org</button>
+          <button type="button" class="btn btn-export btn-sm" data-dash-export="dcat">📤 DCAT-US</button>
+          <button type="button" class="btn btn-export btn-sm" data-dash-export="schema">📤 Schema.org</button>
         </div>
       </div>
     `;
@@ -348,7 +347,6 @@ export function renderDashboard() {
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
         <div class="dashboard-chart-card" id="dashServiceHealthCard">
           <div class="dashboard-chart-title">Service Health</div>
-          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Live reachability check of all cataloged web service endpoints.</p>
           <div data-dash-health-summary class="service-health-summary"></div>
           <div data-dash-health-list>
             <p class="loading-message" style="font-size:0.85rem;">Checking services\u2026</p>
@@ -362,22 +360,9 @@ export function renderDashboard() {
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
         <div class="dashboard-chart-card" id="dashFreshnessCard">
           <div class="dashboard-chart-title">🕐 Data Freshness</div>
-          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Last-updated detection across all cataloged datasets (from pre-computed analysis).</p>
           <div data-dash-freshness-content>
             <p class="loading-message" style="font-size:0.85rem;">Loading freshness data&hellip;</p>
           </div>
-        </div>
-      </div>
-    `;
-
-    // ── Dataset Relationship Graph ──
-    html += `
-      <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
-        <div class="dashboard-chart-card" id="dashRelationshipCard">
-          <div class="dashboard-chart-title">🔗 Dataset Relationships</div>
-          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Force-directed graph showing service-level and topic-level relationships between datasets.</p>
-          <div data-dash-graph-stats></div>
-          <div data-dash-graph-container style="min-height:350px;"></div>
         </div>
       </div>
     `;
@@ -387,7 +372,6 @@ export function renderDashboard() {
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
         <div class="dashboard-chart-card" id="dashPendingRequestsCard">
           <div class="dashboard-chart-title">Pending Dataset Requests</div>
-          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Open requests awaiting review from the community.</p>
           <div data-dash-pending-list>
             <p class="loading-message" style="font-size:0.85rem;">Loading&hellip;</p>
           </div>
@@ -459,8 +443,6 @@ export function renderDashboard() {
     // ── Load freshness overview async ──
     loadDashboardFreshness();
 
-    // ── Render relationship graph ──
-    renderDashboardRelationshipGraph();
   }
 
 /** Fetch and render pending dataset requests in the dashboard. */
@@ -625,32 +607,6 @@ async function loadServiceHealthStatus() {
       state.lastSelectedDatasetId = dsId;
       if (_renderDatasetDetail) _renderDatasetDetail(dsId);
     });
-  });
-}
-
-/** Render the dataset relationship graph in the dashboard. */
-function renderDashboardRelationshipGraph() {
-  const statsEl = els.dashboardContentEl?.querySelector('[data-dash-graph-stats]');
-  const containerEl = els.dashboardContentEl?.querySelector('[data-dash-graph-container]');
-  if (!containerEl) return;
-
-  const graphData = buildRelationshipGraph(state.allDatasets);
-  const stats = getGraphStats(graphData);
-
-  renderGraphStats(statsEl, stats);
-  renderRelationshipGraph(containerEl, graphData, {
-    width: containerEl.clientWidth || 900,
-    height: Math.min(500, Math.max(350, graphData.nodes.length * 3)),
-  });
-
-  // Wire node clicks → navigate to dataset
-  containerEl.addEventListener('graph-node-click', (e) => {
-    const dsId = e.detail?.datasetId;
-    if (dsId) {
-      showDatasetsView();
-      state.lastSelectedDatasetId = dsId;
-      if (_renderDatasetDetail) _renderDatasetDetail(dsId);
-    }
   });
 }
 

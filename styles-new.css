@@ -380,9 +380,8 @@ input[type="search"]:focus {
 
 .detail-panel {
   flex: 1;
-  padding: 0 1.5rem 1.25rem;
+  padding: 0;
   overflow-y: auto;
-  scrollbar-gutter: stable;
   background:
     radial-gradient(ellipse 80% 60% at 10% 20%, rgba(91,163,245,0.04) 0%, transparent 60%),
     radial-gradient(ellipse 60% 50% at 90% 80%, rgba(192,132,252,0.03) 0%, transparent 60%),
@@ -398,6 +397,13 @@ input[type="search"]:focus {
   max-width: 980px;
   width: 100%;
   flex-shrink: 0;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  box-sizing: border-box;
+}
+
+.detail-panel > *:last-child {
+  padding-bottom: 1.25rem;
 }
 
 .detail-panel h2 {
@@ -416,13 +422,12 @@ input[type="search"]:focus {
   position: sticky;
   top: 0;
   z-index: 10;
-  margin: 0 -1.5rem 0.75rem -1.5rem;
   padding: 0.65rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-panel);
   box-shadow: 0 2px 8px rgba(0,0,0,0.5);
   max-width: none !important;
-  width: auto !important;
+  width: 100% !important;
 }
 
 .detail-sticky-header h2 {
@@ -2147,7 +2152,8 @@ textarea.dataset-edit-input {
 
   section { flex-direction: column; }
 
-  .detail-panel { padding: 0 1rem 1rem; }
+  .detail-panel { padding: 0; }
+  .detail-panel > * { padding-left: 1rem; padding-right: 1rem; }
 
   .card-row { flex-direction: column; }
 

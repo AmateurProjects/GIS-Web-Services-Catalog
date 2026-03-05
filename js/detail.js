@@ -109,20 +109,20 @@ export function renderDatasetDetail(datasetId) {
     html += '<div class="manual-section">';
     html += '<h4 class="manual-section-title">Data Access</h4>';
 
-    html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.public_web_service || '')}" data-url-status="idle"><span class="inline-edit-label">Public Web Service</span><span class="inline-edit-cell editable-field" data-field-key="public_web_service"><span class="inline-edit-value"><span class="url-status-icon" aria-hidden="true"></span>${
+    html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.public_web_service || '')}" data-url-status="idle"><span class="url-status-icon" aria-hidden="true"></span><span class="inline-edit-label">Public Web Service</span><span class="inline-edit-cell editable-field" data-field-key="public_web_service"><span class="inline-edit-value">${
       dataset.public_web_service
         ? `<a href="${dataset.public_web_service}" target="_blank" rel="noopener">${escapeHtml(dataset.public_web_service)}</a>`
         : '<span style="color:var(--text-muted);font-style:italic;">—</span>'
     }</span></span></div>`;
 
-    html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.internal_web_service || '')}" data-url-status="idle"><span class="inline-edit-label">Internal Web Service</span><span class="inline-edit-cell editable-field" data-field-key="internal_web_service"><span class="inline-edit-value"><span class="url-status-icon" aria-hidden="true"></span>${
+    html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.internal_web_service || '')}" data-url-status="idle"><span class="url-status-icon" aria-hidden="true"></span><span class="inline-edit-label">Internal Web Service</span><span class="inline-edit-cell editable-field" data-field-key="internal_web_service"><span class="inline-edit-value">${
       dataset.internal_web_service
         ? `<a href="${dataset.internal_web_service}" target="_blank" rel="noopener">${escapeHtml(dataset.internal_web_service)}</a>`
         : '<span style="color:var(--text-muted);font-style:italic;">—</span>'
     }</span></span></div>`;
 
     if (dataset.data_standard && /^https?:\/\//i.test(dataset.data_standard)) {
-      html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.data_standard)}" data-url-status="idle"><span class="inline-edit-label">Data Standard</span><span class="inline-edit-cell editable-field" data-field-key="data_standard"><span class="inline-edit-value"><span class="url-status-icon" aria-hidden="true"></span><a href="${escapeHtml(dataset.data_standard)}" target="_blank" rel="noopener">${escapeHtml(dataset.data_standard)}</a></span></span></div>`;
+      html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.data_standard)}" data-url-status="idle"><span class="url-status-icon" aria-hidden="true"></span><span class="inline-edit-label">Data Standard</span><span class="inline-edit-cell editable-field" data-field-key="data_standard"><span class="inline-edit-value"><a href="${escapeHtml(dataset.data_standard)}" target="_blank" rel="noopener">${escapeHtml(dataset.data_standard)}</a></span></span></div>`;
     } else {
       html += ef('Data Standard', 'data_standard', dataset.data_standard);
     }

@@ -6,6 +6,7 @@
 //   3. Common date field heuristics (MAX on fields named *EDIT_DATE*, *MODIFY*, etc.)
 //   4. Record count delta (compared to stored baseline)
 //   5. Service metadata text (regex for "last updated" in descriptions)
+//   6. Any remaining date field fallback (MAX on untried date fields — low confidence)
 //
 // Each signal carries a confidence level: high | medium | low | none.
 
@@ -206,10 +207,8 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
 
   // ── Signal 3: Common date field heuristics ──
   // Skip for ImageServer — no /query endpoint
-  if (_isImageSvc) {
-    signals.push({ signal: 'date_field_heuristic', value: null, confidence: 'none', detail: 'Skipped — ImageServer has no query endpoint' });
-  } else {
-  const dateFields = fields
+  // Compute dateFields for use by both Signal 3 and Signal 6
+  const dateFields = _isImageSvc ? [] : fields
     .filter(f => {
       const t = (f.type || '').toUpperCase();
       return t.includes('DATE');
@@ -220,6 +219,10 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
       return true;
     })
     .sort((a, b) => dateFieldPriority(a.name) - dateFieldPriority(b.name));
+
+  if (_isImageSvc) {
+    signals.push({ signal: 'date_field_heuristic', value: null, confidence: 'none', detail: 'Skipped — ImageServer has no query endpoint' });
+  } else {
 
   if (dateFields.length > 0) {
     // Query top 3 most promising date fields
@@ -337,6 +340,36 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
     });
   }
 
+  // ── Signal 6: Any remaining date field fallback ──
+  // If no date-based signal (1-3) produced a result, try all remaining date fields
+  if (!_isImageSvc && dateFields.length > 3) {
+    const hasDateResult = signals.some(s =>
+      s.value !== null && s.confidence !== 'none' &&
+      ['editingInfo.lastEditDate', 'editor_tracking', 'date_field_heuristic'].includes(s.signal)
+    );
+    if (!hasDateResult) {
+      const remaining = dateFields.slice(3);
+      let bestDate = null;
+      let bestField = null;
+      for (const f of remaining) {
+        try {
+          const maxDate = await queryMaxDate(queryTarget, f.name);
+          if (maxDate) {
+            const d = new Date(maxDate);
+            if (isValidRealisticDate(d) && (!bestDate || d > new Date(bestDate))) {
+              bestDate = maxDate;
+              bestField = f.name;
+            }
+          }
+        } catch (_) { /* skip */ }
+      }
+      signals.push(bestDate
+        ? { signal: 'any_date_field', value: bestDate, confidence: 'low', detail: `Fallback: MAX(${bestField}) = ${bestDate}` }
+        : { signal: 'any_date_field', value: null, confidence: 'none', detail: `Queried ${remaining.length} remaining date field${remaining.length > 1 ? 's' : ''} — no valid dates` }
+      );
+    }
+  }
+
   // ── Pick the best signal ──
   const confOrder = { high: 0, medium: 1, low: 2, none: 3 };
   const ranked = signals
@@ -411,6 +444,7 @@ const SIGNAL_LABELS = {
   'date_field_heuristic':     'Date field heuristic (MAX query)',
   'record_count_delta':       'Record count change',
   'metadata_text':            'Service description text',
+  'any_date_field':           'Date field fallback (any date attribute)',
   'none':                     'No signal available',
 };
 

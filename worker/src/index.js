@@ -788,14 +788,16 @@ async function processDataset(ds, storedRecordCount, env) {
   }
 
   // ── Signal 3: Date field heuristic ──
+  // Compute dateFields for use by both Signal 3 and Signal 6
+  const wFields = _isImageSvc ? [] : (layerJson?.fields || []);
+  const dateFields = _isImageSvc ? [] : wFields
+    .filter(f => (f.type || '').toUpperCase().includes('DATE'))
+    .filter(f => f.name !== trackingField)
+    .sort((a, b) => dateFieldPriority(a.name) - dateFieldPriority(b.name));
+
   if (_isImageSvc) {
     signals.push({ signal: 'date_field_heuristic', value: null, confidence: 'none', detail: 'Skipped — ImageServer' });
   } else {
-    const fields = layerJson?.fields || [];
-    const dateFields = fields
-      .filter(f => (f.type || '').toUpperCase().includes('DATE'))
-      .filter(f => f.name !== trackingField)
-      .sort((a, b) => dateFieldPriority(a.name) - dateFieldPriority(b.name));
 
     if (dateFields.length > 0) {
       const candidates = dateFields.slice(0, 3);
@@ -852,6 +854,35 @@ async function processDataset(ds, storedRecordCount, env) {
         signals.push({ signal: 'metadata_text', value: d.toISOString(), confidence: 'low', detail: `Found "${match[0]}"` });
       }
     } catch (_) {}
+  }
+
+  // ── Signal 6: Any remaining date field fallback ──
+  if (!_isImageSvc && dateFields.length > 3) {
+    const hasDateResult = signals.some(s =>
+      s.value !== null && s.confidence !== 'none' &&
+      ['editingInfo.lastEditDate', 'editor_tracking', 'date_field_heuristic'].includes(s.signal)
+    );
+    if (!hasDateResult) {
+      const remaining = dateFields.slice(3);
+      let bestDate = null;
+      let bestField = null;
+      for (const f of remaining) {
+        try {
+          const maxDate = await queryMaxDate(queryTarget, f.name);
+          if (maxDate) {
+            const d = new Date(maxDate);
+            if (isValidRealisticDate(d) && (!bestDate || d > new Date(bestDate))) {
+              bestDate = maxDate;
+              bestField = f.name;
+            }
+          }
+        } catch (_) {}
+      }
+      signals.push(bestDate
+        ? { signal: 'any_date_field', value: bestDate, confidence: 'low', detail: `Fallback: MAX(${bestField}) = ${bestDate}` }
+        : { signal: 'any_date_field', value: null, confidence: 'none', detail: `Queried ${remaining.length} remaining date field${remaining.length > 1 ? 's' : ''} — no valid dates` }
+      );
+    }
   }
 
   // ── Pick best signal ──

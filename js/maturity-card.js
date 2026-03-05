@@ -18,7 +18,7 @@ import {
 
 export function maturityCardHTML() {
   return `
-    <div class="card card-maturity" id="maturityScoreCard" style="border-left:4px solid var(--text-muted);">
+    <div class="card card-maturity" id="maturityScoreCard">
       <div class="card-header-row">
         <h3>\uD83D\uDCCA Data Maturity</h3>
         <span class="data-source-badge data-source-badge-auto">Auto</span>

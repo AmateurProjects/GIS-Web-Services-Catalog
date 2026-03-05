@@ -175,7 +175,7 @@ export function renderDatasetDetail(datasetId) {
     html += maturityCardHTML();
 
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
-    html += '<div class="card card-coverage" id="coverageMapCard" style="border-left:4px solid #4CAF50;">';
+    html += '<div class="card card-coverage" id="coverageMapCard">';
     html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><div style="display:flex;align-items:center;gap:0.5rem;"><span class="data-source-badge data-source-badge-auto">Auto</span><button type="button" class="btn" data-cov-refresh title="Re-run live coverage analysis" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button></div></div>';
     html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 2 km inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
     html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
@@ -184,7 +184,7 @@ export function renderDatasetDetail(datasetId) {
 
     // Freshness / last-updated card (async)
     html += `
-      <div class="card card-freshness" id="freshnessCard" style="border-left:4px solid var(--text-muted);">
+      <div class="card card-freshness" id="freshnessCard">
         <div class="card-header-row"><h3>🕐 Data Freshness</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>
         <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.5rem;">Multi-signal detection of when this dataset was last updated.</p>
         <div data-freshness-content>

@@ -21,20 +21,8 @@ export function animatePanel(el, durationMs = 650) {
   }, durationMs);
 }
 
-// Adds stagger classes to the first N cards inside a panel
-export function staggerCards(panelEl, maxCards = 9) {
-  if (!panelEl) return;
-  const cards = panelEl.querySelectorAll('.card, .detail-section');
-  // clear old delay classes
-  cards.forEach((c) => {
-    for (let i = 1; i <= 9; i++) c.classList.remove(`fx-d${i}`);
-  });
-  // assign new delay classes
-  cards.forEach((c, idx) => {
-    const n = Math.min(idx + 1, maxCards);
-    c.classList.add(`fx-d${n}`);
-  });
-}
+// Legacy stagger function — no-op (stagger delays removed from CSS)
+export function staggerCards() {}
 
 export function setActiveListButton(listRootEl, predicateFn) {
   if (!listRootEl) return;

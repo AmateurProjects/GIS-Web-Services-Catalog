@@ -99,11 +99,9 @@ export function renderDatasetList(filterText) {
     const groupEl = document.createElement('div');
     groupEl.className = 'service-tree-group';
 
-    const hasSelectedChild = group.datasets.some(ds => ds.id === state.lastSelectedDatasetId);
-
     const header = document.createElement('button');
     header.type = 'button';
-    header.className = 'service-tree-header' + (hasSelectedChild ? ' is-expanded' : '');
+    header.className = 'service-tree-header is-expanded';
     header.innerHTML = `
       <span class="service-tree-toggle">▶</span>
       <span class="service-tree-label" title="${escapeHtml(group.label)}">${escapeHtml(group.label)}</span>
@@ -111,7 +109,7 @@ export function renderDatasetList(filterText) {
     `;
 
     const childrenEl = document.createElement('ul');
-    childrenEl.className = 'service-tree-children' + (hasSelectedChild ? ' is-open' : '');
+    childrenEl.className = 'service-tree-children is-open';
 
     header.addEventListener('click', () => {
       header.classList.toggle('is-expanded');
@@ -129,12 +127,13 @@ export function renderDatasetList(filterText) {
 
       const geomIconHtml = getGeometryIconHTML(ds.geometry_type || '', 'geom-icon-list');
       const layerName = ds._layer_name || ds.title || ds.id;
-      const layerId = ds._layer_id !== undefined ? ds._layer_id : '';
+      const isNonBLM = (ds.agency_owner || '').toUpperCase() !== 'BLM';
+      const externalBadge = isNonBLM ? `<span class="badge-external" title="Non-BLM dataset">${escapeHtml(ds.agency_owner || 'External')}</span>` : '';
 
       btn.innerHTML = `
         ${geomIconHtml}
         <span class="list-item-label">${escapeHtml(layerName)}</span>
-        ${layerId !== '' ? `<span class="sublayer-id">/${layerId}</span>` : ''}
+        ${externalBadge}
       `;
 
       btn.addEventListener('click', () => {
@@ -164,10 +163,13 @@ export function renderDatasetList(filterText) {
       btn.setAttribute('data-ds-id', ds.id);
 
       const geomIconHtml = getGeometryIconHTML(ds.geometry_type || '', 'geom-icon-list');
+      const isNonBLM = (ds.agency_owner || '').toUpperCase() !== 'BLM';
+      const externalBadge = isNonBLM ? `<span class="badge-external" title="Non-BLM dataset">${escapeHtml(ds.agency_owner || 'External')}</span>` : '';
 
       btn.innerHTML = `
         ${geomIconHtml}
         <span class="list-item-label">${escapeHtml(ds.title || ds.id)}</span>
+        ${externalBadge}
       `;
 
       btn.addEventListener('click', () => {

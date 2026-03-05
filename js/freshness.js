@@ -365,20 +365,6 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   };
 }
 
-// ── Date validation (rejects unrealistic dates like year 9999) ──
-
-function isValidRealisticDate(date) {
-  if (!date || isNaN(date.getTime())) return false;
-  const year = date.getFullYear();
-  const now = new Date();
-  const currentYear = now.getFullYear();
-  // Reject dates before widespread GIS adoption (1990) or more than 1 year in the future
-  if (year < 1990 || year > currentYear + 1) return false;
-  // Reject dates that are exactly on sentinel values often used as placeholders
-  if (year === 9999 || year === 1899 || year === 1900 || year === 1970 && date.getMonth() === 0 && date.getDate() === 1) return false;
-  return true;
-}
-
 // ── Query MAX(dateField) ──
 
 async function queryMaxDate(queryTarget, fieldName) {

@@ -421,8 +421,7 @@ input[type="search"]:focus {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
   border-bottom: 1px solid var(--border-color);
-  backdrop-filter: blur(12px);
-  background: rgba(18, 18, 22, 0.92);
+  background: var(--bg-main);
 }
 
 .detail-sticky-header h2 {

@@ -402,6 +402,25 @@ input[type="search"]:focus {
   background-clip: text;
 }
 
+/* Sticky header for dataset name */
+.detail-sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-main);
+  padding: 0.75rem 0 0.5rem;
+  margin: -1rem -1.25rem 0.75rem -1.25rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  background: rgba(18, 18, 22, 0.92);
+}
+
+.detail-sticky-header h2 {
+  margin: 0;
+}
+
 .detail-panel h3 {
   margin-top: 1.1rem;
   margin-bottom: 0.5rem;

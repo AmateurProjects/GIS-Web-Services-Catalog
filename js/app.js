@@ -144,12 +144,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     return false;
   }
 
-  // On initial load, check hash first; fall back to dashboard
+  // On initial load, check hash first; fall back to datasets view
   if (!navigateFromHash()) {
-    renderDashboard();
-    // Pre-select first dataset so clicking Datasets tab shows detail immediately
+    showDatasetsView();
+    // Pre-select first dataset so detail panel shows immediately
     if (state.allDatasets.length) {
       state.lastSelectedDatasetId = state.allDatasets[0].id;
+      renderDatasetDetail(state.allDatasets[0].id);
     }
   }
 

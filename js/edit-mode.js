@@ -13,32 +13,28 @@ import { buildGithubIssueUrlForEditedAttribute } from './github-issues.js';
 
 export const DATASET_EDIT_FIELDS = [
   // Catalog Metadata
-  { key: 'title', label: 'Title', type: 'text', section: 'catalog' },
+  { key: 'title', label: 'Dataset Name', type: 'text', section: 'catalog' },
   { key: 'description', label: 'Description', type: 'textarea', section: 'catalog' },
-  { key: 'objname', label: 'Database Object Name', type: 'text', section: 'catalog' },
-  { key: 'topics', label: 'Topics', type: 'csv', section: 'catalog' },
   { key: 'agency_owner', label: 'Agency Owner', type: 'text', section: 'catalog' },
   { key: 'office_owner', label: 'Office Owner', type: 'text', section: 'catalog' },
   { key: 'contact_email', label: 'Contact Email', type: 'text', section: 'catalog' },
-  { key: 'geometry_type', label: 'Geometry Type', type: 'text', section: 'catalog' },
+  { key: 'topics', label: 'Topics', type: 'csv', section: 'catalog' },
   { key: 'update_frequency', label: 'Update Frequency', type: 'text', section: 'catalog' },
-  { key: 'access_level', label: 'Access Level', type: 'text', section: 'catalog' },
-  { key: 'public_web_service', label: 'Public Web Service', type: 'text', section: 'catalog' },
-  { key: 'internal_web_service', label: 'Internal Web Service', type: 'text', section: 'catalog' },
-  { key: 'data_standard', label: 'Data Standard', type: 'text', section: 'catalog' },
-  { key: 'projection', label: 'Projection', type: 'text', section: 'catalog' },
   { key: 'notes', label: 'Notes', type: 'textarea', section: 'catalog' },
+
+  // Data Access
+  { key: 'public_web_service', label: 'Public Web Service', type: 'text', section: 'dataaccess' },
+  { key: 'internal_web_service', label: 'Internal Web Service', type: 'text', section: 'dataaccess' },
+  { key: 'data_standard', label: 'Data Standard', type: 'text', section: 'dataaccess' },
+  { key: 'access_level', label: 'Access Level', type: 'text', section: 'dataaccess' },
 
   // Development & Status
   { key: 'development_stage', label: 'Development Stage', type: 'select', options: ['planned', 'in_development', 'qa', 'production', 'deprecated'], section: 'devstatus' },
   { key: 'target_release_date', label: 'Target Release Date', type: 'text', section: 'devstatus' },
   { key: 'blockers', label: 'Blockers', type: 'csv', section: 'devstatus' },
 
-  // National Scale Suitability
-  { key: 'scale_suitability', label: 'Scale Suitability', type: 'select', options: ['national', 'regional', 'local'], section: 'scale' },
-  { key: 'coverage', label: 'Coverage', type: 'select', options: ['nationwide', 'multi_state', 'single_state', 'partial'], section: 'scale' },
-  { key: 'web_mercator_compatible', label: 'Web Mercator Compatible', type: 'boolean', section: 'scale' },
-  { key: 'performance_notes', label: 'Performance Notes', type: 'textarea', section: 'scale' },
+  // Optional
+  { key: 'objname', label: 'Database Object Name', type: 'text', section: 'optional' },
 ];
 
 export const ATTRIBUTE_EDIT_FIELDS = [

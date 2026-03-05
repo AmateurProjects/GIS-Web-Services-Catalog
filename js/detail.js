@@ -1,6 +1,5 @@
 import { state, els } from './state.js';
 import { escapeHtml } from './utils.js';
-import { getGeometryIconHTML } from './geometry-icons.js';
 import { setActiveListButton } from './ui-fx.js';
 import { runUrlChecks } from './url-check.js';
 import { normalizeServiceUrl, parseServiceAndLayerId, maybeRenderPublicServicePreviewCard, incrementRenderGeneration, getCurrentMapView, setCurrentMapView } from './arcgis-preview.js';
@@ -70,13 +69,12 @@ export function renderDatasetDetail(datasetId) {
       return;
     }
 
-    const geomIconHtml = getGeometryIconHTML(dataset.geometry_type || '', 'geom-icon-inline');
     const attrs = getAttributesForDataset(dataset);
 
     let html = '';
 
-    html += `<h2>${escapeHtml(dataset.title || dataset.id)}</h2>`;
-    if (dataset.description) html += `<p>${escapeHtml(dataset.description)}</p>`;
+    // Sticky header with dataset name
+    html += `<div class="detail-sticky-header"><h2>${escapeHtml(dataset.title || dataset.id)}</h2></div>`;
 
     // Helper for simple editable field rows
     const ef = (label, key, val) => {
@@ -87,12 +85,13 @@ export function renderDatasetDetail(datasetId) {
 
     html += '<div class="card card-meta">';
     html += '<div class="card-header-row"><h3>Dataset Information</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
+    html += `<p class="edit-admin-note" style="font-size:0.75rem;color:var(--text-muted);margin:0 0 0.75rem;font-style:italic;">✏️ Click any field value to edit. Saving requires admin access.</p>`;
     
     // === Catalog Metadata Section ===
     html += '<div class="manual-section">';
     html += '<h4 class="manual-section-title">Catalog Metadata</h4>';
-    html += `<div class="inline-edit-row"><span class="inline-edit-label">Geometry Type</span><span class="inline-edit-cell editable-field" data-field-key="geometry_type"><span class="inline-edit-value">${geomIconHtml}${escapeHtml(dataset.geometry_type || '')}</span></span></div>`;
-    html += ef('Database Object Name', 'objname', dataset.objname);
+    html += ef('Dataset Name', 'title', dataset.title || dataset.id);
+    html += ef('Description', 'description', dataset.description);
     html += ef('Agency Owner', 'agency_owner', dataset.agency_owner);
     html += ef('Office Owner', 'office_owner', dataset.office_owner);
     html += ef('Contact Email', 'contact_email', dataset.contact_email);
@@ -103,7 +102,12 @@ export function renderDatasetDetail(datasetId) {
     html += `<div class="inline-edit-row"><span class="inline-edit-label">Topics</span><span class="inline-edit-cell editable-field" data-field-key="topics"><span class="inline-edit-value">${topicsHtml}</span></span></div>`;
 
     html += ef('Update Frequency', 'update_frequency', dataset.update_frequency);
-    html += ef('Access Level', 'access_level', dataset.access_level);
+    html += ef('Notes', 'notes', dataset.notes);
+    html += '</div>'; // end Catalog Metadata section
+
+    // === Data Access Section ===
+    html += '<div class="manual-section">';
+    html += '<h4 class="manual-section-title">Data Access</h4>';
 
     html += `<div class="inline-edit-row url-check-row" data-url-check-row data-url="${escapeHtml(dataset.public_web_service || '')}" data-url-status="idle"><span class="inline-edit-label">Public Web Service</span><span class="inline-edit-cell editable-field" data-field-key="public_web_service"><span class="inline-edit-value"><span class="url-status-icon" aria-hidden="true"></span>${
       dataset.public_web_service
@@ -123,9 +127,8 @@ export function renderDatasetDetail(datasetId) {
       html += ef('Data Standard', 'data_standard', dataset.data_standard);
     }
 
-    html += ef('Projection', 'projection', dataset.projection);
-    html += ef('Notes', 'notes', dataset.notes);
-    html += '</div>'; // end Catalog Metadata section
+    html += ef('Access Level', 'access_level', dataset.access_level);
+    html += '</div>'; // end Data Access section
 
     // === Development & Status Section ===
     html += '<div class="manual-section">';
@@ -151,15 +154,11 @@ export function renderDatasetDetail(datasetId) {
 
     html += '</div>'; // end Development & Status section
 
-    // === National Scale Suitability Section ===
+    // === Optional Section ===
     html += '<div class="manual-section">';
-    html += '<h4 class="manual-section-title">National Scale Suitability</h4>';
-    html += ef('Scale Suitability', 'scale_suitability', dataset.scale_suitability);
-    html += ef('Coverage', 'coverage', dataset.coverage);
-    const wmcVal = dataset.web_mercator_compatible === true ? 'Yes' : dataset.web_mercator_compatible === false ? 'No' : null;
-    html += ef('Web Mercator Compatible', 'web_mercator_compatible', wmcVal);
-    html += ef('Performance Notes', 'performance_notes', dataset.performance_notes);
-    html += '</div>'; // end Scale section
+    html += '<h4 class="manual-section-title">Optional</h4>';
+    html += ef('Database Object Name', 'objname', dataset.objname);
+    html += '</div>'; // end Optional section
 
     // Save button area (hidden by default, shown when edits are pending)
     html += `<div class="manual-section-actions dataset-save-actions" style="display:none;">

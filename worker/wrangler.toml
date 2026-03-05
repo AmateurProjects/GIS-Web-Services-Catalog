@@ -1,7 +1,8 @@
 # ================================================================
-# Cloudflare Worker — Freshness Scanner
+# Cloudflare Worker — GIS Catalog Scanner
 # ================================================================
-# Generates & serves data/freshness.json from R2 storage.
+# Runs health checks and freshness detection for all cataloged datasets.
+# Uses R2 for persistent storage of scan results.
 #
 # Setup
 # ─────
@@ -16,13 +17,16 @@
 #
 # Endpoints
 # ─────────
-#   GET  /freshness.json          → serves cached results from R2
-#   POST /freshness/refresh       → triggers a full scan, stores in R2, returns results
-#   GET  /freshness/status        → returns last-generated timestamp from R2
+#   GET  /health.json             → serves cached health results from R2
+#   POST /health/refresh          → triggers health scan, stores in R2
+#   GET  /freshness.json          → serves cached freshness results from R2
+#   POST /freshness/refresh       → triggers freshness scan, stores in R2
 #
-# Scheduled (Cron Trigger)
-# ────────────────────────
-# A daily cron trigger refreshes the data automatically.
+# Scheduled (Cron Triggers)
+# ─────────────────────────
+# Crons run every minute from 6:00-6:30 UTC. Each invocation processes
+# one batch, respecting Cloudflare's 50-subrequest limit per invocation.
+# A ~150 dataset catalog completes in ~15-20 minutes.
 # ================================================================
 
 name = "gis-freshness-worker"
@@ -34,9 +38,13 @@ compatibility_date = "2024-09-01"
 binding = "BUCKET"
 bucket_name = "gis-catalog-data"
 
-# ── Cron trigger — runs daily at 06:00 UTC ──
+# ── Cron triggers — runs every minute from 6:00-6:30 UTC ──
+# Multiple triggers allow processing large catalogs within Cloudflare's
+# 50-subrequest limit per invocation. Each trigger processes one batch.
+# With HEALTH_BATCH_SIZE=20 and FRESHNESS_BATCH_SIZE=5, a catalog of
+# ~150 datasets completes in ~15-20 minutes.
 [triggers]
-crons = ["0 6 * * *"]
+crons = ["0-30 6 * * *"]
 
 # ── Environment variables ──
 [vars]

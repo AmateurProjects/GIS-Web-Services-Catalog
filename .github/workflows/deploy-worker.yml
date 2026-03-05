@@ -1,0 +1,44 @@
+# ================================================================
+# Deploy Cloudflare Worker — GIS Catalog Scanner
+# ================================================================
+# Automatically deploys worker/src/index.js to Cloudflare Workers
+# when changes are pushed to the main branch.
+#
+# Required Secrets (set in GitHub repo Settings > Secrets):
+#   CLOUDFLARE_API_TOKEN  — API token with "Edit Cloudflare Workers" permission
+#   CLOUDFLARE_ACCOUNT_ID — Your Cloudflare account ID
+# ================================================================
+
+name: Deploy Worker
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'worker/**'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Workers
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Deploy Worker
+        working-directory: worker
+        run: wrangler deploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

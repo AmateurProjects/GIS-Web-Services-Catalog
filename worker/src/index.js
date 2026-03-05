@@ -8,6 +8,8 @@
 //   freshness.json           — latest freshness scan results
 //   freshness-previous.json  — previous freshness scan (for record count delta)
 //   health.json              — latest service health check results
+//   health-task.json         — in-progress health scan state
+//   freshness-task.json      — in-progress freshness scan state
 //
 // Routes:
 //   GET  /freshness.json      → serve from R2
@@ -16,7 +18,20 @@
 //   GET  /health.json         → serve from R2
 //   POST /health/refresh      → run health scan, store in R2
 //   GET  /health/status       → last-generated timestamp
-//   Cron trigger              → runs both scans
+//   Cron trigger              → runs batched scans (see below)
+//
+// Batch Processing Strategy:
+//   Cloudflare Workers have a 50-subrequest limit per invocation (free plan).
+//   To handle large catalogs, scans are split into batches:
+//   - Health: 20 services per batch (~20 fetches)
+//   - Freshness: 5 datasets per batch (~20 fetches)
+//
+//   Cron runs every minute from 6:00-6:30 UTC. Each invocation:
+//   1. Checks for incomplete tasks (task file in R2)
+//   2. If found, continues from the last offset
+//   3. If not, starts a fresh scan (if data is stale)
+//
+//   This allows processing 150+ datasets within Cloudflare limits.
 // ================================================================
 
 const R2_KEY = 'freshness.json';
@@ -129,18 +144,83 @@ export default {
     return corsJson({ error: 'Not found' }, 404);
   },
 
-  // ── Cron Trigger — runs first batch of each scan ──
-  // Cron only processes batch 0; partial results are written to R2.
-  // Full completion requires the dashboard to drive subsequent batches.
+  // ── Cron Trigger — processes batches across multiple invocations ──
+  // Runs every minute during the scan window (6:00-6:30 UTC).
+  // Each invocation processes one batch, staying under Cloudflare's
+  // 50-subrequest limit. Incomplete tasks are continued on subsequent triggers.
   async scheduled(event, env, ctx) {
-    ctx.waitUntil(
-      Promise.all([
-        runHealthScan(env, 0),
-        runScan(env, 0),
-      ])
-    );
+    ctx.waitUntil(runScheduledBatch(env));
   },
 };
+
+// ================================================================
+// Scheduled batch runner — works within Cloudflare subrequest limits
+// ================================================================
+// Processes ONE batch per cron invocation. Each batch stays under
+// 50 subrequests (HEALTH_BATCH_SIZE=20, FRESHNESS_BATCH_SIZE=5×~4=20).
+// Requires multiple cron triggers (e.g., every minute from 6:00-6:30).
+
+async function runScheduledBatch(env) {
+  // Check for incomplete health task first
+  const healthTask = await env.BUCKET.get(R2_KEY_HEALTH_TASK);
+  if (healthTask) {
+    const task = JSON.parse(await healthTask.text());
+    const offset = task.results?.length || 0;
+    console.log(`Continuing health scan from offset ${offset}`);
+    await runHealthScan(env, offset);
+    return;
+  }
+
+  // Check for incomplete freshness task
+  const freshnessTask = await env.BUCKET.get(R2_KEY_FRESHNESS_TASK);
+  if (freshnessTask) {
+    const task = JSON.parse(await freshnessTask.text());
+    const offset = task.results?.length || 0;
+    console.log(`Continuing freshness scan from offset ${offset}`);
+    await runScan(env, offset);
+    return;
+  }
+
+  // No incomplete tasks — check if we should start fresh scans
+  // Only start new scans if existing data is stale (>20 hours old)
+  const healthObj = await env.BUCKET.get(R2_KEY_HEALTH);
+  const freshnessObj = await env.BUCKET.get(R2_KEY);
+  
+  const now = Date.now();
+  const STALE_THRESHOLD_MS = 20 * 60 * 60 * 1000; // 20 hours
+  
+  let healthStale = true;
+  let freshnessStale = true;
+  
+  if (healthObj) {
+    try {
+      const data = JSON.parse(await healthObj.text());
+      if (data.generated && data._scanComplete !== false) {
+        healthStale = (now - new Date(data.generated).getTime()) > STALE_THRESHOLD_MS;
+      }
+    } catch (_) {}
+  }
+  
+  if (freshnessObj) {
+    try {
+      const data = JSON.parse(await freshnessObj.text());
+      if (data.generated && data._scanComplete !== false) {
+        freshnessStale = (now - new Date(data.generated).getTime()) > STALE_THRESHOLD_MS;
+      }
+    } catch (_) {}
+  }
+
+  // Start whichever scan is stale (health first, then freshness)
+  if (healthStale) {
+    console.log('Starting new health scan (data stale or missing)');
+    await runHealthScan(env, 0);
+  } else if (freshnessStale) {
+    console.log('Starting new freshness scan (data stale or missing)');
+    await runScan(env, 0);
+  } else {
+    console.log('Scheduled scan skipped — data is fresh');
+  }
+}
 
 // ================================================================
 // Serve any R2 JSON key

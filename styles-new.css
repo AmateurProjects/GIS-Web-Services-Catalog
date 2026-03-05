@@ -380,7 +380,7 @@ input[type="search"]:focus {
 
 .detail-panel {
   flex: 1;
-  padding: 1.25rem 1.5rem;
+  padding: 0 1.5rem 1.25rem;
   overflow-y: auto;
   background:
     radial-gradient(ellipse 80% 60% at 10% 20%, rgba(91,163,245,0.04) 0%, transparent 60%),
@@ -410,32 +410,23 @@ input[type="search"]:focus {
   background-clip: text;
 }
 
-/* Sticky header for dataset name */
+/* Sticky header for dataset name — flush under site header, full width */
 .detail-sticky-header {
   position: sticky;
   top: 0;
   z-index: 10;
-  padding: 0.75rem 1.25rem 0.5rem;
-  margin: -1rem -1.5rem 0.75rem -1.5rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  margin: 0 -1.5rem 0.75rem -1.5rem;
+  padding: 0.65rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
-  /* Must be fully opaque to hide content scrolling behind */
-  background: var(--bg-main);
-  box-shadow: 0 1px 6px rgba(0,0,0,0.4);
-  /* Cover the panel's radial gradients */
-  isolation: isolate;
-}
-.detail-sticky-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--bg-main);
+  background: var(--bg-panel);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  max-width: none !important;
+  width: auto !important;
 }
 
 .detail-sticky-header h2 {
   margin: 0;
+  max-width: 980px;
 }
 
 .detail-panel h3 {
@@ -2153,7 +2144,7 @@ textarea.dataset-edit-input {
 
   section { flex-direction: column; }
 
-  .detail-panel { padding: 1rem; }
+  .detail-panel { padding: 0 1rem 1rem; }
 
   .card-row { flex-direction: column; }
 

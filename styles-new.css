@@ -2976,6 +2976,29 @@ textarea.dataset-edit-input {
   margin-bottom: 0.5rem;
 }
 
+/* ── Freshness expandable sections ── */
+
+.freshness-remaining-details summary,
+.freshness-unknown-details summary {
+  list-style: none;
+  outline: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  transition: background 150ms;
+}
+.freshness-remaining-details summary::-webkit-details-marker,
+.freshness-unknown-details summary::-webkit-details-marker { display: none; }
+.freshness-remaining-details summary::marker,
+.freshness-unknown-details summary::marker { content: ''; }
+.freshness-remaining-details summary:hover,
+.freshness-unknown-details summary:hover {
+  background: rgba(255,255,255,0.04);
+}
+.freshness-remaining-details[open] summary,
+.freshness-unknown-details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
 /* ================================================================
    IN-PLACE EDIT MODE
    ================================================================ */

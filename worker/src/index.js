@@ -675,6 +675,31 @@ function dateFieldPriority(name) {
   return 3;
 }
 
+// ── Date validation (rejects obvious sentinel/placeholder values) ──
+function isValidRealisticDate(date) {
+  if (!date || isNaN(date.getTime())) return false;
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  
+  // Reject dates more than 1 year in the future
+  if (year > currentYear + 1) return false;
+  
+  // Reject far-future placeholder (year 9999)
+  if (year === 9999) return false;
+  
+  // Reject common database sentinel dates (exactly Jan 1 of these years)
+  // These are often default/null values in databases, not real data
+  if ((year === 1899 || year === 1900) && month === 0 && day === 1) return false;
+  
+  // Reject Unix epoch exactly (Jan 1, 1970 00:00:00.000) — uninitialized timestamp
+  if (date.getTime() === 0) return false;
+  
+  return true;
+}
+
 async function queryMaxDate(target, fieldName) {
   const params = new URLSearchParams({
     where: '1=1',
@@ -687,7 +712,7 @@ async function queryMaxDate(target, fieldName) {
   const val = json?.features?.[0]?.attributes?.max_date;
   if (val == null) return null;
   const d = new Date(typeof val === 'number' ? val : val);
-  return isNaN(d.getTime()) ? null : d.toISOString();
+  return isValidRealisticDate(d) ? d.toISOString() : null;
 }
 
 // ================================================================
@@ -736,8 +761,10 @@ async function processDataset(ds, storedRecordCount, env) {
   const editDate = layerJson?.editingInfo?.lastEditDate;
   if (editDate && typeof editDate === 'number' && editDate > 0) {
     const d = new Date(editDate);
-    if (!isNaN(d.getTime())) {
+    if (isValidRealisticDate(d)) {
       signals.push({ signal: 'editingInfo.lastEditDate', value: d.toISOString(), confidence: 'high', detail: `editingInfo.lastEditDate = ${d.toISOString()}` });
+    } else {
+      signals.push({ signal: 'editingInfo.lastEditDate', value: null, confidence: 'none', detail: `Unrealistic date (year ${d.getFullYear()})` });
     }
   } else {
     signals.push({ signal: 'editingInfo.lastEditDate', value: null, confidence: 'none', detail: 'Not exposed' });

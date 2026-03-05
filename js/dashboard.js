@@ -599,34 +599,81 @@ async function loadDashboardFreshness() {
   html += `</div>`;
 
   // Build combined table: stalest datasets first
-  const tableItems = withDate
+  const allWithDates = withDate
     .sort((a, b) => new Date(a.lastUpdated) - new Date(b.lastUpdated))
-    .slice(0, 10)
     .map(r => {
       const dataset = ds.find(d => d.id === r.datasetId);
       return { ...r, dataset };
     });
+  
+  const stalestItems = allWithDates.slice(0, 10);
+  const remainingItems = allWithDates.slice(10);
 
-  if (tableItems.length) {
+  const freshnessTableHead = `<table class="dashboard-mini-table freshness-table"><thead><tr><th>Dataset</th><th>Last Updated</th><th>Age</th><th>Signal</th><th>Confidence</th></tr></thead><tbody>`;
+  const freshnessTableEnd = `</tbody></table>`;
+
+  function freshnessRow(r) {
+    const label = r.dataset?._layer_name || r.dataset?.title || r.datasetId;
+    const truncLabel = label.length > 40 ? label.slice(0, 37) + '…' : label;
+    const age = formatFreshnessAge(r.lastUpdated);
+    const ageColor = freshnessColor(r.lastUpdated);
+    const cm = getConfidenceMeta(r.confidence);
+    const dateStr = r.lastUpdated ? new Date(r.lastUpdated).toLocaleDateString() : '—';
+
+    let row = `<tr>`;
+    row += `<td><button type="button" class="dash-link" data-dash-ds="${escapeHtml(r.datasetId)}" title="${escapeHtml(label)}">${escapeHtml(truncLabel)}</button></td>`;
+    row += `<td style="font-size:0.82rem;">${dateStr}</td>`;
+    row += `<td style="color:${ageColor};font-weight:600;">${escapeHtml(age)}</td>`;
+    row += `<td style="font-size:0.8rem;">${escapeHtml(r.signal || '—')}</td>`;
+    row += `<td><span style="color:${cm.color};">${cm.icon}</span> ${escapeHtml(cm.label)}</td>`;
+    row += `</tr>`;
+    return row;
+  }
+
+  if (stalestItems.length) {
     html += `<div class="freshness-table-label" style="margin-top:0.5rem;font-size:0.8rem;color:var(--text-muted);">Stalest datasets (oldest first)</div>`;
-    html += `<table class="dashboard-mini-table freshness-table"><thead><tr><th>Dataset</th><th>Last Updated</th><th>Age</th><th>Signal</th><th>Confidence</th></tr></thead><tbody>`;
-    tableItems.forEach(r => {
+    html += freshnessTableHead;
+    stalestItems.forEach(r => { html += freshnessRow(r); });
+    html += freshnessTableEnd;
+  }
+
+  // Expandable section for remaining datasets (more recent ones)
+  if (remainingItems.length) {
+    html += `<details class="freshness-remaining-details" style="margin-top:0.75rem;">`;
+    html += `<summary style="cursor:pointer;font-size:0.85rem;color:var(--text-muted);user-select:none;">`;
+    html += `<span style="color:var(--green);">●</span> ${remainingItems.length} more dataset${remainingItems.length !== 1 ? 's' : ''} — click to expand`;
+    html += `</summary>`;
+    html += freshnessTableHead;
+    remainingItems.forEach(r => { html += freshnessRow(r); });
+    html += freshnessTableEnd;
+    html += `</details>`;
+  }
+
+  // Unknown freshness (no date detected)
+  const unknownItems = results.filter(r => !r.lastUpdated).map(r => {
+    const dataset = ds.find(d => d.id === r.datasetId);
+    return { ...r, dataset };
+  });
+
+  if (unknownItems.length) {
+    html += `<details class="freshness-unknown-details" style="margin-top:0.75rem;">`;
+    html += `<summary style="cursor:pointer;font-size:0.85rem;color:var(--text-muted);user-select:none;">`;
+    html += `<span style="color:var(--text-muted);">○</span> ${unknownItems.length} dataset${unknownItems.length !== 1 ? 's' : ''} with unknown freshness — click to expand`;
+    html += `</summary>`;
+    html += `<table class="dashboard-mini-table freshness-table"><thead><tr><th>Dataset</th><th>Signal</th><th>Details</th></tr></thead><tbody>`;
+    unknownItems.forEach(r => {
       const label = r.dataset?._layer_name || r.dataset?.title || r.datasetId;
       const truncLabel = label.length > 40 ? label.slice(0, 37) + '…' : label;
-      const age = formatFreshnessAge(r.lastUpdated);
-      const ageColor = freshnessColor(r.lastUpdated);
-      const cm = getConfidenceMeta(r.confidence);
-      const dateStr = r.lastUpdated ? new Date(r.lastUpdated).toLocaleDateString() : '—';
-
+      const details = r.details || '—';
+      const truncDetails = details.length > 60 ? details.slice(0, 57) + '…' : details;
       html += `<tr>`;
       html += `<td><button type="button" class="dash-link" data-dash-ds="${escapeHtml(r.datasetId)}" title="${escapeHtml(label)}">${escapeHtml(truncLabel)}</button></td>`;
-      html += `<td style="font-size:0.82rem;">${dateStr}</td>`;
-      html += `<td style="color:${ageColor};font-weight:600;">${escapeHtml(age)}</td>`;
-      html += `<td style="font-size:0.8rem;">${escapeHtml(r.signal || '—')}</td>`;
-      html += `<td><span style="color:${cm.color};">${cm.icon}</span> ${escapeHtml(cm.label)}</td>`;
+      html += `<td style="font-size:0.8rem;">${escapeHtml(r.signal || 'none')}</td>`;
+      html += `<td style="font-size:0.8rem;color:var(--text-muted);" title="${escapeHtml(details)}">${escapeHtml(truncDetails)}</td>`;
       html += `</tr>`;
     });
     html += `</tbody></table>`;
+    html += `</details>`;
   }
 
   html += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">`;

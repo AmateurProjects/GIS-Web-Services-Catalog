@@ -61,6 +61,31 @@ function dateFieldPriority(fieldName) {
   return 4;
 }
 
+// ── Date validation (rejects obvious sentinel/placeholder values) ──
+function isValidRealisticDate(date) {
+  if (!date || isNaN(date.getTime())) return false;
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  
+  // Reject dates more than 1 year in the future
+  if (year > currentYear + 1) return false;
+  
+  // Reject far-future placeholder (year 9999)
+  if (year === 9999) return false;
+  
+  // Reject common database sentinel dates (exactly Jan 1 of these years)
+  // These are often default/null values in databases, not real data
+  if ((year === 1899 || year === 1900) && month === 0 && day === 1) return false;
+  
+  // Reject Unix epoch exactly (Jan 1, 1970 00:00:00.000) — uninitialized timestamp
+  if (date.getTime() === 0) return false;
+  
+  return true;
+}
+
 /**
  * Run all freshness signals against a service URL.
  * @param {string} rawUrl — ArcGIS REST service URL
@@ -112,12 +137,19 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   const lastEditDate = editingInfo?.lastEditDate;
   if (lastEditDate && typeof lastEditDate === 'number' && lastEditDate > 0) {
     const d = new Date(lastEditDate);
-    if (!isNaN(d.getTime())) {
+    if (isValidRealisticDate(d)) {
       signals.push({
         signal: 'editingInfo.lastEditDate',
         value: d.toISOString(),
         confidence: 'high',
         detail: `ArcGIS Server editingInfo.lastEditDate: ${d.toISOString()}`,
+      });
+    } else {
+      signals.push({
+        signal: 'editingInfo.lastEditDate',
+        value: null,
+        confidence: 'none',
+        detail: `editingInfo.lastEditDate has unrealistic value (year ${d.getFullYear()})`,
       });
     }
   } else {
@@ -333,6 +365,20 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   };
 }
 
+// ── Date validation (rejects unrealistic dates like year 9999) ──
+
+function isValidRealisticDate(date) {
+  if (!date || isNaN(date.getTime())) return false;
+  const year = date.getFullYear();
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  // Reject dates before widespread GIS adoption (1990) or more than 1 year in the future
+  if (year < 1990 || year > currentYear + 1) return false;
+  // Reject dates that are exactly on sentinel values often used as placeholders
+  if (year === 9999 || year === 1899 || year === 1900 || year === 1970 && date.getMonth() === 0 && date.getDate() === 1) return false;
+  return true;
+}
+
 // ── Query MAX(dateField) ──
 
 async function queryMaxDate(queryTarget, fieldName) {
@@ -350,12 +396,12 @@ async function queryMaxDate(queryTarget, fieldName) {
   // ArcGIS returns dates as Unix timestamps (milliseconds)
   if (typeof val === 'number') {
     const d = new Date(val);
-    return isNaN(d.getTime()) ? null : d.toISOString();
+    return isValidRealisticDate(d) ? d.toISOString() : null;
   }
   // Or sometimes as ISO strings
   if (typeof val === 'string') {
     const d = new Date(val);
-    return isNaN(d.getTime()) ? null : d.toISOString();
+    return isValidRealisticDate(d) ? d.toISOString() : null;
   }
   return null;
 }

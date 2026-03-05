@@ -844,16 +844,40 @@ async function processDataset(ds, storedRecordCount, env) {
   // ── Signal 5: Metadata text ──
   const desc = layerJson?.description || layerJson?.serviceDescription || '';
   const copy = layerJson?.copyrightText || '';
-  const match = `${desc} ${copy}`.match(
-    /(?:last\s+(?:updated?|modified|revised))[:\s]*(\w+\s+\d{1,2},?\s+\d{4}|\d{4}[-/]\d{2}[-/]\d{2})/i
-  );
-  if (match) {
-    try {
-      const d = new Date(match[1]);
-      if (!isNaN(d.getTime())) {
-        signals.push({ signal: 'metadata_text', value: d.toISOString(), confidence: 'low', detail: `Found "${match[0]}"` });
+  const stripHtml = s => s.replace(/<[^>]+>/g, ' ');
+  const allText = [desc, copy].map(stripHtml).join(' ');
+
+  const MON = '(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)';
+  const DATE_RE = `(${MON}\\s+\\d{1,2},?\\s+\\d{4}|\\d{4}[-/]\\d{2}[-/]\\d{2}|\\d{1,2}[-/]\\d{1,2}[-/]\\d{4}|\\d{1,2}[-/]\\d{4}|${MON}\\s+\\d{4})`;
+  const META_KW = '(?:(?:last\\s+)?(?:updated?|modified|revised|edited|refreshed|published)(?:\\s+(?:on|as\\s+of))?|(?:current|data)\\s+(?:as\\s+of|through)|effective|vintage|as\\s+of)';
+  const parseMetaDate = (s) => {
+    const my = s.match(/^(\d{1,2})[-/](\d{4})$/);
+    if (my) { const m = +my[1]; return m >= 1 && m <= 12 ? new Date(+my[2], m - 1, 1) : null; }
+    if (/^[A-Za-z]/.test(s) && /^\w+\s+\d{4}$/.test(s)) {
+      const d = new Date(s.replace(/^(\w+)\s+(\d{4})$/, '$1 1, $2'));
+      return isNaN(d.getTime()) ? null : d;
+    }
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  let metaSignalPushed = false;
+  const kwMatch = allText.match(new RegExp(META_KW + '[:\\s]+' + DATE_RE, 'i'));
+  if (kwMatch) {
+    const parsed = parseMetaDate(kwMatch[1]);
+    if (parsed && isValidRealisticDate(parsed)) {
+      signals.push({ signal: 'metadata_text', value: parsed.toISOString(), confidence: 'medium', detail: `Found "${kwMatch[0].trim()}"` });
+      metaSignalPushed = true;
+    }
+  }
+  if (!metaSignalPushed) {
+    const dateOnly = allText.match(new RegExp(DATE_RE, 'i'));
+    if (dateOnly) {
+      const parsed = parseMetaDate(dateOnly[1]);
+      if (parsed && isValidRealisticDate(parsed)) {
+        signals.push({ signal: 'metadata_text', value: parsed.toISOString(), confidence: 'low', detail: `Found date "${dateOnly[0].trim()}"` });
       }
-    } catch (_) {}
+    }
   }
 
   // ── Signal 6: Any remaining date field fallback ──

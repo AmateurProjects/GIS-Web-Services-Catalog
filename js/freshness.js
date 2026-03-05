@@ -5,7 +5,7 @@
 //   2. Editor tracking date fields (MAX query on edit date fields)
 //   3. Common date field heuristics (MAX on fields named *EDIT_DATE*, *MODIFY*, etc.)
 //   4. Record count delta (compared to stored baseline)
-//   5. Service metadata text (regex for "last updated" in descriptions)
+//   5. Service metadata text (date patterns in description/copyright/documentInfo)
 //   6. Any remaining date field fallback (MAX on untried date fields — low confidence)
 //
 // Each signal carries a confidence level: high | medium | low | none.
@@ -312,31 +312,68 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   }
 
   // ── Signal 5: Metadata text parsing ──
+  // Searches description, copyright, and documentInfo for date patterns
   const descText = serviceJson?.serviceDescription || serviceJson?.description || '';
-  const copyrightText = serviceJson?.copyrightText || '';
-  const allText = `${descText} ${copyrightText}`;
-  const dateMatch = allText.match(
-    /(?:last\s+(?:updated?|modified|revised|edited))[:\s]*(\w+\s+\d{1,2},?\s+\d{4}|\d{4}[-\/]\d{2}[-\/]\d{2}|\d{1,2}[-\/]\d{1,2}[-\/]\d{4})/i
-  );
-  if (dateMatch) {
-    try {
-      const parsed = new Date(dateMatch[1]);
-      if (!isNaN(parsed.getTime())) {
+  const copyrText = serviceJson?.copyrightText || '';
+  const metaComments = serviceJson?.documentInfo?.comments || serviceJson?.comments || '';
+  const metaSubject = serviceJson?.documentInfo?.subject || serviceJson?.subject || '';
+  const _stripHtml = s => s.replace(/<[^>]+>/g, ' ');
+  const allText = [descText, copyrText, metaComments, metaSubject].map(_stripHtml).join(' ');
+
+  const MON = '(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)';
+  const DATE_RE = `(${MON}\\s+\\d{1,2},?\\s+\\d{4}|\\d{4}[-/]\\d{2}[-/]\\d{2}|\\d{1,2}[-/]\\d{1,2}[-/]\\d{4}|\\d{1,2}[-/]\\d{4}|${MON}\\s+\\d{4})`;
+  const META_KW = '(?:(?:last\\s+)?(?:updated?|modified|revised|edited|refreshed|published)(?:\\s+(?:on|as\\s+of))?|(?:current|data)\\s+(?:as\\s+of|through)|effective|vintage|as\\s+of)';
+  const _parseMetaDate = (s) => {
+    const my = s.match(/^(\d{1,2})[-/](\d{4})$/);
+    if (my) { const m = +my[1]; return m >= 1 && m <= 12 ? new Date(+my[2], m - 1, 1) : null; }
+    if (/^[A-Za-z]/.test(s) && /^\w+\s+\d{4}$/.test(s)) {
+      const d = new Date(s.replace(/^(\w+)\s+(\d{4})$/, '$1 1, $2'));
+      return isNaN(d.getTime()) ? null : d;
+    }
+    const d = new Date(s);
+    return isNaN(d.getTime()) ? null : d;
+  };
+
+  let metaSignalPushed = false;
+
+  // Phase A: keyword-contextual date (medium confidence)
+  const kwMatch = allText.match(new RegExp(META_KW + '[:\\s]+' + DATE_RE, 'i'));
+  if (kwMatch) {
+    const parsed = _parseMetaDate(kwMatch[1]);
+    if (parsed && isValidRealisticDate(parsed)) {
+      signals.push({
+        signal: 'metadata_text',
+        value: parsed.toISOString(),
+        confidence: 'medium',
+        detail: `Found "${kwMatch[0].trim()}" in service metadata text`,
+      });
+      metaSignalPushed = true;
+    }
+  }
+
+  // Phase B: standalone date in text (low confidence)
+  if (!metaSignalPushed) {
+    const dateOnly = allText.match(new RegExp(DATE_RE, 'i'));
+    if (dateOnly) {
+      const parsed = _parseMetaDate(dateOnly[1]);
+      if (parsed && isValidRealisticDate(parsed)) {
         signals.push({
           signal: 'metadata_text',
           value: parsed.toISOString(),
           confidence: 'low',
-          detail: `Found "${dateMatch[0]}" in service description/copyright text`,
+          detail: `Found date "${dateOnly[0].trim()}" in service metadata text`,
         });
+        metaSignalPushed = true;
       }
-    } catch (_) { /* skip */ }
+    }
   }
-  if (!dateMatch || !signals.find(s => s.signal === 'metadata_text')) {
+
+  if (!metaSignalPushed) {
     signals.push({
       signal: 'metadata_text',
       value: null,
       confidence: 'none',
-      detail: 'No "last updated" date found in service metadata text',
+      detail: 'No date found in service metadata text',
     });
   }
 
@@ -443,7 +480,7 @@ const SIGNAL_LABELS = {
   'editor_tracking':          'Editor tracking field query',
   'date_field_heuristic':     'Date field heuristic (MAX query)',
   'record_count_delta':       'Record count change',
-  'metadata_text':            'Service description text',
+  'metadata_text':            'Metadata text parsing (description/copyright/documentInfo)',
   'any_date_field':           'Date field fallback (any date attribute)',
   'none':                     'No signal available',
 };

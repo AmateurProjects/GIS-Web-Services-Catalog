@@ -321,9 +321,12 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   const allText = [descText, copyrText, metaComments, metaSubject].map(_stripHtml).join(' ');
 
   const MON = '(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)';
-  const DATE_RE = `(${MON}\\s+\\d{1,2},?\\s+\\d{4}|\\d{4}[-/]\\d{2}[-/]\\d{2}|\\d{1,2}[-/]\\d{1,2}[-/]\\d{4}|\\d{1,2}[-/]\\d{4}|${MON}\\s+\\d{4})`;
-  const META_KW = '(?:(?:last\\s+)?(?:updated?|modified|revised|edited|refreshed|published)(?:\\s+(?:on|as\\s+of))?|(?:current|data)\\s+(?:as\\s+of|through)|effective|vintage|as\\s+of)';
+  const DATE_RE = `(${MON},?\\s+\\d{1,2},?\\s+\\d{4}|\\d{4}[-/]\\d{2}[-/]\\d{2}|\\d{1,2}[-/]\\d{1,2}[-/]\\d{4}|\\d{1,2}[-/]\\d{4}|${MON},?\\s+\\d{4})`;
+  const META_KW = '(?:(?:last\\s+)?(?:updated?|modified|revised|edited|refreshed|published)(?:\\s+(?:on|as\\s+of))?|(?:current|data)\\s+(?:as\\s+of|through)|(?:data\\s+)?refreshed|effective|vintage|as\\s+of)';
   const _parseMetaDate = (s) => {
+    // Handle "Month, YYYY" (comma after month name)
+    const mcy = s.match(/^([A-Za-z]+),\s+(\d{4})$/);
+    if (mcy) { const d = new Date(`${mcy[1]} 1, ${mcy[2]}`); return isNaN(d.getTime()) ? null : d; }
     const my = s.match(/^(\d{1,2})[-/](\d{4})$/);
     if (my) { const m = +my[1]; return m >= 1 && m <= 12 ? new Date(+my[2], m - 1, 1) : null; }
     if (/^[A-Za-z]/.test(s) && /^\w+\s+\d{4}$/.test(s)) {
@@ -411,7 +414,12 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   const confOrder = { high: 0, medium: 1, low: 2, none: 3 };
   const ranked = signals
     .filter(s => s.value !== null)
-    .sort((a, b) => confOrder[a.confidence] - confOrder[b.confidence]);
+    .sort((a, b) => {
+      const cDiff = confOrder[a.confidence] - confOrder[b.confidence];
+      if (cDiff !== 0) return cDiff;
+      // Same confidence → prefer the more recent date
+      return new Date(b.value) - new Date(a.value);
+    });
 
   if (ranked.length > 0) {
     const best = ranked[0];

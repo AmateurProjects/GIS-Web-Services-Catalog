@@ -844,13 +844,22 @@ async function processDataset(ds, storedRecordCount, env) {
   // ── Signal 5: Metadata text ──
   const desc = layerJson?.description || layerJson?.serviceDescription || '';
   const copy = layerJson?.copyrightText || '';
+  // Also check service-level metadata (copyright/description may differ from layer-level)
+  let svcDesc = '', svcCopy = '';
+  try {
+    const svcRoot = await fetchRetry(() => fetchJson(`${parsed.base}?f=pjson`, TIMEOUT_MS));
+    svcDesc = svcRoot?.serviceDescription || svcRoot?.description || '';
+    svcCopy = svcRoot?.copyrightText || '';
+  } catch (_) {}
   const stripHtml = s => s.replace(/<[^>]+>/g, ' ');
-  const allText = [desc, copy].map(stripHtml).join(' ');
+  const allText = [desc, copy, svcDesc, svcCopy].map(stripHtml).join(' ');
 
   const MON = '(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:tember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)';
-  const DATE_RE = `(${MON}\\s+\\d{1,2},?\\s+\\d{4}|\\d{4}[-/]\\d{2}[-/]\\d{2}|\\d{1,2}[-/]\\d{1,2}[-/]\\d{4}|\\d{1,2}[-/]\\d{4}|${MON}\\s+\\d{4})`;
-  const META_KW = '(?:(?:last\\s+)?(?:updated?|modified|revised|edited|refreshed|published)(?:\\s+(?:on|as\\s+of))?|(?:current|data)\\s+(?:as\\s+of|through)|effective|vintage|as\\s+of)';
+  const DATE_RE = `(${MON},?\\s+\\d{1,2},?\\s+\\d{4}|\\d{4}[-/]\\d{2}[-/]\\d{2}|\\d{1,2}[-/]\\d{1,2}[-/]\\d{4}|\\d{1,2}[-/]\\d{4}|${MON},?\\s+\\d{4})`;
+  const META_KW = '(?:(?:last\\s+)?(?:updated?|modified|revised|edited|refreshed|published)(?:\\s+(?:on|as\\s+of))?|(?:current|data)\\s+(?:as\\s+of|through)|(?:data\\s+)?refreshed|effective|vintage|as\\s+of)';
   const parseMetaDate = (s) => {
+    const mcy = s.match(/^([A-Za-z]+),\s+(\d{4})$/);
+    if (mcy) { const d = new Date(`${mcy[1]} 1, ${mcy[2]}`); return isNaN(d.getTime()) ? null : d; }
     const my = s.match(/^(\d{1,2})[-/](\d{4})$/);
     if (my) { const m = +my[1]; return m >= 1 && m <= 12 ? new Date(+my[2], m - 1, 1) : null; }
     if (/^[A-Za-z]/.test(s) && /^\w+\s+\d{4}$/.test(s)) {
@@ -913,7 +922,11 @@ async function processDataset(ds, storedRecordCount, env) {
   const confOrder = { high: 0, medium: 1, low: 2, none: 3 };
   const ranked = signals
     .filter(s => s.value !== null && s.confidence !== 'none')
-    .sort((a, b) => confOrder[a.confidence] - confOrder[b.confidence]);
+    .sort((a, b) => {
+      const cDiff = confOrder[a.confidence] - confOrder[b.confidence];
+      if (cDiff !== 0) return cDiff;
+      return new Date(b.value) - new Date(a.value);
+    });
   const best = ranked[0] || null;
 
   return {

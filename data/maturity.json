@@ -1,0 +1,2459 @@
+{
+  "generated": "2026-03-06T18:29:17.459Z",
+  "totalDatasets": 144,
+  "tiers": {
+    "gold": 0,
+    "silver": 0,
+    "bronze": 144
+  },
+  "datasets": [
+    {
+      "datasetId": "blm_admin_units_blm_administrative_unit_office_points",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_admin_units_blm_administrative_unit_state_boundary_generalized",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_admin_units_blm_administrative_unit_district_boundary_generalized",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_admin_units_blm_administrative_unit_field_boundary_generalized",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_admin_units_blm_administrative_unit_other_boundary_generalized",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_acec",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_nlcs_nm_nca",
+      "score": 52,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 17,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_wilderness_areas",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_wsa",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_wild_scenic_rivers",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_land_use_planning_boundaries",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_land_use_plans_approved_2022",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_revision_dev_land_use_plans",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_visual_resource_inventory",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_grazing_allotments",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_grazing_pastures",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_oil_gas_leases",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_oil_gas_agreements",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_oil_gas_participating_areas",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_oil_shale_leases",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_geothermal_leases",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_coal_cases",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_mining_claims_active",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_mining_claims_closed",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_non_energy_leasables",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_mineral_materials",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_locatable_notices",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_locatable_plans_operations",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_locatable_allocations",
+      "score": 26,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 4,
+        "issues": -3,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_timber_allocations",
+      "score": 26,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 4,
+        "issues": -3,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_row",
+      "score": 52,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 17,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_lua_leases_permits",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_wild_horse_burro_herd_areas",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_wild_horse_burro_hma",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_eplanning_projects_eplanning_comment_point",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_eplanning_projects_eplanning_comment_map_polyline",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_eplanning_projects_epl_cmt_map_poly",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_eplanning_projects_eplanning_comment",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_fire_perimeters",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_recreation_sites",
+      "score": 39,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 4,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_lwcf",
+      "score": 39,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 4,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_gtlf_roads_trails",
+      "score": 39,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 4,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_danl",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_tga_1_9_000_000",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_tga_1_7_000_000",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_tga_1_4_000_000",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_tga_1_1_500_000",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_tga_taylor_grazing_act_district_boundaries_polygons",
+      "score": 52,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 17,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "blm_fiat_sagebrush",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "plss_township",
+      "score": 39,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 4,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "plss_section",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "plss_parcel",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usa_federal_lands",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfws_critical_habitat_final_critical_habitat_features",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfws_critical_habitat_proposed_critical_habitat_features",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfws_at_risk_species",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfws_nwr_boundaries",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfws_regions",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usgs_ungulate_migration",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usgs_3dep_elevation",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_wetlands_wetlands",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_wetlands_wetlands_conus_east",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_wetlands_wetlands_conus_west",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_wetlands_wetlands_hawaii",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_wetlands_wetlands_pactrust",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_wetlands_wetlands_prvi",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_wetlands_wetlands_project_metadata",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_wetlands_nwi_wetland_codes",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_riparian_riparian",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nwi_riparian_riparian_mapping_areas",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_point",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_point_event",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_line_large_scale",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_flow_direction",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_flowline_small_scale",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_flowline_small_scale_hi_pr_vi_pacific_territories",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_flowline_large_scale",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_area_small_scale",
+      "score": 52,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 17,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_area_small_scale_hi_pr_vi_pacific_territories",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_area_large_scale",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_waterbody_small_scale",
+      "score": 52,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 17,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_waterbody_small_scale_hi_pr_vi_pacific_territories",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhd_waterbody_large_scale",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdplusgage",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdplussink",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdpoint",
+      "score": 39,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 4,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_networknhdflowline",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nonnetworknhdflowline",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_flowdirection",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdpluswall",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdline",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdarea",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdwaterbody",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdpluscatchment",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_nhdplusboundaryunit",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "nhdplus_hr_wbdhu12",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_wbdline",
+      "score": 52,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 17,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_2_digit_hu_region",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_4_digit_hu_subregion",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_6_digit_hu_basin",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_8_digit_hu_subbasin",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_10_digit_hu_watershed",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_12_digit_hu_subwatershed",
+      "score": 47,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 12,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_14_digit_hu",
+      "score": 43,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 8,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "wbd_16_digit_hu",
+      "score": 39,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 4,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "bia_aian_lands",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "bia_tribal_statistical_areas",
+      "score": 55,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 20,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_nfhl_availability",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_firm_panels",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_lomrs",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_lomas",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_political_jurisdictions",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_profile_baselines",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_water_lines",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_cross_sections",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_base_flood_elevations",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_levees",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_seclusion_boundaries",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_coastal_transects",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_transect_baselines",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_general_structures",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_river_mile_markers",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_water_areas",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_plss",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_limit_of_moderate_wave_action",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_flood_hazard_boundaries",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_flood_hazard_zones",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_primary_frontal_dunes",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_base_index",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_topographic_low_confidence_areas",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_datum_conversion_points",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_coastal_gages",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_gages",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_nodes",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_high_water_marks",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_station_start_points",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_hydrologic_reaches",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_alluvial_fans",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_subbasins",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "fema_nfhl_study_info",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfs_inventoried_roadless",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfs_boundaries_administrative_forest_boundaries_national_extent",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfs_boundaries_administrative_forest_boundaries_regional_extent",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    },
+    {
+      "datasetId": "usfs_wilderness",
+      "score": 35,
+      "tier": "bronze",
+      "components": {
+        "basics": 15,
+        "steward": 0,
+        "webService": 10,
+        "dataStandard": 0,
+        "stage": 10,
+        "issues": 0,
+        "serviceMetadata": 0,
+        "serviceCapabilities": 0,
+        "nullHealth": 0,
+        "freshnessConfidence": 0
+      }
+    }
+  ]
+}

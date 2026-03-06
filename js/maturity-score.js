@@ -293,10 +293,48 @@ export function scoreAttributeNullHealth({ fields, fieldStats }) {
   return { score: Math.max(0, Math.min(20, score)), max: 20, details };
 }
 
+// ── 10. Freshness Confidence (0–10) ──
+// Scores how reliably we can detect when this dataset was last updated.
+// Higher-confidence freshness signals indicate better-instrumented services.
+
+export function scoreFreshnessConfidence(freshnessResult) {
+  if (!freshnessResult) {
+    return {
+      score: 0,
+      max: 10,
+      details: [{ label: 'No freshness data available', ok: false, pts: 0, maxPts: 10 }],
+    };
+  }
+
+  const confidence = (freshnessResult.confidence || 'none').toLowerCase();
+  let pts;
+  let label;
+
+  if (confidence === 'high') {
+    pts = 10;
+    label = 'High confidence freshness indicator detected';
+  } else if (confidence === 'medium') {
+    pts = 7;
+    label = 'Medium confidence freshness indicator detected';
+  } else if (confidence === 'low') {
+    pts = 3;
+    label = 'Low confidence freshness indicator detected';
+  } else {
+    pts = 0;
+    label = 'No freshness indicator detected';
+  }
+
+  return {
+    score: pts,
+    max: 10,
+    details: [{ label, ok: pts >= 7, pts, maxPts: 10 }],
+  };
+}
+
 // ── Composite score ──
 
-export function computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth }) {
-  const components = { basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth };
+export function computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth, freshnessConfidence }) {
+  const components = { basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth, freshnessConfidence };
   let total = 0;
   let max = 0;
   let hasPending = false;
@@ -309,7 +347,7 @@ export function computeFullScore({ basics, steward, webService, dataStandard, st
     }
   });
 
-  // Max possible is 100 (15+10+10+5+10+0+15+15+20). Penalties can push below 0.
+  // Max possible is 110 (15+10+10+5+10+0+15+15+20+10). Clamped to 100. Penalties can push below 0.
   const clamped = Math.max(0, Math.min(100, total));
   const tier = tierFromScore(clamped);
 

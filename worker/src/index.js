@@ -51,7 +51,7 @@ const RETRY_DELAY_MS = 2_000;
 // Cloudflare Workers free plan: 50 outbound fetch() per invocation.
 // We split scans into small batches to stay under this limit.
 // Health: ~3 fetches per service (metadata + layer discovery + query) → batch of 10 = ~30 subrequests.
-// Freshness: ~4 fetches per dataset → batch of 5 = ~22 subrequests.
+// Freshness: ~5 fetches per dataset (incl. FGDC metadata XML) → batch of 5 = ~27 subrequests.
 const HEALTH_BATCH_SIZE = 10;
 const FRESHNESS_BATCH_SIZE = 5;
 
@@ -808,6 +808,55 @@ async function fetchJson(url, timeout = TIMEOUT_MS) {
   }
 }
 
+async function fetchXmlText(layerUrl) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    const resp = await fetch(`${layerUrl}/metadata`, { signal: controller.signal });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    return await resp.text();
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function parseFgdcDate(xml) {
+  if (!xml || typeof xml !== 'string') return null;
+  const tagPattern = /<(?:pubdate|pubDate|caldate)>([\d\-]+)<\/(?:pubdate|pubDate|caldate)>/gi;
+  let best = null;
+  let m;
+  while ((m = tagPattern.exec(xml)) !== null) {
+    const raw = m[1].trim();
+    const d = parseFgdcDateValue(raw);
+    if (d && isValidRealisticDate(d) && (!best || d > best)) {
+      best = d;
+    }
+  }
+  return best;
+}
+
+function parseFgdcDateValue(raw) {
+  if (/^\d{8}$/.test(raw)) {
+    const y = +raw.slice(0, 4), mo = +raw.slice(4, 6) - 1, day = +raw.slice(6, 8);
+    const d = new Date(y, mo, day);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    const d = new Date(raw + 'T00:00:00');
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (/^\d{6}$/.test(raw)) {
+    const y = +raw.slice(0, 4), mo = +raw.slice(4, 6) - 1;
+    const d = new Date(y, mo, 1);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  if (/^\d{4}$/.test(raw)) {
+    const d = new Date(+raw, 0, 1);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+
 async function fetchRetry(fn) {
   for (let i = 0; i <= MAX_RETRIES; i++) {
     try {
@@ -1059,7 +1108,25 @@ async function processDataset(ds, storedRecordCount, env) {
     }
   }
 
-  // ── Signal 6: Any remaining date field fallback ──
+  // ── Signal 6: FGDC/ISO metadata XML (pubdate / caldate) ──
+  try {
+    const metaXml = await fetchXmlText(queryTarget);
+    const fgdcDate = parseFgdcDate(metaXml);
+    if (fgdcDate) {
+      signals.push({
+        signal: 'fgdc_metadata',
+        value: fgdcDate.toISOString(),
+        confidence: 'medium',
+        detail: `FGDC/ISO metadata publication date: ${fgdcDate.toISOString().slice(0, 10)}`,
+      });
+    } else {
+      signals.push({ signal: 'fgdc_metadata', value: null, confidence: 'none', detail: 'No publication date in FGDC/ISO metadata' });
+    }
+  } catch (_) {
+    signals.push({ signal: 'fgdc_metadata', value: null, confidence: 'none', detail: 'Could not fetch FGDC/ISO metadata XML' });
+  }
+
+  // ── Signal 7: Any remaining date field fallback ──
   if (!_isImageSvc && dateFields.length > 3) {
     const hasDateResult = signals.some(s =>
       s.value !== null && s.confidence !== 'none' &&

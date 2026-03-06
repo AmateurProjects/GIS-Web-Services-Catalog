@@ -13,6 +13,7 @@ import {
   scoreServiceMetadata,
   scoreServiceCapabilities,
   scoreAttributeNullHealth,
+  scoreFreshnessConfidence,
   computeFullScore,
   tierFromScore,
   TIER_META,
@@ -30,6 +31,22 @@ async function loadMaturityCache() {
     return _maturityCache;
   } catch {
     _maturityCache = null;
+    return null;
+  }
+}
+
+// ── Freshness index cache (loaded once for confidence lookup) ──
+let _freshnessIndex = undefined;
+
+async function loadFreshnessIndex() {
+  if (_freshnessIndex !== undefined) return _freshnessIndex;
+  try {
+    const resp = await fetch('data/freshness.json');
+    if (!resp.ok) { _freshnessIndex = null; return null; }
+    _freshnessIndex = await resp.json();
+    return _freshnessIndex;
+  } catch {
+    _freshnessIndex = null;
     return null;
   }
 }
@@ -81,6 +98,12 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
   }
 
   // ── Fallback: compute client-side ──
+
+  // Load freshness index for confidence scoring
+  const freshnessIdx = await loadFreshnessIndex();
+  const freshnessResult = freshnessIdx?.datasets?.find(d => d.datasetId === dataset.id) || null;
+  const freshnessConfidence = scoreFreshnessConfidence(freshnessResult);
+
   const basics = scoreCatalogBasics(dataset);
   const steward = scoreDataSteward(dataset);
   const webService = scoreWebService(dataset);
@@ -126,7 +149,7 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
 
   // ── Render / re-render card body ──
   function render() {
-    const full = computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth });
+    const full = computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth, freshnessConfidence });
     const tierMeta = TIER_META[full.tier] || TIER_META.bronze;
 
     // Update card border color
@@ -151,7 +174,7 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
       </div>
     `;
 
-    // ── Sub-scores ──
+    // ── Sub-scores (used for details + suggestions, not rendered as bars) ──
     const subs = [
       { key: 'basics',              label: 'Catalog Basics',          data: basics },
       { key: 'steward',             label: 'Data Steward',            data: steward },
@@ -162,48 +185,19 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
       { key: 'serviceMetadata',     label: 'Service Metadata',        data: serviceMetadata },
       { key: 'serviceCapabilities', label: 'Service Capabilities',    data: serviceCapabilities },
       { key: 'nullHealth',          label: 'Attribute Null Health',   data: nullHealth },
+      { key: 'freshnessConfidence', label: 'Freshness Confidence',    data: freshnessConfidence },
     ];
-
-    html += '<div class="maturity-subscores">';
-    subs.forEach(sub => {
-      const d = sub.data;
-      // For penalty-only categories (max=0), show as a tag not a bar
-      if (d.max === 0) {
-        if (d.score < 0) {
-          html += `
-            <div class="maturity-subscore-item">
-              <div class="maturity-subscore-header">
-                <span class="maturity-subscore-label">${escapeHtml(sub.label)}</span>
-                <span class="maturity-subscore-value" style="color:var(--red, #ef4444);">${d.score}</span>
-              </div>
-            </div>
-          `;
-        }
-        // If no penalty, skip showing this row entirely
-        return;
-      }
-      const pct = d.max > 0 ? Math.round((d.score / d.max) * 100) : 0;
-      const pending = d.pending ? ' <span class="maturity-pending-badge">analyzing\u2026</span>' : '';
-      html += `
-        <div class="maturity-subscore-item">
-          <div class="maturity-subscore-header">
-            <span class="maturity-subscore-label">${escapeHtml(sub.label)}${pending}</span>
-            <span class="maturity-subscore-value">${d.score}/${d.max}</span>
-          </div>
-          <div class="completeness-bar-track small">
-            <div class="completeness-bar-fill" style="width:${pct}%; background:${barColor(pct)};"></div>
-          </div>
-        </div>
-      `;
-    });
-    html += '</div>';
 
     // ── Collapsible details ──
     html += '<details class="maturity-details-toggle">';
     html += '<summary>Score Details</summary>';
     html += '<div class="maturity-details-content">';
     subs.forEach(sub => {
-      html += `<h5>${escapeHtml(sub.label)}</h5><ul class="maturity-check-list">`;
+      const target = SCROLL_TARGETS[sub.key] || '';
+      const headingLink = target
+        ? `<a href="#" class="maturity-scroll-link" data-scroll-target="${escapeHtml(target)}">${escapeHtml(sub.label)}</a>`
+        : escapeHtml(sub.label);
+      html += `<h5>${headingLink} <span class="maturity-subscore-inline">${sub.data.score}/${sub.data.max}</span></h5><ul class="maturity-check-list">`;
       sub.data.details.forEach(d => {
         if (d.pending) {
           html += `<li class="maturity-check-pending">\u2022 ${escapeHtml(d.label)}</li>`;
@@ -225,11 +219,33 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
       html += '<div class="maturity-suggestions">';
       html += '<div class="suggestions-header"><strong>Suggestions to improve:</strong></div>';
       html += '<ul class="suggestions-list">';
-      suggestions.forEach(s => { html += `<li>${escapeHtml(s)}</li>`; });
+      suggestions.forEach(s => {
+        const target = s._scrollTarget || '';
+        if (target) {
+          html += `<li><a href="#" class="maturity-scroll-link" data-scroll-target="${escapeHtml(target)}">${escapeHtml(s.text)}</a></li>`;
+        } else {
+          html += `<li>${escapeHtml(s.text)}</li>`;
+        }
+      });
       html += '</ul></div>';
     }
 
     body.innerHTML = html;
+
+    // Wire scroll-link click handlers
+    body.querySelectorAll('.maturity-scroll-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const selector = link.getAttribute('data-scroll-target');
+        if (!selector) return;
+        const targetEl = hostEl.querySelector(selector);
+        if (targetEl) {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          targetEl.classList.add('maturity-highlight');
+          setTimeout(() => targetEl.classList.remove('maturity-highlight'), 2000);
+        }
+      });
+    });
   }
 }
 
@@ -240,6 +256,20 @@ function barColor(pct) {
   if (pct >= 60) return 'var(--amber, #f59e0b)';
   return 'var(--red, #ef4444)';
 }
+
+// Maps sub-score keys to CSS selectors for scrolling to the relevant section
+const SCROLL_TARGETS = {
+  basics:              '[data-field-key="title"]',
+  steward:             '[data-field-key="contact_email"]',
+  webService:          '[data-field-key="public_web_service"]',
+  dataStandard:        '[data-field-key="data_standard"]',
+  stage:               '[data-field-key="development_stage"]',
+  issues:              '[data-field-key="blockers"]',
+  serviceMetadata:     '#serviceMetadataCard',
+  serviceCapabilities: '#serviceMetadataCard',
+  nullHealth:          '#fieldsCard',
+  freshnessConfidence: '#freshnessCard',
+};
 
 /**
  * Generate actionable suggestions from the sub-score details.
@@ -252,7 +282,7 @@ function generateSuggestions(subs) {
     sub.data.details.forEach(d => {
       if (d.pending || d.ok) return;
       const s = suggestFor(sub.key, d);
-      if (s) suggestions.push(s);
+      if (s) suggestions.push({ text: s, _scrollTarget: SCROLL_TARGETS[sub.key] || '' });
     });
   });
 
@@ -279,6 +309,10 @@ function suggestFor(category, detail) {
   if (category === 'nullHealth') {
     if (detail.label?.includes('null rate')) return 'Reduce null values in attribute columns';
     if (detail.label?.includes('over 80%')) return 'Remove or populate nearly-empty columns';
+  }
+  if (category === 'freshnessConfidence') {
+    if (detail.label?.includes('No freshness')) return 'Ensure the web service exposes edit tracking or date fields so freshness can be detected';
+    if (!detail.ok) return 'Enable editor tracking on the service to improve freshness detection confidence';
   }
   return null;
 }

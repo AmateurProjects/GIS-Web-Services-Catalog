@@ -6,7 +6,8 @@
 //   3. Common date field heuristics (MAX on fields named *EDIT_DATE*, *MODIFY*, etc.)
 //   4. Record count delta (compared to stored baseline)
 //   5. Service metadata text (date patterns in description/copyright/documentInfo)
-//   6. Any remaining date field fallback (MAX on untried date fields — low confidence)
+//   6. FGDC/ISO metadata XML (pubdate, caldate from /metadata endpoint)
+//   7. Any remaining date field fallback (MAX on untried date fields — low confidence)
 //
 // Each signal carries a confidence level: high | medium | low | none.
 
@@ -380,7 +381,28 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
     });
   }
 
-  // ── Signal 6: Any remaining date field fallback ──
+  // ── Signal 6: FGDC/ISO metadata XML (pubdate / caldate) ──
+  // ArcGIS Server exposes an XML metadata endpoint at {layer}/metadata that often
+  // contains publication dates (pubdate, caldate, pubDate) even when the REST JSON
+  // has no date information at all.
+  try {
+    const metaXml = await fetchXmlText(queryTarget);
+    const fgdcDate = parseFgdcDate(metaXml);
+    if (fgdcDate) {
+      signals.push({
+        signal: 'fgdc_metadata',
+        value: fgdcDate.toISOString(),
+        confidence: 'medium',
+        detail: `FGDC/ISO metadata publication date: ${fgdcDate.toISOString().slice(0, 10)}`,
+      });
+    } else {
+      signals.push({ signal: 'fgdc_metadata', value: null, confidence: 'none', detail: 'No publication date in FGDC/ISO metadata' });
+    }
+  } catch (_) {
+    signals.push({ signal: 'fgdc_metadata', value: null, confidence: 'none', detail: 'Could not fetch FGDC/ISO metadata XML' });
+  }
+
+  // ── Signal 7: Any remaining date field fallback ──
   // If no date-based signal (1-3) produced a result, try all remaining date fields
   if (!_isImageSvc && dateFields.length > 3) {
     const hasDateResult = signals.some(s =>
@@ -443,6 +465,69 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
   };
 }
 
+// ── FGDC/ISO metadata XML helpers ──
+
+async function fetchXmlText(layerUrl) {
+  const controller = new AbortController();
+  const t = setTimeout(() => controller.abort(), 8000);
+  try {
+    const resp = await fetch(`${layerUrl}/metadata`, {
+      method: 'GET', mode: 'cors', cache: 'no-store', signal: controller.signal,
+    });
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    return await resp.text();
+  } finally {
+    clearTimeout(t);
+  }
+}
+
+/**
+ * Parse publication/calendar dates from FGDC or ISO 19139 metadata XML.
+ * Looks for <pubdate>, <pubDate>, and <caldate> elements.
+ * Returns the most recent valid Date, or null.
+ */
+function parseFgdcDate(xml) {
+  if (!xml || typeof xml !== 'string') return null;
+  // Match <pubdate>YYYYMMDD</pubdate>, <pubDate>YYYY-MM-DD</pubDate>, <caldate>YYYYMMDD</caldate>
+  const tagPattern = /<(?:pubdate|pubDate|caldate)>([\d\-]+)<\/(?:pubdate|pubDate|caldate)>/gi;
+  let best = null;
+  let m;
+  while ((m = tagPattern.exec(xml)) !== null) {
+    const raw = m[1].trim();
+    const d = parseFgdcDateValue(raw);
+    if (d && isValidRealisticDate(d) && (!best || d > best)) {
+      best = d;
+    }
+  }
+  return best;
+}
+
+function parseFgdcDateValue(raw) {
+  // YYYYMMDD (FGDC compact format)
+  if (/^\d{8}$/.test(raw)) {
+    const y = +raw.slice(0, 4), mo = +raw.slice(4, 6) - 1, day = +raw.slice(6, 8);
+    const d = new Date(y, mo, day);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  // YYYY-MM-DD (ISO format)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+    const d = new Date(raw + 'T00:00:00');
+    return isNaN(d.getTime()) ? null : d;
+  }
+  // YYYYMM (year-month only)
+  if (/^\d{6}$/.test(raw)) {
+    const y = +raw.slice(0, 4), mo = +raw.slice(4, 6) - 1;
+    const d = new Date(y, mo, 1);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  // YYYY (year only)
+  if (/^\d{4}$/.test(raw)) {
+    const d = new Date(+raw, 0, 1);
+    return isNaN(d.getTime()) ? null : d;
+  }
+  return null;
+}
+
 // ── Query MAX(dateField) ──
 
 async function queryMaxDate(queryTarget, fieldName) {
@@ -489,6 +574,7 @@ const SIGNAL_LABELS = {
   'date_field_heuristic':     'Date field heuristic (MAX query)',
   'record_count_delta':       'Record count change',
   'metadata_text':            'Metadata text parsing (description/copyright/documentInfo)',
+  'fgdc_metadata':            'FGDC/ISO metadata XML (publication date)',
   'any_date_field':           'Date field fallback (any date attribute)',
   'none':                     'No signal available',
 };

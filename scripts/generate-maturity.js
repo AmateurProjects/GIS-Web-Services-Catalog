@@ -22,6 +22,7 @@ const DATA_DIR = join(process.cwd(), 'data');
 const CATALOG_PATH = join(DATA_DIR, 'catalog.json');
 const SERVICE_INFO_DIR = join(DATA_DIR, 'service-info');
 const OUTPUT_PATH = join(DATA_DIR, 'maturity.json');
+const FRESHNESS_PATH = join(DATA_DIR, 'freshness.json');
 
 // ── Load catalog ──
 let catalog;
@@ -195,8 +196,21 @@ function scoreAttributeNullHealth({ fields, fieldStats }) {
   return { score: Math.max(0, Math.min(20, score)), max: 20, details };
 }
 
-function computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth }) {
-  const components = { basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth };
+function scoreFreshnessConfidence(freshnessResult) {
+  if (!freshnessResult) {
+    return { score: 0, max: 10, details: [{ label: 'No freshness data available', ok: false, pts: 0, maxPts: 10 }] };
+  }
+  const confidence = (freshnessResult.confidence || 'none').toLowerCase();
+  let pts, label;
+  if (confidence === 'high') { pts = 10; label = 'High confidence freshness indicator detected'; }
+  else if (confidence === 'medium') { pts = 7; label = 'Medium confidence freshness indicator detected'; }
+  else if (confidence === 'low') { pts = 3; label = 'Low confidence freshness indicator detected'; }
+  else { pts = 0; label = 'No freshness indicator detected'; }
+  return { score: pts, max: 10, details: [{ label, ok: pts >= 7, pts, maxPts: 10 }] };
+}
+
+function computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth, freshnessConfidence }) {
+  const components = { basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth, freshnessConfidence };
   let total = 0;
   let max = 0;
   Object.values(components).forEach(c => {
@@ -220,6 +234,19 @@ function loadServiceInfo(datasetId) {
 const results = [];
 const tierCounts = { gold: 0, silver: 0, bronze: 0 };
 
+// Load freshness index for confidence scoring
+let freshnessIndex = null;
+try {
+  if (existsSync(FRESHNESS_PATH)) {
+    freshnessIndex = JSON.parse(readFileSync(FRESHNESS_PATH, 'utf-8'));
+    console.log(`Loaded freshness.json (${(freshnessIndex.datasets || []).length} datasets)`);
+  } else {
+    console.log('No freshness.json found — freshness confidence will score 0 for all datasets');
+  }
+} catch (err) {
+  console.warn('Could not load freshness.json:', err.message);
+}
+
 datasets.forEach(ds => {
   const info = loadServiceInfo(ds.id);
 
@@ -240,7 +267,11 @@ datasets.forEach(ds => {
   const serviceCapabilities = scoreServiceCapabilities({ serviceJson, layerJson });
   const nullHealth = scoreAttributeNullHealth({ fields, fieldStats });
 
-  const full = computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth });
+  // Freshness confidence from pre-computed freshness index
+  const freshnessResult = freshnessIndex?.datasets?.find(d => d.datasetId === ds.id) || null;
+  const freshnessConfidence = scoreFreshnessConfidence(freshnessResult);
+
+  const full = computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth, freshnessConfidence });
 
   tierCounts[full.tier]++;
 
@@ -258,6 +289,7 @@ datasets.forEach(ds => {
       serviceMetadata: serviceMetadata.score,
       serviceCapabilities: serviceCapabilities.score,
       nullHealth: nullHealth.score,
+      freshnessConfidence: freshnessConfidence.score,
     },
   });
 });

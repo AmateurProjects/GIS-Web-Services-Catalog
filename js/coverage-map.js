@@ -97,7 +97,7 @@ export async function fetchCensusStateBoundaries() {
 /**
  * Query a dataset's feature service for the count of features that intersect
  * a given polygon geometry (one state boundary) using the ArcGIS JS SDK.
- * A small inward buffer (-2 km) is applied to the state polygon to exclude
+ * A small inward buffer (-0.5 mi) is applied to the state polygon to exclude
  * sliver intersections along shared borders.
  */
 export async function queryFeatureCountInGeometry(serviceUrl, layerId, geometry) {
@@ -107,9 +107,9 @@ export async function queryFeatureCountInGeometry(serviceUrl, layerId, geometry)
   const parsed = parseServiceAndLayerId(base);
   const target = parsed.isLayerUrl ? base : `${base}/${layerId}`;
 
-  // Negative geodesic buffer shrinks the polygon inward by 2 km,
+  // Negative geodesic buffer shrinks the polygon inward by 0.5 miles,
   // eliminating thin slivers at state boundaries from being counted.
-  const buffered = _geometryEngine.geodesicBuffer(geometry, -2, 'kilometers');
+  const buffered = _geometryEngine.geodesicBuffer(geometry, -0.5, 'miles');
 
   // If the buffer collapses the polygon entirely (tiny island/territory),
   // fall back to the original geometry.
@@ -421,8 +421,8 @@ export function paintCoverageResult(statusEl, contentEl, results) {
   const { svg, statesWithData, totalFeatures, totalStates, failedCount } =
     buildCoverageMapSVG(results);
 
-  let summary = `${statesWithData} of ${totalStates} states with data \u00b7 ${totalFeatures.toLocaleString()} intersections`;
-  if (failedCount > 0) summary += ` \u00b7 ${failedCount} state(s) could not be queried`;
+  let summary = `${statesWithData} states with data.`;
+  if (failedCount > 0) summary += ` ${failedCount} state(s) could not be queried.`;
   statusEl.textContent = summary;
   contentEl.innerHTML = svg;
 }
@@ -449,7 +449,7 @@ export async function renderCoverageFromPrecomputed(statusEl, contentEl, coverag
     const entries = Object.entries(coverageData.states || {});
     const withData = entries.filter(([, c]) => c > 0).length;
     const total = entries.reduce((s, [, c]) => s + Math.max(0, c), 0);
-    statusEl.textContent = `${withData} states with data \u00b7 ${total.toLocaleString()} intersections (pre-computed ${generatedDate}). Map unavailable \u2014 Census boundary fetch failed.`;
+    statusEl.textContent = `${withData} states with data. (map generated ${generatedDate}). Map unavailable \u2014 Census boundary fetch failed.`;
     return;
   }
 
@@ -468,6 +468,6 @@ export async function renderCoverageFromPrecomputed(statusEl, contentEl, coverag
 
   paintCoverageResult(statusEl, contentEl, results);
 
-  // Append pre-computed note to the status line
-  statusEl.textContent += ` (pre-computed ${generatedDate})`;
+  // Append generated date to the status line
+  statusEl.textContent += ` (map generated ${generatedDate})`;
 }

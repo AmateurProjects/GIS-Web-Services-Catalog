@@ -187,18 +187,24 @@ export function initializeArcGISMap(serviceUrl, layerId) {
       if (svcType === 'MapServer') {
         // Use MapImageLayer for MapServer
         layer = new MapImageLayer({
-          url: serviceUrl
+          url: serviceUrl,
+          minScale: 0,
+          maxScale: 0
         });
       } else if (svcType === 'FeatureServer') {
         // Use FeatureLayer for FeatureServer
         const layerUrl = serviceUrl.replace(/\/FeatureServer\/?$/i, `/FeatureServer/${layerId}`);
         layer = new FeatureLayer({
-          url: layerUrl
+          url: layerUrl,
+          minScale: 0,
+          maxScale: 0
         });
       } else if (svcType === 'ImageServer') {
         // Use ImageryLayer for ImageServer (raster/imagery services)
         layer = new ImageryLayer({
-          url: serviceUrl
+          url: serviceUrl,
+          minScale: 0,
+          maxScale: 0
         });
       } else {
         mapContainer.innerHTML = '<p style="padding:1rem; color:var(--text-muted);">Unsupported service type for interactive map</p>';
@@ -435,7 +441,7 @@ function buildMapCardHTML(url, layerId) {
   return `
     <div class="card" style="margin-top:0.75rem;">
       <div class="card-header-row"><div style="font-weight:600;">Interactive Map</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
-      <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset</div>
+      <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset. Scale-dependent rendering limits are overridden so data draws at all zoom levels.</div>
       <div id="arcgisMapContainer"
            data-service-url="${escapeHtml(url)}"
            data-layer-id="${layerId}"

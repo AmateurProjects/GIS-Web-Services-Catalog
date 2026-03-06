@@ -1,8 +1,6 @@
-// maturity-score.js — Automated data maturity scoring engine.
+// maturity-score.js — Simplified data maturity scoring engine.
 // Pure synchronous scoring functions — no DOM, no fetch.
-// Each sub-score returns { score, max, details[] }.
-
-import { getAttributesForDataset } from './catalog.js';
+// Each check returns { label, ok, pts, maxPts, ... }.
 
 // ── Tier thresholds ──
 
@@ -18,147 +16,247 @@ export const TIER_META = {
   bronze: { label: 'Bronze', icon: '🥉', css: 'tier-bronze' },
 };
 
-// ── Sub-score: Catalog Completeness (0–30) ──
+// ── 1. Catalog Basics (0–15) ──
+// Dataset Name, Description, Agency Owner filled out (5 each).
 
-export function scoreCatalogCompleteness(dataset) {
+export function scoreCatalogBasics(dataset) {
   const checks = [
-    // Core metadata (11 items)
-    { key: 'title',            label: 'Title',              present: !!dataset.title },
-    { key: 'description',     label: 'Description',        present: !!dataset.description },
-    { key: 'agency_owner',    label: 'Agency Owner',       present: !!dataset.agency_owner },
-    { key: 'office_owner',    label: 'Office Owner',       present: !!dataset.office_owner },
-    { key: 'contact_email',   label: 'Contact Email',      present: !!dataset.contact_email },
-    { key: 'geometry_type',   label: 'Geometry Type',      present: !!dataset.geometry_type },
-    { key: 'update_frequency', label: 'Update Frequency',  present: !!dataset.update_frequency },
-    { key: 'access_level',    label: 'Access Level',       present: !!dataset.access_level },
-    { key: 'topics',          label: 'Topics',             present: Array.isArray(dataset.topics) && dataset.topics.length > 0 },
-    { key: 'public_web_service', label: 'Public Web Service', present: !!dataset.public_web_service },
-    { key: 'data_standard',   label: 'Data Standard',      present: !!dataset.data_standard },
-    // Bonus metadata (4 items)
-    { key: 'development_stage', label: 'Development Stage', present: !!dataset.development_stage && dataset.development_stage !== 'unknown' },
-    { key: 'notes',           label: 'Notes',              present: !!dataset.notes },
-    { key: 'objname',         label: 'Database Object Name', present: !!dataset.objname },
-    { key: 'projection',      label: 'Projection',         present: !!dataset.projection },
+    { key: 'title',        label: 'Dataset Name',    present: !!dataset.title },
+    { key: 'description',  label: 'Description',     present: !!dataset.description },
+    { key: 'agency_owner', label: 'Agency Owner',    present: !!dataset.agency_owner },
   ];
 
-  const filled = checks.filter(c => c.present).length;
-  const total = checks.length; // 15
-  const score = Math.round((filled / total) * 30);
+  let score = 0;
+  const details = checks.map(c => {
+    const pts = c.present ? 5 : 0;
+    score += pts;
+    return { label: c.label, ok: c.present, pts, maxPts: 5, key: c.key };
+  });
 
-  return { score, max: 30, filled, total, details: checks };
+  return { score, max: 15, details };
 }
 
-// ── Sub-score: Service Health (0–25) ──
+// ── 2. Data Steward (0–10) ──
+// Contact Email filled out.
 
-export function scoreServiceHealth({ serviceJson, layerJson }) {
+export function scoreDataSteward(dataset) {
+  const has = !!dataset.contact_email;
+  return {
+    score: has ? 10 : 0,
+    max: 10,
+    details: [{ label: 'Data steward (Contact Email)', ok: has, pts: has ? 10 : 0, maxPts: 10 }],
+  };
+}
+
+// ── 3. Web Service URL (0–10) ──
+// Public Web Service if Access Level is Public, and/or Internal Web Service filled out.
+
+export function scoreWebService(dataset) {
+  const accessLevel = (dataset.access_level || '').toLowerCase();
+  const hasPublic = !!dataset.public_web_service;
+  const hasInternal = !!dataset.internal_web_service;
+
+  const details = [];
+  let score = 0;
+
+  if (accessLevel === 'public' || !accessLevel) {
+    // Public datasets should have a public URL
+    const ok = hasPublic;
+    const pts = ok ? 10 : 0;
+    score += pts;
+    details.push({ label: 'Public Web Service URL', ok, pts, maxPts: 10 });
+  } else {
+    // Internal/restricted — internal URL sufficient, public is bonus
+    if (hasInternal || hasPublic) {
+      score = 10;
+      details.push({ label: hasInternal ? 'Internal Web Service URL' : 'Public Web Service URL', ok: true, pts: 10, maxPts: 10 });
+    } else {
+      details.push({ label: 'Web Service URL (Public or Internal)', ok: false, pts: 0, maxPts: 10 });
+    }
+  }
+
+  return { score, max: 10, details };
+}
+
+// ── 4. Data Standard (0–5) ──
+
+export function scoreDataStandard(dataset) {
+  const has = !!dataset.data_standard;
+  return {
+    score: has ? 5 : 0,
+    max: 5,
+    details: [{ label: 'Data Standard', ok: has, pts: has ? 5 : 0, maxPts: 5 }],
+  };
+}
+
+// ── 5. Development Stage (0–10) ──
+// Production = full points. Anything else = partial.
+
+export function scoreDevelopmentStage(dataset) {
+  const stage = (dataset.development_stage || '').toLowerCase();
+  let pts;
+  let label;
+  if (stage === 'production') {
+    pts = 10;
+    label = 'Production';
+  } else if (stage === 'qa') {
+    pts = 7;
+    label = 'QA';
+  } else if (stage === 'in_development') {
+    pts = 4;
+    label = 'In Development';
+  } else if (stage === 'planned') {
+    pts = 2;
+    label = 'Planned';
+  } else if (stage === 'deprecated') {
+    pts = 1;
+    label = 'Deprecated';
+  } else {
+    pts = 0;
+    label = 'Not set';
+  }
+
+  return {
+    score: pts,
+    max: 10,
+    details: [{ label: `Development Stage: ${label}`, ok: pts === 10, pts, maxPts: 10 }],
+  };
+}
+
+// ── 6. Blockers & Improvements (penalty, 0 to -10) ──
+// Having open blockers or improvements needed lowers the score.
+
+export function scoreBlockersImprovements(dataset) {
+  const blockers = Array.isArray(dataset.blockers) ? dataset.blockers.filter(b => !!b) : [];
+  const improvements = Array.isArray(dataset.improvements) ? dataset.improvements.filter(i => !!i) : [];
+  const total = blockers.length + improvements.length;
+
+  const details = [];
+  let penalty = 0;
+
+  if (blockers.length > 0) {
+    const p = Math.min(blockers.length * 3, 6);
+    penalty += p;
+    details.push({ label: `${blockers.length} blocker(s)`, ok: false, pts: -p, maxPts: 0, isPenalty: true });
+  }
+  if (improvements.length > 0) {
+    const p = Math.min(improvements.length * 2, 4);
+    penalty += p;
+    details.push({ label: `${improvements.length} improvement(s) needed`, ok: false, pts: -p, maxPts: 0, isPenalty: true });
+  }
+  if (total === 0) {
+    details.push({ label: 'No blockers or improvements needed', ok: true, pts: 0, maxPts: 0 });
+  }
+
+  return {
+    score: -penalty,
+    max: 0,
+    details,
+  };
+}
+
+// ── 7. Service Metadata (0–15) ──
+// Description, Copyright, Subject filled out in the live service JSON.
+
+export function scoreServiceMetadata({ serviceJson, layerJson }) {
   if (!serviceJson) {
     return {
       score: 0,
-      max: 25,
+      max: 15,
       pending: true,
-      details: [{ label: 'Service data not yet loaded', ok: false, pts: 0, maxPts: 25 }],
+      details: [{ label: 'Service data not yet loaded', ok: false, pts: 0, maxPts: 15 }],
     };
   }
 
-  const items = [];
+  const details = [];
   let score = 0;
 
-  // Service responds (10 pts)
-  items.push({ label: 'Service responds to REST query', ok: true, pts: 10, maxPts: 10 });
-  score += 10;
+  // Description (5 pts)
+  const hasDesc = !!(serviceJson.serviceDescription || serviceJson.description || layerJson?.description);
+  details.push({ label: 'Service Description', ok: hasDesc, pts: hasDesc ? 5 : 0, maxPts: 5 });
+  score += hasDesc ? 5 : 0;
 
-  // Query capability (5 pts)
-  const caps = (serviceJson.capabilities || '').toUpperCase();
-  const hasQuery = caps.includes('QUERY');
-  items.push({ label: 'Query capability enabled', ok: hasQuery, pts: hasQuery ? 5 : 0, maxPts: 5 });
-  score += hasQuery ? 5 : 0;
-
-  // Statistics support (3 pts)
-  const supportsStats = layerJson?.supportsStatistics ?? serviceJson.supportsStatistics ?? false;
-  items.push({ label: 'Statistics support', ok: !!supportsStats, pts: supportsStats ? 3 : 0, maxPts: 3 });
-  score += supportsStats ? 3 : 0;
-
-  // Advanced queries (2 pts)
-  const advQ = layerJson?.advancedQueryCapabilities?.supportsAdvancedQueries ?? false;
-  items.push({ label: 'Advanced query support', ok: !!advQ, pts: advQ ? 2 : 0, maxPts: 2 });
-  score += advQ ? 2 : 0;
-
-  // Spatial reference defined (2 pts)
-  const sr = serviceJson.spatialReference || layerJson?.spatialReference || {};
-  const hasWkid = !!(sr.wkid || sr.latestWkid);
-  items.push({ label: 'Spatial reference defined', ok: hasWkid, pts: hasWkid ? 2 : 0, maxPts: 2 });
-  score += hasWkid ? 2 : 0;
-
-  // Service documentation (3 pts — 2 for description, 1 for copyright)
-  const hasDesc = !!(serviceJson.serviceDescription || serviceJson.description);
+  // Copyright (5 pts)
   const hasCopy = !!serviceJson.copyrightText;
-  const docPts = (hasDesc ? 2 : 0) + (hasCopy ? 1 : 0);
-  items.push({ label: 'Service documentation (description/copyright)', ok: docPts > 0, pts: docPts, maxPts: 3 });
-  score += docPts;
+  details.push({ label: 'Copyright Text', ok: hasCopy, pts: hasCopy ? 5 : 0, maxPts: 5 });
+  score += hasCopy ? 5 : 0;
 
-  return { score, max: 25, details: items };
+  // Subject/Category/Tags (5 pts) — documentInfo.Subject or documentInfo.Keywords or tags array
+  const docInfo = serviceJson.documentInfo || {};
+  const hasSubject = !!(docInfo.Subject || docInfo.Keywords || docInfo.Category ||
+    (Array.isArray(serviceJson.tags) && serviceJson.tags.length));
+  details.push({ label: 'Subject / Keywords', ok: hasSubject, pts: hasSubject ? 5 : 0, maxPts: 5 });
+  score += hasSubject ? 5 : 0;
+
+  return { score, max: 15, details };
 }
 
-// ── Sub-score: Attribute Table Quality (0–25) ──
+// ── 8. Service Capabilities (0–15) ──
+// Does the service have appropriate capabilities for its type?
 
-export function scoreAttributeQuality({ fields, fieldStats, totalCount }) {
-  // fields = null → data not loaded yet
+export function scoreServiceCapabilities({ serviceJson, layerJson }) {
+  if (!serviceJson) {
+    return {
+      score: 0,
+      max: 15,
+      pending: true,
+      details: [{ label: 'Service data not yet loaded', ok: false, pts: 0, maxPts: 15 }],
+    };
+  }
+
+  const caps = (serviceJson.capabilities || '').toUpperCase();
+  const details = [];
+  let score = 0;
+
+  // Query capability (5 pts)
+  const hasQuery = caps.includes('QUERY');
+  details.push({ label: 'Query capability', ok: hasQuery, pts: hasQuery ? 5 : 0, maxPts: 5 });
+  score += hasQuery ? 5 : 0;
+
+  // Statistics support (5 pts)
+  const supportsStats = layerJson?.supportsStatistics ?? serviceJson.supportsStatistics ?? false;
+  details.push({ label: 'Statistics support', ok: !!supportsStats, pts: supportsStats ? 5 : 0, maxPts: 5 });
+  score += supportsStats ? 5 : 0;
+
+  // Spatial reference defined (5 pts)
+  const sr = serviceJson.spatialReference || layerJson?.spatialReference || {};
+  const hasSR = !!(sr.wkid || sr.latestWkid);
+  details.push({ label: 'Spatial reference defined', ok: hasSR, pts: hasSR ? 5 : 0, maxPts: 5 });
+  score += hasSR ? 5 : 0;
+
+  return { score, max: 15, details };
+}
+
+// ── 9. Attribute Null Health (0–20, with penalties) ──
+// High null rates or mostly-null columns lower maturity.
+
+export function scoreAttributeNullHealth({ fields, fieldStats }) {
   if (fields === null || fields === undefined) {
     return {
       score: 0,
-      max: 25,
+      max: 20,
       pending: true,
-      details: [{ label: 'Attribute data not yet loaded', ok: false, pts: 0, maxPts: 25 }],
+      details: [{ label: 'Attribute data not yet loaded', ok: false, pts: 0, maxPts: 20 }],
     };
   }
 
-  // fields = [] → service has no fields (or it's a non-query service)
   if (!fields.length) {
     return {
       score: 0,
-      max: 25,
-      details: [{ label: 'Service exposes no fields', ok: false, pts: 0, maxPts: 25 }],
+      max: 20,
+      details: [{ label: 'Service exposes no fields', ok: false, pts: 0, maxPts: 20 }],
     };
   }
 
-  const items = [];
+  const details = [];
   let score = 0;
 
-  // Filter out system/key fields for quality checks
+  // Filter out system fields
   const nonSystem = fields.filter(f => {
     const t = (f.type || '').toUpperCase();
     return !t.includes('OID') && !t.includes('GLOBALID') && !t.includes('GEOMETRY');
   });
 
-  // A) Fields exist (5 pts)
-  items.push({ label: 'Fields present', ok: true, pts: 5, maxPts: 5 });
-  score += 5;
-
-  // B) Schema width (5 pts) — penalizes excessively wide tables
-  const count = nonSystem.length;
-  let widthPts;
-  if (count <= 25) widthPts = 5;
-  else if (count <= 40) widthPts = 4;
-  else if (count <= 60) widthPts = 2;
-  else widthPts = 0;
-  const widthLabel = `Schema width (${count} non-system fields)`;
-  items.push({ label: widthLabel, ok: widthPts >= 4, pts: widthPts, maxPts: 5 });
-  score += widthPts;
-
-  // C) Alias coverage (5 pts) — fields should have human-readable aliases
-  const aliasCount = nonSystem.filter(f => f.alias && f.alias !== f.name).length;
-  const aliasPct = count > 0 ? aliasCount / count : 0;
-  const aliasPts = Math.round(aliasPct * 5);
-  items.push({ label: `Field aliases (${Math.round(aliasPct * 100)}% aliased)`, ok: aliasPts >= 3, pts: aliasPts, maxPts: 5 });
-  score += aliasPts;
-
-  // D) Domain usage (3 pts) — coded value domains indicate well-governed data
-  const domainCount = nonSystem.filter(f => f.domain && f.domain.type === 'codedValue').length;
-  const domainPts = Math.min(domainCount, 3);
-  items.push({ label: `Coded value domains (${domainCount} fields)`, ok: domainPts > 0, pts: domainPts, maxPts: 3 });
-  score += domainPts;
-
-  // E) Null health (7 pts) — requires field stats (async)
   if (fieldStats && fieldStats.length) {
     const nullPcts = fieldStats
       .filter(s => typeof s.nullPct === 'number' && !isNaN(s.nullPct))
@@ -166,111 +264,39 @@ export function scoreAttributeQuality({ fields, fieldStats, totalCount }) {
 
     if (nullPcts.length) {
       const avgNull = nullPcts.reduce((a, b) => a + b, 0) / nullPcts.length;
-      let nullPts;
-      if (avgNull < 10) nullPts = 7;
-      else if (avgNull < 25) nullPts = 5;
-      else if (avgNull < 40) nullPts = 3;
-      else if (avgNull < 60) nullPts = 1;
-      else nullPts = 0;
-      items.push({ label: `Avg null rate (${avgNull.toFixed(1)}%)`, ok: nullPts >= 5, pts: nullPts, maxPts: 7 });
-      score += nullPts;
 
-      // High-null penalty: -1 per field >80% null (max -3)
-      const highNull = nullPcts.filter(p => p > 80).length;
-      if (highNull > 0) {
-        const penalty = Math.min(highNull, 3);
-        items.push({ label: `${highNull} field(s) >80% null`, ok: false, pts: -penalty, maxPts: 0, isPenalty: true });
-        score -= penalty;
+      // Base score from average null rate (0–15)
+      let basePts;
+      if (avgNull < 5) basePts = 15;
+      else if (avgNull < 15) basePts = 12;
+      else if (avgNull < 30) basePts = 8;
+      else if (avgNull < 50) basePts = 4;
+      else basePts = 0;
+      score += basePts;
+      details.push({ label: `Average null rate: ${avgNull.toFixed(1)}%`, ok: basePts >= 12, pts: basePts, maxPts: 15 });
+
+      // Bonus: no columns > 80% null (5 pts)
+      const highNullCount = nullPcts.filter(p => p > 80).length;
+      if (highNullCount === 0) {
+        score += 5;
+        details.push({ label: 'No columns over 80% null', ok: true, pts: 5, maxPts: 5 });
+      } else {
+        details.push({ label: `${highNullCount} column(s) over 80% null`, ok: false, pts: 0, maxPts: 5, isPenalty: true });
       }
-    }
-  } else {
-    items.push({ label: 'Null statistics', ok: false, pts: 0, maxPts: 7, pending: true });
-  }
-
-  return { score: Math.max(0, Math.min(25, score)), max: 25, details: items };
-}
-
-// ── Sub-score: Coverage (0–10) ──
-
-export function scoreCoverage(dataset) {
-  const cov = dataset._coverage;
-  if (!cov || !cov.states) {
-    return {
-      score: 0,
-      max: 10,
-      details: [{ label: 'No pre-computed coverage data', ok: false, pts: 0, maxPts: 10 }],
-    };
-  }
-
-  const statesWithData = cov.statesWithData || 0;
-  let pts;
-  if (statesWithData >= 5) pts = 10;
-  else if (statesWithData >= 3) pts = 7;
-  else if (statesWithData >= 1) pts = 4;
-  else pts = 0;
-
-  return {
-    score: pts,
-    max: 10,
-    details: [{ label: `${statesWithData} state(s) with data`, ok: pts === 10, pts, maxPts: 10 }],
-  };
-}
-
-// ── Sub-score: Documentation (0–10) ──
-
-export function scoreDocumentation(dataset) {
-  const attrs = getAttributesForDataset(dataset) || [];
-  const items = [];
-  let score = 0;
-
-  // Attribute IDs linked (3 pts)
-  const attrIds = dataset.attribute_ids || [];
-  const hasAttrs = attrIds.length > 0;
-  items.push({ label: 'Attribute IDs linked to dataset', ok: hasAttrs, pts: hasAttrs ? 3 : 0, maxPts: 3 });
-  score += hasAttrs ? 3 : 0;
-
-  if (hasAttrs && attrs.length) {
-    // Definitions present (3 pts)
-    const withDef = attrs.filter(a => !!a.definition).length;
-    const defPts = Math.round((withDef / attrs.length) * 3);
-    items.push({ label: `Attribute definitions (${withDef}/${attrs.length})`, ok: defPts >= 2, pts: defPts, maxPts: 3 });
-    score += defPts;
-
-    // Expected values (2 pts)
-    const withExp = attrs.filter(a => a.expected_value !== undefined && a.expected_value !== '').length;
-    const expPts = Math.round((withExp / attrs.length) * 2);
-    items.push({ label: `Expected value examples (${withExp}/${attrs.length})`, ok: expPts > 0, pts: expPts, maxPts: 2 });
-    score += expPts;
-
-    // Enumerated values (2 pts)
-    const enumAttrs = attrs.filter(a => a.type === 'enumerated');
-    if (enumAttrs.length) {
-      const withVals = enumAttrs.filter(a => Array.isArray(a.values) && a.values.length).length;
-      const enumPts = Math.round((withVals / enumAttrs.length) * 2);
-      items.push({ label: `Enum values documented (${withVals}/${enumAttrs.length})`, ok: enumPts > 0, pts: enumPts, maxPts: 2 });
-      score += enumPts;
     } else {
-      // No enumerated attrs — full marks (nothing to document)
-      items.push({ label: 'No enumerated attributes to document', ok: true, pts: 2, maxPts: 2 });
-      score += 2;
+      details.push({ label: 'No null statistics available', ok: false, pts: 0, maxPts: 20 });
     }
   } else {
-    items.push({ label: 'Attribute definitions', ok: false, pts: 0, maxPts: 3 });
-    items.push({ label: 'Expected value examples', ok: false, pts: 0, maxPts: 2 });
-    items.push({ label: 'Enumerated values', ok: false, pts: 0, maxPts: 2 });
+    details.push({ label: 'Null statistics', ok: false, pts: 0, maxPts: 20, pending: true });
   }
 
-  return { score, max: 10, details: items };
+  return { score: Math.max(0, Math.min(20, score)), max: 20, details };
 }
 
 // ── Composite score ──
 
-/**
- * Compute the full maturity score from all sub-components.
- * Any component can be null/undefined (pending async data).
- */
-export function computeFullScore({ catalog, service, attributes, coverage, docs }) {
-  const components = { catalog, service, attributes, coverage, docs };
+export function computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth }) {
+  const components = { basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth };
   let total = 0;
   let max = 0;
   let hasPending = false;
@@ -283,10 +309,9 @@ export function computeFullScore({ catalog, service, attributes, coverage, docs 
     }
   });
 
-  const pct = max > 0 ? Math.round((total / max) * 100) : 0;
-  // Normalize to 0-100 scale
-  const normalized = max === 100 ? total : pct;
-  const tier = tierFromScore(normalized);
+  // Max possible is 100 (15+10+10+5+10+0+15+15+20). Penalties can push below 0.
+  const clamped = Math.max(0, Math.min(100, total));
+  const tier = tierFromScore(clamped);
 
-  return { total: normalized, tier, hasPending, components };
+  return { total: clamped, tier, hasPending, components };
 }

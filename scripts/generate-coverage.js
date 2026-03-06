@@ -37,10 +37,19 @@ const CENSUS_STATES_URL =
 
 const TIMEOUT_MS       = 15000;   // per-request timeout
 const CENSUS_TIMEOUT   = 30000;   // Census boundary fetch (large response)
+const BUFFER_TIMEOUT   = 20000;   // Geometry service buffer timeout
 const DATASET_CONCURRENCY = 2;    // datasets processed in parallel
 const STATE_CONCURRENCY   = 4;    // states queried in parallel per dataset
 const MAX_RETRIES         = 2;    // retries per request
 const RETRY_DELAY_MS      = 2000; // base delay between retries
+
+// Inward buffer distance applied to state polygons to avoid sliver intersections
+// at shared borders. Must match the browser-side value in coverage-map.js.
+const BUFFER_DISTANCE_MILES = -0.5;
+
+// ArcGIS Geometry Service for server-side buffer operations
+const GEOMETRY_SERVICE_URL =
+  'https://utility.arcgisonline.com/arcgis/rest/services/Geometry/GeometryServer/buffer';
 
 const US_STATE_FIPS = new Set([
   '01','02','04','05','06','08','09','10','11','12','13','15','16','17','18','19','20',
@@ -182,6 +191,44 @@ function normalizeUrl(url) {
   return (url || '').trim().replace(/\/+$/, '');
 }
 
+// ── Geometry Buffer via ArcGIS Geometry Service ────────────────────────────
+
+/**
+ * Apply an inward (negative) geodesic buffer to a polygon using the ArcGIS
+ * Geometry Service. This shrinks the polygon inward to exclude sliver
+ * intersections at state borders — matching the browser-side behavior.
+ *
+ * If the buffer collapses the polygon entirely (tiny territories), or the
+ * service call fails, falls back to the original geometry.
+ */
+async function bufferGeometry(geometry) {
+  try {
+    const formData = {
+      geometries: JSON.stringify({
+        geometryType: 'esriGeometryPolygon',
+        geometries: [geometry],
+      }),
+      inSR: '4326',
+      outSR: '4326',
+      bufferSR: '4326',
+      distances: String(BUFFER_DISTANCE_MILES),
+      unit: '9093',       // esriSRUnit_StatuteMile
+      geodesic: 'true',
+      f: 'json',
+    };
+
+    const json = await postFormJson(GEOMETRY_SERVICE_URL, formData, BUFFER_TIMEOUT);
+
+    if (json && json.geometries && json.geometries.length &&
+        json.geometries[0].rings && json.geometries[0].rings.length) {
+      return json.geometries[0];
+    }
+  } catch (_) {
+    // Fall through to return original
+  }
+  return geometry;
+}
+
 // ── Census State Boundaries ────────────────────────────────────────────────
 
 /**
@@ -231,6 +278,19 @@ async function fetchCensusStates() {
     .filter(s => US_STATE_FIPS.has(s.fips) && s.geometry && s.geometry.rings);
 
   console.log(`  Found ${states.length} state boundaries`);
+
+  // Apply inward buffer to all state polygons
+  console.log('  Applying 0.5 mile inward buffer to state boundaries...');
+  let buffered = 0;
+  for (const state of states) {
+    state.geometry = await bufferGeometry(state.geometry);
+    buffered++;
+    if (buffered % 10 === 0 || buffered === states.length) {
+      process.stdout.write(`\r  Buffered ${buffered}/${states.length} states`);
+    }
+  }
+  process.stdout.write('\n');
+
   return states;
 }
 
@@ -240,9 +300,9 @@ async function fetchCensusStates() {
  * Query the count of features in a dataset layer that intersect a given
  * state polygon. Uses POST to handle large geometry payloads.
  *
- * Note: Unlike the browser version, this does NOT apply a -2 km inward
- * buffer to state polygons (no geometry engine available in plain Node.js).
- * Counts may be slightly higher at state borders due to sliver intersections.
+ * State polygons are pre-buffered inward by 0.5 miles (via the ArcGIS
+ * Geometry Service) to exclude sliver intersections along shared borders,
+ * matching the browser-side behavior in coverage-map.js.
  */
 async function queryFeatureCountInState(serviceBase, layerId, stateGeometry) {
   const target = `${serviceBase}/${layerId}/query`;

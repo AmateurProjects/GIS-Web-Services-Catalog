@@ -4,11 +4,15 @@
 
 import { escapeHtml } from './utils.js';
 import {
-  scoreCatalogCompleteness,
-  scoreServiceHealth,
-  scoreAttributeQuality,
-  scoreCoverage,
-  scoreDocumentation,
+  scoreCatalogBasics,
+  scoreDataSteward,
+  scoreWebService,
+  scoreDataStandard,
+  scoreDevelopmentStage,
+  scoreBlockersImprovements,
+  scoreServiceMetadata,
+  scoreServiceCapabilities,
+  scoreAttributeNullHealth,
   computeFullScore,
   tierFromScore,
   TIER_META,
@@ -24,7 +28,7 @@ export function maturityCardHTML() {
         <span class="data-source-badge data-source-badge-auto">Auto</span>
       </div>
       <p class="text-muted" style="margin-bottom:0.75rem;font-size:0.85rem;">
-        Automated quality assessment based on catalog metadata, service capabilities, attribute schema, and spatial coverage.
+        Automated quality assessment based on catalog metadata, service documentation, capabilities, and attribute health.
       </p>
       <div data-maturity-body>
         <p class="loading-message" style="font-size:0.85rem;">Analyzing\u2026</p>
@@ -51,18 +55,25 @@ export function initMaturityCard(hostEl, dataset, hasService) {
   if (!body) return;
 
   // ── Compute instant sub-scores ──
-  const catalog = scoreCatalogCompleteness(dataset);
-  const coverage = scoreCoverage(dataset);
-  const docs = scoreDocumentation(dataset);
+  const basics = scoreCatalogBasics(dataset);
+  const steward = scoreDataSteward(dataset);
+  const webService = scoreWebService(dataset);
+  const dataStandard = scoreDataStandard(dataset);
+  const stage = scoreDevelopmentStage(dataset);
+  const issues = scoreBlockersImprovements(dataset);
 
-  // Service + attribute quality start as pending (or N/A if no service)
-  let service = hasService
-    ? { score: 0, max: 25, pending: true, details: [{ label: 'Analyzing service\u2026', ok: false, pts: 0, maxPts: 25 }] }
-    : { score: 0, max: 25, details: [{ label: 'No public web service configured', ok: false, pts: 0, maxPts: 25 }] };
+  // Service-dependent scores start as pending (or N/A if no service)
+  let serviceMetadata = hasService
+    ? { score: 0, max: 15, pending: true, details: [{ label: 'Analyzing service metadata\u2026', ok: false, pts: 0, maxPts: 15 }] }
+    : { score: 0, max: 15, details: [{ label: 'No public web service configured', ok: false, pts: 0, maxPts: 15 }] };
 
-  let attributes = hasService
-    ? { score: 0, max: 25, pending: true, details: [{ label: 'Analyzing attribute schema\u2026', ok: false, pts: 0, maxPts: 25 }] }
-    : { score: 0, max: 25, details: [{ label: 'No service to analyze', ok: false, pts: 0, maxPts: 25 }] };
+  let serviceCapabilities = hasService
+    ? { score: 0, max: 15, pending: true, details: [{ label: 'Analyzing service capabilities\u2026', ok: false, pts: 0, maxPts: 15 }] }
+    : { score: 0, max: 15, details: [{ label: 'No service to analyze', ok: false, pts: 0, maxPts: 15 }] };
+
+  let nullHealth = hasService
+    ? { score: 0, max: 20, pending: true, details: [{ label: 'Analyzing attribute schema\u2026', ok: false, pts: 0, maxPts: 20 }] }
+    : { score: 0, max: 20, details: [{ label: 'No service to analyze', ok: false, pts: 0, maxPts: 20 }] };
 
   // Stash fields for later stats update
   let _layerFields = null;
@@ -73,24 +84,23 @@ export function initMaturityCard(hostEl, dataset, hasService) {
   if (hasService) {
     hostEl.addEventListener('maturity:service-data', (e) => {
       const { serviceJson, layerJson } = e.detail || {};
-      service = scoreServiceHealth({ serviceJson, layerJson });
-      // Compute partial attribute quality from field metadata (no stats yet)
+      serviceMetadata = scoreServiceMetadata({ serviceJson, layerJson });
+      serviceCapabilities = scoreServiceCapabilities({ serviceJson, layerJson });
       _layerFields = layerJson?.fields || null;
-      attributes = scoreAttributeQuality({ fields: _layerFields, fieldStats: null, totalCount: 0 });
+      nullHealth = scoreAttributeNullHealth({ fields: _layerFields, fieldStats: null });
       render();
     });
 
     hostEl.addEventListener('maturity:field-stats', (e) => {
-      const { fieldStats, totalCount } = e.detail || {};
-      // Re-score attribute quality with full stats
-      attributes = scoreAttributeQuality({ fields: _layerFields, fieldStats, totalCount });
+      const { fieldStats } = e.detail || {};
+      nullHealth = scoreAttributeNullHealth({ fields: _layerFields, fieldStats });
       render();
     });
   }
 
   // ── Render / re-render card body ──
   function render() {
-    const full = computeFullScore({ catalog, service, attributes, coverage, docs });
+    const full = computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth });
     const tierMeta = TIER_META[full.tier] || TIER_META.bronze;
 
     // Update card border color
@@ -117,16 +127,35 @@ export function initMaturityCard(hostEl, dataset, hasService) {
 
     // ── Sub-scores ──
     const subs = [
-      { key: 'catalog',    label: 'Catalog Completeness',     data: catalog },
-      { key: 'service',    label: 'Service Health',           data: service },
-      { key: 'attributes', label: 'Attribute Table Quality',  data: attributes },
-      { key: 'coverage',   label: 'Coverage',                 data: coverage },
-      { key: 'docs',       label: 'Documentation',            data: docs },
+      { key: 'basics',              label: 'Catalog Basics',          data: basics },
+      { key: 'steward',             label: 'Data Steward',            data: steward },
+      { key: 'webService',          label: 'Web Service URL',         data: webService },
+      { key: 'dataStandard',        label: 'Data Standard',           data: dataStandard },
+      { key: 'stage',               label: 'Development Stage',       data: stage },
+      { key: 'issues',              label: 'Blockers & Improvements', data: issues },
+      { key: 'serviceMetadata',     label: 'Service Metadata',        data: serviceMetadata },
+      { key: 'serviceCapabilities', label: 'Service Capabilities',    data: serviceCapabilities },
+      { key: 'nullHealth',          label: 'Attribute Null Health',   data: nullHealth },
     ];
 
     html += '<div class="maturity-subscores">';
     subs.forEach(sub => {
       const d = sub.data;
+      // For penalty-only categories (max=0), show as a tag not a bar
+      if (d.max === 0) {
+        if (d.score < 0) {
+          html += `
+            <div class="maturity-subscore-item">
+              <div class="maturity-subscore-header">
+                <span class="maturity-subscore-label">${escapeHtml(sub.label)}</span>
+                <span class="maturity-subscore-value" style="color:var(--red, #ef4444);">${d.score}</span>
+              </div>
+            </div>
+          `;
+        }
+        // If no penalty, skip showing this row entirely
+        return;
+      }
       const pct = d.max > 0 ? Math.round((d.score / d.max) * 100) : 0;
       const pending = d.pending ? ' <span class="maturity-pending-badge">analyzing\u2026</span>' : '';
       html += `
@@ -195,43 +224,35 @@ function generateSuggestions(subs) {
 
   subs.forEach(sub => {
     sub.data.details.forEach(d => {
-      if (d.pending || d.ok || d.isPenalty) return;
-      // Map failing checks to actionable suggestions
+      if (d.pending || d.ok) return;
       const s = suggestFor(sub.key, d);
       if (s) suggestions.push(s);
     });
   });
 
-  // Cap at 5 most impactful
   return suggestions.slice(0, 5);
 }
 
 function suggestFor(category, detail) {
-  if (category === 'catalog') {
-    if (!detail.present && detail.key) {
-      const friendly = detail.label || detail.key;
-      return `Add "${friendly}" to catalog metadata`;
-    }
+  if (category === 'basics') {
+    if (detail.key && !detail.ok) return `Fill in "${detail.label}" in catalog metadata`;
   }
-  if (category === 'service') {
-    return detail.label ? `Service: ${detail.label}` : null;
+  if (category === 'steward') return 'Add a Contact Email to assign a data steward';
+  if (category === 'webService') return 'Provide a Web Service URL for data access';
+  if (category === 'dataStandard') return 'Link a Data Standard document';
+  if (category === 'stage') {
+    if (detail.label?.includes('Not set')) return 'Set a Development Stage';
+    if (!detail.ok) return 'Advance the dataset toward Production stage';
   }
-  if (category === 'attributes') {
-    if (detail.label?.includes('aliases')) return 'Add human-readable aliases to service fields';
-    if (detail.label?.includes('null')) return 'Reduce null values in attribute columns';
-    if (detail.label?.includes('width')) return 'Consider reducing the number of fields in the service';
-    if (detail.label?.includes('domains')) return 'Add coded value domains to low-cardinality fields';
-    return null;
+  if (category === 'issues') {
+    if (detail.isPenalty && detail.label?.includes('blocker')) return 'Resolve open blockers';
+    if (detail.isPenalty && detail.label?.includes('improvement')) return 'Address noted improvements';
   }
-  if (category === 'coverage') {
-    return 'Run coverage analysis (generate-coverage.js) to populate spatial coverage data';
-  }
-  if (category === 'docs') {
-    if (detail.label?.includes('Attribute IDs')) return 'Link attribute definitions to this dataset via attribute_ids';
-    if (detail.label?.includes('definitions')) return 'Add definitions to linked attributes';
-    if (detail.label?.includes('Expected')) return 'Add expected_value examples to attributes';
-    if (detail.label?.includes('Enum')) return 'Document enumerated value lists for enumerated-type attributes';
-    return null;
+  if (category === 'serviceMetadata') return `Add ${detail.label} to the ArcGIS service`;
+  if (category === 'serviceCapabilities') return detail.label ? `Enable ${detail.label} on the service` : null;
+  if (category === 'nullHealth') {
+    if (detail.label?.includes('null rate')) return 'Reduce null values in attribute columns';
+    if (detail.label?.includes('over 80%')) return 'Remove or populate nearly-empty columns';
   }
   return null;
 }

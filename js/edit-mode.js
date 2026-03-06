@@ -45,20 +45,55 @@ export const ATTRIBUTE_EDIT_FIELDS = [
   { key: 'values', label: 'Allowed values (JSON array)', type: 'json' },
 ];
 
-// ── Admin token management ──
+// ── GitHub OAuth management ──
 
-function getAdminToken() {
-  return sessionStorage.getItem('gis_admin_token') || '';
+function getGithubToken() {
+  return sessionStorage.getItem('gis_github_token') || '';
 }
 
-function setAdminToken(token) {
-  sessionStorage.setItem('gis_admin_token', token);
+function getGithubUser() {
+  return sessionStorage.getItem('gis_github_user') || '';
 }
 
-function promptAdminToken() {
-  const token = prompt('Enter admin token:');
-  if (token) setAdminToken(token.trim());
-  return token ? token.trim() : '';
+function setGithubAuth(token, login) {
+  sessionStorage.setItem('gis_github_token', token);
+  sessionStorage.setItem('gis_github_user', login);
+}
+
+function clearGithubAuth() {
+  sessionStorage.removeItem('gis_github_token');
+  sessionStorage.removeItem('gis_github_user');
+}
+
+function loginWithGithub() {
+  return new Promise((resolve, reject) => {
+    const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
+    if (!workerBase) { reject(new Error('Worker URL not configured.')); return; }
+
+    const popup = window.open(`${workerBase}/auth/github`, 'github-auth', 'width=600,height=700');
+    if (!popup) { reject(new Error('Popup blocked. Please allow popups for this site.')); return; }
+
+    function onMessage(event) {
+      if (!event.data || event.data.type !== 'github-auth') return;
+      window.removeEventListener('message', onMessage);
+      clearInterval(timer);
+      if (event.data.error) {
+        reject(new Error(event.data.error));
+      } else {
+        setGithubAuth(event.data.token, event.data.user.login);
+        resolve(event.data);
+      }
+    }
+    window.addEventListener('message', onMessage);
+
+    const timer = setInterval(() => {
+      if (popup.closed) {
+        clearInterval(timer);
+        window.removeEventListener('message', onMessage);
+        if (!getGithubToken()) reject(new Error('Login cancelled.'));
+      }
+    }, 500);
+  });
 }
 
 // ── Pending changes tracker ──
@@ -135,8 +170,16 @@ async function saveChanges() {
     return;
   }
 
-  let token = getAdminToken();
-  if (!token) token = promptAdminToken();
+  let token = getGithubToken();
+  if (!token) {
+    try {
+      await loginWithGithub();
+      token = getGithubToken();
+    } catch (e) {
+      alert(e.message);
+      return;
+    }
+  }
   if (!token) return;
 
   const saveBtn = _cardEl?.querySelector('[data-save-edits]');
@@ -171,8 +214,8 @@ async function saveChanges() {
 
     if (!resp.ok) {
       if (resp.status === 401) {
-        sessionStorage.removeItem('gis_admin_token');
-        alert('Invalid admin token. Please try again.');
+        clearGithubAuth();
+        alert('GitHub session expired or not authorized. Please log in again.');
       } else {
         alert(`Save failed: ${result.error || resp.statusText}`);
       }

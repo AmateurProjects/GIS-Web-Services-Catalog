@@ -52,3 +52,14 @@ crons = ["0-30 6 * * *"]
 CATALOG_BASE_URL = "https://amateurprojects.github.io/GIS-Web-Services-Catalog"
 # Optional shared secret — set via `wrangler secret put REFRESH_TOKEN`
 # REFRESH_TOKEN = ""
+
+# ── GitHub OAuth (for admin edits) ──
+# 1. Create a GitHub OAuth App at https://github.com/settings/developers
+#    - Homepage URL: your catalog URL above
+#    - Authorization callback URL: https://<your-worker>.workers.dev/auth/callback
+# 2. Set the Client ID here:
+GITHUB_CLIENT_ID = "Ov23liBAdrKJLReT1yVR"
+# 3. Set secrets via wrangler CLI:
+#      wrangler secret put GITHUB_CLIENT_SECRET
+#      wrangler secret put GITHUB_ALLOWED_USERS   (comma-separated GitHub usernames)
+

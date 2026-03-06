@@ -57,7 +57,7 @@ const FRESHNESS_BATCH_SIZE = 5;
 // ── CORS headers applied to every response ──
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
@@ -133,6 +133,16 @@ export default {
     // ── GET /catalog/overrides.json ──
     if (request.method === 'GET' && (path === '/catalog/overrides.json' || path === '/catalog/overrides')) {
       return serveR2Json(env, R2_KEY_OVERRIDES);
+    }
+
+    // ── GET /auth/github — redirect to GitHub OAuth ──
+    if (request.method === 'GET' && path === '/auth/github') {
+      return handleAuthGithub(request, env);
+    }
+
+    // ── GET /auth/callback — GitHub OAuth callback ──
+    if (request.method === 'GET' && path === '/auth/callback') {
+      return handleAuthCallback(request, env);
     }
 
     // ── PATCH /catalog/dataset/:id ──
@@ -263,23 +273,142 @@ async function serveStatus(env, key) {
 }
 
 // ================================================================
+// GitHub OAuth helpers
+// ================================================================
+
+async function generateOAuthState(secret) {
+  const timestamp = Date.now().toString();
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(timestamp));
+  const sigHex = [...new Uint8Array(sig)].map(b => b.toString(16).padStart(2, '0')).join('');
+  return `${timestamp}.${sigHex}`;
+}
+
+async function verifyOAuthState(state, secret) {
+  const dot = state.indexOf('.');
+  if (dot < 1) return false;
+  const timestamp = state.slice(0, dot);
+  const sigHex = state.slice(dot + 1);
+  if (Date.now() - parseInt(timestamp, 10) > 10 * 60 * 1000) return false; // 10 min expiry
+  const key = await crypto.subtle.importKey(
+    'raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const expected = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(timestamp));
+  const expectedHex = [...new Uint8Array(expected)].map(b => b.toString(16).padStart(2, '0')).join('');
+  return sigHex === expectedHex;
+}
+
+async function validateGithubUser(request, env) {
+  const auth = request.headers.get('Authorization') || '';
+  const match = auth.match(/^Bearer (.+)$/);
+  if (!match) return null;
+  try {
+    const resp = await fetch('https://api.github.com/user', {
+      headers: { 'Authorization': `Bearer ${match[1]}`, 'User-Agent': 'GIS-Catalog-Worker' },
+    });
+    if (!resp.ok) return null;
+    const user = await resp.json();
+    const allowed = (env.GITHUB_ALLOWED_USERS || '').split(',').map(u => u.trim().toLowerCase());
+    if (!allowed.includes(user.login?.toLowerCase())) return null;
+    return user.login;
+  } catch (_) {
+    return null;
+  }
+}
+
+// ── GET /auth/github — redirect to GitHub OAuth authorize ──
+async function handleAuthGithub(request, env) {
+  const clientId = env.GITHUB_CLIENT_ID;
+  if (!clientId || !env.GITHUB_CLIENT_SECRET) {
+    return corsJson({ error: 'GitHub OAuth not configured. Set GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET on the Worker.' }, 501);
+  }
+  const state = await generateOAuthState(env.GITHUB_CLIENT_SECRET);
+  const redirectUri = new URL('/auth/callback', request.url).href;
+  const params = new URLSearchParams({
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    state,
+  });
+  return Response.redirect(`https://github.com/login/oauth/authorize?${params}`, 302);
+}
+
+// ── GET /auth/callback — exchange code for token, verify user, return to popup ──
+async function handleAuthCallback(request, env) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get('code');
+  const state = url.searchParams.get('state');
+  const frontendOrigin = (env.CATALOG_BASE_URL || '*').replace(/\/+$/, '');
+
+  if (!code || !state || !await verifyOAuthState(state, env.GITHUB_CLIENT_SECRET)) {
+    return new Response(oauthCallbackPage({ error: 'Invalid or expired OAuth state. Please try again.' }, frontendOrigin), {
+      headers: { 'Content-Type': 'text/html' },
+    });
+  }
+
+  // Exchange code for access token
+  const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json', 'User-Agent': 'GIS-Catalog-Worker' },
+    body: JSON.stringify({ client_id: env.GITHUB_CLIENT_ID, client_secret: env.GITHUB_CLIENT_SECRET, code }),
+  });
+  const tokenData = await tokenResp.json();
+  if (tokenData.error) {
+    return new Response(oauthCallbackPage({ error: tokenData.error_description || tokenData.error }, frontendOrigin), {
+      headers: { 'Content-Type': 'text/html' },
+    });
+  }
+
+  // Verify user identity
+  const userResp = await fetch('https://api.github.com/user', {
+    headers: { 'Authorization': `Bearer ${tokenData.access_token}`, 'User-Agent': 'GIS-Catalog-Worker' },
+  });
+  if (!userResp.ok) {
+    return new Response(oauthCallbackPage({ error: 'Failed to verify GitHub identity.' }, frontendOrigin), {
+      headers: { 'Content-Type': 'text/html' },
+    });
+  }
+  const user = await userResp.json();
+
+  // Check if user is in the allowed list
+  const allowed = (env.GITHUB_ALLOWED_USERS || '').split(',').map(u => u.trim().toLowerCase());
+  if (!allowed.includes(user.login?.toLowerCase())) {
+    return new Response(oauthCallbackPage({ error: `User "${user.login}" is not authorized to edit this catalog.` }, frontendOrigin), {
+      headers: { 'Content-Type': 'text/html' },
+    });
+  }
+
+  return new Response(
+    oauthCallbackPage({ token: tokenData.access_token, user: { login: user.login, avatar_url: user.avatar_url } }, frontendOrigin),
+    { headers: { 'Content-Type': 'text/html' } }
+  );
+}
+
+function oauthCallbackPage(data, targetOrigin) {
+  // Safely serialize data — escape < to prevent </script> injection
+  const safeJson = JSON.stringify({ type: 'github-auth', ...data }).replace(/</g, '\\u003c');
+  const safeOrigin = targetOrigin.replace(/'/g, "\\'").replace(/</g, '\\u003c');
+  return `<!DOCTYPE html><html><body>
+<script>if(window.opener){window.opener.postMessage(${safeJson},'${safeOrigin}');window.close();}else{document.body.textContent='Authentication complete. You can close this window.';}</script>
+<p>Authenticating\u2026 this window should close automatically.</p>
+</body></html>`;
+}
+
+// ================================================================
 // Handle PATCH /catalog/dataset/:id — admin inline edits
 // ================================================================
 // Stores per-dataset field overrides in R2 (catalog-overrides.json).
 // Body: { fields: { key: value, ... } }
-// Auth: Bearer <ADMIN_TOKEN> (env variable)
+// Auth: Bearer <github_access_token> — validated against GitHub API
 // The overrides file is a simple map: { datasetId: { field: value, ... }, ... }
 // The frontend merges these on top of the base catalog.json at load time.
 
 async function handleDatasetPatch(request, env, datasetId) {
-  // Auth check — ADMIN_TOKEN is required for writes
-  const token = env.ADMIN_TOKEN;
-  if (!token) {
-    return corsJson({ error: 'Admin edits not configured. Set ADMIN_TOKEN env var on the Worker.' }, 501);
-  }
-  const auth = request.headers.get('Authorization') || '';
-  if (auth !== `Bearer ${token}`) {
-    return corsJson({ error: 'Unauthorized' }, 401);
+  // Auth check — validate GitHub token and check user is allowed
+  const ghUser = await validateGithubUser(request, env);
+  if (!ghUser) {
+    return corsJson({ error: 'Unauthorized. Log in with an authorized GitHub account.' }, 401);
   }
 
   // Parse body

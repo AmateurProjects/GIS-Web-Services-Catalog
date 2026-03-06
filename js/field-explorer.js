@@ -8,6 +8,9 @@ let fieldList  = [];    // Sorted array of field entries for rendering
 let loading    = false;
 let loaded     = false;
 let loadCallbacks = [];
+let generatedTimestamp = null; // ISO timestamp from field-index.json
+
+export function getFieldIndexGenerated() { return generatedTimestamp; }
 
 /**
  * FieldInfo shape:
@@ -63,6 +66,7 @@ export async function loadFieldData(onProgress) {
     const resp = await fetch('data/field-index.json');
     if (resp.ok) {
       const data = await resp.json();
+      generatedTimestamp = data.generated || null;
       buildIndexFromPrebuilt(data);
       loaded = true;
       loading = false;

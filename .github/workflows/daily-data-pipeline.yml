@@ -1,0 +1,50 @@
+name: Daily Data Pipeline
+
+on:
+  schedule:
+    # Once daily at 7:00 UTC (after Worker health+freshness scans finish at ~6:30)
+    - cron: '0 7 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  generate-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate service info
+        run: node scripts/generate-service-info.js --write
+        timeout-minutes: 30
+
+      - name: Generate coverage data
+        run: node scripts/generate-coverage.js --write
+        timeout-minutes: 20
+
+      - name: Generate field index
+        run: node scripts/generate-field-index.js --write
+
+      - name: Generate maturity scores
+        run: node scripts/generate-maturity.js --write
+
+      - name: Commit updated data files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --staged --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "chore: daily data pipeline update [skip ci]"
+            git push
+          fi

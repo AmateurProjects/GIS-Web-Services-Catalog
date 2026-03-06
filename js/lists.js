@@ -1,7 +1,7 @@
 // lists.js — Dataset and attribute list rendering
 
 import { state, els } from './state.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, cacheBadgeHTML } from './utils.js';
 import { getGeometryIconHTML } from './geometry-icons.js';
 import { setActiveListButton } from './ui-fx.js';
 import { getFilteredDatasets, hasAnyFilter } from './filters.js';
@@ -15,6 +15,7 @@ import {
   searchFields as _searchFields,
   shortTypeName as _shortTypeName,
   typeColor as _typeColor,
+  getFieldIndexGenerated as _getFieldIndexGenerated,
 } from './field-explorer.js';
 
 // Lazy references to detail renderers — set by app.js to avoid circular import at eval time
@@ -352,7 +353,8 @@ export function renderAttributeList(filterText = '') {
   // Summary header
   const summaryEl = document.createElement('div');
   summaryEl.className = 'field-list-summary';
-  summaryEl.innerHTML = `<span class="field-list-total">${allFields.length} unique fields</span> across ${(state.allDatasets || []).length} datasets`;
+  const fieldGenTs = _getFieldIndexGenerated();
+  summaryEl.innerHTML = `<span class="field-list-total">${allFields.length} unique fields</span> across ${(state.allDatasets || []).length} datasets${fieldGenTs ? ' ' + cacheBadgeHTML(fieldGenTs) : ''}`;
   container.appendChild(summaryEl);
 
   const list = document.createElement('ul');

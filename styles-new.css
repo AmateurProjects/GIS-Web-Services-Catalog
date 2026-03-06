@@ -1592,6 +1592,20 @@ textarea.dataset-edit-input {
   font-size: 0.7rem;
 }
 
+/* Cache timestamp badge (displayed consistently on all cached sections) */
+.cache-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.7rem;
+  color: var(--text-muted, #94a3b8);
+  background: rgba(96, 165, 250, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  white-space: nowrap;
+}
+
 /* Card header with badge */
 .card-header-row {
   display: flex;

@@ -2,7 +2,7 @@
 // DASHBOARD RENDERER (ES Module)
 // ===========================
 import { state, els } from './state.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, cacheBadgeHTML } from './utils.js';
 import { showDatasetsView } from './navigation.js';
 import { applyDashboardFilter } from './filters.js';
 import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
@@ -305,16 +305,14 @@ function renderHealthResults(results, meta, summaryEl, listEl, hasWorker) {
         <span class="health-kpi health-kpi-unknown"><span class="health-kpi-value">${unknownCount}</span> Uncertain</span>
         <span class="health-kpi" style="color:var(--text-muted);"><span class="health-kpi-value">${total}</span> Total</span>
       </div>`;
-    if (meta?.generated || hasWorker) {
-      sumHtml += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.35rem;flex-wrap:wrap;">`;
-      if (meta?.generated) {
-        sumHtml += `<span style="font-size:0.75rem;color:var(--text-muted);">Scanned: ${new Date(meta.generated).toLocaleString()}</span>`;
-      }
-      if (hasWorker) {
-        sumHtml += `<button type="button" class="btn btn-sm health-refresh-btn" title="Trigger a new health scan via the Worker">🔄 Refresh Health</button>`;
-      }
-      sumHtml += `</div>`;
+    sumHtml += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.35rem;flex-wrap:wrap;">`;
+    if (meta?.generated) {
+      sumHtml += cacheBadgeHTML(meta.generated);
     }
+    if (hasWorker) {
+      sumHtml += `<button type="button" class="btn btn-sm health-refresh-btn" title="Trigger a new health scan via the Worker">🔄 Refresh Health</button>`;
+    }
+    sumHtml += `</div>`;
     summaryEl.innerHTML = sumHtml;
     wireHealthRefreshBtn(summaryEl);
   }
@@ -677,7 +675,7 @@ async function loadDashboardFreshness() {
   }
 
   html += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">`;
-  html += `<span style="font-size:0.75rem;color:var(--text-muted);">Generated: ${freshnessData.generated ? new Date(freshnessData.generated).toLocaleString() : 'unknown'}</span>`;
+  html += cacheBadgeHTML(freshnessData.generated);
   html += refreshBtn;
   html += `</div>`;
 

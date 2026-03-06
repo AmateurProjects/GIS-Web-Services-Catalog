@@ -1,4 +1,4 @@
-import { escapeHtml } from './utils.js';
+import { escapeHtml, cacheBadgeHTML } from './utils.js';
 import { normalizeServiceUrl, parseServiceAndLayerId, looksLikeArcGisService, getRenderGeneration, isImageService, fetchServiceJson } from './arcgis-preview.js';
 
 // ====== COVERAGE MAP (State-level Intersection Analysis via Census Bureau) ======
@@ -470,4 +470,9 @@ export async function renderCoverageFromPrecomputed(statusEl, contentEl, coverag
 
   // Append generated date to the status line
   statusEl.textContent += ` (map generated ${generatedDate})`;
+
+  // Add cache badge
+  if (coverageData.generated) {
+    contentEl.insertAdjacentHTML('beforeend', cacheBadgeHTML(coverageData.generated));
+  }
 }

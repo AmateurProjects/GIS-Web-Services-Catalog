@@ -1,8 +1,9 @@
 import { state, els } from './state.js';
-import { escapeHtml } from './utils.js';
+import { escapeHtml, cacheBadgeHTML } from './utils.js';
 import { setActiveListButton } from './ui-fx.js';
-import { runUrlChecks } from './url-check.js';
+import { runUrlChecks, setCachedUrlStatus } from './url-check.js';
 import { normalizeServiceUrl, parseServiceAndLayerId, maybeRenderPublicServicePreviewCard, incrementRenderGeneration, getCurrentMapView, setCurrentMapView } from './arcgis-preview.js';
+import { WORKER_BASE_URL } from './config.js';
 import { renderCoverageMapCard, getCoverageCache } from './coverage-map.js';
 import { getDatasetById, getAttributeById, getAttributesForDataset, getDatasetsForAttribute } from './catalog.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
@@ -11,7 +12,7 @@ import { applyDashboardFilter } from './filters.js';
 import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
 import { getFieldInfo, shortTypeName, typeColor, isFieldIndexLoaded } from './field-explorer.js';
 import { setLastSelectedFieldName } from './lists.js';
-import { detectFreshness, getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor } from './freshness.js';
+import { getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor } from './freshness.js';
 import { exportButtonsHTML, wireExportButtons } from './metadata-export.js';
 
 // ── Freshness data cache (loaded from data/freshness.json once) ──
@@ -33,6 +34,34 @@ async function loadFreshnessIndex() {
 }
 
 export function getFreshnessIndex() { return _freshnessIndex; }
+
+// ── Health data cache (loaded from Worker R2 health.json once) ──
+let _healthCache = undefined; // undefined = not attempted
+
+async function loadHealthCache() {
+  if (_healthCache !== undefined) return _healthCache;
+  try {
+    const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
+    if (!workerBase) { _healthCache = null; return null; }
+    const resp = await fetch(`${workerBase}/health.json`);
+    if (!resp.ok) { _healthCache = null; return null; }
+    _healthCache = await resp.json();
+    return _healthCache;
+  } catch {
+    _healthCache = null;
+    return null;
+  }
+}
+
+/** Pre-seed url-check cache with Worker health results. */
+async function seedHealthFromCache() {
+  const health = await loadHealthCache();
+  if (!health || !health.services) return;
+  for (const svc of health.services) {
+    if (!svc.url) continue;
+    setCachedUrlStatus(svc.url, svc.status, svc.detail || '');
+  }
+}
 
 export function renderDatasetDetail(datasetId) {
     if (!els.datasetDetailEl) return;
@@ -246,8 +275,8 @@ html += `
 // Initialize auto-computed maturity card (listens for service data events)
 initMaturityCard(els.datasetDetailEl, dataset, !!dataset.public_web_service);
 
-// Check URL status icons (async)
-runUrlChecks(els.datasetDetailEl);
+// Check URL status icons (async — pre-seed from Worker health cache first)
+seedHealthFromCache().then(() => runUrlChecks(els.datasetDetailEl));
 
 // Load service preview immediately (don't wait for URL health check)
 maybeRenderPublicServicePreviewCard(els.datasetDetailEl, dataset.public_web_service, currentGeneration, { datasetId: dataset.id });
@@ -309,7 +338,7 @@ if (covRefreshBtn) {
 
 /**
  * Load and render the freshness card for a dataset.
- * Tries pre-computed data/freshness.json first, then falls back to live detection.
+ * Uses pre-computed data/freshness.json (or Worker R2 cache). No live fallback.
  */
 async function loadFreshnessCard(hostEl, dataset, generation) {
   const contentEl = hostEl.querySelector('[data-freshness-content]');
@@ -317,6 +346,7 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
   if (!contentEl) return;
 
   let result = null;
+  let generatedTimestamp = null;
 
   // Try pre-computed freshness index first
   const index = await loadFreshnessIndex();
@@ -324,22 +354,12 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
     const precomputed = index.datasets.find(d => d.datasetId === dataset.id);
     if (precomputed) {
       result = precomputed;
-    }
-  }
-
-  // Fall back to live detection if no pre-computed data and URL is available
-  if (!result && dataset.public_web_service) {
-    contentEl.innerHTML = '<p class="loading-message" style="font-size:0.85rem;">Running live freshness detection…</p>';
-    try {
-      result = await detectFreshness(dataset.public_web_service);
-    } catch (e) {
-      contentEl.innerHTML = `<p style="font-size:0.85rem;color:var(--text-muted);">Freshness detection failed: ${escapeHtml(e.message)}</p>`;
-      return;
+      generatedTimestamp = index.generated || null;
     }
   }
 
   if (!result) {
-    contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">No web service URL — freshness detection not available.</p>';
+    contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">No pre-computed freshness data available for this dataset. Data is generated twice daily.</p>';
     return;
   }
 
@@ -398,6 +418,10 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
   }
 
   html += '</div>';
+
+  if (generatedTimestamp) {
+    html += cacheBadgeHTML(generatedTimestamp);
+  }
 
   contentEl.innerHTML = html;
 }

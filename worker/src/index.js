@@ -23,10 +23,11 @@
 // Batch Processing Strategy:
 //   Cloudflare Workers have a 50-subrequest limit per invocation (free plan).
 //   To handle large catalogs, scans are split into batches:
-//   - Health: 20 services per batch (~20 fetches)
+//   - Health: 10 services per batch (~30 fetches, full 3-step validation)
 //   - Freshness: 5 datasets per batch (~20 fetches)
 //
-//   Cron runs every minute from 6:00-6:30 UTC. Each invocation:
+//   Cron runs every minute from 6:00-6:30 and 18:00-18:30 UTC (twice daily).
+//   Each invocation:
 //   1. Checks for incomplete tasks (task file in R2)
 //   2. If found, continues from the last offset
 //   3. If not, starts a fresh scan (if data is stale)
@@ -49,9 +50,9 @@ const RETRY_DELAY_MS = 2_000;
 // ── Batch-and-chain settings ──
 // Cloudflare Workers free plan: 50 outbound fetch() per invocation.
 // We split scans into small batches to stay under this limit.
-// Health: 1 fetch per service → batch of 20 = ~22 subrequests.
+// Health: ~3 fetches per service (metadata + layer discovery + query) → batch of 10 = ~30 subrequests.
 // Freshness: ~4 fetches per dataset → batch of 5 = ~22 subrequests.
-const HEALTH_BATCH_SIZE = 20;
+const HEALTH_BATCH_SIZE = 10;
 const FRESHNESS_BATCH_SIZE = 5;
 
 // ── CORS headers applied to every response ──
@@ -167,8 +168,8 @@ export default {
 // Scheduled batch runner — works within Cloudflare subrequest limits
 // ================================================================
 // Processes ONE batch per cron invocation. Each batch stays under
-// 50 subrequests (HEALTH_BATCH_SIZE=20, FRESHNESS_BATCH_SIZE=5×~4=20).
-// Requires multiple cron triggers (e.g., every minute from 6:00-6:30).
+// 50 subrequests (HEALTH_BATCH_SIZE=10×~3=30, FRESHNESS_BATCH_SIZE=5×~4=20).
+// Requires multiple cron triggers (twice daily: 6:00-6:30, 18:00-18:30 UTC).
 
 async function runScheduledBatch(env) {
   // Check for incomplete health task first
@@ -713,23 +714,63 @@ async function checkArcGisHealth(url) {
   const parsed = parseServiceUrl(url);
   if (!parsed) return { status: 'bad', detail: 'Could not parse ArcGIS REST URL' };
 
-  // Single-fetch health check: verify service metadata is accessible.
-  // Skips the query step to conserve subrequests within Cloudflare's limit.
+  const isLayerUrl = parsed.layerId !== null;
+
+  // Step 1: Fetch service/layer JSON metadata
+  let serviceJson;
   try {
-    const target = parsed.layerId !== null ? url.replace(/\?.*$/, '') : parsed.base;
-    const serviceJson = await fetchJson(`${target}?f=pjson`, HEALTH_TIMEOUT_MS);
-
-    if (serviceJson?.error) {
-      return { status: 'bad', detail: `Service error (${serviceJson.error.code || ''}): ${serviceJson.error.message || 'Unknown'}` };
-    }
-
-    if (serviceJson.currentVersion || serviceJson.name || serviceJson.serviceDataType || serviceJson.layers || serviceJson.type) {
-      return { status: 'ok', detail: `Service responding (v${serviceJson.currentVersion || '?'})` };
-    }
-
-    return { status: 'unknown', detail: 'Response missing expected ArcGIS fields' };
+    const pjsonUrl = `${parsed.base}?f=pjson`;
+    serviceJson = await fetchJson(pjsonUrl, HEALTH_TIMEOUT_MS);
   } catch (e) {
-    return { status: 'bad', detail: `Service unreachable: ${e.message}` };
+    return { status: 'bad', detail: `Service endpoint unreachable: ${e.message}` };
+  }
+
+  if (serviceJson?.error) {
+    return { status: 'bad', detail: `Service error (${serviceJson.error.code || ''}): ${serviceJson.error.message || 'Unknown'}` };
+  }
+
+  // Step 2: For ImageServer, metadata-only check is sufficient (no /query endpoint)
+  if (isImageServer(url)) {
+    if (serviceJson && (serviceJson.currentVersion || serviceJson.name || serviceJson.serviceDataType)) {
+      return { status: 'ok', detail: 'ImageServer serving metadata' };
+    }
+    return { status: 'unknown', detail: 'ImageServer metadata could not be verified' };
+  }
+
+  // Step 3: Determine query target (MapServer / FeatureServer)
+  let queryTarget;
+  if (isLayerUrl) {
+    queryTarget = url.replace(/\?.*$/, '');
+  } else {
+    const layers = serviceJson.layers || [];
+    const firstLayerId = layers.length ? (layers[0].id ?? 0) : 0;
+    queryTarget = `${parsed.base}/${firstLayerId}`;
+  }
+
+  // Step 4: Query returnCountOnly — the true test of whether the service serves data
+  try {
+    const countParams = new URLSearchParams({
+      where: '1=1',
+      returnCountOnly: 'true',
+      f: 'json',
+    });
+    const countJson = await fetchJson(`${queryTarget}/query?${countParams}`, HEALTH_TIMEOUT_MS);
+
+    if (countJson?.error) {
+      return { status: 'bad', detail: `Query failed (${countJson.error.code || ''}): ${countJson.error.message || 'Query error'}` };
+    }
+
+    if (countJson && typeof countJson.count === 'number') {
+      if (countJson.count > 0) {
+        return { status: 'ok', detail: `Serving data (${countJson.count.toLocaleString()} features)` };
+      } else {
+        return { status: 'bad', detail: 'Service responds but contains 0 features' };
+      }
+    }
+
+    return { status: 'unknown', detail: 'Service responded but count query returned unexpected format' };
+  } catch (e) {
+    return { status: 'unknown', detail: `Service metadata reachable but query failed: ${e.message}` };
   }
 }
 

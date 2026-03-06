@@ -1,4 +1,4 @@
-import { escapeHtml } from './utils.js';
+import { escapeHtml, cacheBadgeHTML } from './utils.js';
 
 // ====== ARCGIS REST PREVIEW HELPERS (static image + metadata + sample) ======
 
@@ -431,6 +431,7 @@ function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {})
            </details>`
         : ''
       }
+      ${isCached && generatedDate ? cacheBadgeHTML(generatedDate) : ''}
     </div>
   `;
 }
@@ -559,6 +560,7 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
           </tbody>
         </table>
       </div>
+      ${isCached && generatedDate ? cacheBadgeHTML(generatedDate) : ''}
     </div>
   `;
 }
@@ -602,6 +604,7 @@ function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDat
       </div>
       <p class="text-muted" data-sample-desc style="margin-bottom:0.5rem;font-size:0.85rem;">${desc}</p>
       <div data-sample-content>${bodyHTML}</div>
+      ${isCached && generatedDate ? cacheBadgeHTML(generatedDate) : ''}
     </div>
   `;
 }

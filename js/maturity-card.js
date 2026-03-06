@@ -2,7 +2,7 @@
 // Initializes with instant sub-scores (catalog, coverage, docs),
 // then updates live when service/field data arrives via CustomEvents.
 
-import { escapeHtml } from './utils.js';
+import { escapeHtml, cacheBadgeHTML } from './utils.js';
 import {
   scoreCatalogBasics,
   scoreDataSteward,
@@ -17,6 +17,22 @@ import {
   tierFromScore,
   TIER_META,
 } from './maturity-score.js';
+
+// ── Maturity cache (loaded from data/maturity.json once) ──
+let _maturityCache = undefined; // undefined = not attempted, null = failed/missing
+
+async function loadMaturityCache() {
+  if (_maturityCache !== undefined) return _maturityCache;
+  try {
+    const resp = await fetch('data/maturity.json');
+    if (!resp.ok) { _maturityCache = null; return null; }
+    _maturityCache = await resp.json();
+    return _maturityCache;
+  } catch {
+    _maturityCache = null;
+    return null;
+  }
+}
 
 // ── Card HTML placeholder (inserted by detail.js) ──
 
@@ -48,13 +64,23 @@ export function maturityCardHTML() {
  * @param {Object} dataset — the full dataset object
  * @param {boolean} hasService — whether dataset has a public_web_service URL
  */
-export function initMaturityCard(hostEl, dataset, hasService) {
+export async function initMaturityCard(hostEl, dataset, hasService) {
   const card = hostEl.querySelector('#maturityScoreCard');
   if (!card) return;
   const body = card.querySelector('[data-maturity-body]');
   if (!body) return;
 
-  // ── Compute instant sub-scores ──
+  // ── Try pre-computed cache first ──
+  const cache = await loadMaturityCache();
+  if (cache && cache.datasets) {
+    const cached = cache.datasets.find(d => d.datasetId === dataset.id);
+    if (cached) {
+      renderCachedMaturity(card, body, cached, cache.generated);
+      return;
+    }
+  }
+
+  // ── Fallback: compute client-side ──
   const basics = scoreCatalogBasics(dataset);
   const steward = scoreDataSteward(dataset);
   const webService = scoreWebService(dataset);
@@ -255,4 +281,69 @@ function suggestFor(category, detail) {
     if (detail.label?.includes('over 80%')) return 'Remove or populate nearly-empty columns';
   }
   return null;
+}
+
+// ── Render from pre-computed cache ──
+function renderCachedMaturity(card, body, cached, generatedTimestamp) {
+  const tier = cached.tier || 'bronze';
+  const total = cached.score || 0;
+  const tierMeta = TIER_META[tier] || TIER_META.bronze;
+
+  const borderColors = { gold: '#fde047', silver: '#d4d4d4', bronze: '#d4a574' };
+  card.style.borderLeftColor = borderColors[tier] || 'var(--text-muted)';
+
+  let html = '';
+
+  html += `
+    <div class="maturity-score-summary">
+      <div class="tier-badge-large ${tierMeta.css}">${tierMeta.icon}<span>${escapeHtml(tierMeta.label)}</span></div>
+      <div class="maturity-score-value">
+        <span class="maturity-score-number">${total}</span><span class="maturity-score-total">/100</span>
+      </div>
+    </div>
+    <div class="completeness-bar-container" style="margin-bottom:1rem;">
+      <div class="completeness-bar-track">
+        <div class="completeness-bar-fill" style="width:${total}%; background:${barColor(total)};"></div>
+      </div>
+    </div>
+  `;
+
+  // Sub-score breakdown from cached components
+  if (cached.components) {
+    html += '<div class="maturity-subscores">';
+    for (const [label, comp] of Object.entries(cached.components)) {
+      if (comp.max === 0) {
+        if (comp.score < 0) {
+          html += `
+            <div class="maturity-subscore-item">
+              <div class="maturity-subscore-header">
+                <span class="maturity-subscore-label">${escapeHtml(label)}</span>
+                <span class="maturity-subscore-value" style="color:var(--red, #ef4444);">${comp.score}</span>
+              </div>
+            </div>
+          `;
+        }
+        continue;
+      }
+      const pct = comp.max > 0 ? Math.round((comp.score / comp.max) * 100) : 0;
+      html += `
+        <div class="maturity-subscore-item">
+          <div class="maturity-subscore-header">
+            <span class="maturity-subscore-label">${escapeHtml(label)}</span>
+            <span class="maturity-subscore-value">${comp.score}/${comp.max}</span>
+          </div>
+          <div class="completeness-bar-track small">
+            <div class="completeness-bar-fill" style="width:${pct}%; background:${barColor(pct)};"></div>
+          </div>
+        </div>
+      `;
+    }
+    html += '</div>';
+  }
+
+  if (generatedTimestamp) {
+    html += cacheBadgeHTML(generatedTimestamp);
+  }
+
+  body.innerHTML = html;
 }

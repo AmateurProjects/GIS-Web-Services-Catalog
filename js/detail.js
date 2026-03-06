@@ -152,6 +152,11 @@ export function renderDatasetDetail(datasetId) {
       : '<span style="color:var(--text-muted);font-style:italic;">—</span>';
     html += `<div class="inline-edit-row"><span class="inline-edit-label">Blockers</span><span class="inline-edit-cell editable-field" data-field-key="blockers"><span class="inline-edit-value">${blockersDisplay}</span></span></div>`;
 
+    const improvementsDisplay = Array.isArray(dataset.improvements) && dataset.improvements.length
+      ? escapeHtml(dataset.improvements.join(', '))
+      : '<span style="color:var(--text-muted);font-style:italic;">—</span>';
+    html += `<div class="inline-edit-row"><span class="inline-edit-label">Improvements Needed</span><span class="inline-edit-cell editable-field" data-field-key="improvements"><span class="inline-edit-value">${improvementsDisplay}</span></span></div>`;
+
     html += '</div>'; // end Development & Status section
 
     // === Optional Section ===

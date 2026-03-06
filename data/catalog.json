@@ -22,6 +22,7 @@
         "development_stage": "planned | in_development | qa | production | deprecated",
         "target_release_date": "YYYY-MM-DD",
         "blockers": "e.g., awaiting data review, pending security approval",
+        "improvements": "e.g., add date changed attributes, missing state values",
         "scale_suitability": "national | regional | local",
         "coverage": "nationwide | multi_state | single_state | partial",
         "performance_notes": "e.g., Tile-cached, feature count limits, etc.",

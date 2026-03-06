@@ -32,6 +32,7 @@ export const DATASET_EDIT_FIELDS = [
   { key: 'development_stage', label: 'Development Stage', type: 'select', options: ['planned', 'in_development', 'qa', 'production', 'deprecated'], section: 'devstatus' },
   { key: 'target_release_date', label: 'Target Release Date', type: 'text', section: 'devstatus' },
   { key: 'blockers', label: 'Blockers', type: 'csv', section: 'devstatus' },
+  { key: 'improvements', label: 'Improvements Needed', type: 'csv', section: 'devstatus' },
 
   // Optional
   { key: 'objname', label: 'Database Object Name', type: 'text', section: 'optional' },

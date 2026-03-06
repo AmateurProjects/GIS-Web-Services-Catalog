@@ -246,19 +246,6 @@ export function initializeArcGISMap(serviceUrl, layerId) {
   });
 }
 
-// ── Cached service info loader ──
-
-async function fetchCachedServiceInfo(datasetId) {
-  if (!datasetId) return null;
-  try {
-    const resp = await fetch(`data/service-info/${encodeURIComponent(datasetId)}.json`, { cache: 'no-store' });
-    if (!resp.ok) return null;
-    return await resp.json();
-  } catch {
-    return null;
-  }
-}
-
 // ── Extract metadata properties from live-fetched service/layer JSON ──
 
 function extractMetadataProps(serviceJson, layerJson, recordCount) {
@@ -797,147 +784,11 @@ function wireSampleRefresh(contentEl, fetchBaseUrl, layerId, objectIdField, reco
   return loadRandomSample;
 }
 
-// ── Render from cached service info ──
-
-function renderFromCachedData(contentEl, statusEl, cached, url, generation, containingEl) {
-  const m = cached.metadata;
-  const generatedDate = new Date(cached.generated).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  const parsed = parseServiceAndLayerId(url);
-  const serviceBaseUrl = parsed.serviceUrl;
-  const layerId = parsed.isLayerUrl ? parsed.layerId : 0;
-  const _isTable = !m.geometryType || m.geometryType.toUpperCase() === 'TABLE';
-
-  let html = '';
-
-  // 1. Service Metadata card (from cache)
-  html += buildMetadataCardHTML(m, { isCached: true, generatedDate });
-
-  // 2. Interactive Map (live — still needs the ArcGIS widget)
-  if (!_isTable) {
-    html += buildMapCardHTML(url, layerId);
-  }
-
-  // 3. Fields card (from cache with pre-computed stats)
-  html += buildFieldsCardHTML(cached.fields, cached.fieldStats, {
-    isCached: true,
-    generatedDate,
-    oidFieldName: m.objectIdField || '',
-    globalIdFieldName: m.globalIdField || '',
-  });
-
-  // 4. Sample Records card (from cache)
-  html += buildSampleCardHTML(cached.sampleRows, m.recordCount, { isCached: true, generatedDate });
-
-  contentEl.innerHTML = html;
-  statusEl.textContent = `Preview loaded from cache (${generatedDate}).`;
-
-  // Dispatch maturity events from cached data so the maturity card can score
-  try {
-    // Reconstruct minimal serviceJson/layerJson for maturity scoring
-    const syntheticServiceJson = {
-      capabilities: m.capabilities || '',
-      supportsStatistics: m.supportsStatistics,
-      spatialReference: m.wkid ? { wkid: m.wkid } : {},
-      serviceDescription: m.serviceDescription || '',
-      description: m.serviceDescription || '',
-      copyrightText: m.copyrightText || '',
-      documentInfo: { Author: m.author || '' },
-    };
-    const syntheticLayerJson = {
-      supportsStatistics: m.supportsStatistics,
-      advancedQueryCapabilities: { supportsAdvancedQueries: m.supportsAdvancedQueries },
-      spatialReference: m.wkid ? { wkid: m.wkid } : {},
-      fields: cached.fields || [],
-    };
-    containingEl.dispatchEvent(new CustomEvent('maturity:service-data', {
-      detail: { serviceJson: syntheticServiceJson, layerJson: syntheticLayerJson },
-    }));
-  } catch (_) {}
-
-  // Dispatch cached field stats for maturity
-  if (cached.fieldStats && cached.fieldStats.length) {
-    try {
-      containingEl.dispatchEvent(new CustomEvent('maturity:field-stats', {
-        detail: { fieldStats: cached.fieldStats, totalCount: m.recordCount || 0 },
-      }));
-    } catch (_) {}
-  }
-
-  // Wire sample records refresh (fetch new random rows from live service)
-  const fetchBaseUrl = parsed.isLayerUrl ? url : serviceBaseUrl;
-  wireSampleRefresh(contentEl, fetchBaseUrl, layerId, m.objectIdField, m.recordCount, generation);
-
-  // Wire metadata refresh button
-  const metaRefreshBtn = contentEl.querySelector('[data-refresh-metadata]');
-  if (metaRefreshBtn) {
-    metaRefreshBtn.addEventListener('click', async () => {
-      const card = contentEl.querySelector('#serviceMetadataCard');
-      if (!card) return;
-      card.innerHTML = '<p class="loading-message" style="padding:1rem;font-size:0.85rem;">Refreshing from live service\u2026</p>';
-      try {
-        let sj;
-        try { sj = await fetchServiceJson(serviceBaseUrl); } catch { sj = await fetchServiceJson(url); }
-        let lj = null;
-        try { lj = await fetchLayerJson(fetchBaseUrl, layerId); } catch {}
-        if ((!lj || !Array.isArray(lj.fields)) && parsed.isLayerUrl) {
-          try { const d = await fetchServiceJson(url); if (d && Array.isArray(d.fields)) lj = d; } catch {}
-        }
-        let rc = null;
-        try {
-          const cp = new URLSearchParams({ where: '1=1', returnCountOnly: 'true', f: 'json' });
-          const ct = parsed.isLayerUrl ? fetchBaseUrl : `${fetchBaseUrl}/${layerId}`;
-          const cj = await fetchJsonWithTimeout(`${ct}/query?${cp}`, 5000);
-          if (cj && typeof cj.count === 'number') rc = cj.count;
-        } catch {}
-        const liveProps = extractMetadataProps(sj, lj, rc);
-        card.outerHTML = buildMetadataCardHTML(liveProps);
-      } catch (e) {
-        card.innerHTML = '<p class="text-muted" style="padding:1rem;font-size:0.85rem;">Failed to refresh metadata from live service.</p>';
-      }
-    });
-  }
-
-  // Wire fields refresh button
-  const fieldsRefreshBtn = contentEl.querySelector('[data-refresh-fields]');
-  if (fieldsRefreshBtn) {
-    fieldsRefreshBtn.addEventListener('click', async () => {
-      const card = contentEl.querySelector('#fieldsCard');
-      if (!card) return;
-      card.innerHTML = '<p class="loading-message" style="padding:1rem;font-size:0.85rem;">Refreshing fields from live service\u2026</p>';
-      try {
-        let lj = null;
-        try { lj = await fetchLayerJson(fetchBaseUrl, layerId); } catch {}
-        if ((!lj || !Array.isArray(lj.fields)) && parsed.isLayerUrl) {
-          try { const d = await fetchServiceJson(url); if (d && Array.isArray(d.fields)) lj = d; } catch {}
-        }
-        if (lj && Array.isArray(lj.fields) && lj.fields.length) {
-          card.outerHTML = buildFieldsCardHTML(lj.fields, null, {
-            isCached: false,
-            oidFieldName: lj.objectIdField || '',
-            globalIdFieldName: lj.globalIdField || '',
-          });
-          // Start async field stats for the refreshed fields
-          startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, lj.fields, generation);
-        } else {
-          card.innerHTML = '<p class="text-muted" style="padding:1rem;font-size:0.85rem;">No fields returned from live service.</p>';
-        }
-      } catch {
-        card.innerHTML = '<p class="text-muted" style="padding:1rem;font-size:0.85rem;">Failed to refresh fields from live service.</p>';
-      }
-    });
-  }
-
-  // Initialize interactive map
-  if (!_isTable) {
-    initializeArcGISMap(serviceBaseUrl, layerId);
-  }
-}
-
 // ── Main preview renderer ──
 
 export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, generation, options = {}) {
   if (!hostEl) return;
-  const { datasetId, skipCache } = options;
+  const { datasetId } = options;
 
   const card = hostEl.querySelector('#datasetPreviewCard');
   const statusEl = hostEl.querySelector('[data-preview-status]');
@@ -963,20 +814,11 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     return;
   }
 
-  // avoid duplicate loads for same dataset re-render (unless refreshing)
-  if (!skipCache && contentEl.getAttribute('data-preview-rendered') === url) return;
+  // avoid duplicate loads for same dataset re-render
+  if (contentEl.getAttribute('data-preview-rendered') === url) return;
   contentEl.setAttribute('data-preview-rendered', url);
 
-  // ── Try cached data first (unless explicitly skipping) ──
-  if (!skipCache && datasetId) {
-    const cached = await fetchCachedServiceInfo(datasetId);
-    if (cached && cached.metadata) {
-      renderFromCachedData(contentEl, statusEl, cached, url, generation, containingEl);
-      return;
-    }
-  }
-
-  // ── Live fetch path ──
+  // ── Always fetch live from the ArcGIS REST endpoint ──
   statusEl.textContent = 'Loading service preview…';
   contentEl.innerHTML = '';
 

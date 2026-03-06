@@ -12,7 +12,7 @@ import { applyDashboardFilter } from './filters.js';
 import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
 import { getFieldInfo, shortTypeName, typeColor, isFieldIndexLoaded } from './field-explorer.js';
 import { setLastSelectedFieldName } from './lists.js';
-import { getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor } from './freshness.js';
+import { getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor, detectFreshness } from './freshness.js';
 import { exportButtonsHTML, wireExportButtons } from './metadata-export.js';
 
 // ── Freshness data cache (loaded from data/freshness.json once) ──
@@ -338,7 +338,7 @@ if (covRefreshBtn) {
 
 /**
  * Load and render the freshness card for a dataset.
- * Uses pre-computed data/freshness.json (or Worker R2 cache). No live fallback.
+ * Runs live multi-signal detection first; falls back to pre-computed cache if live fails.
  */
 async function loadFreshnessCard(hostEl, dataset, generation) {
   const contentEl = hostEl.querySelector('[data-freshness-content]');
@@ -346,34 +346,46 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
   if (!contentEl) return;
 
   let result = null;
+  let source = null; // 'live' | 'cache'
   let generatedTimestamp = null;
 
-  // Try pre-computed freshness index first
-  const index = await loadFreshnessIndex();
-  if (index && index.datasets) {
-    const precomputed = index.datasets.find(d => d.datasetId === dataset.id);
-    if (precomputed) {
-      result = precomputed;
-      generatedTimestamp = index.generated || null;
+  // ── Try live detection first (simple ~6 requests per dataset) ──
+  if (dataset.public_web_service) {
+    try {
+      const liveResult = await detectFreshness(dataset.public_web_service);
+      if (liveResult && liveResult.lastUpdated) {
+        result = liveResult;
+        source = 'live';
+      }
+    } catch (_) { /* live failed, fall back to cache */ }
+  }
+
+  // ── Fall back to pre-computed cache ──
+  if (!result) {
+    const index = await loadFreshnessIndex();
+    if (index && index.datasets) {
+      const precomputed = index.datasets.find(d => d.datasetId === dataset.id);
+      if (precomputed) {
+        result = precomputed;
+        source = 'cache';
+        generatedTimestamp = index.generated || null;
+      }
     }
   }
 
   if (!result) {
-    contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">No pre-computed freshness data available for this dataset. Data is generated twice daily.</p>';
+    contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">Could not detect freshness for this dataset (no signals found).</p>';
     return;
   }
 
-  // Render freshness result
+  // ── Render freshness result ──
   const confMeta = getConfidenceMeta(result.confidence);
   const age = formatFreshnessAge(result.lastUpdated);
   const ageColor = freshnessColor(result.lastUpdated);
 
-  // Update card border color based on freshness
   if (cardEl) cardEl.style.borderLeftColor = ageColor;
 
   let html = '';
-
-  // Main freshness display
   html += '<div class="freshness-result">';
   html += `<div class="freshness-main-row">`;
   html += `<div class="freshness-age" style="color:${ageColor};">${escapeHtml(age)}</div>`;
@@ -412,15 +424,17 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
     html += `</details>`;
   }
 
-  // Record count
   if (result.recordCount !== null && result.recordCount !== undefined) {
     html += `<div class="freshness-record-count">Record count: <strong>${result.recordCount.toLocaleString()}</strong></div>`;
   }
 
   html += '</div>';
 
-  if (generatedTimestamp) {
+  // Source indicator
+  if (source === 'cache' && generatedTimestamp) {
     html += cacheBadgeHTML(generatedTimestamp);
+  } else if (source === 'live') {
+    html += '<div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;">Detected live just now</div>';
   }
 
   contentEl.innerHTML = html;

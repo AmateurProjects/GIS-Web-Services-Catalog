@@ -369,11 +369,65 @@ input[type="search"]:focus {
   box-shadow: 0 2px 8px rgba(0,0,0,0.5);
   max-width: none !important;
   width: 100% !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .detail-sticky-header h2 {
   margin: 0;
   max-width: 980px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-header-actions {
+  flex-shrink: 0;
+}
+
+/* Export dropdown in sticky header */
+.export-dropdown {
+  position: relative;
+}
+.btn-export-trigger {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.75rem;
+  white-space: nowrap;
+}
+.export-dropdown-menu {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  min-width: 180px;
+  z-index: 20;
+  overflow: hidden;
+}
+.export-dropdown-menu.open {
+  display: flex;
+  flex-direction: column;
+}
+.export-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 0.55rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-main);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.export-dropdown-item:hover {
+  background: rgba(91,163,245,0.1);
 }
 
 .detail-panel h3 {
@@ -1033,6 +1087,15 @@ textarea.dataset-edit-input {
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--border-color);
+  position: relative;
+  z-index: 0;
+}
+
+/* Contain ArcGIS MapView z-index values so they don't overlap the sticky header */
+.card-map-preview,
+#arcgisMapContainer {
+  position: relative;
+  z-index: 0;
 }
 
 .card-map-preview .map-preview-status {
@@ -1161,6 +1224,18 @@ textarea.dataset-edit-input {
   50.1% { left: -100%; }
   100% { left: 200%; }
 }
+
+/* [Placeholder Detection] */
+.field-stat-placeholder {
+  color: #d97706;
+  font-weight: 600;
+  font-size: 0.85em;
+}
+.field-stat-ok {
+  color: #22c55e;
+  font-weight: 600;
+}
+/* [/Placeholder Detection] */
 
 .maturity-overview {
   display: flex;
@@ -2012,6 +2087,17 @@ textarea.dataset-edit-input {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+.field-name-link {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9em;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.field-name-link:hover {
+  text-decoration: underline;
 }
 
 .field-type-pill {

@@ -211,14 +211,35 @@ async function computeFieldStats(target, fields, totalCount) {
         });
         const distJson = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams}`, TIMEOUT_MS));
         if (distJson && typeof distJson.count === 'number') {
-          distinctCount = distJson.count;
+          // Some ArcGIS Server versions ignore returnDistinctValues and return
+          // the total record count instead. Treat count === totalCount as unreliable
+          // unless totalCount is very small (≤ 50), where all-unique is plausible.
+          if (distJson.count !== totalCount || (totalCount != null && totalCount <= 50)) {
+            distinctCount = distJson.count;
+          }
         }
       } catch {}
 
-      // Approach 2 fallback: groupByFieldsForStatistics
+      // Approach 2 fallback: groupByFieldsForStatistics + returnCountOnly
       if (distinctCount === null) {
         try {
           const distParams2 = new URLSearchParams({
+            where: '1=1',
+            groupByFieldsForStatistics: f.name,
+            returnCountOnly: 'true',
+            f: 'json',
+          });
+          const distJson2 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams2}`, TIMEOUT_MS));
+          if (distJson2 && typeof distJson2.count === 'number') {
+            distinctCount = distJson2.count;
+          }
+        } catch {}
+      }
+
+      // Approach 3 fallback: groupByFieldsForStatistics (count features array)
+      if (distinctCount === null) {
+        try {
+          const distParams3 = new URLSearchParams({
             where: '1=1',
             groupByFieldsForStatistics: f.name,
             outStatistics: JSON.stringify([
@@ -226,12 +247,61 @@ async function computeFieldStats(target, fields, totalCount) {
             ]),
             f: 'json',
           });
-          const distJson2 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams2}`, TIMEOUT_MS));
-          if (distJson2 && Array.isArray(distJson2.features)) {
-            distinctCount = distJson2.features.length;
+          const distJson3 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams3}`, TIMEOUT_MS));
+          if (distJson3 && Array.isArray(distJson3.features)) {
+            distinctCount = distJson3.features.length;
           }
         } catch {}
       }
+
+      // [Placeholder Detection] — empty string % and dominant value detection
+      let emptyPct = null;
+      let dominantValue = null;
+      let dominantPct = null;
+      const isStringField = ft.includes('STRING');
+
+      // Empty string count (string fields only)
+      if (isStringField && totalCount > 0) {
+        try {
+          const emptyParams = new URLSearchParams({
+            where: `${f.name} = ''`,
+            returnCountOnly: 'true',
+            f: 'json',
+          });
+          const emptyJson = await fetchWithRetry(() => fetchJson(`${target}/query?${emptyParams}`, TIMEOUT_MS));
+          if (emptyJson && typeof emptyJson.count === 'number') {
+            emptyPct = Number((emptyJson.count / totalCount * 100).toFixed(1));
+          }
+        } catch {}
+      }
+
+      // Dominant value: most frequent value + its percentage
+      // Skip OID / system fields and fields with very high cardinality
+      if (totalCount > 0 && !ft.includes('OID') && !ft.includes('GLOBALID')) {
+        try {
+          const domParams = new URLSearchParams({
+            where: '1=1',
+            groupByFieldsForStatistics: f.name,
+            outStatistics: JSON.stringify([
+              { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }
+            ]),
+            orderByFields: 'cnt DESC',
+            resultRecordCount: '1',
+            f: 'json',
+          });
+          const domJson = await fetchWithRetry(() => fetchJson(`${target}/query?${domParams}`, TIMEOUT_MS));
+          const topFeature = domJson?.features?.[0]?.attributes;
+          if (topFeature && typeof topFeature.cnt === 'number') {
+            dominantPct = Number((topFeature.cnt / totalCount * 100).toFixed(1));
+            dominantValue = topFeature[f.name];
+            // Normalize null dominant value representation
+            if (dominantValue === null || dominantValue === undefined) {
+              dominantValue = null;
+            }
+          }
+        } catch {}
+      }
+      // [/Placeholder Detection]
 
       results[i] = {
         name: f.name,
@@ -240,6 +310,9 @@ async function computeFieldStats(target, fields, totalCount) {
         nullPct,
         distinctCount,
         hasDomain: !!(f.domain && f.domain.type === 'codedValue'),
+        emptyPct,        // [Placeholder Detection]
+        dominantValue,   // [Placeholder Detection]
+        dominantPct,     // [Placeholder Detection]
       };
     }
   }

@@ -71,8 +71,10 @@ export function showAttributesView() {
   hideAllViews();
   if (els.attributesView) els.attributesView.classList.remove('hidden');
   if (els.attributesTabBtn) els.attributesTabBtn.classList.add('active');
-  // Clear dataset hash when leaving dataset view
-  if (window.location.hash) history.replaceState(null, '', window.location.pathname + window.location.search);
+  // Clear hash unless we're deep-linking to a field
+  if (window.location.hash && !window.location.hash.startsWith('#field/')) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
 
   // Trigger field data loading if not yet loaded (renderAttributeList handles the UX)
   if (!isFieldIndexLoaded() && _renderAttributeList) {

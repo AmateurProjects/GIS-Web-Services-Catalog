@@ -229,8 +229,9 @@ export function scoreServiceCapabilities({ serviceJson, layerJson }) {
   return { score, max: 15, details };
 }
 
-// ── 9. Attribute Null Health (0–20, with penalties) ──
-// High null rates or mostly-null columns lower maturity.
+// ── 9. Attribute Health (0–20, with penalties) ──
+// High null rates, mostly-null columns, or placeholder values lower maturity.
+// [Placeholder Detection] — this section includes placeholder/dominant-value checks.
 
 export function scoreAttributeNullHealth({ fields, fieldStats }) {
   if (fields === null || fields === undefined) {
@@ -267,27 +268,54 @@ export function scoreAttributeNullHealth({ fields, fieldStats }) {
     if (nullPcts.length) {
       const avgNull = nullPcts.reduce((a, b) => a + b, 0) / nullPcts.length;
 
-      // Base score from average null rate (0–15)
+      // Base score from average null rate (0–12)
       let basePts;
-      if (avgNull < 5) basePts = 15;
-      else if (avgNull < 15) basePts = 12;
-      else if (avgNull < 30) basePts = 8;
-      else if (avgNull < 50) basePts = 4;
+      if (avgNull < 5) basePts = 12;
+      else if (avgNull < 15) basePts = 10;
+      else if (avgNull < 30) basePts = 6;
+      else if (avgNull < 50) basePts = 3;
       else basePts = 0;
       score += basePts;
-      details.push({ label: `Average null rate: ${avgNull.toFixed(1)}%`, ok: basePts >= 12, pts: basePts, maxPts: 15 });
+      details.push({ label: `Average null rate: ${avgNull.toFixed(1)}%`, ok: basePts >= 10, pts: basePts, maxPts: 12 });
 
-      // Bonus: no columns > 80% null (5 pts)
+      // Bonus: no columns > 80% null (3 pts)
       const highNullCount = nullPcts.filter(p => p > 80).length;
       if (highNullCount === 0) {
-        score += 5;
-        details.push({ label: 'No columns over 80% null', ok: true, pts: 5, maxPts: 5 });
+        score += 3;
+        details.push({ label: 'No columns over 80% null', ok: true, pts: 3, maxPts: 3 });
       } else {
-        details.push({ label: `${highNullCount} column(s) over 80% null`, ok: false, pts: 0, maxPts: 5, isPenalty: true });
+        details.push({ label: `${highNullCount} column(s) over 80% null`, ok: false, pts: 0, maxPts: 3, isPenalty: true });
       }
     } else {
-      details.push({ label: 'No null statistics available', ok: false, pts: 0, maxPts: 20 });
+      details.push({ label: 'No null statistics available', ok: false, pts: 0, maxPts: 15 });
     }
+
+    // [Placeholder Detection] — empty string and dominant value checks (0–5)
+    const placeholderStats = fieldStats.filter(s => {
+      const t = (s.type || '').toUpperCase();
+      return !t.includes('OID') && !t.includes('GLOBALID') && !t.includes('GEOMETRY') && !s.skipped;
+    });
+
+    if (placeholderStats.length) {
+      const emptyFields = placeholderStats.filter(s => typeof s.emptyPct === 'number' && s.emptyPct > 20);
+      const dominantFields = placeholderStats.filter(s => typeof s.dominantPct === 'number' && s.dominantPct >= 95 && s.dominantValue !== null && s.dominantValue !== undefined);
+      const placeholderIssueCount = emptyFields.length + dominantFields.length;
+
+      if (placeholderIssueCount === 0) {
+        score += 5;
+        details.push({ label: 'No placeholder or dominant-value issues', ok: true, pts: 5, maxPts: 5 });
+      } else {
+        const msgs = [];
+        if (emptyFields.length) msgs.push(`${emptyFields.length} field(s) >20% empty strings`);
+        if (dominantFields.length) msgs.push(`${dominantFields.length} field(s) with 95%+ same value`);
+        details.push({ label: msgs.join('; '), ok: false, pts: 0, maxPts: 5, isPenalty: true });
+      }
+    } else {
+      // No placeholder data available yet — don't penalize
+      score += 5;
+      details.push({ label: 'Placeholder analysis not available', ok: true, pts: 5, maxPts: 5 });
+    }
+    // [/Placeholder Detection]
   } else {
     details.push({ label: 'Null statistics', ok: false, pts: 0, maxPts: 20, pending: true });
   }

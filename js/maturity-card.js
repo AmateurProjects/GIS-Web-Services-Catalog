@@ -158,7 +158,7 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
       { key: 'issues',              label: 'Blockers & Improvements', data: issues },
       { key: 'serviceMetadata',     label: 'Service Metadata',        data: serviceMetadata },
       { key: 'serviceCapabilities', label: 'Service Capabilities',    data: serviceCapabilities },
-      { key: 'nullHealth',          label: 'Attribute Null Health',   data: nullHealth },
+      { key: 'nullHealth',          label: 'Attribute Health',       data: nullHealth },
       { key: 'freshnessConfidence', label: 'Freshness Confidence',    data: freshnessConfidence },
     ];
 

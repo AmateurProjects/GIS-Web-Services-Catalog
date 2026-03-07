@@ -81,6 +81,11 @@ infoFiles.forEach(filename => {
       const nullPct = stats?.nullPct ?? null;
       const distinctCount = stats?.distinctCount ?? null;
       const hasDomain = !!(f.domain || stats?.hasDomain);
+      // [Placeholder Detection]
+      const emptyPct = stats?.emptyPct ?? null;
+      const dominantValue = stats?.dominantValue ?? null;
+      const dominantPct = stats?.dominantPct ?? null;
+      // [/Placeholder Detection]
 
       if (hasDomain) entry._hasDomain = true;
       if (nullPct !== null && nullPct !== undefined) entry._nullPcts.push(nullPct);
@@ -93,6 +98,11 @@ infoFiles.forEach(filename => {
         nullPct,
         distinctCount,
         hasDomain,
+        // [Placeholder Detection]
+        emptyPct,
+        dominantValue,
+        dominantPct,
+        // [/Placeholder Detection]
       });
     });
 

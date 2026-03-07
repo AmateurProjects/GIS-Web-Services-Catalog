@@ -13,7 +13,7 @@ import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
 import { getFieldInfo, shortTypeName, typeColor, isFieldIndexLoaded } from './field-explorer.js';
 import { setLastSelectedFieldName } from './lists.js';
 import { getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor, detectFreshness } from './freshness.js';
-import { exportButtonsHTML, wireExportButtons } from './metadata-export.js';
+import { wireExportButtons } from './metadata-export.js';
 
 // ── Freshness data cache (loaded from data/freshness.json once) ──
 let _freshnessIndex = null;  // { datasets: [...] } or null
@@ -102,8 +102,23 @@ export function renderDatasetDetail(datasetId) {
 
     let html = '';
 
-    // Sticky header with dataset name
-    html += `<div class="detail-sticky-header"><h2>${escapeHtml(dataset.title || dataset.id)}</h2></div>`;
+    // Sticky header with dataset name + export dropdown
+    html += `<div class="detail-sticky-header">
+      <h2>${escapeHtml(dataset.title || dataset.id)}</h2>
+      <div class="detail-header-actions">
+        <div class="export-dropdown" id="exportDropdown">
+          <button type="button" class="btn btn-export-trigger" data-export-toggle>📤 Export</button>
+          <div class="export-dropdown-menu" id="exportDropdownMenu">
+            <button type="button" class="export-dropdown-item" data-export-format="dcat" data-export-ds="${escapeHtml(dataset.id)}">DCAT-US JSON-LD</button>
+            <button type="button" class="export-dropdown-item" data-export-format="schema" data-export-ds="${escapeHtml(dataset.id)}">Schema.org JSON-LD</button>
+            <button type="button" class="export-dropdown-item" data-export-format="iso" data-export-ds="${escapeHtml(dataset.id)}">ISO 19115 XML</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+    // Auto-computed Data Maturity card (initialized after innerHTML is set — appears first)
+    html += maturityCardHTML();
 
     // Helper for simple editable field rows
     const ef = (label, key, val) => {
@@ -205,9 +220,6 @@ export function renderDatasetDetail(datasetId) {
 
     html += '</div>'; // end combined manual card
 
-    // Auto-computed Data Maturity card (initialized after innerHTML is set)
-    html += maturityCardHTML();
-
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
     html += '<div class="card card-coverage" id="coverageMapCard">';
     html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><div style="display:flex;align-items:center;gap:0.5rem;"><span class="data-source-badge data-source-badge-auto">Auto</span><button type="button" class="btn" data-cov-refresh title="Re-run live coverage analysis" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button></div></div>';
@@ -226,9 +238,6 @@ export function renderDatasetDetail(datasetId) {
         </div>
       </div>
     `;
-
-    // Metadata Export card
-    html += exportButtonsHTML(dataset.id);
 
     // Attributes + inline attribute details - only show if dataset has attributes
     if (attrs.length > 0) {
@@ -331,8 +340,24 @@ if (covRefreshBtn) {
     // ── Freshness detection (async) ──
     loadFreshnessCard(els.datasetDetailEl, dataset, currentGeneration);
 
-    // ── Wire metadata export buttons ──
+    // ── Wire metadata export buttons (now in sticky header dropdown) ──
     wireExportButtons(els.datasetDetailEl);
+
+    // ── Wire export dropdown toggle ──
+    const exportToggle = els.datasetDetailEl.querySelector('[data-export-toggle]');
+    const exportMenu = els.datasetDetailEl.querySelector('#exportDropdownMenu');
+    if (exportToggle && exportMenu) {
+      exportToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportMenu.classList.toggle('open');
+      });
+      // Close dropdown when clicking anywhere outside
+      els.datasetDetailEl.addEventListener('click', (e) => {
+        if (!e.target.closest('.export-dropdown')) exportMenu.classList.remove('open');
+      });
+      // Close after an export item is clicked
+      exportMenu.addEventListener('click', () => exportMenu.classList.remove('open'));
+    }
 
   }
 
@@ -576,6 +601,12 @@ export function renderAttributeDetail(attrIdOrFieldName) {
 function _renderFieldExplorerDetail(field) {
   setLastSelectedFieldName(field.name);
 
+  // Set URL hash for deep linking
+  const targetHash = `#field/${encodeURIComponent(field.name)}`;
+  if (window.location.hash !== targetHash) {
+    history.replaceState(null, '', targetHash);
+  }
+
   // Highlight active field in sidebar
   setActiveListButton(els.attributeListEl, (b) => b.getAttribute('data-field-name') === field.name);
 
@@ -666,6 +697,7 @@ function _renderFieldExplorerDetail(field) {
             <th>Alias</th>
             <th>Null %</th>
             <th>Distinct</th>
+            <th>Quality</th>
             <th>Domain</th>
           </tr>
         </thead>
@@ -682,6 +714,21 @@ function _renderFieldExplorerDetail(field) {
       const domainVal = d.hasDomain ? '\u2713' : '\u2014';
       const domainColor = d.hasDomain ? 'var(--purple)' : 'var(--text-muted)';
 
+      // [Placeholder Detection]
+      let qualityHtml = '\u2014';
+      const qWarnings = [];
+      if (typeof d.emptyPct === 'number' && d.emptyPct > 5) {
+        qWarnings.push(`<span class="field-stat-placeholder">${d.emptyPct.toFixed(0)}% empty</span>`);
+      }
+      if (typeof d.dominantPct === 'number' && d.dominantPct >= 90 && d.dominantValue !== null && d.dominantValue !== undefined) {
+        const dv = String(d.dominantValue);
+        const trunc = dv.length > 15 ? dv.slice(0, 12) + '\u2026' : dv;
+        qWarnings.push(`<span class="field-stat-placeholder">${d.dominantPct.toFixed(0)}% \u201c${escapeHtml(trunc)}\u201d</span>`);
+      }
+      if (qWarnings.length) qualityHtml = qWarnings.join(' ');
+      else if (d.nullPct !== null) qualityHtml = '<span class="field-stat-ok">\u2713</span>';
+      // [/Placeholder Detection]
+
       html += `
         <tr>
           <td><button type="button" class="link-button" data-dataset-id="${escapeHtml(d.datasetId)}" title="${escapeHtml(d.datasetTitle)}">${escapeHtml(
@@ -691,6 +738,7 @@ function _renderFieldExplorerDetail(field) {
           <td style="color:var(--text-muted);font-size:0.82rem;">${escapeHtml(d.alias)}</td>
           <td style="color:${nullColor};font-weight:600;">${nullVal}</td>
           <td style="font-variant-numeric:tabular-nums;">${distinctVal}</td>
+          <td class="fields-stat-col">${qualityHtml}</td>
           <td style="color:${domainColor};text-align:center;">${domainVal}</td>
         </tr>`;
     });

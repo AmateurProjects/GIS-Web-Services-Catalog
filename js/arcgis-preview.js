@@ -1,5 +1,10 @@
 import { escapeHtml, cacheBadgeHTML } from './utils.js';
 
+// Lazy callback for navigating to a field in the field explorer tab.
+// Registered from app.js via registerFieldLinkCallback() to avoid circular imports.
+let _onFieldLinkClick = null;
+export function registerFieldLinkCallback(fn) { _onFieldLinkClick = fn; }
+
 // ====== ARCGIS REST PREVIEW HELPERS (static image + metadata + sample) ======
 
 export function normalizeServiceUrl(url) {
@@ -496,6 +501,7 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
               <th>Type</th>
               <th class="fields-stat-col">Null %</th>
               <th class="fields-stat-col">Distinct</th>
+              <th class="fields-stat-col">Quality</th>
             </tr>
           </thead>
           <tbody>
@@ -536,12 +542,33 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
                 uniqCell = `<span class="field-stat-loading">\u2022\u2022\u2022</span>`;
               }
 
+              // [Placeholder Detection] — quality warnings from cached stats
+              let qualityCell = '';
+              if (hasPrecomputedStats && stat && !stat.skipped) {
+                const warnings = [];
+                if (typeof stat.emptyPct === 'number' && stat.emptyPct > 5) {
+                  warnings.push(`<span class="field-stat-placeholder" title="${stat.emptyPct.toFixed(1)}% empty strings">${stat.emptyPct.toFixed(0)}% empty</span>`);
+                }
+                if (typeof stat.dominantPct === 'number' && stat.dominantPct >= 90 && stat.dominantValue !== null) {
+                  const domVal = String(stat.dominantValue);
+                  const truncVal = domVal.length > 20 ? domVal.slice(0, 17) + '\u2026' : domVal;
+                  warnings.push(`<span class="field-stat-placeholder" title="${stat.dominantPct.toFixed(1)}% of values are '${escapeHtml(domVal)}'">${stat.dominantPct.toFixed(0)}% \u201c${escapeHtml(truncVal)}\u201d</span>`);
+                }
+                qualityCell = warnings.length ? warnings.join(' ') : '<span class="field-stat-ok">\u2713</span>';
+              } else if (hasPrecomputedStats && stat && stat.skipped) {
+                qualityCell = '\u2014';
+              } else {
+                qualityCell = `<span class="field-stat-loading">\u2022\u2022\u2022</span>`;
+              }
+              // [/Placeholder Detection]
+
               return `<tr${rowCls} data-field-idx="${i}">
-                <td class="field-name-cell">${fieldBadge}<code>${escapeHtml(f.name)}</code></td>
+                <td class="field-name-cell">${fieldBadge}<a class="field-name-link" href="#" data-field-link="${escapeHtml(f.name)}">${escapeHtml(f.name)}</a></td>
                 <td>${escapeHtml(f.alias || '')}</td>
                 <td><span class="field-type-pill">${escapeHtml(friendlyType(f.type))}</span></td>
                 <td class="fields-stat-col" data-field-null="${i}">${nullCell}</td>
                 <td class="fields-stat-col" data-field-uniq="${i}">${uniqCell}</td>
+                <td class="fields-stat-col" data-field-quality="${i}">${qualityCell}</td>
               </tr>`;
             }).join('')}
           </tbody>
@@ -550,6 +577,17 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
       ${isCached && generatedDate ? cacheBadgeHTML(generatedDate) : ''}
     </div>
   `;
+}
+
+/** Attach delegated click handler for field-name links inside a container. */
+function wireFieldLinks(container) {
+  container.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-field-link]');
+    if (!link) return;
+    e.preventDefault();
+    const fieldName = link.getAttribute('data-field-link');
+    if (fieldName && _onFieldLinkClick) _onFieldLinkClick(fieldName);
+  });
 }
 
 // ── Build Sample Records card HTML ──
@@ -680,18 +718,36 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
               where: '1=1', outFields: f.name, returnDistinctValues: 'true', returnCountOnly: 'true', f: 'json',
             });
             const distJson1 = await fetchJsonWithTimeout(`${target}/query?${distParams1}`, 5000);
-            if (distJson1 && typeof distJson1.count === 'number') distinctCount = distJson1.count;
+            if (distJson1 && typeof distJson1.count === 'number') {
+              // Some ArcGIS Server versions ignore returnDistinctValues and return
+              // the total record count. Treat count === totalCount as unreliable
+              // unless totalCount is very small (≤ 50).
+              if (distJson1.count !== totalCount || (totalCount != null && totalCount <= 50)) {
+                distinctCount = distJson1.count;
+              }
+            }
           } catch {}
           
           if (distinctCount === null) {
             try {
               const distParams2 = new URLSearchParams({
                 where: '1=1', groupByFieldsForStatistics: f.name,
+                returnCountOnly: 'true', f: 'json',
+              });
+              const distJson2 = await fetchJsonWithTimeout(`${target}/query?${distParams2}`, 5000);
+              if (distJson2 && typeof distJson2.count === 'number') distinctCount = distJson2.count;
+            } catch {}
+          }
+
+          if (distinctCount === null) {
+            try {
+              const distParams3 = new URLSearchParams({
+                where: '1=1', groupByFieldsForStatistics: f.name,
                 outStatistics: JSON.stringify([{ statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }]),
                 f: 'json',
               });
-              const distJson2 = await fetchJsonWithTimeout(`${target}/query?${distParams2}`, 5000);
-              if (distJson2 && Array.isArray(distJson2.features)) distinctCount = distJson2.features.length;
+              const distJson3 = await fetchJsonWithTimeout(`${target}/query?${distParams3}`, 5000);
+              if (distJson3 && Array.isArray(distJson3.features)) distinctCount = distJson3.features.length;
             } catch {}
           }
           
@@ -710,6 +766,54 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
             }
           } else {
             uniqCell.textContent = '\u2014';
+          }
+
+          // [Placeholder Detection] — live quality check
+          const qualityCell = table.querySelector(`[data-field-quality="${i}"]`);
+          if (qualityCell) {
+            const fType = (f.type || '').toUpperCase();
+            const isStr = fType.includes('STRING');
+            const warnings = [];
+
+            // Empty string check (string fields only)
+            if (isStr && totalCount > 0) {
+              try {
+                const empParams = new URLSearchParams({ where: `${f.name} = ''`, returnCountOnly: 'true', f: 'json' });
+                const empJson = await fetchJsonWithTimeout(`${target}/query?${empParams}`, 5000);
+                if (empJson && typeof empJson.count === 'number') {
+                  const empPct = empJson.count / totalCount * 100;
+                  if (empPct > 5) {
+                    warnings.push(`<span class="field-stat-placeholder" title="${empPct.toFixed(1)}% empty strings">${empPct.toFixed(0)}% empty</span>`);
+                  }
+                }
+              } catch {}
+            }
+
+            // Dominant value check
+            if (totalCount > 0 && !fType.includes('OID') && !fType.includes('GLOBALID')) {
+              try {
+                const domParams = new URLSearchParams({
+                  where: '1=1', groupByFieldsForStatistics: f.name,
+                  outStatistics: JSON.stringify([{ statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }]),
+                  orderByFields: 'cnt DESC', resultRecordCount: '1', f: 'json',
+                });
+                const domJson = await fetchJsonWithTimeout(`${target}/query?${domParams}`, 5000);
+                const top = domJson?.features?.[0]?.attributes;
+                if (top && typeof top.cnt === 'number') {
+                  const domPct = top.cnt / totalCount * 100;
+                  const domVal = top[f.name];
+                  if (domPct >= 90 && domVal !== null && domVal !== undefined) {
+                    const s = String(domVal);
+                    const trunc = s.length > 20 ? s.slice(0, 17) + '\u2026' : s;
+                    warnings.push(`<span class="field-stat-placeholder" title="${domPct.toFixed(1)}% are '${s}'">${domPct.toFixed(0)}% \u201c${trunc}\u201d</span>`);
+                  }
+                }
+              } catch {}
+            }
+
+            qualityCell.innerHTML = warnings.length ? warnings.join(' ') : '<span class="field-stat-ok">\u2713</span>';
+          }
+          // [/Placeholder Detection]
           }
         } catch {
           uniqCell.textContent = '\u2014';
@@ -915,6 +1019,9 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
 
     contentEl.innerHTML = html;
     statusEl.textContent = 'Preview loaded.';
+
+    // Wire field name links → field explorer tab
+    wireFieldLinks(contentEl);
 
     // Start async field stats — skip for ImageServer (no /query for stats)
     if (allFields.length && !_isImageSvc) {

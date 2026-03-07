@@ -9,6 +9,8 @@ import { renderDatasetDetail, renderInlineAttributeDetail, renderAttributeDetail
 import { renderNewDatasetRequestForm } from './new-dataset-form.js';
 import { renderNewAttributeCreateForm } from './forms.js';
 import { showDashboardView, showDatasetsView, showAttributesView, registerNavigationCallbacks, registerAttributeListCallback } from './navigation.js';
+import { registerFieldLinkCallback } from './arcgis-preview.js';
+import { isFieldIndexLoaded, loadFieldData } from './field-explorer.js';
 
 /** Simple debounce helper */
 function debounce(fn, ms) {
@@ -43,6 +45,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Register attribute list callback for navigation (triggers field loading on tab visit)
   registerAttributeListCallback(renderAttributeList);
+
+  // Register field link callback so clicking a field name in the preview navigates to the field explorer
+  registerFieldLinkCallback(async (fieldName) => {
+    showAttributesView();
+    if (!isFieldIndexLoaded()) await loadFieldData();
+    renderAttributeDetail(fieldName);
+  });
 
   // ── Show loading state ──
   if (els.dashboardContentEl) {
@@ -132,15 +141,32 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ── Hash-based deep linking ──
   function navigateFromHash() {
     const hash = window.location.hash;
-    const match = hash.match(/^#dataset\/(.+)$/);
-    if (match) {
-      const dsId = decodeURIComponent(match[1]);
+
+    // Dataset deep link: #dataset/<id>
+    const dsMatch = hash.match(/^#dataset\/(.+)$/);
+    if (dsMatch) {
+      const dsId = decodeURIComponent(dsMatch[1]);
       if (dsId && state.allDatasets.some(ds => ds.id === dsId)) {
         showDatasetsView();
         renderDatasetDetail(dsId);
         return true;
       }
     }
+
+    // Field deep link: #field/<fieldName>
+    const fieldMatch = hash.match(/^#field\/(.+)$/);
+    if (fieldMatch) {
+      const fieldName = decodeURIComponent(fieldMatch[1]);
+      if (fieldName) {
+        showAttributesView();
+        (async () => {
+          if (!isFieldIndexLoaded()) await loadFieldData();
+          renderAttributeDetail(fieldName);
+        })();
+        return true;
+      }
+    }
+
     return false;
   }
 

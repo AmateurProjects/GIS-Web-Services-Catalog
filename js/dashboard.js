@@ -371,7 +371,9 @@ function healthRow(r) {
   const shortUrl = r.url.replace(/^https?:\/\//, '').replace(/\/+$/, '');
   const truncUrl = shortUrl.length > 60 ? shortUrl.slice(0, 57) + '\u2026' : shortUrl;
   const dsCount = r.datasets ? r.datasets.length : 0;
-  const dsNames = r.datasets ? r.datasets.slice(0, 3).map(d => escapeHtml(d.title)).join(', ') : '';
+  const dsLinks = r.datasets ? r.datasets.slice(0, 3).map(d =>
+    `<button type="button" class="dash-link" data-dash-ds="${escapeHtml(d.id)}" title="${escapeHtml(d.title)}">${escapeHtml(d.title)}</button>`
+  ).join(', ') : '';
   const more = dsCount > 3 ? ` +${dsCount - 3} more` : '';
   const detailText = r.detail ? escapeHtml(r.detail) : '';
 
@@ -379,7 +381,7 @@ function healthRow(r) {
   row += `<td class="health-status-cell">${statusIcon} ${statusLabel}</td>`;
   row += `<td><a href="${escapeHtml(r.url)}" target="_blank" rel="noopener" class="health-url" title="${escapeHtml(r.url)}">${escapeHtml(truncUrl)}</a></td>`;
   row += `<td class="health-detail-cell" style="font-size:0.8rem;color:var(--text-muted);max-width:220px;">${detailText}</td>`;
-  row += `<td class="health-ds-cell">${dsNames}${more}</td>`;
+  row += `<td class="health-ds-cell">${dsLinks}${more}</td>`;
   row += `</tr>`;
   return row;
 }

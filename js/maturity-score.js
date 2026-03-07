@@ -5,12 +5,14 @@
 // ── Tier thresholds ──
 
 export function tierFromScore(score) {
+  if (score >= 95) return 'platinum';
   if (score >= 80) return 'gold';
   if (score >= 60) return 'silver';
   return 'bronze';
 }
 
 export const TIER_META = {
+  platinum: { label: 'Platinum', icon: '💎', css: 'tier-platinum' },
   gold:   { label: 'Gold',   icon: '🥇', css: 'tier-gold' },
   silver: { label: 'Silver', icon: '🥈', css: 'tier-silver' },
   bronze: { label: 'Bronze', icon: '🥉', css: 'tier-bronze' },

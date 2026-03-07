@@ -1136,6 +1136,32 @@ textarea.dataset-edit-input {
   100% { left: 200%; }
 }
 
+.tier-platinum {
+  border-color: rgba(180,220,255,0.6);
+  background: rgba(180,220,255,0.08);
+  color: #b4dcff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 0 12px rgba(180,220,255,0.15);
+}
+
+/* Platinum tier double shimmer */
+.tier-platinum::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%;
+  width: 50%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(180,220,255,0.25), transparent);
+  animation: platinum-shimmer 2s ease-in-out 1 forwards;
+}
+
+@keyframes platinum-shimmer {
+  0%   { left: -100%; }
+  50%  { left: 200%; }
+  50.1% { left: -100%; }
+  100% { left: 200%; }
+}
+
 .maturity-overview {
   display: flex;
   justify-content: flex-start;
@@ -2396,9 +2422,10 @@ textarea.dataset-edit-input {
   border: 1px solid;
 }
 
-.dash-tier-bronze { border-color: rgba(205,127,50,0.4); background: rgba(205,127,50,0.1); color: #d4a574; }
-.dash-tier-silver { border-color: rgba(192,192,192,0.4); background: rgba(192,192,192,0.1); color: #d4d4d4; }
-.dash-tier-gold   { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.1); color: #fde047; }
+.dash-tier-bronze   { border-color: rgba(205,127,50,0.4); background: rgba(205,127,50,0.1); color: #d4a574; }
+.dash-tier-silver   { border-color: rgba(192,192,192,0.4); background: rgba(192,192,192,0.1); color: #d4d4d4; }
+.dash-tier-gold     { border-color: rgba(255,215,0,0.4); background: rgba(255,215,0,0.1); color: #fde047; }
+.dash-tier-platinum { border-color: rgba(180,220,255,0.4); background: rgba(180,220,255,0.1); color: #b4dcff; }
 
 /* ================================================================
    SERVICE HEALTH STATUS (Dashboard)

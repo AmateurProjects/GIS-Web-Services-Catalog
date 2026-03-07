@@ -3,7 +3,9 @@
 // Determines when a web service was last updated using a cascade of signals:
 //   1. editingInfo.lastEditDate (layer-level timestamp from ArcGIS Server)
 //   2. Editor tracking date fields (MAX query on edit date fields)
-//   3. Common date field heuristics (MAX on fields named *EDIT_DATE*, *MODIFY*, etc.)
+//   3. Common date field heuristics (MAX on fields named Modified, Created, *EDIT_DATE*, etc.)
+//      — modification fields (Modified, MODIFY_DATE, etc.) → high confidence
+//      — creation fields (Created, CREATE_DATE) → medium confidence
 //   4. Record count delta (compared to stored baseline)
 //   5. Service metadata text (date patterns in description/copyright/documentInfo)
 //   6. FGDC/ISO metadata XML (pubdate, caldate from /metadata endpoint)
@@ -35,14 +37,16 @@ const DATE_FIELD_PATTERNS = [
   /^edit_date$/i,
   /^edited_date$/i,
   /^last_editor?_date$/i,
-  // Modification fields
+  // Modification fields (high confidence — actual record timestamps)
+  /^modified$/i,
   /^modif(y|ied)_date$/i,
   /^last_modif(y|ied)$/i,
   /^date_modif(y|ied)$/i,
   /^update_date$/i,
   /^last_update(d)?$/i,
   /^date_updated$/i,
-  // Creation fields (fallback — less indicative of "currency")
+  // Creation fields (medium confidence — when data was added)
+  /^created$/i,
   /^created?_date$/i,
   /^create_date$/i,
   /^date_created$/i,
@@ -54,11 +58,17 @@ const DATE_FIELD_PATTERNS = [
 ];
 
 // ── Priority scoring for date fields ──
+// Lower number = higher priority = more indicative of "last updated".
+// Priority 0: Editor tracking fields (explicit edit timestamps)
+// Priority 1: Modification / update fields (record-level "Modified", "last_modified", etc.)
+// Priority 2: Creation fields ("Created", "create_date" — less useful for currency)
+// Priority 3: GDB system fields
+// Priority 4: Any other date field
 function dateFieldPriority(fieldName) {
   const n = fieldName.toUpperCase();
   if (/LAST.?EDIT/.test(n) || /EDIT.?DATE/.test(n) || /EDITED.?DATE/.test(n)) return 0;
-  if (/MODIF/.test(n) || /UPDATE/.test(n)) return 1;
-  if (/CREATE/.test(n)) return 2;
+  if (/^MODIFIED$/i.test(fieldName) || /MODIF/.test(n) || /UPDATE/.test(n)) return 1;
+  if (/^CREATED$/i.test(fieldName) || /CREATE/.test(n)) return 2;
   if (/GDB/.test(n)) return 3;
   return 4;
 }
@@ -248,7 +258,10 @@ export async function detectFreshness(rawUrl, cachedServiceInfo = null, storedRe
 
     if (bestDate) {
       const priority = dateFieldPriority(bestField);
-      const conf = priority <= 1 ? 'medium' : 'low';
+      // Modification/edit fields are high confidence (actual record timestamps)
+      // Creation fields are medium confidence (show when data was added, not updated)
+      // Other date fields are low confidence
+      const conf = priority <= 1 ? 'high' : priority <= 2 ? 'medium' : 'low';
       signals.push({
         signal: 'date_field_heuristic',
         value: bestDate,

@@ -127,7 +127,7 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
     const tierMeta = TIER_META[full.tier] || TIER_META.bronze;
 
     // Update card border color
-    const borderColors = { gold: '#fde047', silver: '#d4d4d4', bronze: '#d4a574' };
+    const borderColors = { platinum: '#b4dcff', gold: '#fde047', silver: '#d4d4d4', bronze: '#d4a574' };
     card.style.borderLeftColor = borderColors[full.tier] || 'var(--text-muted)';
 
     let html = '';

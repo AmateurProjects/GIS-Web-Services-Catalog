@@ -202,6 +202,7 @@ export function renderFilterPanel() {
       key: 'tier',
       label: 'Quality Tier',
       options: [
+        { value: 'platinum', label: 'Platinum' },
         { value: 'gold', label: 'Gold' },
         { value: 'silver', label: 'Silver' },
         { value: 'bronze', label: 'Bronze' },

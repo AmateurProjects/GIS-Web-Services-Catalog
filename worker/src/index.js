@@ -889,8 +889,8 @@ function isImageServer(url) {
 function dateFieldPriority(name) {
   const n = name.toUpperCase();
   if (/LAST.?EDIT/.test(n) || /EDIT.?DATE/.test(n)) return 0;
-  if (/MODIF/.test(n) || /UPDATE/.test(n)) return 1;
-  if (/CREATE/.test(n)) return 2;
+  if (/^MODIFIED$/i.test(name) || /MODIF/.test(n) || /UPDATE/.test(n)) return 1;
+  if (/^CREATED$/i.test(name) || /CREATE/.test(n)) return 2;
   return 3;
 }
 
@@ -1032,7 +1032,8 @@ async function processDataset(ds, storedRecordCount, env) {
         } catch (_) {}
       }
       const priority = bestField ? dateFieldPriority(bestField) : 4;
-      const conf = priority <= 1 ? 'medium' : 'low';
+      // Modification/edit fields → high, creation fields → medium, others → low
+      const conf = priority <= 1 ? 'high' : priority <= 2 ? 'medium' : 'low';
       signals.push(bestDate
         ? { signal: 'date_field_heuristic', value: bestDate, confidence: conf, detail: `MAX(${bestField}) = ${bestDate}` }
         : { signal: 'date_field_heuristic', value: null, confidence: 'none', detail: 'No dates found' });

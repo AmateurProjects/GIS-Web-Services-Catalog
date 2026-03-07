@@ -3,9 +3,23 @@ export function getMaturityImprovementSuggestions(tier, completeness, docLevel) 
   const suggestions = [];
   const comp = Number(completeness) || 0;
   
-  if (tier === 'gold') {
+  if (tier === 'platinum') {
     // Already at highest tier - no suggestions
     return [];
+  }
+
+  if (tier === 'gold') {
+    // Gold → Platinum suggestions
+    suggestions.push('Achieve a near-perfect score (95+) to reach Platinum status');
+    if (comp < 95) {
+      suggestions.push(`Increase completeness from ${comp}% toward 95%+ by addressing remaining data gaps`);
+    }
+    if (docLevel !== 'complete') {
+      suggestions.push('Achieve "Complete" documentation with full field definitions and lineage');
+    }
+    suggestions.push('Ensure all service metadata fields are populated (description, copyright, subject)');
+    suggestions.push('Minimize null rates across all attribute columns');
+    return suggestions;
   }
   
   if (tier === 'bronze') {
@@ -36,7 +50,7 @@ export function getMaturityImprovementSuggestions(tier, completeness, docLevel) 
     if (!docLevel || docLevel === 'none') {
       suggestions.push('Add basic documentation including field descriptions');
     }
-    suggestions.push('Assign a quality tier (bronze/silver/gold) to track maturity');
+    suggestions.push('Assign a quality tier (bronze/silver/gold/platinum) to track maturity');
   }
   
   return suggestions;

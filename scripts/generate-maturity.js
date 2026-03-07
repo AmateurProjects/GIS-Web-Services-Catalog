@@ -38,6 +38,7 @@ const datasets = catalog.datasets || [];
 // ── Scoring functions (mirrors js/maturity-score.js) ──
 
 function tierFromScore(score) {
+  if (score >= 95) return 'platinum';
   if (score >= 80) return 'gold';
   if (score >= 60) return 'silver';
   return 'bronze';
@@ -232,7 +233,7 @@ function loadServiceInfo(datasetId) {
 }
 
 const results = [];
-const tierCounts = { gold: 0, silver: 0, bronze: 0 };
+const tierCounts = { platinum: 0, gold: 0, silver: 0, bronze: 0 };
 
 // Load freshness index for confidence scoring
 let freshnessIndex = null;
@@ -302,8 +303,9 @@ const output = {
 };
 
 console.log(`\nMaturity scores computed for ${results.length} datasets:`);
-console.log(`  🥇 Gold:   ${tierCounts.gold}`);
-console.log(`  🥈 Silver: ${tierCounts.silver}`);
+console.log(`  💎 Platinum: ${tierCounts.platinum}`);
+console.log(`  🥇 Gold:     ${tierCounts.gold}`);
+console.log(`  🥈 Silver:   ${tierCounts.silver}`);
 console.log(`  🥉 Bronze: ${tierCounts.bronze}`);
 
 if (WRITE) {

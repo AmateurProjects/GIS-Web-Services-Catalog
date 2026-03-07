@@ -814,7 +814,6 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
             qualityCell.innerHTML = warnings.length ? warnings.join(' ') : '<span class="field-stat-ok">\u2713</span>';
           }
           // [/Placeholder Detection]
-          }
         } catch {
           uniqCell.textContent = '\u2014';
         }

@@ -231,7 +231,10 @@ async function computeFieldStats(target, fields, totalCount) {
           });
           const distJson2 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams2}`, TIMEOUT_MS));
           if (distJson2 && typeof distJson2.count === 'number') {
-            distinctCount = distJson2.count;
+            // Same guard: server may ignore groupByFieldsForStatistics with returnCountOnly
+            if (distJson2.count !== totalCount || (totalCount != null && totalCount <= 50)) {
+              distinctCount = distJson2.count;
+            }
           }
         } catch {}
       }

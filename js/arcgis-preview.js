@@ -735,7 +735,12 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
                 returnCountOnly: 'true', f: 'json',
               });
               const distJson2 = await fetchJsonWithTimeout(`${target}/query?${distParams2}`, 5000);
-              if (distJson2 && typeof distJson2.count === 'number') distinctCount = distJson2.count;
+              if (distJson2 && typeof distJson2.count === 'number') {
+                // Same guard: server may ignore groupByFieldsForStatistics with returnCountOnly
+                if (distJson2.count !== totalCount || (totalCount != null && totalCount <= 50)) {
+                  distinctCount = distJson2.count;
+                }
+              }
             } catch {}
           }
 

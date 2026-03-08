@@ -1,4 +1,4 @@
-import { escapeHtml, cacheBadgeHTML } from './utils.js';
+import { escapeHtml } from './utils.js';
 
 // Lazy callback for navigating to a field in the field explorer tab.
 // Registered from app.js via registerFieldLinkCallback() to avoid circular imports.
@@ -318,7 +318,6 @@ function friendlyType(esriType) {
 // ── Build Service Metadata card HTML ──
 
 function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {}) {
-  const badge = isCached ? 'Cached' : 'Auto';
   const subtitle = isCached
     ? `Generated ${generatedDate} from ArcGIS REST endpoint`
     : 'Fetched from the ArcGIS REST endpoint';
@@ -330,10 +329,7 @@ function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {})
     <div class="card" style="margin-top:0.75rem;" id="serviceMetadataCard">
       <div class="card-header-row">
         <div style="font-weight:600;">Service Metadata</div>
-        <div style="display:flex;align-items:center;gap:0.5rem;">
-          <span class="data-source-badge data-source-badge-${isCached ? 'cached' : 'auto'}">${badge}</span>
-          ${refreshBtn}
-        </div>
+        ${refreshBtn}
       </div>
       <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${subtitle}</p>
       
@@ -423,7 +419,6 @@ function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {})
            </details>`
         : ''
       }
-      ${isCached && generatedDate ? cacheBadgeHTML(generatedDate) : ''}
     </div>
   `;
 }
@@ -433,7 +428,7 @@ function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {})
 function buildMapCardHTML(url, layerId) {
   return `
     <div class="card" style="margin-top:0.75rem;">
-      <div class="card-header-row"><div style="font-weight:600;">Interactive Map</div><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+      <div class="card-header-row"><div style="font-weight:600;">Interactive Map</div></div>
       <div style="color:var(--text-muted); margin-bottom:0.5rem; font-size:0.9rem;">Pan and zoom to explore the dataset. Scale-dependent rendering limits are overridden so data draws at all zoom levels.</div>
       <div id="arcgisMapContainer"
            data-service-url="${escapeHtml(url)}"
@@ -448,7 +443,6 @@ function buildMapCardHTML(url, layerId) {
 function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDate = '', oidFieldName = '', globalIdFieldName = '' } = {}) {
   if (!fields || !fields.length) return '';
 
-  const badge = isCached ? 'Cached' : 'Auto';
   const refreshBtn = isCached
     ? '<button type="button" class="btn" data-refresh-fields title="Refresh from live service" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>'
     : '';
@@ -486,10 +480,7 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
     <div class="card card-fields" style="margin-top:0.75rem;" id="fieldsCard">
       <div class="card-header-row">
         <div style="font-weight:600;">Fields</div>
-        <div style="display:flex;align-items:center;gap:0.5rem;">
-          <span class="data-source-badge data-source-badge-${isCached ? 'cached' : 'auto'}">${badge}</span>
-          ${refreshBtn}
-        </div>
+        ${refreshBtn}
       </div>
       <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${subtitle}</p>
       <div style="overflow-x:auto;">
@@ -574,7 +565,6 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
           </tbody>
         </table>
       </div>
-      ${isCached && generatedDate ? cacheBadgeHTML(generatedDate) : ''}
     </div>
   `;
 }
@@ -593,7 +583,6 @@ function wireFieldLinks(container) {
 // ── Build Sample Records card HTML ──
 
 function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDate = '' } = {}) {
-  const badge = isCached ? 'Cached' : 'Auto';
   const refreshBtn = '<button type="button" class="btn" data-sample-refresh title="Fetch new random sample from live service" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>';
 
   let bodyHTML;
@@ -622,14 +611,10 @@ function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDat
     <div class="card" id="sampleRecordsCard" style="margin-top:0.75rem;">
       <div class="card-header-row">
         <div style="font-weight:600;">Sample Records</div>
-        <div style="display:flex;align-items:center;gap:0.5rem;">
-          <span class="data-source-badge data-source-badge-${isCached ? 'cached' : 'auto'}">${badge}</span>
-          ${refreshBtn}
-        </div>
+        ${refreshBtn}
       </div>
       <p class="text-muted" data-sample-desc style="margin-bottom:0.5rem;font-size:0.85rem;">${desc}</p>
       <div data-sample-content>${bodyHTML}</div>
-      ${isCached && generatedDate ? cacheBadgeHTML(generatedDate) : ''}
     </div>
   `;
 }
@@ -864,13 +849,6 @@ function wireSampleRefresh(contentEl, fetchBaseUrl, layerId, objectIdField, reco
     const cols = Object.keys(rows[0]);
     const total = _sCount ? `${_sCount.toLocaleString()} total records in service. ` : '';
     _sDesc.textContent = `${total}Showing ${rows.length} randomly selected rows.`;
-
-    // Update badge to show live data
-    const badgeEl = sampleCard.querySelector('.data-source-badge');
-    if (badgeEl) {
-      badgeEl.textContent = 'Auto';
-      badgeEl.className = 'data-source-badge data-source-badge-auto';
-    }
 
     _sContent.innerHTML = `
       <div style="overflow:auto;">

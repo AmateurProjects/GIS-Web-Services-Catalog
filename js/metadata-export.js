@@ -350,7 +350,7 @@ export function downloadCatalogSchemaOrg(datasets) {
 export function exportButtonsHTML(datasetId) {
   return `
     <div class="card card-export" style="border-left:4px solid var(--purple);">
-      <div class="card-header-row"><h3>📤 Metadata Export</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+      <div class="card-header-row"><h3>📤 Metadata Export</h3></div>
       <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.5rem;">Download machine-readable metadata for this dataset.</p>
       <div class="export-buttons-row">
         <button type="button" class="btn btn-export" data-export-format="dcat" data-export-ds="${escapeHtml(datasetId)}">

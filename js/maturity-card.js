@@ -42,7 +42,6 @@ export function maturityCardHTML() {
     <div class="card card-maturity" id="maturityScoreCard">
       <div class="card-header-row">
         <h3>\uD83D\uDCCA Data Maturity</h3>
-        <span class="data-source-badge data-source-badge-auto">Auto</span>
       </div>
       <p class="text-muted" style="margin-bottom:0.75rem;font-size:0.85rem;">
         Automated quality assessment based on catalog metadata, service documentation, capabilities, and attribute health.

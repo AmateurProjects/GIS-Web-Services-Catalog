@@ -52,15 +52,3 @@ export function computeChanges(original, updated) {
   });
   return changes;
 }
-
-/**
- * Renders a compact "Cached · Generated <timestamp>" badge.
- * @param {string|null} isoTimestamp — ISO timestamp string, or null
- * @returns {string} HTML string for the badge
- */
-export function cacheBadgeHTML(isoTimestamp) {
-  if (!isoTimestamp) return '';
-  const d = new Date(isoTimestamp);
-  const formatted = d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-  return `<span class="cache-badge" title="Data loaded from cache generated on ${escapeHtml(formatted)}">📦 Cached · ${escapeHtml(formatted)}</span>`;
-}

@@ -1,5 +1,5 @@
 import { state, els } from './state.js';
-import { escapeHtml, cacheBadgeHTML } from './utils.js';
+import { escapeHtml } from './utils.js';
 import { setActiveListButton } from './ui-fx.js';
 import { runUrlChecks, setCachedUrlStatus } from './url-check.js';
 import { normalizeServiceUrl, parseServiceAndLayerId, maybeRenderPublicServicePreviewCard, incrementRenderGeneration, getCurrentMapView, setCurrentMapView } from './arcgis-preview.js';
@@ -128,7 +128,7 @@ export function renderDatasetDetail(datasetId) {
     };
 
     html += '<div class="card card-meta">';
-    html += '<div class="card-header-row"><h3>Dataset Information</h3><span class="data-source-badge data-source-badge-manual">Manual</span></div>';
+    html += '<div class="card-header-row"><h3>Dataset Information</h3></div>';
     html += `<p class="edit-admin-note" style="font-size:0.75rem;color:var(--text-muted);margin:0 0 0.75rem;font-style:italic;">✏️ Click any field value to edit. Saving requires admin access.</p>`;
     
     // === Catalog Metadata Section ===
@@ -222,7 +222,7 @@ export function renderDatasetDetail(datasetId) {
 
     // Coverage Map card (populated asynchronously by renderCoverageMapCard)
     html += '<div class="card card-coverage" id="coverageMapCard">';
-    html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><div style="display:flex;align-items:center;gap:0.5rem;"><span class="data-source-badge data-source-badge-auto">Auto</span><button type="button" class="btn" data-cov-refresh title="Re-run live coverage analysis" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button></div></div>';
+    html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><div style="display:flex;align-items:center;gap:0.5rem;"><button type="button" class="btn" data-cov-refresh title="Re-run live coverage analysis" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button></div></div>';
     html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 0.5 mile inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
     html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
     html += '<div data-cov-content></div>';
@@ -231,7 +231,7 @@ export function renderDatasetDetail(datasetId) {
     // Freshness / last-updated card (async)
     html += `
       <div class="card card-freshness" id="freshnessCard">
-        <div class="card-header-row"><h3>🕐 Data Freshness</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+        <div class="card-header-row"><h3>🕐 Data Freshness</h3></div>
         <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.5rem;">Multi-signal detection of when this dataset was last updated.</p>
         <div data-freshness-content>
           <p class="loading-message" style="font-size:0.85rem;">Detecting freshness…</p>
@@ -244,7 +244,7 @@ export function renderDatasetDetail(datasetId) {
       html += `
         <div class="card-row">
           <div class="card card-attributes">
-            <div class="card-header-row"><h3>Attributes</h3><span class="data-source-badge data-source-badge-hybrid">Hybrid</span></div>
+            <div class="card-header-row"><h3>Attributes</h3></div>
             <ul>
       `;
       attrs.forEach((attr) => {
@@ -269,7 +269,7 @@ export function renderDatasetDetail(datasetId) {
 // --- Public Web Service preview card (renders after URL checks) ---
 html += `
   <div class="card card-map-preview" id="datasetPreviewCard">
-    <div class="card-header-row"><h3>Public Web Service Preview</h3><span class="data-source-badge data-source-badge-auto">Auto</span></div>
+    <div class="card-header-row"><h3>Public Web Service Preview</h3></div>
     <div class="map-preview-status" data-preview-status>
       Checking Public Web Service…
     </div>
@@ -457,7 +457,8 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
 
   // Source indicator
   if (source === 'cache' && generatedTimestamp) {
-    html += cacheBadgeHTML(generatedTimestamp);
+    const genDate = new Date(generatedTimestamp).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    html += `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;">Generated ${escapeHtml(genDate)}</div>`;
   } else if (source === 'live') {
     html += '<div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;">Detected live just now</div>';
   }

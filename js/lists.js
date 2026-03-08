@@ -1,7 +1,7 @@
 // lists.js — Dataset and attribute list rendering
 
 import { state, els } from './state.js';
-import { escapeHtml, cacheBadgeHTML } from './utils.js';
+import { escapeHtml } from './utils.js';
 import { getGeometryIconHTML } from './geometry-icons.js';
 import { setActiveListButton } from './ui-fx.js';
 import { getFilteredDatasets, hasAnyFilter } from './filters.js';
@@ -354,7 +354,10 @@ export function renderAttributeList(filterText = '') {
   const summaryEl = document.createElement('div');
   summaryEl.className = 'field-list-summary';
   const fieldGenTs = _getFieldIndexGenerated();
-  summaryEl.innerHTML = `<span class="field-list-total">${allFields.length} unique fields</span> across ${(state.allDatasets || []).length} datasets${fieldGenTs ? ' ' + cacheBadgeHTML(fieldGenTs) : ''}`;
+  const fieldGenDate = fieldGenTs
+    ? new Date(fieldGenTs).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+    : '';
+  summaryEl.innerHTML = `<span class="field-list-total">${allFields.length} unique fields</span> across ${(state.allDatasets || []).length} datasets${fieldGenDate ? ` <span class="text-muted" style="font-size:0.82rem;">· Generated ${escapeHtml(fieldGenDate)}</span>` : ''}`;
   container.appendChild(summaryEl);
 
   const list = document.createElement('ul');

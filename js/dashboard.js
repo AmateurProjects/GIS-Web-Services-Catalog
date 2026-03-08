@@ -2,7 +2,7 @@
 // DASHBOARD RENDERER (ES Module)
 // ===========================
 import { state, els } from './state.js';
-import { escapeHtml, cacheBadgeHTML } from './utils.js';
+import { escapeHtml } from './utils.js';
 import { showDatasetsView } from './navigation.js';
 import { applyDashboardFilter } from './filters.js';
 import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
@@ -307,7 +307,8 @@ function renderHealthResults(results, meta, summaryEl, listEl, hasWorker) {
       </div>`;
     sumHtml += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.35rem;flex-wrap:wrap;">`;
     if (meta?.generated) {
-      sumHtml += cacheBadgeHTML(meta.generated);
+      const genDate = new Date(meta.generated).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      sumHtml += `<span class="text-muted" style="font-size:0.82rem;">Generated ${escapeHtml(genDate)}</span>`;
     }
     if (hasWorker) {
       sumHtml += `<button type="button" class="btn btn-sm health-refresh-btn" title="Trigger a new health scan via the Worker">🔄 Refresh Health</button>`;
@@ -676,8 +677,11 @@ async function loadDashboardFreshness() {
     html += `</details>`;
   }
 
+  const genDate = freshnessData.generated
+    ? new Date(freshnessData.generated).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })
+    : '';
   html += `<div style="display:flex;align-items:center;gap:0.5rem;margin-top:0.5rem;flex-wrap:wrap;">`;
-  html += cacheBadgeHTML(freshnessData.generated);
+  if (genDate) html += `<span class="text-muted" style="font-size:0.82rem;">Generated ${escapeHtml(genDate)}</span>`;
   html += refreshBtn;
   html += `</div>`;
 

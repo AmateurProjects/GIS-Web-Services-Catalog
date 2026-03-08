@@ -80,19 +80,48 @@ async function checkService(url) {
       };
     }
 
-    // Check if it returns valid service metadata
-    if (json && (json.layers || json.type || json.currentVersion || json.name)) {
-      return { status: 'healthy', httpStatus: status, detail: 'Serving data', responseTime: elapsed };
-    }
+    // Valid ArcGIS metadata = service is healthy
+    const hasServiceFields = json && (json.layers || json.currentVersion || json.mapName);
+    const hasLayerFields = json && (json.type || json.fields || json.name);
+    if (hasServiceFields || hasLayerFields) {
+      // Try a count query for richer detail (best-effort, doesn't change status)
+      const capabilities = ((json.capabilities || '') + '').toUpperCase();
+      const supportsQuery = capabilities.includes('QUERY') || !capabilities;
 
-    // Try a simple query
-    try {
-      const queryUrl = `${url}/query?where=1%3D1&returnCountOnly=true&f=json`;
-      const qr = await fetchUrl(queryUrl, TIMEOUT_MS);
-      if (qr.json && typeof qr.json.count === 'number') {
-        return { status: 'healthy', httpStatus: 200, detail: `Serving data (${qr.json.count} features)`, responseTime: elapsed };
+      if (supportsQuery) {
+        // Find a proper queryable layer — skip group layers
+        let queryLayerUrl = null;
+        if (json.layers) {
+          for (const layer of json.layers) {
+            if (Array.isArray(layer.subLayerIds) && layer.subLayerIds.length > 0) continue;
+            queryLayerUrl = `${url}/${layer.id}`;
+            break;
+          }
+          if (!queryLayerUrl && json.layers.length > 0 && Array.isArray(json.layers[0].subLayerIds) && json.layers[0].subLayerIds.length > 0) {
+            queryLayerUrl = `${url}/${json.layers[0].subLayerIds[0]}`;
+          }
+        } else if (json.type && json.type !== 'Group Layer') {
+          queryLayerUrl = url;
+        }
+
+        if (queryLayerUrl) {
+          try {
+            const queryUrl = `${queryLayerUrl}/query?where=1%3D1&returnCountOnly=true&f=json`;
+            const qr = await fetchUrl(queryUrl, TIMEOUT_MS);
+            if (qr.json && !qr.json.error && typeof qr.json.count === 'number') {
+              return { status: 'healthy', httpStatus: 200, detail: `Serving data (${qr.json.count} features)`, responseTime: elapsed };
+            }
+          } catch (_) {}
+        }
       }
-    } catch (_) {}
+
+      // Report healthy based on metadata (query not attempted or failed)
+      const layerCount = (json.layers || []).length;
+      const detail = layerCount > 0
+        ? `Healthy (${layerCount} layer${layerCount !== 1 ? 's' : ''})`
+        : 'Service metadata confirmed';
+      return { status: 'healthy', httpStatus: status, detail, responseTime: elapsed };
+    }
 
     return { status: 'degraded', httpStatus: status, detail: 'Response received but could not verify data', responseTime: elapsed };
 

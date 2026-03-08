@@ -72,10 +72,13 @@ async function fetchJsonTimeout(url, timeoutMs) {
 /**
  * Deep health check for ArcGIS REST services.
  *
- * Steps:
- *  1. Fetch service JSON (?f=pjson) — confirms endpoint exists and returns valid JSON
- *  2. Determine the query target layer (explicit layerId or first sublayer)
- *  3. Query returnCountOnly — confirms the service actually serves feature data
+ * Strategy:
+ *  1. Fetch metadata JSON (?f=pjson) for the target URL — if valid, service IS alive
+ *  2. Determine a queryable layer (skip group layers, check capabilities)
+ *  3. Best-effort count query — enriches detail but does not gate the status
+ *
+ * A service is only marked 'bad' when the endpoint is unreachable or returns an
+ * ArcGIS error. Query failures on a confirmed-alive service still yield 'ok'.
  *
  * Returns: { status: "ok"|"bad"|"unknown", detail: string }
  */
@@ -85,74 +88,103 @@ async function checkArcGisServiceHealth(url) {
 
   const serviceBase = parsed.base;
   const isLayerUrl = parsed.layerId !== null;
+  const cleanUrl = url.replace(/\?.*$/, '');
 
-  // Step 1: Fetch service/layer JSON
-  let serviceJson;
+  // Step 1: Fetch metadata for the target URL (layer or service root)
+  // Layer URLs → fetch layer JSON directly (gives type, fields, capabilities)
+  // Service roots → fetch service JSON (gives layers list, capabilities, version)
+  let metaJson;
   try {
-    const pjsonUrl = serviceBase.includes('?')
-      ? `${serviceBase}&f=pjson`
-      : `${serviceBase}?f=pjson`;
-    serviceJson = await fetchJsonTimeout(pjsonUrl, URL_CHECK.timeoutMs);
+    const metaUrl = isLayerUrl
+      ? (cleanUrl.includes('?') ? `${cleanUrl}&f=pjson` : `${cleanUrl}?f=pjson`)
+      : (serviceBase.includes('?') ? `${serviceBase}&f=pjson` : `${serviceBase}?f=pjson`);
+    metaJson = await fetchJsonTimeout(metaUrl, URL_CHECK.timeoutMs);
   } catch (e) {
     return { status: 'bad', detail: `Service endpoint unreachable: ${e.message}` };
   }
 
-  // Check for ArcGIS REST error responses
-  if (serviceJson && serviceJson.error) {
-    const code = serviceJson.error.code || '';
-    const msg = serviceJson.error.message || 'Service error';
+  // ArcGIS error response (token required, forbidden, service not found, etc.)
+  if (metaJson && metaJson.error) {
+    const code = metaJson.error.code || '';
+    const msg = metaJson.error.message || 'Service error';
     return { status: 'bad', detail: `Service error (${code}): ${msg}` };
   }
 
-  // Step 2: For ImageServer, metadata-only check is sufficient (no /query endpoint)
+  // Validate that the response is genuine ArcGIS REST metadata
+  const hasServiceFields = metaJson && (metaJson.currentVersion || metaJson.layers || metaJson.serviceDescription != null || metaJson.mapName);
+  const hasLayerFields = metaJson && (metaJson.type || metaJson.fields || (metaJson.name && metaJson.id != null));
+  if (!hasServiceFields && !hasLayerFields) {
+    return { status: 'bad', detail: 'Response is not valid ArcGIS service metadata' };
+  }
+
+  // ── Service is confirmed alive ──
+  // Query failures below yield 'ok' with descriptive detail, never 'bad' or 'unknown'.
+
+  // Step 2: ImageServer — metadata alone confirms health
   if (isImageServerUrl(url)) {
-    if (serviceJson && (serviceJson.currentVersion || serviceJson.name || serviceJson.serviceDataType)) {
-      return { status: 'ok', detail: 'ImageServer serving metadata' };
-    }
-    return { status: 'unknown', detail: 'ImageServer metadata could not be verified' };
+    return { status: 'ok', detail: 'ImageServer serving metadata' };
   }
 
-  // Step 3: Determine query target (MapServer / FeatureServer only)
-  let queryTarget;
+  // Step 3: Determine a queryable layer target (skip group layers)
+  const capabilities = (metaJson.capabilities || '').toUpperCase();
+  const supportsQuery = capabilities.includes('QUERY') || !capabilities;
+  let queryTarget = null;
+
   if (isLayerUrl) {
-    queryTarget = url.replace(/\?.*$/, ''); // strip query params
+    // Check if the targeted layer is a group layer (not directly queryable)
+    const isGroup = metaJson.type === 'Group Layer' ||
+      (Array.isArray(metaJson.subLayerIds) && metaJson.subLayerIds.length > 0);
+    if (!isGroup) {
+      queryTarget = cleanUrl;
+    }
   } else {
-    // Find first layer
-    const layers = serviceJson.layers || [];
-    const firstLayerId = layers.length ? (layers[0].id ?? 0) : 0;
-    queryTarget = `${serviceBase}/${firstLayerId}`;
+    // Service root: find first non-group layer for querying
+    const layers = metaJson.layers || [];
+    for (const layer of layers) {
+      if (Array.isArray(layer.subLayerIds) && layer.subLayerIds.length > 0) continue;
+      queryTarget = `${serviceBase}/${layer.id}`;
+      break;
+    }
+    // All top-level entries are groups — try first sublayer of first group
+    if (!queryTarget && layers.length > 0 && Array.isArray(layers[0].subLayerIds) && layers[0].subLayerIds.length > 0) {
+      queryTarget = `${serviceBase}/${layers[0].subLayerIds[0]}`;
+    }
   }
 
-  // Step 3: Query returnCountOnly — the true test of whether the service renders data
-  try {
-    const countParams = new URLSearchParams({
-      where: '1=1',
-      returnCountOnly: 'true',
-      f: 'json',
-    });
-    const countJson = await fetchJsonTimeout(`${queryTarget}/query?${countParams}`, URL_CHECK.timeoutMs);
+  // Step 4: Attempt count query (best-effort enrichment — service already confirmed up)
+  if (queryTarget && supportsQuery) {
+    try {
+      const countParams = new URLSearchParams({
+        where: '1=1',
+        returnCountOnly: 'true',
+        f: 'json',
+      });
+      const countJson = await fetchJsonTimeout(`${queryTarget}/query?${countParams}`, URL_CHECK.timeoutMs);
 
-    // Check for error in query response
-    if (countJson && countJson.error) {
-      const code = countJson.error.code || '';
-      const msg = countJson.error.message || 'Query error';
-      return { status: 'bad', detail: `Query failed (${code}): ${msg}` };
-    }
-
-    if (countJson && typeof countJson.count === 'number') {
-      if (countJson.count > 0) {
-        return { status: 'ok', detail: `Serving data (${countJson.count.toLocaleString()} features)` };
-      } else {
+      if (countJson && !countJson.error && typeof countJson.count === 'number') {
+        if (countJson.count > 0) {
+          return { status: 'ok', detail: `Serving data (${countJson.count.toLocaleString()} features)` };
+        }
         return { status: 'ok', detail: 'Service responding (0 features — layer may be empty or scale-filtered)' };
       }
+      // Query returned error or unexpected format — fall through to metadata-based ok
+    } catch (_) {
+      // Query timed out or CORS blocked — fall through to metadata-based ok
     }
-
-    // Response didn't have a count — unusual
-    return { status: 'unknown', detail: 'Service responded but count query returned unexpected format' };
-  } catch (e) {
-    // Service JSON worked but query failed — could be CORS, could be a broken query endpoint
-    return { status: 'unknown', detail: `Service metadata reachable but query failed: ${e.message}` };
   }
+
+  // Step 5: Report healthy based on confirmed metadata
+  if (isLayerUrl) {
+    if (metaJson.type === 'Group Layer') {
+      return { status: 'ok', detail: `Group layer responding (${(metaJson.subLayerIds || []).length} sub-layers)` };
+    }
+    return { status: 'ok', detail: `Layer metadata confirmed${!supportsQuery ? ' (query not supported)' : ''}` };
+  }
+  const layerCount = (metaJson.layers || []).length;
+  if (layerCount > 0) {
+    return { status: 'ok', detail: `Service responding (${layerCount} layer${layerCount !== 1 ? 's' : ''}${!supportsQuery ? ', query not supported' : ''})` };
+  }
+  return { status: 'ok', detail: 'Service serving metadata' };
 }
 
 /**

@@ -193,34 +193,49 @@ async function computeFieldStats(target, fields, totalCount) {
           f: 'json',
         });
         const statJson = await fetchWithRetry(() => fetchJson(`${target}/query?${statParams}`, TIMEOUT_MS));
-        const nnCount = statJson?.features?.[0]?.attributes?.nn_count;
-        if (nnCount != null && totalCount > 0) {
-          nullPct = Number(((totalCount - nnCount) / totalCount * 100).toFixed(1));
+        // Extract the non-null count — some servers return the alias in different casing,
+        // so grab the first numeric attribute value regardless of key name.
+        const attrs = statJson?.features?.[0]?.attributes;
+        let nnCount = null;
+        if (attrs) {
+          const val = attrs.nn_count ?? attrs.NN_COUNT ?? Object.values(attrs)[0];
+          if (typeof val === 'number') nnCount = val;
+        }
+        if (totalCount > 0) {
+          // If query succeeded but attribute missing/null, assume zero nulls (nnCount = totalCount)
+          const effective = nnCount != null ? nnCount : totalCount;
+          nullPct = Number(((totalCount - effective) / totalCount * 100).toFixed(1));
         }
       } catch {}
 
-      // Distinct count
+      // Distinct count — uses three approaches in reliability order.
+      // Approach 1 (most reliable): groupBy + outStatistics → count returned features.
+      // This is the only approach that gives a true distinct count on all ArcGIS Server
+      // versions, because the server must group rows before computing statistics.
+      // Caveat: maxRecordCount may truncate the features array.
       try {
-        // Approach 1: returnDistinctValues + returnCountOnly
-        const distParams = new URLSearchParams({
+        const distParams1 = new URLSearchParams({
           where: '1=1',
-          outFields: f.name,
-          returnDistinctValues: 'true',
-          returnCountOnly: 'true',
+          groupByFieldsForStatistics: f.name,
+          outStatistics: JSON.stringify([
+            { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }
+          ]),
           f: 'json',
         });
-        const distJson = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams}`, TIMEOUT_MS));
-        if (distJson && typeof distJson.count === 'number') {
-          // Some ArcGIS Server versions ignore returnDistinctValues and return
-          // the total record count instead. Treat count === totalCount as unreliable
-          // unless totalCount is very small (≤ 50), where all-unique is plausible.
-          if (distJson.count !== totalCount || (totalCount != null && totalCount <= 50)) {
-            distinctCount = distJson.count;
+        const distJson1 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams1}`, TIMEOUT_MS));
+        if (distJson1 && Array.isArray(distJson1.features)) {
+          // If exceededTransferLimit is true, the array is truncated — use as a floor.
+          // Otherwise this is the exact distinct count.
+          distinctCount = distJson1.features.length;
+          if (distJson1.exceededTransferLimit && distinctCount < totalCount) {
+            distinctCount = null; // truncated, try other approaches
           }
         }
       } catch {}
 
-      // Approach 2 fallback: groupByFieldsForStatistics + returnCountOnly
+      // Approach 2 fallback: groupByFieldsForStatistics + returnCountOnly.
+      // Reliable on ArcGIS Server 10.6.1+ and ArcGIS Enterprise — returns
+      // the number of groups, not subject to maxRecordCount.
       if (distinctCount === null) {
         try {
           const distParams2 = new URLSearchParams({
@@ -231,28 +246,29 @@ async function computeFieldStats(target, fields, totalCount) {
           });
           const distJson2 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams2}`, TIMEOUT_MS));
           if (distJson2 && typeof distJson2.count === 'number') {
-            // Same guard: server may ignore groupByFieldsForStatistics with returnCountOnly
-            if (distJson2.count !== totalCount || (totalCount != null && totalCount <= 50)) {
-              distinctCount = distJson2.count;
-            }
+            distinctCount = distJson2.count;
           }
         } catch {}
       }
 
-      // Approach 3 fallback: groupByFieldsForStatistics (count features array)
+      // Approach 3 fallback: returnDistinctValues + returnCountOnly.
+      // Many ArcGIS Server versions ignore returnDistinctValues and return
+      // totalCount. Only trust when the result is less than totalCount,
+      // or totalCount is small enough that all-unique is plausible.
       if (distinctCount === null) {
         try {
           const distParams3 = new URLSearchParams({
             where: '1=1',
-            groupByFieldsForStatistics: f.name,
-            outStatistics: JSON.stringify([
-              { statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }
-            ]),
+            outFields: f.name,
+            returnDistinctValues: 'true',
+            returnCountOnly: 'true',
             f: 'json',
           });
           const distJson3 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams3}`, TIMEOUT_MS));
-          if (distJson3 && Array.isArray(distJson3.features)) {
-            distinctCount = distJson3.features.length;
+          if (distJson3 && typeof distJson3.count === 'number') {
+            if (distJson3.count !== totalCount || (totalCount != null && totalCount <= 50)) {
+              distinctCount = distJson3.count;
+            }
           }
         } catch {}
       }

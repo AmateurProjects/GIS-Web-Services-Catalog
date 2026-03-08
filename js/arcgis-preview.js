@@ -685,7 +685,14 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
             f: 'json',
           });
           const statJson = await fetchJsonWithTimeout(`${target}/query?${statParams}`, 6000);
-          const nnCount = (statJson?.features?.[0]?.attributes?.nn_count) ?? totalCount;
+          // Extract non-null count — some servers return the alias in different casing,
+          // so grab the first numeric attribute value regardless of key name.
+          const _attrs = statJson?.features?.[0]?.attributes;
+          let nnCount = totalCount;
+          if (_attrs) {
+            const _v = _attrs.nn_count ?? _attrs.NN_COUNT ?? Object.values(_attrs)[0];
+            if (typeof _v === 'number') nnCount = _v;
+          }
           const nullPct = totalCount > 0 ? ((totalCount - nnCount) / totalCount * 100) : 0;
           _fieldStatsCollector.push({ name: f.name, type: f.type, alias: f.alias || '', nullPct, hasDomain: !!(f.domain && f.domain.type === 'codedValue') });
           nullCell.innerHTML = nullPct > 0
@@ -700,22 +707,28 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
           const parsed = parseServiceAndLayerId(base);
           const target = parsed.isLayerUrl ? base : `${base}/${_fieldStatsLayerId}`;
           
+          // Distinct count — three approaches in reliability order.
           let distinctCount = null;
+
+          // Approach 1 (most reliable): groupBy + outStatistics → count features.
+          // Server must group rows before computing stats, so this gives true distinct count.
+          // Caveat: maxRecordCount may truncate the features array.
           try {
             const distParams1 = new URLSearchParams({
-              where: '1=1', outFields: f.name, returnDistinctValues: 'true', returnCountOnly: 'true', f: 'json',
+              where: '1=1', groupByFieldsForStatistics: f.name,
+              outStatistics: JSON.stringify([{ statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }]),
+              f: 'json',
             });
             const distJson1 = await fetchJsonWithTimeout(`${target}/query?${distParams1}`, 5000);
-            if (distJson1 && typeof distJson1.count === 'number') {
-              // Some ArcGIS Server versions ignore returnDistinctValues and return
-              // the total record count. Treat count === totalCount as unreliable
-              // unless totalCount is very small (≤ 50).
-              if (distJson1.count !== totalCount || (totalCount != null && totalCount <= 50)) {
-                distinctCount = distJson1.count;
+            if (distJson1 && Array.isArray(distJson1.features)) {
+              distinctCount = distJson1.features.length;
+              if (distJson1.exceededTransferLimit && distinctCount < totalCount) {
+                distinctCount = null; // truncated, try other approaches
               }
             }
           } catch {}
-          
+
+          // Approach 2: groupBy + returnCountOnly (reliable on ArcGIS 10.6.1+)
           if (distinctCount === null) {
             try {
               const distParams2 = new URLSearchParams({
@@ -724,23 +737,24 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
               });
               const distJson2 = await fetchJsonWithTimeout(`${target}/query?${distParams2}`, 5000);
               if (distJson2 && typeof distJson2.count === 'number') {
-                // Same guard: server may ignore groupByFieldsForStatistics with returnCountOnly
-                if (distJson2.count !== totalCount || (totalCount != null && totalCount <= 50)) {
-                  distinctCount = distJson2.count;
-                }
+                distinctCount = distJson2.count;
               }
             } catch {}
           }
 
+          // Approach 3: returnDistinctValues + returnCountOnly (least reliable fallback)
           if (distinctCount === null) {
             try {
               const distParams3 = new URLSearchParams({
-                where: '1=1', groupByFieldsForStatistics: f.name,
-                outStatistics: JSON.stringify([{ statisticType: 'count', onStatisticField: f.name, outStatisticFieldName: 'cnt' }]),
-                f: 'json',
+                where: '1=1', outFields: f.name, returnDistinctValues: 'true',
+                returnCountOnly: 'true', f: 'json',
               });
               const distJson3 = await fetchJsonWithTimeout(`${target}/query?${distParams3}`, 5000);
-              if (distJson3 && Array.isArray(distJson3.features)) distinctCount = distJson3.features.length;
+              if (distJson3 && typeof distJson3.count === 'number') {
+                if (distJson3.count !== totalCount || (totalCount != null && totalCount <= 50)) {
+                  distinctCount = distJson3.count;
+                }
+              }
             } catch {}
           }
           

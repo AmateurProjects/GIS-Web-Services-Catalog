@@ -70,7 +70,7 @@ export function renderDashboard() {
       <div class="dashboard-charts-row" style="grid-template-columns: 1fr;">
         <div class="dashboard-chart-card" id="dashFreshnessCard">
           <div class="dashboard-chart-title">🕐 Data Freshness</div>
-          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Last-updated detection across all cataloged datasets (from pre-computed analysis).</p>
+          <p data-dash-freshness-subtitle style="color:var(--text-muted);font-size:0.85rem;margin-bottom:0.5rem;">Last-updated detection across all cataloged datasets (from pre-computed analysis).</p>
           <div data-dash-freshness-content>
             <p class="loading-message" style="font-size:0.85rem;">Loading freshness data&hellip;</p>
           </div>
@@ -536,6 +536,7 @@ function wireFreshnessButtons(container) {
 async function loadDashboardFreshness() {
   const contentEl = els.dashboardContentEl?.querySelector('[data-dash-freshness-content]');
   if (!contentEl) return;
+  const subtitleEl = els.dashboardContentEl?.querySelector('[data-dash-freshness-subtitle]');
 
   // Try loading from Worker (R2) first, then fall back to local file
   let freshnessData = getFreshnessIndex();
@@ -568,6 +569,12 @@ async function loadDashboardFreshness() {
       </div>`;
     wireFreshnessButtons(contentEl);
     return;
+  }
+
+  // Update subtitle with generated datestamp
+  if (subtitleEl && freshnessData.generated) {
+    const genStr = new Date(freshnessData.generated).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    subtitleEl.textContent = `Last-updated detection across all cataloged datasets (scanned ${genStr}).`;
   }
 
   const results = freshnessData.datasets;

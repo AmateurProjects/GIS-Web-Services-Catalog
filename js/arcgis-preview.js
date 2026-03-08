@@ -318,9 +318,10 @@ function friendlyType(esriType) {
 // ── Build Service Metadata card HTML ──
 
 function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {}) {
+  const liveDate = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   const subtitle = isCached
     ? `Generated ${generatedDate} from ArcGIS REST endpoint`
-    : 'Fetched from the ArcGIS REST endpoint';
+    : `Fetched ${liveDate} from the ArcGIS REST endpoint`;
   const refreshBtn = isCached
     ? '<button type="button" class="btn" data-refresh-metadata title="Refresh from live service" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>'
     : '';
@@ -446,9 +447,10 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
   const refreshBtn = isCached
     ? '<button type="button" class="btn" data-refresh-fields title="Refresh from live service" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>'
     : '';
+  const liveDate = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   const subtitle = isCached
     ? `${fields.length} fields. Generated ${generatedDate}. Null % and Distinct counts pre-computed.`
-    : `${fields.length} fields. Null % and Distinct counts are computed from the full dataset via service statistics queries.`;
+    : `${fields.length} fields. Fetched ${liveDate}. Null % and Distinct counts are computed from the full dataset via service statistics queries.`;
 
   const oidUpper = oidFieldName.toUpperCase();
   const globalIdUpper = globalIdFieldName.toUpperCase();
@@ -603,8 +605,9 @@ function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDat
   }
 
   const total = recordCount != null ? `${Number(recordCount).toLocaleString()} total records in service. ` : '';
+  const sampleLiveDate = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   const desc = rows && rows.length
-    ? `${total}Showing ${rows.length} ${isCached ? 'cached sample' : 'randomly selected'} rows.${isCached ? ' Generated ' + generatedDate + '.' : ''}`
+    ? `${total}Showing ${rows.length} ${isCached ? 'cached sample' : 'randomly selected'} rows.${isCached ? ' Generated ' + generatedDate + '.' : ' Fetched ' + sampleLiveDate + '.'}`
     : `${total}Loading random sample\u2026`;
 
   return `
@@ -1001,6 +1004,13 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
 
     contentEl.innerHTML = html;
     statusEl.textContent = 'Preview loaded.';
+
+    // Update the preview card subtitle with live fetch timestamp
+    const previewSubtitle = hostEl.querySelector('[data-preview-subtitle]');
+    if (previewSubtitle) {
+      const now = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      previewSubtitle.textContent = `Live data fetched from the ArcGIS REST endpoint. Fetched ${now}.`;
+    }
 
     // Wire field name links → field explorer tab
     wireFieldLinks(contentEl);

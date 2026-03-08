@@ -38,13 +38,14 @@ async function loadFreshnessIndex() {
 // ── Card HTML placeholder (inserted by detail.js) ──
 
 export function maturityCardHTML() {
+  const now = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
   return `
     <div class="card card-maturity" id="maturityScoreCard">
       <div class="card-header-row">
         <h3>\uD83D\uDCCA Data Maturity</h3>
       </div>
       <p class="text-muted" style="margin-bottom:0.75rem;font-size:0.85rem;">
-        Automated quality assessment based on catalog metadata, service documentation, capabilities, and attribute health.
+        Automated quality assessment based on catalog metadata, service documentation, capabilities, and attribute health. Computed ${now}.
       </p>
       <div data-maturity-body>
         <p class="loading-message" style="font-size:0.85rem;">Analyzing\u2026</p>

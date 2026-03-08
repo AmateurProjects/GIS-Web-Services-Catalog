@@ -201,25 +201,39 @@ async function saveChanges() {
     }
   }
 
-  try {
-    const resp = await fetch(`${workerBase}/catalog/dataset/${encodeURIComponent(_activeDatasetId)}`, {
+  async function doPatch(bearerToken) {
+    return fetch(`${workerBase}/catalog/dataset/${encodeURIComponent(_activeDatasetId)}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `Bearer ${bearerToken}`,
       },
       body: JSON.stringify({ fields }),
     });
+  }
 
-    const result = await resp.json();
+  try {
+    let resp = await doPatch(token);
+    let result = await resp.json();
+
+    // On 401 (expired/invalid token), auto re-login and retry once
+    if (resp.status === 401 && result.code === 'token_expired') {
+      clearGithubAuth();
+      try {
+        await loginWithGithub();
+        token = getGithubToken();
+      } catch (e) {
+        alert(e.message);
+        if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save'; }
+        return;
+      }
+      if (!token) { if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save'; } return; }
+      resp = await doPatch(token);
+      result = await resp.json();
+    }
 
     if (!resp.ok) {
-      if (resp.status === 401) {
-        clearGithubAuth();
-        alert('GitHub session expired or not authorized. Please log in again.');
-      } else {
-        alert(`Save failed: ${result.error || resp.statusText}`);
-      }
+      alert(`Save failed: ${result.error || resp.statusText}`);
       if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save'; }
       return;
     }

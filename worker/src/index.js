@@ -42,7 +42,7 @@ const R2_KEY_HEALTH_TASK = 'health-task.json';
 const R2_KEY_FRESHNESS_TASK = 'freshness-task.json';
 const R2_KEY_OVERRIDES = 'catalog-overrides.json';
 const TIMEOUT_MS = 12_000;
-const HEALTH_TIMEOUT_MS = 10_000;
+const HEALTH_TIMEOUT_MS = 15_000;
 const CONCURRENCY = 4;
 const MAX_RETRIES = 1;
 const RETRY_DELAY_MS = 2_000;
@@ -50,9 +50,9 @@ const RETRY_DELAY_MS = 2_000;
 // ── Batch-and-chain settings ──
 // Cloudflare Workers free plan: 50 outbound fetch() per invocation.
 // We split scans into small batches to stay under this limit.
-// Health: ~3 fetches per service (metadata + layer discovery + query) → batch of 10 = ~30 subrequests.
+// Health: ~3 fetches per service + 1 retry for failures (~6 worst case) → batch of 7 = ~42 subrequests.
 // Freshness: ~5 fetches per dataset (incl. FGDC metadata XML) → batch of 5 = ~27 subrequests.
-const HEALTH_BATCH_SIZE = 10;
+const HEALTH_BATCH_SIZE = 7;
 const FRESHNESS_BATCH_SIZE = 5;
 
 // ── CORS headers applied to every response ──
@@ -304,18 +304,18 @@ async function verifyOAuthState(state, secret) {
 async function validateGithubUser(request, env) {
   const auth = request.headers.get('Authorization') || '';
   const match = auth.match(/^Bearer (.+)$/);
-  if (!match) return null;
+  if (!match) return { error: 'missing_token' };
   try {
     const resp = await fetch('https://api.github.com/user', {
       headers: { 'Authorization': `Bearer ${match[1]}`, 'User-Agent': 'GIS-Catalog-Worker' },
     });
-    if (!resp.ok) return null;
+    if (!resp.ok) return { error: 'token_invalid', status: resp.status };
     const user = await resp.json();
     const allowed = (env.GITHUB_ALLOWED_USERS || '').split(',').map(u => u.trim().toLowerCase());
-    if (!allowed.includes(user.login?.toLowerCase())) return null;
-    return user.login;
+    if (!allowed.includes(user.login?.toLowerCase())) return { error: 'not_allowed', login: user.login };
+    return { login: user.login };
   } catch (_) {
-    return null;
+    return { error: 'token_invalid' };
   }
 }
 
@@ -330,6 +330,7 @@ async function handleAuthGithub(request, env) {
   const params = new URLSearchParams({
     client_id: clientId,
     redirect_uri: redirectUri,
+    scope: 'read:user',
     state,
   });
   return Response.redirect(`https://github.com/login/oauth/authorize?${params}`, 302);
@@ -407,10 +408,15 @@ function oauthCallbackPage(data, targetOrigin) {
 
 async function handleDatasetPatch(request, env, datasetId) {
   // Auth check — validate GitHub token and check user is allowed
-  const ghUser = await validateGithubUser(request, env);
-  if (!ghUser) {
-    return corsJson({ error: 'Unauthorized. Log in with an authorized GitHub account.' }, 401);
+  const result = await validateGithubUser(request, env);
+  if (result.error) {
+    if (result.error === 'not_allowed') {
+      return corsJson({ error: `User "${result.login}" is not in the authorized editors list. Ask a repo admin to add your GitHub username to GITHUB_ALLOWED_USERS.`, code: 'not_allowed' }, 403);
+    }
+    // token_invalid or missing_token — prompt re-login
+    return corsJson({ error: 'GitHub session expired or invalid. Please log in again.', code: 'token_expired' }, 401);
   }
+  const ghUser = result.login;
 
   // Parse body
   let body;
@@ -632,7 +638,12 @@ async function runHealthScan(env, offset = 0) {
 
   const batchResults = await Promise.allSettled(
     batch.map(async (svc) => {
-      const check = await checkServiceHealth(svc.url);
+      let check = await checkServiceHealth(svc.url);
+      // Retry once for non-ok results (transient timeouts / slow government servers)
+      if (check.status !== 'ok') {
+        await new Promise(r => setTimeout(r, RETRY_DELAY_MS));
+        check = await checkServiceHealth(svc.url);
+      }
       return { url: svc.url, datasets: svc.datasets, status: check.status, detail: check.detail };
     })
   );
@@ -764,7 +775,7 @@ async function checkArcGisHealth(url) {
       if (countJson.count > 0) {
         return { status: 'ok', detail: `Serving data (${countJson.count.toLocaleString()} features)` };
       } else {
-        return { status: 'bad', detail: 'Service responds but contains 0 features' };
+        return { status: 'ok', detail: 'Service responding (0 features — layer may be empty or scale-filtered)' };
       }
     }
 

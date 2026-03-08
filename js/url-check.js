@@ -1,6 +1,6 @@
 // ====== URL STATUS CHECK HELPERS ======
 export const URL_CHECK = {
-  timeoutMs: 8000,
+  timeoutMs: 12000,
   concurrency: 3,
 };
 
@@ -143,7 +143,7 @@ async function checkArcGisServiceHealth(url) {
       if (countJson.count > 0) {
         return { status: 'ok', detail: `Serving data (${countJson.count.toLocaleString()} features)` };
       } else {
-        return { status: 'bad', detail: 'Service responds but contains 0 features' };
+        return { status: 'ok', detail: 'Service responding (0 features — layer may be empty or scale-filtered)' };
       }
     }
 
@@ -223,6 +223,11 @@ export async function checkUrlStatus(url) {
   let result;
   if (isArcGisRestUrl(url)) {
     result = await checkArcGisServiceHealth(url);
+    // Retry once for transient failures (slow government servers, timeouts)
+    if (result.status !== 'ok') {
+      await new Promise(r => setTimeout(r, 2000));
+      result = await checkArcGisServiceHealth(url);
+    }
   } else {
     result = await checkSimpleUrlReachability(url);
   }
@@ -249,6 +254,11 @@ export async function checkUrlStatusDetailed(url) {
   let result;
   if (isArcGisRestUrl(url)) {
     result = await checkArcGisServiceHealth(url);
+    // Retry once for transient failures (slow government servers, timeouts)
+    if (result.status !== 'ok') {
+      await new Promise(r => setTimeout(r, 2000));
+      result = await checkArcGisServiceHealth(url);
+    }
   } else {
     result = await checkSimpleUrlReachability(url);
   }

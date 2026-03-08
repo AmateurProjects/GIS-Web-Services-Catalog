@@ -59,7 +59,12 @@ async function seedHealthFromCache() {
   if (!health || !health.services) return;
   for (const svc of health.services) {
     if (!svc.url) continue;
-    setCachedUrlStatus(svc.url, svc.status, svc.detail || '');
+    // Only pre-seed "ok" results from the Worker cache.
+    // "bad" and "unknown" results may be stale (Worker runs twice daily),
+    // so let the browser re-check those live for fresher accuracy.
+    if (svc.status === 'ok') {
+      setCachedUrlStatus(svc.url, svc.status, svc.detail || '');
+    }
   }
 }
 
@@ -232,7 +237,7 @@ export function renderDatasetDetail(datasetId) {
     html += `
       <div class="card card-freshness" id="freshnessCard">
         <div class="card-header-row"><h3>🕐 Data Freshness</h3></div>
-        <p class="text-muted" style="font-size:0.85rem;margin-bottom:0.5rem;">Multi-signal detection of when this dataset was last updated.</p>
+        <p class="text-muted" data-freshness-subtitle style="font-size:0.85rem;margin-bottom:0.5rem;">Multi-signal detection of when this dataset was last updated.</p>
         <div data-freshness-content>
           <p class="loading-message" style="font-size:0.85rem;">Detecting freshness…</p>
         </div>
@@ -270,6 +275,7 @@ export function renderDatasetDetail(datasetId) {
 html += `
   <div class="card card-map-preview" id="datasetPreviewCard">
     <div class="card-header-row"><h3>Public Web Service Preview</h3></div>
+    <p class="text-muted" data-preview-subtitle style="font-size:0.85rem;margin-bottom:0.5rem;">Live data fetched from the ArcGIS REST endpoint.</p>
     <div class="map-preview-status" data-preview-status>
       Checking Public Web Service…
     </div>
@@ -455,15 +461,19 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
 
   html += '</div>';
 
-  // Source indicator
-  if (source === 'cache' && generatedTimestamp) {
-    const genDate = new Date(generatedTimestamp).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-    html += `<div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;">Generated ${escapeHtml(genDate)}</div>`;
-  } else if (source === 'live') {
-    html += '<div style="font-size:0.72rem;color:var(--text-muted);margin-top:0.5rem;">Detected live just now</div>';
-  }
-
   contentEl.innerHTML = html;
+
+  // Update subtitle with source/date info
+  const subtitleEl = hostEl.querySelector('[data-freshness-subtitle]');
+  if (subtitleEl) {
+    if (source === 'cache' && generatedTimestamp) {
+      const genDate = new Date(generatedTimestamp).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      subtitleEl.textContent = `Multi-signal detection of when this dataset was last updated. Generated ${genDate}.`;
+    } else if (source === 'live') {
+      const now = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+      subtitleEl.textContent = `Multi-signal detection of when this dataset was last updated. Detected live ${now}.`;
+    }
+  }
 }
 
 export function renderInlineAttributeDetail(attrId) {

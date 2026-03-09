@@ -655,6 +655,8 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
 
     const STAT_CONCURRENCY = 3;
     let fIdx = 0;
+    let _nullMissing = 0;
+    let _distinctMissing = 0;
 
     async function processField() {
       while (fIdx < _fieldStatsFields.length) {
@@ -711,9 +713,11 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
               : '<span class="field-stat-zero">0%</span>';
           } else {
             nullCell.textContent = '\u2014';
+            _nullMissing++;
           }
         } catch {
           nullCell.textContent = '\u2014';
+          _nullMissing++;
         }
 
         try {
@@ -760,7 +764,11 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
               });
               const distJson2 = await fetchJsonWithTimeout(`${target}/query?${distParams2}`, 5000);
               if (distJson2 && typeof distJson2.count === 'number') {
-                distinctCount = distJson2.count;
+                // Guard: servers that ignore groupByFieldsForStatistics return totalCount.
+                // Accept only if count differs from totalCount (or dataset is tiny enough that all-distinct is plausible).
+                if (distJson2.count !== totalCount || (totalCount != null && totalCount <= 50)) {
+                  distinctCount = distJson2.count;
+                }
               }
             } catch {}
           }
@@ -796,6 +804,7 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
             }
           } else {
             uniqCell.textContent = '\u2014';
+            _distinctMissing++;
           }
 
           // [Placeholder Detection] — live quality check
@@ -846,11 +855,27 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
           // [/Placeholder Detection]
         } catch {
           uniqCell.textContent = '\u2014';
+          _distinctMissing++;
         }
       }
     }
 
     await Promise.all(Array.from({ length: STAT_CONCURRENCY }, processField));
+
+    // Show note if many stats could not be computed
+    const queryableCount = _fieldStatsFields.filter(f => {
+      const ft = (f.type || '').toUpperCase();
+      return !(ft.includes('GEOMETRY') || ft.includes('BLOB') || ft.includes('RASTER') || ft.includes('XML'));
+    }).length;
+    const halfQueryable = Math.ceil(queryableCount / 2);
+    if (queryableCount > 0 && (_nullMissing >= halfQueryable || _distinctMissing >= halfQueryable)) {
+      const noteEl = document.createElement('p');
+      noteEl.className = 'text-muted';
+      noteEl.style.cssText = 'font-size:0.8rem;margin-top:0.5rem;font-style:italic;';
+      noteEl.textContent = 'Some statistics could not be computed. This service may be running an older version of ArcGIS Server that does not support outStatistics or groupByFieldsForStatistics queries.';
+      const fieldsCard = contentEl.querySelector('#fieldsCard');
+      if (fieldsCard) fieldsCard.appendChild(noteEl);
+    }
 
     try {
       containingEl.dispatchEvent(new CustomEvent('maturity:field-stats', {

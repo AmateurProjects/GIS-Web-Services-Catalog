@@ -193,18 +193,26 @@ async function computeFieldStats(target, fields, totalCount) {
           f: 'json',
         });
         const statJson = await fetchWithRetry(() => fetchJson(`${target}/query?${statParams}`, TIMEOUT_MS));
-        // Extract the non-null count — some servers return the alias in different casing,
-        // so grab the first numeric attribute value regardless of key name.
+        // Extract the non-null count — only trust results that look like stat responses.
+        // ArcGIS error responses (HTTP 200) or servers that ignore outStatistics
+        // may return raw features instead of stat results.
         const attrs = statJson?.features?.[0]?.attributes;
         let nnCount = null;
         if (attrs) {
-          const val = attrs.nn_count ?? attrs.NN_COUNT ?? Object.values(attrs)[0];
-          if (typeof val === 'number') nnCount = val;
+          const val = attrs.nn_count ?? attrs.NN_COUNT;
+          if (typeof val === 'number') {
+            nnCount = val;
+          } else {
+            // Fallback: first numeric value, but only if the response has exactly 1 feature
+            // (stat queries always return 1 feature; raw queries return many)
+            if (statJson.features.length === 1) {
+              const firstVal = Object.values(attrs)[0];
+              if (typeof firstVal === 'number') nnCount = firstVal;
+            }
+          }
         }
-        if (totalCount > 0) {
-          // If query succeeded but attribute missing/null, assume zero nulls (nnCount = totalCount)
-          const effective = nnCount != null ? nnCount : totalCount;
-          nullPct = Number(((totalCount - effective) / totalCount * 100).toFixed(1));
+        if (totalCount > 0 && nnCount !== null) {
+          nullPct = Number(((totalCount - nnCount) / totalCount * 100).toFixed(1));
         }
       } catch {}
 
@@ -213,6 +221,7 @@ async function computeFieldStats(target, fields, totalCount) {
       // This is the only approach that gives a true distinct count on all ArcGIS Server
       // versions, because the server must group rows before computing statistics.
       // Caveat: maxRecordCount may truncate the features array.
+      // Some servers ignore groupBy and return raw rows — detect via attribute shape.
       try {
         const distParams1 = new URLSearchParams({
           where: '1=1',
@@ -223,13 +232,21 @@ async function computeFieldStats(target, fields, totalCount) {
           f: 'json',
         });
         const distJson1 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams1}`, TIMEOUT_MS));
-        if (distJson1 && Array.isArray(distJson1.features)) {
-          // If exceededTransferLimit is true, the array is truncated — use as a floor.
-          // Otherwise this is the exact distinct count.
-          distinctCount = distJson1.features.length;
-          if (distJson1.exceededTransferLimit && distinctCount < totalCount) {
-            distinctCount = null; // truncated, try other approaches
+        if (distJson1 && Array.isArray(distJson1.features) && distJson1.features.length > 0) {
+          // Validate: grouped responses should have a 'cnt' (or field-name) stat attribute
+          // and exactly 2-3 attributes per feature. Raw ungrouped rows have many more.
+          const sampleAttrs = distJson1.features[0].attributes;
+          const attrKeys = sampleAttrs ? Object.keys(sampleAttrs) : [];
+          const hasCntStat = sampleAttrs && ('cnt' in sampleAttrs || 'CNT' in sampleAttrs);
+          if (hasCntStat && attrKeys.length <= 3) {
+            // If exceededTransferLimit is true, the array is truncated — use as a floor.
+            // Otherwise this is the exact distinct count.
+            distinctCount = distJson1.features.length;
+            if (distJson1.exceededTransferLimit && distinctCount < totalCount) {
+              distinctCount = null; // truncated, try other approaches
+            }
           }
+          // If no stat attribute or too many attributes → server returned raw rows, skip to approach 2
         }
       } catch {}
 

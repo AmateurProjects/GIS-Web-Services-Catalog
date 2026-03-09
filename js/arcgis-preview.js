@@ -327,7 +327,7 @@ function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {})
     : '';
 
   return `
-    <div class="card" style="margin-top:0.75rem;" id="serviceMetadataCard">
+    <div class="card" id="serviceMetadataCard">
       <div class="card-header-row">
         <div style="font-weight:600;">Service Metadata</div>
         ${refreshBtn}
@@ -479,7 +479,7 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
   });
 
   return `
-    <div class="card card-fields" style="margin-top:0.75rem;" id="fieldsCard">
+    <div class="card card-fields" id="fieldsCard">
       <div class="card-header-row">
         <div style="font-weight:600;">Fields</div>
         ${refreshBtn}
@@ -611,7 +611,7 @@ function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDat
     : `${total}Loading random sample\u2026`;
 
   return `
-    <div class="card" id="sampleRecordsCard" style="margin-top:0.75rem;">
+    <div class="card" id="sampleRecordsCard">
       <div class="card-header-row">
         <div style="font-weight:600;">Sample Records</div>
         ${refreshBtn}
@@ -685,19 +685,33 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
             f: 'json',
           });
           const statJson = await fetchJsonWithTimeout(`${target}/query?${statParams}`, 6000);
-          // Extract non-null count — some servers return the alias in different casing,
-          // so grab the first numeric attribute value regardless of key name.
+          // Extract non-null count — only trust results that look like stat responses.
+          // ArcGIS error responses (HTTP 200) or servers that ignore outStatistics
+          // may return raw features instead of stat results.
           const _attrs = statJson?.features?.[0]?.attributes;
-          let nnCount = totalCount;
+          let nnCount = null;
           if (_attrs) {
-            const _v = _attrs.nn_count ?? _attrs.NN_COUNT ?? Object.values(_attrs)[0];
-            if (typeof _v === 'number') nnCount = _v;
+            const _v = _attrs.nn_count ?? _attrs.NN_COUNT;
+            if (typeof _v === 'number') {
+              nnCount = _v;
+            } else {
+              // Fallback: first numeric value, but only if the response has exactly 1 feature
+              // (stat queries always return 1 feature; raw queries return many)
+              if (statJson.features.length === 1) {
+                const firstVal = Object.values(_attrs)[0];
+                if (typeof firstVal === 'number') nnCount = firstVal;
+              }
+            }
           }
-          const nullPct = totalCount > 0 ? ((totalCount - nnCount) / totalCount * 100) : 0;
-          _fieldStatsCollector.push({ name: f.name, type: f.type, alias: f.alias || '', nullPct, hasDomain: !!(f.domain && f.domain.type === 'codedValue') });
-          nullCell.innerHTML = nullPct > 0
-            ? `<span class="field-stat-bar" style="--pct:${Math.min(nullPct, 100).toFixed(0)}%">${nullPct.toFixed(1)}%</span>`
-            : '<span class="field-stat-zero">0%</span>';
+          if (nnCount !== null && totalCount > 0) {
+            const nullPct = (totalCount - nnCount) / totalCount * 100;
+            _fieldStatsCollector.push({ name: f.name, type: f.type, alias: f.alias || '', nullPct, hasDomain: !!(f.domain && f.domain.type === 'codedValue') });
+            nullCell.innerHTML = nullPct > 0
+              ? `<span class="field-stat-bar" style="--pct:${Math.min(nullPct, 100).toFixed(0)}%">${nullPct.toFixed(1)}%</span>`
+              : '<span class="field-stat-zero">0%</span>';
+          } else {
+            nullCell.textContent = '\u2014';
+          }
         } catch {
           nullCell.textContent = '\u2014';
         }
@@ -713,6 +727,7 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
           // Approach 1 (most reliable): groupBy + outStatistics → count features.
           // Server must group rows before computing stats, so this gives true distinct count.
           // Caveat: maxRecordCount may truncate the features array.
+          // Some servers ignore groupBy and return raw rows — detect via attribute shape.
           try {
             const distParams1 = new URLSearchParams({
               where: '1=1', groupByFieldsForStatistics: f.name,
@@ -720,11 +735,19 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
               f: 'json',
             });
             const distJson1 = await fetchJsonWithTimeout(`${target}/query?${distParams1}`, 5000);
-            if (distJson1 && Array.isArray(distJson1.features)) {
-              distinctCount = distJson1.features.length;
-              if (distJson1.exceededTransferLimit && distinctCount < totalCount) {
-                distinctCount = null; // truncated, try other approaches
+            if (distJson1 && Array.isArray(distJson1.features) && distJson1.features.length > 0) {
+              // Validate: grouped responses should have a 'cnt' (or field-name) stat attribute
+              // and exactly 2 attributes per feature. Raw ungrouped rows have many more.
+              const sampleAttrs = distJson1.features[0].attributes;
+              const attrKeys = sampleAttrs ? Object.keys(sampleAttrs) : [];
+              const hasCntStat = sampleAttrs && ('cnt' in sampleAttrs || 'CNT' in sampleAttrs);
+              if (hasCntStat && attrKeys.length <= 3) {
+                distinctCount = distJson1.features.length;
+                if (distJson1.exceededTransferLimit && distinctCount < totalCount) {
+                  distinctCount = null; // truncated, try other approaches
+                }
               }
+              // If no stat attribute or too many attributes → server returned raw rows, skip to approach 2
             }
           } catch {}
 
@@ -893,10 +916,10 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
   if (!hostEl) return;
   const { datasetId } = options;
 
-  const card = hostEl.querySelector('#datasetPreviewCard');
+  const container = hostEl.querySelector('#servicePreviewContainer');
   const statusEl = hostEl.querySelector('[data-preview-status]');
   const contentEl = hostEl.querySelector('[data-preview-content]');
-  if (!card || !statusEl || !contentEl) return;
+  if (!container || !statusEl || !contentEl) return;
 
   // containingEl is hostEl (the dataset detail panel) — used for dispatching maturity events
   const containingEl = hostEl;
@@ -993,9 +1016,6 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     // Build metadata props and render cards using shared helpers
     const metaProps = extractMetadataProps(serviceJson, layerJson, recordCount);
 
-    let html = '';
-    html += buildMetadataCardHTML(metaProps);
-
     const _isTable = !metaProps.geometryType || metaProps.geometryType.toUpperCase() === 'TABLE';
     const _isRaster = _isImageSvc || (metaProps.geometryType && metaProps.geometryType.toUpperCase() === 'RASTER');
 
@@ -1004,6 +1024,8 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
       const mapCard = hostEl.querySelector('#interactiveMapCard');
       if (mapCard) mapCard.style.display = '';
     }
+
+    let html = '';
 
     // Fields card (live — stats computed async). ImageServer rarely has queryable fields.
     const allFields = (layerJson && Array.isArray(layerJson.fields)) ? layerJson.fields : [];
@@ -1020,16 +1042,15 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
       html += buildSampleCardHTML(null, recordCount);
     }
 
+    // Service Metadata card
+    html += buildMetadataCardHTML(metaProps);
+
     contentEl.innerHTML = html;
     statusEl.classList.remove('loading-message');
     statusEl.textContent = 'Preview loaded.';
 
-    // Update the preview card subtitle with live fetch timestamp
-    const previewSubtitle = hostEl.querySelector('[data-preview-subtitle]');
-    if (previewSubtitle) {
-      const now = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-      previewSubtitle.textContent = `Live data fetched from the ArcGIS REST endpoint. Fetched ${now}.`;
-    }
+    // Hide the status line once preview is loaded
+    statusEl.style.display = 'none';
 
     // Wire field name links → field explorer tab
     wireFieldLinks(contentEl);

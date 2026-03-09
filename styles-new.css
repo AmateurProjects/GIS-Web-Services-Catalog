@@ -1108,7 +1108,7 @@ textarea.dataset-edit-input {
    MAP PREVIEW
    ================================================================ */
 
-.card-map-preview .map-preview-view {
+#servicePreviewContainer .map-preview-view {
   height: 360px;
   border-radius: 12px;
   overflow: hidden;
@@ -1118,13 +1118,13 @@ textarea.dataset-edit-input {
 }
 
 /* Contain ArcGIS MapView z-index values so they don't overlap the sticky header */
-.card-map-preview,
+#servicePreviewContainer,
 #arcgisMapContainer {
   position: relative;
   z-index: 0;
 }
 
-.card-map-preview .map-preview-status {
+#servicePreviewContainer .map-preview-status {
   color: var(--text-muted);
   margin-bottom: 0.6rem;
 }

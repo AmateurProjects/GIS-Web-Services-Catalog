@@ -285,11 +285,9 @@ export function renderDatasetDetail(datasetId) {
       `;
     }
 
-// --- Web Service Metadata card (renders after URL checks) ---
+// --- Web Service preview container (Fields, Sample Records, Service Metadata cards render here) ---
 html += `
-  <div class="card card-map-preview" id="datasetPreviewCard">
-    <div class="card-header-row"><h3>Web Service Metadata</h3></div>
-    <p class="text-muted" data-preview-subtitle style="font-size:0.85rem;margin-bottom:0.5rem;">Live data fetched from the ArcGIS REST endpoint.</p>
+  <div id="servicePreviewContainer">
     <div class="map-preview-status loading-message" data-preview-status>
       Checking Public Web Service…
     </div>

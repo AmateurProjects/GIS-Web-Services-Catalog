@@ -1126,7 +1126,13 @@ textarea.dataset-edit-input {
 
 #servicePreviewContainer .map-preview-status {
   color: var(--text-muted);
-  margin-bottom: 0.6rem;
+  margin-bottom: 0;
+}
+
+#servicePreviewContainer .map-preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 /* ================================================================
@@ -2200,6 +2206,10 @@ textarea.dataset-edit-input {
 }
 
 .dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 

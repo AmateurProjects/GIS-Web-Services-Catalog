@@ -9,7 +9,7 @@ import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedD
 import { checkUrlStatusDetailed } from './url-check.js';
 import { formatFreshnessAge, freshnessColor, getConfidenceMeta } from './freshness.js';
 import { getFreshnessIndex } from './detail.js';
-import { downloadCatalogDcat, downloadCatalogSchemaOrg, downloadCatalogCsv } from './metadata-export.js';
+import { downloadCatalogDcat, downloadCatalogSchemaOrg, downloadCatalogCsv, downloadCatalogIso } from './metadata-export.js';
 import { WORKER_BASE_URL } from './config.js';
 
 let _renderDatasetDetail = null;
@@ -42,14 +42,17 @@ export function renderDashboard() {
     // Header
     html += `
       <div class="dashboard-header">
-        <h2>Catalog Dashboard</h2>
-        <p>${totalDatasets} datasets across ${Object.keys(agencyMap).length} agencies.</p>
+        <div class="dashboard-header-text">
+          <h2>Catalog Dashboard</h2>
+          <p>${totalDatasets} datasets across ${Object.keys(agencyMap).length} agencies.</p>
+        </div>
         <div class="export-dropdown" id="dashExportDropdown">
-          <button type="button" class="btn btn-export-trigger btn-sm" data-dash-export-toggle>📤 Export All Datasets</button>
+          <button type="button" class="btn btn-export-trigger btn-sm" data-dash-export-toggle>📤 Download All Metadata</button>
           <div class="export-dropdown-menu" id="dashExportMenu">
             <button type="button" class="export-dropdown-item" data-dash-export="csv">CSV (Name + URL)</button>
             <button type="button" class="export-dropdown-item" data-dash-export="dcat">DCAT-US JSON-LD</button>
             <button type="button" class="export-dropdown-item" data-dash-export="schema">Schema.org JSON-LD</button>
+            <button type="button" class="export-dropdown-item" data-dash-export="iso">ISO 19115 XML</button>
           </div>
         </div>
       </div>
@@ -219,6 +222,7 @@ export function renderDashboard() {
         if (fmt === 'dcat') downloadCatalogDcat();
         else if (fmt === 'schema') downloadCatalogSchemaOrg();
         else if (fmt === 'csv') downloadCatalogCsv();
+        else if (fmt === 'iso') downloadCatalogIso();
         dashExportMenu?.classList.remove('open');
       });
     });

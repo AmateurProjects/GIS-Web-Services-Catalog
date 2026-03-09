@@ -345,6 +345,15 @@ export function downloadCatalogSchemaOrg(datasets) {
 }
 
 /**
+ * Download all datasets as concatenated ISO 19115 XML records.
+ */
+export function downloadCatalogIso(datasets) {
+  const all = datasets || state.allDatasets || [];
+  const records = all.map(ds => generateIso19115(ds)).join('\n\n');
+  downloadBlob(records, 'catalog_iso19115.xml', 'application/xml');
+}
+
+/**
  * Download a CSV of all datasets with name and service URL.
  */
 export function downloadCatalogCsv() {

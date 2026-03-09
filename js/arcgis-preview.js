@@ -935,7 +935,7 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     statusEl.classList.remove('loading-message');
     statusEl.textContent = 'Not recognized as an ArcGIS REST Map/Feature service.';
     contentEl.innerHTML = `
-      <div class="card" style="margin-top:0.75rem;">
+      <div class="card">
         <p><strong>Link:</strong> <a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(url)}</a></p>
       </div>
     `;
@@ -1076,7 +1076,7 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     statusEl.classList.remove('loading-message');
     statusEl.textContent = 'Failed to load preview (service JSON blocked or unavailable).';
     contentEl.innerHTML = `
-      <div class="card" style="margin-top:0.75rem;">
+      <div class="card">
         <p>We could not fetch service details in-browser. You can still open the link:</p>
         <p><a href="${escapeHtml(publicUrl)}" target="_blank" rel="noopener">${escapeHtml(publicUrl)}</a></p>
       </div>

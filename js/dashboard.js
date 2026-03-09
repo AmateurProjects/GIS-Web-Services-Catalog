@@ -278,11 +278,52 @@ async function loadServiceHealthStatus() {
 
   if (healthData && healthData.services && healthData.services.length > 0) {
     renderHealthResults(healthData.services, healthData, summaryEl, listEl, hasWorker);
+
+    // Re-check bad/unknown services live — cached results may be stale
+    // (Worker runs twice daily; a service may have recovered since last scan)
+    const problemServices = healthData.services.filter(s => s.status !== 'ok');
+    if (problemServices.length > 0) {
+      recheckProblemServices(problemServices, healthData, summaryEl, listEl, hasWorker);
+    }
     return;
   }
 
   // Fallback: live browser-based checks (original behaviour)
   runLiveHealthChecks(summaryEl, listEl, hasWorker);
+}
+
+/** Re-check services that the cached scan marked bad/unknown.
+ *  Runs in the background after the initial render. If any status changes,
+ *  re-renders the entire health section with updated results. */
+async function recheckProblemServices(problemServices, healthData, summaryEl, listEl, hasWorker) {
+  const RECHECK_CONCURRENCY = 3;
+  let changed = false;
+
+  // Build a mutable copy of the full results array
+  const allResults = [...healthData.services];
+  const urlToIdx = new Map();
+  allResults.forEach((svc, i) => { urlToIdx.set(svc.url, i); });
+
+  let idx = 0;
+  async function worker() {
+    while (idx < problemServices.length) {
+      const svc = problemServices[idx++];
+      const result = await checkUrlStatusDetailed(svc.url);
+      if (result.status !== svc.status) {
+        const i = urlToIdx.get(svc.url);
+        if (i !== undefined) {
+          allResults[i] = { ...allResults[i], status: result.status, detail: result.detail || '' };
+          changed = true;
+        }
+      }
+    }
+  }
+
+  await Promise.all(Array.from({ length: RECHECK_CONCURRENCY }, () => worker()));
+
+  if (changed) {
+    renderHealthResults(allResults, healthData, summaryEl, listEl, hasWorker);
+  }
 }
 
 /** Shared HTML renderer for health results (used by both cached & live paths). */

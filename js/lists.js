@@ -7,6 +7,7 @@ import { setActiveListButton } from './ui-fx.js';
 import { getFilteredDatasets, hasAnyFilter } from './filters.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
 import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedDescription } from './github-api.js';
+import { loadHealthCache } from './detail.js';
 import {
   isFieldIndexLoaded as _isFieldIndexLoaded,
   isFieldIndexLoading as _isFieldIndexLoading,
@@ -21,6 +22,43 @@ import {
 // Lazy references to detail renderers — set by app.js to avoid circular import at eval time
 let _renderDatasetDetail = null;
 let _renderAttributeDetail = null;
+
+// Health status: set of URLs known to be down
+let _downUrls = new Set();
+let _healthLoaded = false;
+
+/** Load health data and build the down-URL set. Called once; re-renders list badges. */
+async function ensureHealthBadges() {
+  if (_healthLoaded) return;
+  _healthLoaded = true;
+  try {
+    const health = await loadHealthCache();
+    if (!health || !health.services) return;
+    for (const svc of health.services) {
+      if (svc.url && svc.status !== 'ok') _downUrls.add(svc.url);
+    }
+    // Apply badges to already-rendered list items
+    applyHealthBadges();
+  } catch (_) {}
+}
+
+/** Apply "down" badges to dataset list buttons already in the DOM. */
+function applyHealthBadges() {
+  if (!_downUrls.size || !els.datasetListEl) return;
+  for (const ds of state.allDatasets) {
+    // Health entries are keyed by _parent_service or public_web_service
+    const urlToCheck = ds._parent_service || ds.public_web_service;
+    if (!urlToCheck || !_downUrls.has(urlToCheck)) continue;
+    const btn = els.datasetListEl.querySelector(`[data-ds-id="${CSS.escape(ds.id)}"]`);
+    if (btn && !btn.querySelector('.badge-down')) {
+      const badge = document.createElement('span');
+      badge.className = 'badge-down';
+      badge.title = 'Service is down';
+      badge.textContent = 'down';
+      btn.appendChild(badge);
+    }
+  }
+}
 
 // Track last selected field for highlight
 let _lastSelectedFieldName = null;
@@ -194,6 +232,9 @@ export function renderDatasetList(filterText) {
 
   // keep active highlight in sync after re-render
   setActiveListButton(els.datasetListEl, (b) => b.getAttribute('data-ds-id') === state.lastSelectedDatasetId);
+
+  // Apply health-down badges (async, will patch DOM once data arrives)
+  ensureHealthBadges();
 
   // Append pending requests section (async)
   appendPendingRequestsToList(ft);

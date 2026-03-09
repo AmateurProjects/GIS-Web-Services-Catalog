@@ -38,7 +38,7 @@ export function getFreshnessIndex() { return _freshnessIndex; }
 // ── Health data cache (loaded from Worker R2 health.json once) ──
 let _healthCache = undefined; // undefined = not attempted
 
-async function loadHealthCache() {
+export async function loadHealthCache() {
   if (_healthCache !== undefined) return _healthCache;
   try {
     const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
@@ -144,14 +144,6 @@ export function renderDatasetDetail(datasetId) {
     html += ef('Agency Owner', 'agency_owner', dataset.agency_owner);
     html += ef('Office Owner', 'office_owner', dataset.office_owner);
     html += ef('Contact Email', 'contact_email', dataset.contact_email);
-
-    const topicsHtml = Array.isArray(dataset.topics) && dataset.topics.length
-      ? dataset.topics.map(t => `<button type="button" class="pill pill-topic pill-clickable" data-topic-filter="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join(' ')
-      : '<span style="color:var(--text-muted);font-style:italic;">—</span>';
-    html += `<div class="inline-edit-row"><span class="inline-edit-label">Topics</span><span class="inline-edit-cell editable-field" data-field-key="topics"><span class="inline-edit-value">${topicsHtml}</span></span></div>`;
-
-    html += ef('Update Frequency', 'update_frequency', dataset.update_frequency);
-    html += ef('Notes', 'notes', dataset.notes);
     html += '</div>'; // end Catalog Metadata section
 
     // === Data Access Section ===
@@ -193,12 +185,7 @@ export function renderDatasetDetail(datasetId) {
     const stageInfo = stageLabels[stage] || { label: stage, class: '' };
     html += `<div class="inline-edit-row"><span class="inline-edit-label">Development Stage</span><span class="inline-edit-cell editable-field" data-field-key="development_stage"><span class="inline-edit-value"><span class="stage-badge ${stageInfo.class}">${escapeHtml(stageInfo.label)}</span></span></span></div>`;
 
-    html += ef('Target Release Date', 'target_release_date', dataset.target_release_date);
-
-    const blockersDisplay = Array.isArray(dataset.blockers) && dataset.blockers.length
-      ? escapeHtml(dataset.blockers.join(', '))
-      : '<span style="color:var(--text-muted);font-style:italic;">—</span>';
-    html += `<div class="inline-edit-row"><span class="inline-edit-label">Blockers</span><span class="inline-edit-cell editable-field" data-field-key="blockers"><span class="inline-edit-value">${blockersDisplay}</span></span></div>`;
+    html += ef('Target Date', 'target_release_date', dataset.target_release_date);
 
     const improvementsDisplay = Array.isArray(dataset.improvements) && dataset.improvements.length
       ? escapeHtml(dataset.improvements.join(', '))
@@ -210,6 +197,14 @@ export function renderDatasetDetail(datasetId) {
     // === Optional Section ===
     html += '<div class="manual-section">';
     html += '<h4 class="manual-section-title">Optional</h4>';
+
+    const topicsHtml = Array.isArray(dataset.topics) && dataset.topics.length
+      ? dataset.topics.map(t => `<button type="button" class="pill pill-topic pill-clickable" data-topic-filter="${escapeHtml(t)}">${escapeHtml(t)}</button>`).join(' ')
+      : '<span style="color:var(--text-muted);font-style:italic;">—</span>';
+    html += `<div class="inline-edit-row"><span class="inline-edit-label">Topics</span><span class="inline-edit-cell editable-field" data-field-key="topics"><span class="inline-edit-value">${topicsHtml}</span></span></div>`;
+
+    html += ef('Update Frequency', 'update_frequency', dataset.update_frequency);
+    html += ef('Notes', 'notes', dataset.notes);
     html += ef('Database Object Name', 'objname', dataset.objname);
     html += '</div>'; // end Optional section
 
@@ -242,6 +237,15 @@ export function renderDatasetDetail(datasetId) {
     html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
     html += '<div data-cov-content></div>';
     html += '</div>';
+
+    // Interactive Map card (populated by arcgis-preview.js after service metadata loads)
+    html += `
+      <div class="card card-interactive-map" id="interactiveMapCard" style="display:none;">
+        <div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Interactive Map</h3></div>
+        <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Pan and zoom to explore the dataset. Scale-dependent rendering limits are overridden so data draws at all zoom levels.</p>
+        <div id="arcgisMapContainer" style="width:100%; height:400px; border-radius:12px; overflow:hidden; background:#e0e0e0;"></div>
+      </div>
+    `;
 
     // Freshness / last-updated card (async)
     html += `
@@ -281,10 +285,10 @@ export function renderDatasetDetail(datasetId) {
       `;
     }
 
-// --- Public Web Service preview card (renders after URL checks) ---
+// --- Web Service Metadata card (renders after URL checks) ---
 html += `
   <div class="card card-map-preview" id="datasetPreviewCard">
-    <div class="card-header-row"><h3>Public Web Service Preview</h3></div>
+    <div class="card-header-row"><h3>Web Service Metadata</h3></div>
     <p class="text-muted" data-preview-subtitle style="font-size:0.85rem;margin-bottom:0.5rem;">Live data fetched from the ArcGIS REST endpoint.</p>
     <div class="map-preview-status" data-preview-status>
       Checking Public Web Service…

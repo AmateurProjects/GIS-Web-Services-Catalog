@@ -996,9 +996,10 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     const _isTable = !metaProps.geometryType || metaProps.geometryType.toUpperCase() === 'TABLE';
     const _isRaster = _isImageSvc || (metaProps.geometryType && metaProps.geometryType.toUpperCase() === 'RASTER');
 
-    // Show map card for spatial + raster layers, but not for TABLE
+    // Show standalone Interactive Map card for spatial + raster layers
     if (!_isTable) {
-      html += buildMapCardHTML(url, layerId);
+      const mapCard = hostEl.querySelector('#interactiveMapCard');
+      if (mapCard) mapCard.style.display = '';
     }
 
     // Fields card (live — stats computed async). ImageServer rarely has queryable fields.

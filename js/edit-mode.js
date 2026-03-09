@@ -3,7 +3,7 @@
 // Click a value → inline input appears with ✓/✕. Save button appears when changes exist.
 // Save → PATCH to Cloudflare Worker → R2 overlay → immediate effect.
 
-import { els } from './state.js';
+import { state, els } from './state.js';
 import { escapeHtml, deepClone, parseCsvList, compactObject, computeChanges, tryParseJson } from './utils.js';
 import { getDatasetById, getAttributeById, getDatasetsForAttribute, applyLocalOverrides, removeLocalDataset } from './catalog.js';
 import { WORKER_BASE_URL } from './config.js';
@@ -18,9 +18,6 @@ export const DATASET_EDIT_FIELDS = [
   { key: 'agency_owner', label: 'Agency Owner', type: 'text', section: 'catalog' },
   { key: 'office_owner', label: 'Office Owner', type: 'text', section: 'catalog' },
   { key: 'contact_email', label: 'Contact Email', type: 'text', section: 'catalog' },
-  { key: 'topics', label: 'Topics', type: 'csv', section: 'catalog' },
-  { key: 'update_frequency', label: 'Update Frequency', type: 'text', section: 'catalog' },
-  { key: 'notes', label: 'Notes', type: 'textarea', section: 'catalog' },
 
   // Data Access
   { key: 'public_web_service', label: 'Public Web Service', type: 'text', section: 'dataaccess' },
@@ -30,11 +27,13 @@ export const DATASET_EDIT_FIELDS = [
 
   // Development & Status
   { key: 'development_stage', label: 'Development Stage', type: 'select', options: ['requested', 'in_development', 'published', 'deprecated'], section: 'devstatus' },
-  { key: 'target_release_date', label: 'Target Release Date', type: 'text', section: 'devstatus' },
-  { key: 'blockers', label: 'Blockers', type: 'csv', section: 'devstatus' },
+  { key: 'target_release_date', label: 'Target Date', type: 'text', section: 'devstatus' },
   { key: 'improvements', label: 'Improvements Needed', type: 'csv', section: 'devstatus' },
 
   // Optional
+  { key: 'topics', label: 'Topics', type: 'csv', section: 'optional' },
+  { key: 'update_frequency', label: 'Update Frequency', type: 'text', section: 'optional' },
+  { key: 'notes', label: 'Notes', type: 'textarea', section: 'optional' },
   { key: 'objname', label: 'Database Object Name', type: 'text', section: 'optional' },
 ];
 
@@ -285,6 +284,89 @@ function renderInlineInput(fieldDef, val) {
 
 // ── Inline field activation ──
 
+/** Collect distinct non-empty values for a field key across all datasets. */
+function getExistingValues(key) {
+  const vals = new Set();
+  for (const ds of state.allDatasets) {
+    const v = ds[key];
+    if (v == null || v === '') continue;
+    if (Array.isArray(v)) {
+      v.forEach(item => { if (item) vals.add(String(item)); });
+    } else {
+      vals.add(String(v));
+    }
+  }
+  return [...vals].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+}
+
+/** Attach an autocomplete suggestion dropdown to an input element. */
+function attachAutocomplete(input, suggestions) {
+  if (!suggestions.length) return;
+
+  const dropdown = document.createElement('div');
+  dropdown.className = 'inline-edit-suggestions';
+  input.parentElement.style.position = 'relative';
+  input.parentElement.appendChild(dropdown);
+
+  let activeIdx = -1;
+
+  function render(filter) {
+    const q = (filter || '').toLowerCase();
+    const matches = q
+      ? suggestions.filter(s => s.toLowerCase().includes(q))
+      : suggestions;
+    if (!matches.length || (matches.length === 1 && matches[0].toLowerCase() === q)) {
+      dropdown.style.display = 'none';
+      activeIdx = -1;
+      return;
+    }
+    dropdown.innerHTML = matches.map((s, i) =>
+      `<div class="inline-edit-suggestion${i === activeIdx ? ' is-active' : ''}">${escapeHtml(s)}</div>`
+    ).join('');
+    dropdown.style.display = 'block';
+  }
+
+  function pickItem(value) {
+    input.value = value;
+    dropdown.style.display = 'none';
+    input.dispatchEvent(new Event('input'));
+    input.focus();
+  }
+
+  input.addEventListener('input', () => { activeIdx = -1; render(input.value); });
+  input.addEventListener('focus', () => render(input.value));
+
+  input.addEventListener('keydown', (e) => {
+    if (dropdown.style.display === 'none') return;
+    const items = dropdown.querySelectorAll('.inline-edit-suggestion');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = Math.min(activeIdx + 1, items.length - 1);
+      render(input.value);
+      items[activeIdx]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = Math.max(activeIdx - 1, 0);
+      render(input.value);
+      items[activeIdx]?.scrollIntoView({ block: 'nearest' });
+    } else if (e.key === 'Enter' && activeIdx >= 0 && items[activeIdx]) {
+      e.preventDefault();
+      pickItem(items[activeIdx].textContent);
+    } else if (e.key === 'Escape') {
+      dropdown.style.display = 'none';
+    }
+  });
+
+  dropdown.addEventListener('mousedown', (e) => {
+    e.preventDefault(); // prevent blur from firing
+    const item = e.target.closest('.inline-edit-suggestion');
+    if (item) pickItem(item.textContent);
+  });
+
+  // Hide on blur (unless clicking dropdown — handled by mousedown preventDefault)
+  input.addEventListener('blur', () => { dropdown.style.display = 'none'; });
+}
+
 function activateField(cell, fieldDef, dataset) {
   if (cell.classList.contains('is-editing')) return;
   // Save original HTML so we can restore on cancel
@@ -306,6 +388,12 @@ function activateField(cell, fieldDef, dataset) {
 
   const input = cell.querySelector('[data-inline-key]');
   if (input) input.focus();
+
+  // Attach autocomplete suggestions for text and csv fields
+  if (input && (fieldDef.type === 'text' || fieldDef.type === 'csv')) {
+    const suggestions = getExistingValues(fieldDef.key);
+    attachAutocomplete(input, suggestions);
+  }
 
   // Confirm — record change, show updated value or restore if no actual change
   cell.querySelector('.inline-edit-ok').addEventListener('click', () => {

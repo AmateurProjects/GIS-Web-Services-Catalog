@@ -1641,6 +1641,26 @@ textarea.dataset-edit-input {
   letter-spacing: 0.02em;
 }
 
+.badge-down {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #f87171;
+  text-transform: uppercase;
+  margin-left: auto;
+  padding: 0.1rem 0.35rem;
+  background: rgba(248, 113, 113, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 4px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+/* When both badges exist, keep external badge first */
+.badge-external + .badge-down {
+  margin-left: 0.25rem;
+}
+
 /* Standalone datasets (no parent service) */
 .standalone-dataset {
   margin-bottom: 0.15rem;
@@ -3636,6 +3656,39 @@ textarea.inline-edit-input {
 
 select.inline-edit-input {
   cursor: pointer;
+}
+
+/* Autocomplete suggestions dropdown */
+.inline-edit-suggestions {
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 50;
+  max-height: 160px;
+  overflow-y: auto;
+  background: var(--bg-main, #0f172a);
+  border: 1px solid var(--accent, #60a5fa);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+.inline-edit-suggestion {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-main, #e2e8f0);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inline-edit-suggestion:hover,
+.inline-edit-suggestion.is-active {
+  background: var(--accent, #60a5fa);
+  color: #fff;
 }
 
 .inline-edit-actions {

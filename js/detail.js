@@ -133,7 +133,7 @@ export function renderDatasetDetail(datasetId) {
     };
 
     html += '<div class="card card-meta">';
-    html += '<div class="card-header-row"><h3>Dataset Information</h3></div>';
+    html += '<div class="card-header-row"><h3>📋 Dataset Information</h3></div>';
     html += `<p class="edit-admin-note" style="font-size:0.75rem;color:var(--text-muted);margin:0 0 0.75rem;font-style:italic;">✏️ Click any field value to edit. Saving requires admin access.</p>`;
     
     // === Catalog Metadata Section ===
@@ -263,7 +263,7 @@ export function renderDatasetDetail(datasetId) {
       html += `
         <div class="card-row">
           <div class="card card-attributes">
-            <div class="card-header-row"><h3>Attributes</h3></div>
+            <div class="card-header-row"><h3>🏷️ Attributes</h3></div>
             <ul>
       `;
       attrs.forEach((attr) => {
@@ -278,7 +278,7 @@ export function renderDatasetDetail(datasetId) {
             </ul>
           </div>
           <div class="card card-inline-attribute" id="inlineAttributeDetail">
-            <h3>Attribute details</h3>
+            <h3>🔍 Attribute Details</h3>
             <p>Select an attribute from the list to see its properties here without leaving this dataset.</p>
           </div>
         </div>
@@ -520,7 +520,7 @@ export function renderInlineAttributeDetail(attrId) {
     const attribute = getAttributeById(attrId);
     if (!attribute) {
       container.innerHTML = `
-        <h3>Attribute details</h3>
+        <h3>🔍 Attribute Details</h3>
         <p>Attribute not found: ${escapeHtml(attrId)}</p>
       `;
       return;
@@ -529,7 +529,7 @@ export function renderInlineAttributeDetail(attrId) {
     const datasetsUsing = getDatasetsForAttribute(attrId) || [];
 
     let html = '';
-    html += '<h3>Attribute details</h3>';
+    html += '<h3>\ud83d\udd0d Attribute Details</h3>';
     html += `<h4>${escapeHtml(attribute.id)} – ${escapeHtml(attribute.label || '')}</h4>`;
 
     html += `<p><strong>Attribute Field Name:</strong> ${escapeHtml(attribute.id)}</p>`;

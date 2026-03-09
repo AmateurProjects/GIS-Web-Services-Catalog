@@ -329,7 +329,7 @@ function buildMetadataCardHTML(m, { isCached = false, generatedDate = '' } = {})
   return `
     <div class="card" id="serviceMetadataCard">
       <div class="card-header-row">
-        <div style="font-weight:600;">Service Metadata</div>
+        <div style="font-weight:600;">🌐 Service Metadata</div>
         ${refreshBtn}
       </div>
       <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${subtitle}</p>
@@ -481,7 +481,7 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
   return `
     <div class="card card-fields" id="fieldsCard">
       <div class="card-header-row">
-        <div style="font-weight:600;">Fields</div>
+        <div style="font-weight:600;">📐 Fields</div>
         ${refreshBtn}
       </div>
       <p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">${subtitle}</p>
@@ -613,7 +613,7 @@ function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDat
   return `
     <div class="card" id="sampleRecordsCard">
       <div class="card-header-row">
-        <div style="font-weight:600;">Sample Records</div>
+        <div style="font-weight:600;">📄 Sample Records</div>
         ${refreshBtn}
       </div>
       <p class="text-muted" data-sample-desc style="margin-bottom:0.5rem;font-size:0.85rem;">${desc}</p>

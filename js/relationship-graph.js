@@ -163,10 +163,9 @@ const GEOMETRY_COLORS = {
 };
 
 const STAGE_SHAPES = {
-  'production': 'circle',
-  'qa': 'diamond',
+  'published': 'circle',
   'in_development': 'square',
-  'planned': 'triangle',
+  'requested': 'triangle',
   'deprecated': 'cross',
 };
 

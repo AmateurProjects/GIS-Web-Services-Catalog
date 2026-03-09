@@ -94,10 +94,9 @@ function scoreDataStandard(dataset) {
 function scoreDevelopmentStage(dataset) {
   const stage = (dataset.development_stage || '').toLowerCase();
   let pts, label;
-  if (stage === 'production') { pts = 10; label = 'Production'; }
-  else if (stage === 'qa') { pts = 7; label = 'QA'; }
-  else if (stage === 'in_development') { pts = 4; label = 'In Development'; }
-  else if (stage === 'planned') { pts = 2; label = 'Planned'; }
+  if (stage === 'published') { pts = 10; label = 'Published'; }
+  else if (stage === 'in_development') { pts = 5; label = 'In Development'; }
+  else if (stage === 'requested') { pts = 2; label = 'Requested'; }
   else if (stage === 'deprecated') { pts = 1; label = 'Deprecated'; }
   else { pts = 0; label = 'Not set'; }
   return { score: pts, max: 10, details: [{ label: `Development Stage: ${label}`, ok: pts === 10, pts, maxPts: 10 }] };

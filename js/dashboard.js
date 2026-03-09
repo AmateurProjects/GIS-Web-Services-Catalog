@@ -9,7 +9,7 @@ import { fetchPendingDatasetRequests, parseRequestedDatasetName, parseRequestedD
 import { checkUrlStatusDetailed } from './url-check.js';
 import { formatFreshnessAge, freshnessColor, getConfidenceMeta } from './freshness.js';
 import { getFreshnessIndex } from './detail.js';
-import { downloadCatalogDcat, downloadCatalogSchemaOrg } from './metadata-export.js';
+import { downloadCatalogDcat, downloadCatalogSchemaOrg, downloadCatalogCsv } from './metadata-export.js';
 import { WORKER_BASE_URL } from './config.js';
 
 let _renderDatasetDetail = null;
@@ -44,9 +44,13 @@ export function renderDashboard() {
       <div class="dashboard-header">
         <h2>Catalog Dashboard</h2>
         <p>${totalDatasets} datasets across ${Object.keys(agencyMap).length} agencies.</p>
-        <div class="dashboard-export-row">
-          <button type="button" class="btn btn-export btn-sm" data-dash-export="dcat">📤 Export DCAT-US</button>
-          <button type="button" class="btn btn-export btn-sm" data-dash-export="schema">📤 Export Schema.org</button>
+        <div class="export-dropdown" id="dashExportDropdown">
+          <button type="button" class="btn btn-export-trigger btn-sm" data-dash-export-toggle>📤 Export All Datasets</button>
+          <div class="export-dropdown-menu" id="dashExportMenu">
+            <button type="button" class="export-dropdown-item" data-dash-export="csv">CSV (Name + URL)</button>
+            <button type="button" class="export-dropdown-item" data-dash-export="dcat">DCAT-US JSON-LD</button>
+            <button type="button" class="export-dropdown-item" data-dash-export="schema">Schema.org JSON-LD</button>
+          </div>
         </div>
       </div>
     `;
@@ -197,12 +201,25 @@ export function renderDashboard() {
       });
     });
 
-    // ── Wire up catalog export buttons ──
+    // ── Wire up catalog export dropdown ──
+    const dashExportToggle = els.dashboardContentEl.querySelector('[data-dash-export-toggle]');
+    const dashExportMenu = els.dashboardContentEl.querySelector('#dashExportMenu');
+    if (dashExportToggle && dashExportMenu) {
+      dashExportToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dashExportMenu.classList.toggle('open');
+      });
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#dashExportDropdown')) dashExportMenu.classList.remove('open');
+      });
+    }
     els.dashboardContentEl.querySelectorAll('button[data-dash-export]').forEach(btn => {
       btn.addEventListener('click', () => {
         const fmt = btn.getAttribute('data-dash-export');
         if (fmt === 'dcat') downloadCatalogDcat();
         else if (fmt === 'schema') downloadCatalogSchemaOrg();
+        else if (fmt === 'csv') downloadCatalogCsv();
+        dashExportMenu?.classList.remove('open');
       });
     });
 

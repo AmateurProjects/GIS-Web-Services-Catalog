@@ -1075,6 +1075,8 @@ textarea.dataset-edit-input {
 }
 
 .btn.primary { border-color: var(--accent); }
+.btn.btn-danger { border-color: #c0392b; color: #e74c3c; }
+.btn.btn-danger:hover { background: #c0392b; color: #fff; }
 
 #newDatasetAttributesCard h3 { margin-top: 0; }
 
@@ -1118,7 +1120,7 @@ textarea.dataset-edit-input {
   border: 1px solid;
 }
 
-.stage-planned {
+.stage-requested {
   border-color: rgba(107,114,128,0.4);
   background: rgba(107,114,128,0.1);
   color: #9ca3af;
@@ -1130,13 +1132,7 @@ textarea.dataset-edit-input {
   color: #fbbf24;
 }
 
-.stage-qa {
-  border-color: rgba(139,92,246,0.4);
-  background: rgba(139,92,246,0.1);
-  color: #a78bfa;
-}
-
-.stage-prod {
+.stage-published {
   border-color: rgba(16,185,129,0.4);
   background: rgba(16,185,129,0.1);
   color: #34d399;
@@ -2413,10 +2409,9 @@ textarea.dataset-edit-input {
   border: 1px solid;
 }
 
-.dash-stage-planned     { border-color: rgba(107,114,128,0.4); background: rgba(107,114,128,0.1); color: #9ca3af; }
+.dash-stage-requested   { border-color: rgba(107,114,128,0.4); background: rgba(107,114,128,0.1); color: #9ca3af; }
 .dash-stage-dev         { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.1); color: #fbbf24; }
-.dash-stage-qa          { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.1); color: #a78bfa; }
-.dash-stage-prod        { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.1); color: #34d399; }
+.dash-stage-published   { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.1); color: #34d399; }
 .dash-stage-deprecated  { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.1); color: #f87171; }
 
 /* ── Dashboard tier mini badges ── */

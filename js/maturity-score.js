@@ -92,24 +92,21 @@ export function scoreDataStandard(dataset) {
 }
 
 // ── 5. Development Stage (0–10) ──
-// Production = full points. Anything else = partial.
+// Published = full points. Anything else = partial.
 
 export function scoreDevelopmentStage(dataset) {
   const stage = (dataset.development_stage || '').toLowerCase();
   let pts;
   let label;
-  if (stage === 'production') {
+  if (stage === 'published') {
     pts = 10;
-    label = 'Production';
-  } else if (stage === 'qa') {
-    pts = 7;
-    label = 'QA';
+    label = 'Published';
   } else if (stage === 'in_development') {
-    pts = 4;
+    pts = 5;
     label = 'In Development';
-  } else if (stage === 'planned') {
+  } else if (stage === 'requested') {
     pts = 2;
-    label = 'Planned';
+    label = 'Requested';
   } else if (stage === 'deprecated') {
     pts = 1;
     label = 'Deprecated';

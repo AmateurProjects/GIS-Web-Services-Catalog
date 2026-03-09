@@ -58,7 +58,7 @@ const FRESHNESS_BATCH_SIZE = 5;
 // ── CORS headers applied to every response ──
 const CORS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
 
@@ -150,6 +150,12 @@ export default {
     const patchMatch = path.match(/^\/catalog\/dataset\/(.+)$/);
     if (request.method === 'PATCH' && patchMatch) {
       return handleDatasetPatch(request, env, decodeURIComponent(patchMatch[1]));
+    }
+
+    // ── DELETE /catalog/dataset/:id ──
+    const deleteMatch = path.match(/^\/catalog\/dataset\/(.+)$/);
+    if (request.method === 'DELETE' && deleteMatch) {
+      return handleDatasetDelete(request, env, decodeURIComponent(deleteMatch[1]));
     }
 
     return corsJson({ error: 'Not found' }, 404);
@@ -466,6 +472,38 @@ async function handleDatasetPatch(request, env, datasetId) {
     overrides: overrides[datasetId] || {},
     totalOverriddenDatasets: Object.keys(overrides).length,
   });
+}
+
+// ================================================================
+// Handle DELETE /catalog/dataset/:id — admin dataset removal
+// ================================================================
+// Marks a dataset as deleted by setting { _deleted: true } in overrides.
+// The frontend filters out deleted datasets when merging overrides at load time.
+// The base catalog.json is never modified — deletion is a soft override.
+
+async function handleDatasetDelete(request, env, datasetId) {
+  const result = await validateGithubUser(request, env);
+  if (result.error) {
+    if (result.error === 'not_allowed') {
+      return corsJson({ error: `User "${result.login}" is not in the authorized editors list. Ask a repo admin to add your GitHub username to GITHUB_ALLOWED_USERS.`, code: 'not_allowed' }, 403);
+    }
+    return corsJson({ error: 'GitHub session expired or invalid. Please log in again.', code: 'token_expired' }, 401);
+  }
+
+  let overrides = {};
+  try {
+    const obj = await env.BUCKET.get(R2_KEY_OVERRIDES);
+    if (obj) overrides = JSON.parse(await obj.text());
+  } catch (_) {}
+
+  // Mark as deleted — replaces any existing field overrides for this dataset
+  overrides[datasetId] = { _deleted: true };
+
+  await env.BUCKET.put(R2_KEY_OVERRIDES, JSON.stringify(overrides, null, 2), {
+    httpMetadata: { contentType: 'application/json' },
+  });
+
+  return corsJson({ ok: true, datasetId, deleted: true });
 }
 
 // ================================================================

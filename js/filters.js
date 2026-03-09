@@ -9,14 +9,11 @@ import { showDatasetsView } from './navigation.js';
 export const activeFilters = {
   stage: new Set(),
   tier: new Set(),
-  geometry: new Set(),
-  coverage: new Set(),
-  office: new Set(),
-  topics: new Set(),
+  agency: new Set(),
 };
 
 // Track which filter groups are expanded (persist across re-renders)
-export const filterGroupOpen = { stage: true, tier: false, geometry: false, coverage: false, office: false, topics: false };
+export const filterGroupOpen = { stage: true, tier: false, agency: false };
 
 // Lazy reference to renderDatasetList — set by app.js to avoid circular import at eval time
 let _renderDatasetList = null;
@@ -139,20 +136,8 @@ export function getFilteredDatasets(textFilter) {
       return activeFilters.tier.has(t);
     });
   }
-  if (activeFilters.geometry.size) {
-    filtered = filtered.filter(ds => activeFilters.geometry.has((ds.geometry_type || 'UNKNOWN').toUpperCase()));
-  }
-  if (activeFilters.coverage.size) {
-    filtered = filtered.filter(ds => activeFilters.coverage.has(ds.coverage || 'unknown'));
-  }
-  if (activeFilters.office.size) {
-    filtered = filtered.filter(ds => activeFilters.office.has(ds.office_owner || 'Unknown'));
-  }
-  if (activeFilters.topics.size) {
-    filtered = filtered.filter(ds => {
-      const t = ds.topics || [];
-      return t.some(topic => activeFilters.topics.has(topic));
-    });
+  if (activeFilters.agency.size) {
+    filtered = filtered.filter(ds => activeFilters.agency.has(ds.agency_owner || 'Unknown'));
   }
 
   return filtered;
@@ -189,10 +174,9 @@ export function renderFilterPanel() {
       key: 'stage',
       label: 'Development Stage',
       options: [
-        { value: 'production', label: 'Production' },
-        { value: 'qa', label: 'QA / Testing' },
+        { value: 'published', label: 'Published' },
         { value: 'in_development', label: 'In Development' },
-        { value: 'planned', label: 'Planned' },
+        { value: 'requested', label: 'Requested' },
         { value: 'deprecated', label: 'Deprecated' },
         { value: 'unknown', label: 'Unknown' },
       ],
@@ -211,35 +195,10 @@ export function renderFilterPanel() {
       getValue: ds => (ds.maturity && ds.maturity.quality_tier) || 'unassigned',
     },
     {
-      key: 'geometry',
-      label: 'Geometry Type',
+      key: 'agency',
+      label: 'Agency Owner',
       options: null, // dynamic
-      getValue: ds => (ds.geometry_type || 'UNKNOWN').toUpperCase(),
-    },
-    {
-      key: 'coverage',
-      label: 'Coverage',
-      options: [
-        { value: 'nationwide', label: 'Nationwide' },
-        { value: 'multi_state', label: 'Multi-State' },
-        { value: 'single_state', label: 'Single State' },
-        { value: 'partial', label: 'Partial' },
-        { value: 'unknown', label: 'Unknown' },
-      ],
-      getValue: ds => ds.coverage || 'unknown',
-    },
-    {
-      key: 'office',
-      label: 'Office Owner',
-      options: null, // dynamic
-      getValue: ds => ds.office_owner || 'Unknown',
-    },
-    {
-      key: 'topics',
-      label: 'Topics',
-      options: null, // dynamic
-      multi: true, // datasets have an array of topics
-      getValues: ds => (ds.topics && ds.topics.length) ? ds.topics : ['(none)'],
+      getValue: ds => ds.agency_owner || 'Unknown',
     },
   ];
 
@@ -361,8 +320,8 @@ function renderActiveFilterChips() {
 
   let chipsHtml = '';
   const chipLabels = {
-    stage: 'Stage', tier: 'Tier', geometry: 'Geometry',
-    coverage: 'Coverage', office: 'Office', topics: 'Topic',
+    stage: 'Stage', tier: 'Tier',
+    agency: 'Agency',
   };
   Object.entries(activeFilters).forEach(([group, values]) => {
     values.forEach(v => {

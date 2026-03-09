@@ -345,6 +345,20 @@ export function downloadCatalogSchemaOrg(datasets) {
 }
 
 /**
+ * Download a CSV of all datasets with name and service URL.
+ */
+export function downloadCatalogCsv() {
+  const datasets = state.allDatasets || [];
+  const rows = [['Name', 'Service URL']];
+  datasets.forEach(ds => {
+    const name = (ds.title || ds.id || '').replace(/"/g, '""');
+    const url = (ds.public_web_service || '').replace(/"/g, '""');
+    rows.push([`"${name}"`, `"${url}"`]);
+  });
+  downloadBlob(rows.map(r => r.join(',')).join('\n'), 'catalog_datasets.csv', 'text/csv');
+}
+
+/**
  * Render export buttons HTML for a dataset detail view.
  */
 export function exportButtonsHTML(datasetId) {

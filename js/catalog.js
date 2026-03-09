@@ -32,6 +32,15 @@ async function mergeOverrides() {
     const overrides = await resp.json();
     if (!overrides || typeof overrides !== 'object') return;
 
+    // Filter out deleted datasets, then merge field overrides for the rest
+    const deletedIds = new Set();
+    for (const [id, patch] of Object.entries(overrides)) {
+      if (patch && patch._deleted) deletedIds.add(id);
+    }
+    if (deletedIds.size > 0) {
+      cache.datasets = (cache.datasets || []).filter(ds => !deletedIds.has(ds.id));
+    }
+
     const datasets = cache.datasets || [];
     for (const ds of datasets) {
       const patch = overrides[ds.id];
@@ -60,6 +69,17 @@ export function applyLocalOverrides(datasetId, fields) {
       ds[k] = v;
     }
   }
+}
+
+/**
+ * Remove a dataset from the in-memory cache (after server-side delete).
+ * Removes from cache.datasets array and from the datasetById index.
+ */
+export function removeLocalDataset(datasetId) {
+  if (cache && cache.datasets) {
+    cache.datasets = cache.datasets.filter(ds => ds.id !== datasetId);
+  }
+  delete datasetById[datasetId];
 }
 
 function buildIndexes() {

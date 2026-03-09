@@ -272,7 +272,7 @@ function suggestFor(category, detail) {
   if (category === 'dataStandard') return 'Link a Data Standard document';
   if (category === 'stage') {
     if (detail.label?.includes('Not set')) return 'Set a Development Stage';
-    if (!detail.ok) return 'Advance the dataset toward Production stage';
+    if (!detail.ok) return 'Advance the dataset toward Published stage';
   }
   if (category === 'issues') {
     if (detail.isPenalty && detail.label?.includes('blocker')) return 'Resolve open blockers';

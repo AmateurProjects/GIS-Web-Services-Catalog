@@ -7,8 +7,8 @@ import { WORKER_BASE_URL } from './config.js';
 import { renderCoverageMapCard, getCoverageCache } from './coverage-map.js';
 import { getDatasetById, getAttributeById, getAttributesForDataset, getDatasetsForAttribute } from './catalog.js';
 import { showDatasetsView, showAttributesView } from './navigation.js';
-import { wireDatasetInlineEdit, enterAttributeEditMode } from './edit-mode.js';
-import { applyDashboardFilter } from './filters.js';
+import { wireDatasetInlineEdit, enterAttributeEditMode, deleteDataset } from './edit-mode.js';
+import { clearAllFilters } from './filters.js';
 import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
 import { getFieldInfo, shortTypeName, typeColor, isFieldIndexLoaded } from './field-explorer.js';
 import { setLastSelectedFieldName } from './lists.js';
@@ -184,10 +184,9 @@ export function renderDatasetDetail(datasetId) {
     html += '<h4 class="manual-section-title">Development & Status</h4>';
 
     const stageLabels = {
-      'planned': { label: 'Planned', class: 'stage-planned' },
+      'requested': { label: 'Requested', class: 'stage-requested' },
       'in_development': { label: 'In Development', class: 'stage-dev' },
-      'qa': { label: 'QA/Testing', class: 'stage-qa' },
-      'production': { label: 'Production', class: 'stage-prod' },
+      'published': { label: 'Published', class: 'stage-published' },
       'deprecated': { label: 'Deprecated', class: 'stage-deprecated' }
     };
     const stage = dataset.development_stage || 'unknown';
@@ -221,6 +220,17 @@ export function renderDatasetDetail(datasetId) {
         <button type="button" class="btn" data-discard-edits>Discard</button>
         <button type="button" class="btn primary" data-save-edits>💾 Save</button>
       </div>
+    </div>`;
+
+    // Danger zone — admin delete action
+    html += `<div class="manual-section dataset-danger-zone" style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border-color);">
+      <details>
+        <summary style="cursor:pointer;font-size:0.8rem;color:var(--text-muted);user-select:none;">⚠️ Danger Zone</summary>
+        <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.75rem;">
+          <button type="button" class="btn btn-danger" data-delete-dataset>🗑️ Delete Dataset</button>
+          <span style="font-size:0.78rem;color:var(--text-muted);">Permanently remove this dataset from the catalog. Requires admin access.</span>
+        </div>
+      </details>
     </div>`;
 
     html += '</div>'; // end combined manual card
@@ -324,6 +334,24 @@ if (covRefreshBtn) {
     // Wire inline edit on all editable fields in the Dataset Information card
     wireDatasetInlineEdit(dataset, () => renderDatasetDetail(datasetId));
 
+    // Wire delete dataset button
+    const deleteBtn = els.datasetDetailEl.querySelector('[data-delete-dataset]');
+    if (deleteBtn) {
+      deleteBtn.addEventListener('click', async () => {
+        const confirmed = confirm(`Are you sure you want to delete "${dataset.title || dataset.id}"?\n\nThis will remove the dataset from the catalog. This action requires admin access.`);
+        if (!confirmed) return;
+        deleteBtn.disabled = true;
+        deleteBtn.textContent = '⏳ Deleting…';
+        const ok = await deleteDataset(dataset.id);
+        if (ok) {
+          showDatasetsView();
+        } else {
+          deleteBtn.disabled = false;
+          deleteBtn.textContent = '🗑️ Delete Dataset';
+        }
+      });
+    }
+
     const rootBtn = els.datasetDetailEl.querySelector('button[data-breadcrumb="datasets"]');
     if (rootBtn) rootBtn.addEventListener('click', showDatasetsView);
 
@@ -335,11 +363,13 @@ if (covRefreshBtn) {
       });
     });
 
-    // Wire topic pills → filter by topic
+    // Wire topic pills → search by topic text
     els.datasetDetailEl.querySelectorAll('button[data-topic-filter]').forEach(btn => {
       btn.addEventListener('click', () => {
         const topic = btn.getAttribute('data-topic-filter');
-        applyDashboardFilter('topics', topic);
+        clearAllFilters();
+        if (els.datasetSearchInput) els.datasetSearchInput.value = topic;
+        showDatasetsView();
       });
     });
 

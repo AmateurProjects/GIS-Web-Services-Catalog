@@ -5,7 +5,7 @@
 
 import { els } from './state.js';
 import { escapeHtml, deepClone, parseCsvList, compactObject, computeChanges, tryParseJson } from './utils.js';
-import { getDatasetById, getAttributeById, getDatasetsForAttribute, applyLocalOverrides } from './catalog.js';
+import { getDatasetById, getAttributeById, getDatasetsForAttribute, applyLocalOverrides, removeLocalDataset } from './catalog.js';
 import { WORKER_BASE_URL } from './config.js';
 import { buildGithubIssueUrlForEditedAttribute } from './github-issues.js';
 
@@ -29,7 +29,7 @@ export const DATASET_EDIT_FIELDS = [
   { key: 'access_level', label: 'Access Level', type: 'text', section: 'dataaccess' },
 
   // Development & Status
-  { key: 'development_stage', label: 'Development Stage', type: 'select', options: ['planned', 'in_development', 'qa', 'production', 'deprecated'], section: 'devstatus' },
+  { key: 'development_stage', label: 'Development Stage', type: 'select', options: ['requested', 'in_development', 'published', 'deprecated'], section: 'devstatus' },
   { key: 'target_release_date', label: 'Target Release Date', type: 'text', section: 'devstatus' },
   { key: 'blockers', label: 'Blockers', type: 'csv', section: 'devstatus' },
   { key: 'improvements', label: 'Improvements Needed', type: 'csv', section: 'devstatus' },
@@ -462,4 +462,70 @@ export function enterAttributeEditMode(attrId, onDone) {
     if (onDone) onDone();
     window.open(issueUrl, '_blank', 'noopener');
   });
+}
+
+// ── Delete dataset via Worker ──
+
+/**
+ * Delete a dataset by sending DELETE to Worker, then remove from local cache.
+ * Requires admin auth (GitHub OAuth). Returns true on success, false on failure.
+ * @param {string} datasetId
+ */
+export async function deleteDataset(datasetId) {
+  const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
+  if (!workerBase) {
+    alert('Worker URL not configured. Cannot delete dataset.');
+    return false;
+  }
+
+  let token = getGithubToken();
+  if (!token) {
+    try {
+      await loginWithGithub();
+      token = getGithubToken();
+    } catch (e) {
+      alert(e.message);
+      return false;
+    }
+  }
+  if (!token) return false;
+
+  async function doDelete(bearerToken) {
+    return fetch(`${workerBase}/catalog/dataset/${encodeURIComponent(datasetId)}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${bearerToken}` },
+    });
+  }
+
+  try {
+    let resp = await doDelete(token);
+    let result = await resp.json();
+
+    // On 401 (expired token), auto re-login and retry once
+    if (resp.status === 401 && result.code === 'token_expired') {
+      clearGithubAuth();
+      try {
+        await loginWithGithub();
+        token = getGithubToken();
+      } catch (e) {
+        alert(e.message);
+        return false;
+      }
+      if (!token) return false;
+      resp = await doDelete(token);
+      result = await resp.json();
+    }
+
+    if (!resp.ok) {
+      alert(`Delete failed: ${result.error || resp.statusText}`);
+      return false;
+    }
+
+    // Remove from local cache so UI updates immediately
+    removeLocalDataset(datasetId);
+    return true;
+  } catch (e) {
+    alert(`Delete failed: ${e.message}`);
+    return false;
+  }
 }

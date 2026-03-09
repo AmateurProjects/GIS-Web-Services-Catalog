@@ -286,15 +286,11 @@ export function buildCoverageMapSVG(analysisResults) {
       fill-rule="evenodd" data-state="${escapeHtml(state.abbr)}" data-count="${state.count}">
       <title>${title}</title></path>\n`;
 
-    // Count label for states with data
+    // State abbreviation label for states with data
     if (state.count > 0) {
       const [clon, clat] = polygonLabelPoint(state.geometry.rings);
       const [sx, sy] = projectGeoToSVG(clon, clat, bounds, vp);
-      const countStr = state.count >= 1000
-        ? (state.count / 1000).toFixed(state.count >= 10000 ? 0 : 1) + 'k'
-        : String(state.count);
-      labelsHtml += `<text x="${sx.toFixed(0)}" y="${(sy - 2).toFixed(0)}" class="cov-count">${countStr}</text>\n`;
-      labelsHtml += `<text x="${sx.toFixed(0)}" y="${(sy + 12).toFixed(0)}" class="cov-abbr">${escapeHtml(state.abbr)}</text>\n`;
+      labelsHtml += `<text x="${sx.toFixed(0)}" y="${(sy + 5).toFixed(0)}" class="cov-abbr">${escapeHtml(state.abbr)}</text>\n`;
     }
   });
 

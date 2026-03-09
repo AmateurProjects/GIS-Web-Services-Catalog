@@ -384,11 +384,13 @@ export async function renderCoverageMapCard(hostEl, publicServiceUrl, generation
 
   // Step 1 — fetch state boundaries
   statusEl.textContent = 'Fetching state boundaries from Census Bureau\u2026';
+  statusEl.classList.add('loading-message');
   let states;
   try {
     states = await fetchCensusStateBoundaries();
   } catch (err) {
     console.error('Census state fetch failed:', err);
+    statusEl.classList.remove('loading-message');
     statusEl.textContent = 'Could not fetch state boundaries from Census Bureau TIGER service.';
     return;
   }
@@ -406,6 +408,7 @@ export async function renderCoverageMapCard(hostEl, publicServiceUrl, generation
     });
   } catch (err) {
     console.error('Coverage analysis failed:', err);
+    statusEl.classList.remove('loading-message');
     statusEl.textContent = 'Coverage analysis failed \u2014 the service may not support spatial queries.';
     return;
   }
@@ -423,6 +426,7 @@ export function paintCoverageResult(statusEl, contentEl, results) {
 
   let summary = `${statesWithData} states with data.`;
   if (failedCount > 0) summary += ` ${failedCount} state(s) could not be queried.`;
+  statusEl.classList.remove('loading-message');
   statusEl.textContent = summary;
   contentEl.innerHTML = svg;
 }
@@ -438,6 +442,7 @@ export async function renderCoverageFromPrecomputed(statusEl, contentEl, coverag
     : 'unknown date';
 
   statusEl.textContent = `Loading pre-computed coverage (${generatedDate})\u2026`;
+  statusEl.classList.add('loading-message');
 
   // Fetch Census state boundaries for SVG rendering (cached per session)
   let states;
@@ -449,6 +454,7 @@ export async function renderCoverageFromPrecomputed(statusEl, contentEl, coverag
     const entries = Object.entries(coverageData.states || {});
     const withData = entries.filter(([, c]) => c > 0).length;
     const total = entries.reduce((s, [, c]) => s + Math.max(0, c), 0);
+    statusEl.classList.remove('loading-message');
     statusEl.textContent = `${withData} states with data. (map generated ${generatedDate}). Map unavailable \u2014 Census boundary fetch failed.`;
     return;
   }

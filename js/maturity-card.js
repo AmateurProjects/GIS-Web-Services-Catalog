@@ -3,6 +3,7 @@
 // then updates live when service/field data arrives via CustomEvents.
 
 import { escapeHtml } from './utils.js';
+import { WORKER_BASE_URL } from './config.js';
 import {
   scoreCatalogBasics,
   scoreDataSteward,
@@ -24,6 +25,14 @@ let _freshnessIndex = undefined;
 
 async function loadFreshnessIndex() {
   if (_freshnessIndex !== undefined) return _freshnessIndex;
+  // Try Worker endpoint first (most up-to-date), then local file
+  const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
+  if (workerBase) {
+    try {
+      const resp = await fetch(`${workerBase}/freshness.json`);
+      if (resp.ok) { _freshnessIndex = await resp.json(); return _freshnessIndex; }
+    } catch {}
+  }
   try {
     const resp = await fetch('data/freshness.json');
     if (!resp.ok) { _freshnessIndex = null; return null; }
@@ -76,7 +85,7 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
   // Load freshness index for confidence scoring
   const freshnessIdx = await loadFreshnessIndex();
   const freshnessResult = freshnessIdx?.datasets?.find(d => d.datasetId === dataset.id) || null;
-  const freshnessConfidence = scoreFreshnessConfidence(freshnessResult);
+  let freshnessConfidence = scoreFreshnessConfidence(freshnessResult);
 
   const basics = scoreCatalogBasics(dataset);
   const steward = scoreDataSteward(dataset);
@@ -120,6 +129,15 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
       render();
     });
   }
+
+  // ── Listen for live freshness result (dispatched by freshness card) ──
+  hostEl.addEventListener('maturity:freshness-result', (e) => {
+    const { freshnessResult: liveResult } = e.detail || {};
+    if (liveResult) {
+      freshnessConfidence = scoreFreshnessConfidence(liveResult);
+      render();
+    }
+  });
 
   // ── Render / re-render card body ──
   function render() {

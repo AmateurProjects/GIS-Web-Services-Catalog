@@ -234,7 +234,7 @@ export function renderDatasetDetail(datasetId) {
     html += '<div class="card card-coverage" id="coverageMapCard">';
     html += '<div class="card-header-row"><h3>\uD83D\uDDFA\uFE0F Coverage Map</h3><div style="display:flex;align-items:center;gap:0.5rem;"><button type="button" class="btn" data-cov-refresh title="Re-run live coverage analysis" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button></div></div>';
     html += '<p class="text-muted" style="margin-bottom:0.5rem;font-size:0.85rem;">Spatial intersection with <a href="https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer/0" target="_blank" rel="noopener">Census Bureau TIGER state boundaries</a>. A 0.5 mile inward buffer is applied to each state boundary to exclude sliver intersections along shared borders. Counts are approximate.</p>';
-    html += '<div data-cov-status class="coverage-status">Waiting for analysis\u2026</div>';
+    html += '<div data-cov-status class="coverage-status loading-message">Waiting for analysis\u2026</div>';
     html += '<div data-cov-content></div>';
     html += '</div>';
 
@@ -290,7 +290,7 @@ html += `
   <div class="card card-map-preview" id="datasetPreviewCard">
     <div class="card-header-row"><h3>Web Service Metadata</h3></div>
     <p class="text-muted" data-preview-subtitle style="font-size:0.85rem;margin-bottom:0.5rem;">Live data fetched from the ArcGIS REST endpoint.</p>
-    <div class="map-preview-status" data-preview-status>
+    <div class="map-preview-status loading-message" data-preview-status>
       Checking Public Web Service…
     </div>
     <div class="map-preview-content" data-preview-content></div>
@@ -442,6 +442,9 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
     contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">Could not detect freshness for this dataset (no signals found).</p>';
     return;
   }
+
+  // Notify the maturity card with the freshness result so it can update its score
+  hostEl.dispatchEvent(new CustomEvent('maturity:freshness-result', { detail: { freshnessResult: result } }));
 
   // ── Render freshness result ──
   const confMeta = getConfidenceMeta(result.confidence);

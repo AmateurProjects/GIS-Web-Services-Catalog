@@ -176,7 +176,7 @@ export function initializeArcGISMap(serviceUrl, layerId) {
     return;
   }
 
-  mapContainer.innerHTML = '<p style="padding:1rem; color:var(--text-muted);">Loading map...</p>';
+  mapContainer.innerHTML = '<p class="loading-message" style="padding:1rem; color:var(--text-muted);">Loading map…</p>';
 
   require([
     "esri/Map",
@@ -903,11 +903,13 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
 
   const url = normalizeServiceUrl(publicUrl);
   if (!url) {
+    statusEl.classList.remove('loading-message');
     statusEl.textContent = 'No Public Web Service provided for this dataset.';
     return;
   }
 
   if (!looksLikeArcGisService(url)) {
+    statusEl.classList.remove('loading-message');
     statusEl.textContent = 'Not recognized as an ArcGIS REST Map/Feature service.';
     contentEl.innerHTML = `
       <div class="card" style="margin-top:0.75rem;">
@@ -923,6 +925,7 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
 
   // ── Always fetch live from the ArcGIS REST endpoint ──
   statusEl.textContent = 'Loading service preview…';
+  statusEl.classList.add('loading-message');
   contentEl.innerHTML = '';
 
   try {
@@ -1018,6 +1021,7 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
     }
 
     contentEl.innerHTML = html;
+    statusEl.classList.remove('loading-message');
     statusEl.textContent = 'Preview loaded.';
 
     // Update the preview card subtitle with live fetch timestamp
@@ -1048,6 +1052,7 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
 
   } catch (err) {
     console.error(err);
+    statusEl.classList.remove('loading-message');
     statusEl.textContent = 'Failed to load preview (service JSON blocked or unavailable).';
     contentEl.innerHTML = `
       <div class="card" style="margin-top:0.75rem;">

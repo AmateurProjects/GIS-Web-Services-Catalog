@@ -50,7 +50,7 @@ const R2_KEY_PERF_TASK = 'performance-task.json';
 const R2_KEY_OVERRIDES = 'catalog-overrides.json';
 const TIMEOUT_MS = 12_000;
 const HEALTH_TIMEOUT_MS = 15_000;
-const PERF_TIMEOUT_MS = 15_000;
+const PERF_TIMEOUT_MS = 8_000;
 const CONCURRENCY = 4;
 const MAX_RETRIES = 1;
 const RETRY_DELAY_MS = 2_000;
@@ -62,8 +62,10 @@ const RETRY_DELAY_MS = 2_000;
 // Freshness: ~5 fetches per dataset (incl. FGDC metadata XML) → batch of 5 = ~27 subrequests.
 const HEALTH_BATCH_SIZE = 7;
 const FRESHNESS_BATCH_SIZE = 5;
-// Performance: 5 timed queries per dataset → ~25 subrequests per batch of 5
-const PERF_BATCH_SIZE = 5;
+// Performance: 5 timed queries per dataset × 3 datasets = ~15 subrequests per batch.
+// Batch kept small since each dataset runs 5-6 sequential fetches and some
+// government servers respond slowly (up to 8s per query).
+const PERF_BATCH_SIZE = 3;
 
 // ── CORS headers applied to every response ──
 const CORS = {

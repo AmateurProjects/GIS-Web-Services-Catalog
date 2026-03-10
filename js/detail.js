@@ -14,6 +14,7 @@ import { getFieldInfo, shortTypeName, typeColor, isFieldIndexLoaded } from './fi
 import { setLastSelectedFieldName } from './lists.js';
 import { getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor, detectFreshness } from './freshness.js';
 import { wireExportButtons } from './metadata-export.js';
+import { loadPerformanceCard } from './performance-card.js';
 
 // ── Freshness data cache (loaded from data/freshness.json once) ──
 let _freshnessIndex = null;  // { datasets: [...] } or null
@@ -258,6 +259,17 @@ export function renderDatasetDetail(datasetId) {
       </div>
     `;
 
+    // Performance benchmark card (async — populated from Worker R2 performance.json)
+    html += `
+      <div class="card card-performance" id="performanceCard">
+        <div class="card-header-row"><h3>⚡ Service Performance</h3></div>
+        <p class="text-muted" data-perf-subtitle style="font-size:0.85rem;margin-bottom:0.5rem;">Standardized query benchmarks run from Cloudflare edge.</p>
+        <div data-perf-content>
+          <p class="loading-message" style="font-size:0.85rem;">Loading benchmark data…</p>
+        </div>
+      </div>
+    `;
+
     // Attributes + inline attribute details - only show if dataset has attributes
     if (attrs.length > 0) {
       html += `
@@ -377,6 +389,9 @@ if (covRefreshBtn) {
 
     // ── Freshness detection (async) ──
     loadFreshnessCard(els.datasetDetailEl, dataset, currentGeneration);
+
+    // ── Performance benchmark card (async) ──
+    loadPerformanceCard(els.datasetDetailEl, dataset);
 
     // ── Wire metadata export buttons (now in sticky header dropdown) ──
     wireExportButtons(els.datasetDetailEl);

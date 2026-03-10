@@ -10,6 +10,8 @@
 //   health.json              — latest service health check results
 //   health-task.json         — in-progress health scan state
 //   freshness-task.json      — in-progress freshness scan state
+//   performance.json         — latest query performance benchmark results
+//   performance-task.json    — in-progress performance scan state
 //
 // Routes:
 //   GET  /freshness.json      → serve from R2
@@ -18,6 +20,9 @@
 //   GET  /health.json         → serve from R2
 //   POST /health/refresh      → run health scan, store in R2
 //   GET  /health/status       → last-generated timestamp
+//   GET  /performance.json    → serve from R2
+//   POST /performance/refresh → run performance scan, store in R2
+//   GET  /performance/status  → last-generated timestamp
 //   Cron trigger              → runs batched scans (see below)
 //
 // Batch Processing Strategy:
@@ -40,9 +45,12 @@ const R2_KEY_PREV = 'freshness-previous.json';
 const R2_KEY_HEALTH = 'health.json';
 const R2_KEY_HEALTH_TASK = 'health-task.json';
 const R2_KEY_FRESHNESS_TASK = 'freshness-task.json';
+const R2_KEY_PERF = 'performance.json';
+const R2_KEY_PERF_TASK = 'performance-task.json';
 const R2_KEY_OVERRIDES = 'catalog-overrides.json';
 const TIMEOUT_MS = 12_000;
 const HEALTH_TIMEOUT_MS = 15_000;
+const PERF_TIMEOUT_MS = 15_000;
 const CONCURRENCY = 4;
 const MAX_RETRIES = 1;
 const RETRY_DELAY_MS = 2_000;
@@ -54,6 +62,8 @@ const RETRY_DELAY_MS = 2_000;
 // Freshness: ~5 fetches per dataset (incl. FGDC metadata XML) → batch of 5 = ~27 subrequests.
 const HEALTH_BATCH_SIZE = 7;
 const FRESHNESS_BATCH_SIZE = 5;
+// Performance: 5 timed queries per dataset → ~25 subrequests per batch of 5
+const PERF_BATCH_SIZE = 5;
 
 // ── CORS headers applied to every response ──
 const CORS = {
@@ -131,6 +141,29 @@ export default {
       return corsJson(result);
     }
 
+    // ── GET /performance.json ──
+    if (request.method === 'GET' && (path === '/performance.json' || path === '/performance')) {
+      return serveR2Json(env, R2_KEY_PERF);
+    }
+
+    // ── GET /performance/status ──
+    if (request.method === 'GET' && path === '/performance/status') {
+      return serveStatus(env, R2_KEY_PERF);
+    }
+
+    // ── POST /performance/refresh ──
+    if (request.method === 'POST' && path === '/performance/refresh') {
+      const offset = parseInt(url.searchParams.get('offset') || '0', 10);
+      if (offset === 0 && env.REFRESH_TOKEN) {
+        const auth = request.headers.get('Authorization') || '';
+        if (auth !== `Bearer ${env.REFRESH_TOKEN}`) {
+          return corsJson({ error: 'Unauthorized' }, 401);
+        }
+      }
+      const result = await runPerformanceScan(env, offset);
+      return corsJson(result);
+    }
+
     // ── GET /catalog/overrides.json ──
     if (request.method === 'GET' && (path === '/catalog/overrides.json' || path === '/catalog/overrides')) {
       return serveR2Json(env, R2_KEY_OVERRIDES);
@@ -198,16 +231,28 @@ async function runScheduledBatch(env) {
     return;
   }
 
+  // Check for incomplete performance task
+  const perfTask = await env.BUCKET.get(R2_KEY_PERF_TASK);
+  if (perfTask) {
+    const task = JSON.parse(await perfTask.text());
+    const offset = task.results?.length || 0;
+    console.log(`Continuing performance scan from offset ${offset}`);
+    await runPerformanceScan(env, offset);
+    return;
+  }
+
   // No incomplete tasks — check if we should start fresh scans
   // Only start new scans if existing data is stale (>20 hours old)
   const healthObj = await env.BUCKET.get(R2_KEY_HEALTH);
   const freshnessObj = await env.BUCKET.get(R2_KEY);
+  const perfObj = await env.BUCKET.get(R2_KEY_PERF);
   
   const now = Date.now();
   const STALE_THRESHOLD_MS = 20 * 60 * 60 * 1000; // 20 hours
   
   let healthStale = true;
   let freshnessStale = true;
+  let perfStale = true;
   
   if (healthObj) {
     try {
@@ -227,13 +272,25 @@ async function runScheduledBatch(env) {
     } catch (_) {}
   }
 
-  // Start whichever scan is stale (health first, then freshness)
+  if (perfObj) {
+    try {
+      const data = JSON.parse(await perfObj.text());
+      if (data.generated && data._scanComplete !== false) {
+        perfStale = (now - new Date(data.generated).getTime()) > STALE_THRESHOLD_MS;
+      }
+    } catch (_) {}
+  }
+
+  // Start whichever scan is stale (health first, then freshness, then performance)
   if (healthStale) {
     console.log('Starting new health scan (data stale or missing)');
     await runHealthScan(env, 0);
   } else if (freshnessStale) {
     console.log('Starting new freshness scan (data stale or missing)');
     await runScan(env, 0);
+  } else if (perfStale) {
+    console.log('Starting new performance scan (data stale or missing)');
+    await runPerformanceScan(env, 0);
   } else {
     console.log('Scheduled scan skipped — data is fresh');
   }
@@ -1260,5 +1317,284 @@ async function processDataset(ds, storedRecordCount, env) {
     details: best ? best.detail : 'No freshness signal found',
     signals,
     recordCount: currentCount,
+  };
+}
+
+// ================================================================
+// Performance scan — benchmarks query response times per dataset
+// ================================================================
+// Runs 5 standardised queries against each dataset's public web service
+// and records response times. Results stored in performance.json on R2.
+//
+// Queries per dataset (~5 sub-requests):
+//   1. Metadata fetch       — {layerUrl}?f=pjson
+//   2. Count query           — /query?where=1=1&returnCountOnly=true
+//   3. Attribute query       — /query?where=1=1&outFields=*&returnGeometry=false&resultRecordCount=10
+//   4. Geometry query        — /query?where=1=1&outFields=*&returnGeometry=true&resultRecordCount=10
+//   5. Spatial query         — /query?geometry={extent}&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&returnCountOnly=true
+//
+// Grading thresholds (ms) per query type — based on ArcGIS REST service
+// industry baselines for government enterprise GIS servers:
+//
+//   Grade:     A (Excellent)  B (Good)     C (Fair)     D (Poor)     F (Failing)
+//   Metadata:  <300           <750         <1500        <3000        ≥3000
+//   Count:     <300           <750         <1500        <3000        ≥3000
+//   Attribute: <500           <1000        <2000        <4000        ≥4000
+//   Geometry:  <750           <1500        <3000        <6000        ≥6000
+//   Spatial:   <500           <1000        <2000        <4000        ≥4000
+// ================================================================
+
+const PERF_THRESHOLDS = {
+  metadata:  [300, 750, 1500, 3000],
+  count:     [300, 750, 1500, 3000],
+  attribute: [500, 1000, 2000, 4000],
+  geometry:  [750, 1500, 3000, 6000],
+  spatial:   [500, 1000, 2000, 4000],
+};
+
+const GRADE_LETTERS = ['A', 'B', 'C', 'D', 'F'];
+const GRADE_LABELS = ['Excellent', 'Good', 'Fair', 'Poor', 'Failing'];
+
+function gradeForMetric(type, ms) {
+  if (ms === null || ms === undefined) return null;
+  const thresholds = PERF_THRESHOLDS[type];
+  for (let i = 0; i < thresholds.length; i++) {
+    if (ms < thresholds[i]) return GRADE_LETTERS[i];
+  }
+  return 'F';
+}
+
+function overallGrade(metrics) {
+  // Convert each metric grade to a numeric score (A=4, B=3, C=2, D=1, F=0)
+  // and compute a weighted average. Failures (null) count as F.
+  const gradeScore = { A: 4, B: 3, C: 2, D: 1, F: 0 };
+  let totalScore = 0;
+  let count = 0;
+  for (const m of metrics) {
+    if (m.grade) {
+      totalScore += gradeScore[m.grade] ?? 0;
+    }
+    // Only count metrics that were attempted (responseMs !== undefined)
+    if (m.responseMs !== undefined) count++;
+  }
+  if (count === 0) return 'N/A';
+  const avg = totalScore / count;
+  if (avg >= 3.5) return 'A';
+  if (avg >= 2.5) return 'B';
+  if (avg >= 1.5) return 'C';
+  if (avg >= 0.5) return 'D';
+  return 'F';
+}
+
+async function timedFetch(url, timeout) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  const start = Date.now();
+  try {
+    const resp = await fetch(url, { signal: controller.signal });
+    const elapsed = Date.now() - start;
+    if (!resp.ok) return { ok: false, elapsed, error: `HTTP ${resp.status}` };
+    const json = await resp.json();
+    const total = Date.now() - start;
+    if (json?.error) return { ok: false, elapsed: total, error: json.error.message || 'ArcGIS error' };
+    return { ok: true, elapsed: total, data: json };
+  } catch (e) {
+    return { ok: false, elapsed: Date.now() - start, error: e.name === 'AbortError' ? 'Timeout' : e.message };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function benchmarkDataset(ds) {
+  const url = normalizeUrl(ds.public_web_service);
+  const parsed = parseServiceUrl(url);
+  if (!parsed) return null;
+
+  const _isImage = isImageServer(url);
+  const isLayerUrl = parsed.layerId !== null;
+
+  let queryTarget;
+  if (_isImage) {
+    queryTarget = parsed.base;
+  } else if (isLayerUrl) {
+    queryTarget = url;
+  } else {
+    let layerId = 0;
+    try {
+      const svcJson = await fetchJson(`${parsed.base}?f=pjson`, PERF_TIMEOUT_MS);
+      if (svcJson?.layers?.length) layerId = svcJson.layers[0].id ?? 0;
+    } catch (_) {}
+    queryTarget = `${parsed.base}/${layerId}`;
+  }
+
+  const metrics = [];
+
+  // 1. Metadata fetch
+  const meta = await timedFetch(`${queryTarget}?f=pjson`, PERF_TIMEOUT_MS);
+  metrics.push({
+    query: 'metadata',
+    label: 'Metadata Fetch',
+    responseMs: meta.elapsed,
+    grade: meta.ok ? gradeForMetric('metadata', meta.elapsed) : 'F',
+    error: meta.ok ? null : meta.error,
+  });
+
+  if (_isImage) {
+    // ImageServers don't support /query — return metadata-only results
+    return {
+      datasetId: ds.id,
+      metrics,
+      overall: overallGrade(metrics),
+    };
+  }
+
+  // 2. Count query
+  const countUrl = `${queryTarget}/query?where=${encodeURIComponent('1=1')}&returnCountOnly=true&f=json`;
+  const countResult = await timedFetch(countUrl, PERF_TIMEOUT_MS);
+  metrics.push({
+    query: 'count',
+    label: 'Count Query',
+    responseMs: countResult.elapsed,
+    grade: countResult.ok ? gradeForMetric('count', countResult.elapsed) : 'F',
+    error: countResult.ok ? null : countResult.error,
+  });
+
+  // 3. Attribute query (10 rows, no geometry)
+  const attrUrl = `${queryTarget}/query?where=${encodeURIComponent('1=1')}&outFields=*&returnGeometry=false&resultRecordCount=10&f=json`;
+  const attrResult = await timedFetch(attrUrl, PERF_TIMEOUT_MS);
+  metrics.push({
+    query: 'attribute',
+    label: 'Attribute Query',
+    responseMs: attrResult.elapsed,
+    grade: attrResult.ok ? gradeForMetric('attribute', attrResult.elapsed) : 'F',
+    error: attrResult.ok ? null : attrResult.error,
+  });
+
+  // 4. Geometry query (10 rows, with geometry)
+  const geomUrl = `${queryTarget}/query?where=${encodeURIComponent('1=1')}&outFields=*&returnGeometry=true&resultRecordCount=10&f=json`;
+  const geomResult = await timedFetch(geomUrl, PERF_TIMEOUT_MS);
+  metrics.push({
+    query: 'geometry',
+    label: 'Geometry Query',
+    responseMs: geomResult.elapsed,
+    grade: geomResult.ok ? gradeForMetric('geometry', geomResult.elapsed) : 'F',
+    error: geomResult.ok ? null : geomResult.error,
+  });
+
+  // 5. Spatial query — use the layer extent (from metadata) as the envelope
+  let spatialResult = null;
+  const extent = meta.ok && meta.data?.extent;
+  if (extent && extent.xmin != null) {
+    const geomParam = JSON.stringify({
+      xmin: extent.xmin, ymin: extent.ymin,
+      xmax: extent.xmax, ymax: extent.ymax,
+      spatialReference: extent.spatialReference,
+    });
+    const spatialUrl = `${queryTarget}/query?geometry=${encodeURIComponent(geomParam)}&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&returnCountOnly=true&f=json`;
+    spatialResult = await timedFetch(spatialUrl, PERF_TIMEOUT_MS);
+  }
+  metrics.push({
+    query: 'spatial',
+    label: 'Spatial Query',
+    responseMs: spatialResult ? spatialResult.elapsed : null,
+    grade: spatialResult?.ok ? gradeForMetric('spatial', spatialResult.elapsed) : (spatialResult ? 'F' : null),
+    error: spatialResult ? (spatialResult.ok ? null : spatialResult.error) : 'No extent available',
+  });
+
+  return {
+    datasetId: ds.id,
+    metrics,
+    overall: overallGrade(metrics),
+  };
+}
+
+async function runPerformanceScan(env, offset = 0) {
+  let task;
+
+  if (offset === 0) {
+    const catalogUrl = `${(env.CATALOG_BASE_URL || '').replace(/\/+$/, '')}/data/catalog.json`;
+    let catalog;
+    try {
+      const resp = await fetch(catalogUrl);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      catalog = await resp.json();
+    } catch (e) {
+      console.error('Performance scan: failed to fetch catalog.json:', e);
+      return { error: 'Failed to fetch catalog', done: true };
+    }
+
+    const datasets = catalog.datasets || [];
+    const toProcess = datasets.filter(ds => {
+      if (!ds.public_web_service) return false;
+      if (!/\/rest\/services\//i.test(ds.public_web_service)) return false;
+      return true;
+    });
+
+    console.log(`Performance scan: ${toProcess.length} datasets to benchmark in batches of ${PERF_BATCH_SIZE}`);
+    await env.BUCKET.delete(R2_KEY_PERF_TASK);
+    task = { toProcess, results: [] };
+  } else {
+    const obj = await env.BUCKET.get(R2_KEY_PERF_TASK);
+    if (!obj) return { error: 'No task found', done: true };
+    task = JSON.parse(await obj.text());
+  }
+
+  const batch = task.toProcess.slice(offset, offset + PERF_BATCH_SIZE);
+  console.log(`Performance scan batch: offset=${offset}, batchSize=${batch.length}, total=${task.toProcess.length}`);
+
+  const batchResults = await Promise.allSettled(
+    batch.map(ds => benchmarkDataset(ds))
+  );
+
+  for (let i = 0; i < batchResults.length; i++) {
+    const r = batchResults[i];
+    if (r.status === 'fulfilled' && r.value) {
+      task.results.push(r.value);
+    } else {
+      task.results.push({
+        datasetId: batch[i].id,
+        metrics: [],
+        overall: 'F',
+        error: r.reason?.message || 'Unknown error',
+      });
+    }
+  }
+
+  const nextOffset = offset + PERF_BATCH_SIZE;
+  const done = nextOffset >= task.toProcess.length;
+
+  if (!done) {
+    await env.BUCKET.put(R2_KEY_PERF_TASK, JSON.stringify(task));
+  }
+
+  // Grade distribution for logging
+  const gradeCounts = { A: 0, B: 0, C: 0, D: 0, F: 0, 'N/A': 0 };
+  task.results.forEach(r => { gradeCounts[r.overall] = (gradeCounts[r.overall] || 0) + 1; });
+
+  const output = {
+    generated: new Date().toISOString(),
+    totalChecked: task.toProcess.length,
+    thresholds: PERF_THRESHOLDS,
+    gradeLabels: Object.fromEntries(GRADE_LETTERS.map((g, i) => [g, GRADE_LABELS[i]])),
+    datasets: task.results,
+    _scanComplete: done,
+  };
+
+  await env.BUCKET.put(R2_KEY_PERF, JSON.stringify(output, null, 2), {
+    httpMetadata: { contentType: 'application/json' },
+  });
+
+  if (done) {
+    await env.BUCKET.delete(R2_KEY_PERF_TASK);
+    console.log(`Performance scan complete: A=${gradeCounts.A} B=${gradeCounts.B} C=${gradeCounts.C} D=${gradeCounts.D} F=${gradeCounts.F}`);
+  }
+
+  return {
+    done,
+    offset,
+    nextOffset: done ? null : nextOffset,
+    total: task.toProcess.length,
+    processed: task.results.length,
+    batchSize: batch.length,
   };
 }

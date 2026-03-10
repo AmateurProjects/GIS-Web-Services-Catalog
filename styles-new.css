@@ -3774,3 +3774,135 @@ select.inline-edit-input {
   justify-content: space-between;
   gap: 1rem;
 }
+
+/* ================================================================
+   Performance Benchmark Card
+   ================================================================ */
+
+.card-performance {
+  position: relative;
+  border-left: 3px solid var(--text-muted);
+  transition: border-color 400ms ease;
+}
+
+/* Overall grade row */
+.perf-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.perf-overall-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.perf-grade-badge {
+  flex-shrink: 0;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.03em;
+}
+
+.perf-grade-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.perf-grade-label {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.perf-grade-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Metrics grid */
+.perf-metrics-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid var(--border-color);
+  margin-top: 0.25rem;
+}
+
+.perf-metric-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.perf-metric-name {
+  flex: 1 1 auto;
+  font-size: 0.85rem;
+  color: var(--text-main);
+}
+
+.perf-metric-time {
+  flex: 0 0 5rem;
+  text-align: right;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-main);
+}
+
+.perf-metric-time.perf-metric-error {
+  color: var(--red);
+  font-weight: 400;
+  font-size: 0.78rem;
+}
+
+.perf-metric-grade {
+  flex: 0 0 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Legend */
+.perf-legend-details {
+  margin-top: 0.5rem;
+}
+
+.perf-legend-details summary {
+  cursor: pointer;
+  font-size: 0.82rem;
+  color: var(--accent);
+  user-select: none;
+}
+
+.perf-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.4rem;
+}
+
+.perf-legend-item {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.perf-legend-note {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.4rem;
+  line-height: 1.4;
+  font-style: italic;
+}

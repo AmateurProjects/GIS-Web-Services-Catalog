@@ -755,6 +755,18 @@ th {
 
 tr:hover td { background: var(--bg-hover); }
 
+/* Sample records table — keep rows compact, rely on horizontal scroll */
+#sampleRecordsCard td {
+  white-space: nowrap;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#sampleRecordsCard th {
+  white-space: nowrap;
+}
+
 /* ================================================================
    GENERIC BUTTONS
    ================================================================ */

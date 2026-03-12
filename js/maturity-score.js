@@ -223,7 +223,18 @@ export function scoreServiceCapabilities({ serviceJson, layerJson }) {
   details.push({ label: 'Spatial reference defined', ok: hasSR, pts: hasSR ? 5 : 0, maxPts: 5 });
   score += hasSR ? 5 : 0;
 
-  return { score, max: 15, details };
+  // Pagination support (5 pts)
+  const aqc = layerJson?.advancedQueryCapabilities || {};
+  const supportsPaging = aqc.supportsPagination ?? layerJson?.supportsPagination ?? false;
+  details.push({ label: 'Pagination support', ok: !!supportsPaging, pts: supportsPaging ? 5 : 0, maxPts: 5 });
+  score += supportsPaging ? 5 : 0;
+
+  // OrderBy support (5 pts)
+  const supportsOrderBy = aqc.supportsOrderBy ?? layerJson?.supportsOrderBy ?? false;
+  details.push({ label: 'OrderBy support', ok: !!supportsOrderBy, pts: supportsOrderBy ? 5 : 0, maxPts: 5 });
+  score += supportsOrderBy ? 5 : 0;
+
+  return { score, max: 25, details };
 }
 
 // ── 9. Attribute Health (0–20, with penalties) ──
@@ -374,7 +385,7 @@ export function computeFullScore({ basics, steward, webService, dataStandard, st
     }
   });
 
-  // Max possible is 110 (15+10+10+5+10+0+15+15+20+10). Clamped to 100. Penalties can push below 0.
+  // Max possible is 120 (15+10+10+5+10+0+15+25+20+10). Clamped to 100. Penalties can push below 0.
   const clamped = Math.max(0, Math.min(100, total));
   const tier = tierFromScore(clamped);
 

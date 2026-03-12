@@ -1407,6 +1407,17 @@ async function timedFetch(url, timeout) {
   }
 }
 
+// Warm-cache: run timedFetch twice and use the better (lower elapsed) result.
+// Many ArcGIS Server endpoints are significantly slower on cold first requests.
+// If the first call fails, return the failure without retrying.
+async function warmTimedFetch(url, timeout) {
+  const first = await timedFetch(url, timeout);
+  if (!first.ok) return first;
+  const second = await timedFetch(url, timeout);
+  if (!second.ok) return first; // second failed, use the successful first
+  return second.elapsed <= first.elapsed ? second : first;
+}
+
 async function benchmarkDataset(ds) {
   const url = normalizeUrl(ds.public_web_service);
   const parsed = parseServiceUrl(url);
@@ -1452,7 +1463,7 @@ async function benchmarkDataset(ds) {
 
   // 2. Count query
   const countUrl = `${queryTarget}/query?where=${encodeURIComponent('1=1')}&returnCountOnly=true&f=json`;
-  const countResult = await timedFetch(countUrl, PERF_TIMEOUT_MS);
+  const countResult = await warmTimedFetch(countUrl, PERF_TIMEOUT_MS);
   metrics.push({
     query: 'count',
     label: 'Count Query',
@@ -1463,7 +1474,7 @@ async function benchmarkDataset(ds) {
 
   // 3. Attribute query (10 rows, no geometry)
   const attrUrl = `${queryTarget}/query?where=${encodeURIComponent('1=1')}&outFields=*&returnGeometry=false&resultRecordCount=10&f=json`;
-  const attrResult = await timedFetch(attrUrl, PERF_TIMEOUT_MS);
+  const attrResult = await warmTimedFetch(attrUrl, PERF_TIMEOUT_MS);
   metrics.push({
     query: 'attribute',
     label: 'Attribute Query',
@@ -1474,7 +1485,7 @@ async function benchmarkDataset(ds) {
 
   // 4. Geometry query (10 rows, with geometry)
   const geomUrl = `${queryTarget}/query?where=${encodeURIComponent('1=1')}&outFields=*&returnGeometry=true&resultRecordCount=10&f=json`;
-  const geomResult = await timedFetch(geomUrl, PERF_TIMEOUT_MS);
+  const geomResult = await warmTimedFetch(geomUrl, PERF_TIMEOUT_MS);
   metrics.push({
     query: 'geometry',
     label: 'Geometry Query',
@@ -1493,7 +1504,7 @@ async function benchmarkDataset(ds) {
       spatialReference: extent.spatialReference,
     });
     const spatialUrl = `${queryTarget}/query?geometry=${encodeURIComponent(geomParam)}&geometryType=esriGeometryEnvelope&spatialRel=esriSpatialRelIntersects&returnCountOnly=true&f=json`;
-    spatialResult = await timedFetch(spatialUrl, PERF_TIMEOUT_MS);
+    spatialResult = await warmTimedFetch(spatialUrl, PERF_TIMEOUT_MS);
   }
   metrics.push({
     query: 'spatial',

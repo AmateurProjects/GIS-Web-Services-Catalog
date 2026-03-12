@@ -100,8 +100,8 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
     : { score: 0, max: 15, details: [{ label: 'No public web service configured', ok: false, pts: 0, maxPts: 15 }] };
 
   let serviceCapabilities = hasService
-    ? { score: 0, max: 15, pending: true, details: [{ label: 'Analyzing service capabilities\u2026', ok: false, pts: 0, maxPts: 15 }] }
-    : { score: 0, max: 15, details: [{ label: 'No service to analyze', ok: false, pts: 0, maxPts: 15 }] };
+    ? { score: 0, max: 25, pending: true, details: [{ label: 'Analyzing service capabilities\u2026', ok: false, pts: 0, maxPts: 25 }] }
+    : { score: 0, max: 25, details: [{ label: 'No service to analyze', ok: false, pts: 0, maxPts: 25 }] };
 
   let nullHealth = hasService
     ? { score: 0, max: 20, pending: true, details: [{ label: 'Analyzing attribute schema\u2026', ok: false, pts: 0, maxPts: 20 }] }

@@ -12,7 +12,7 @@ import { clearAllFilters } from './filters.js';
 import { maturityCardHTML, initMaturityCard } from './maturity-card.js';
 import { getFieldInfo, shortTypeName, typeColor, isFieldIndexLoaded } from './field-explorer.js';
 import { setLastSelectedFieldName } from './lists.js';
-import { getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor, detectFreshness } from './freshness.js';
+import { getConfidenceMeta, getSignalLabel, formatFreshnessAge, freshnessColor } from './freshness.js';
 import { wireExportButtons } from './metadata-export.js';
 import { loadPerformanceCard } from './performance-card.js';
 
@@ -24,12 +24,18 @@ async function loadFreshnessIndex() {
   if (_freshnessIndex) return _freshnessIndex;
   if (_freshnessIndexLoading) return null;
   _freshnessIndexLoading = true;
-  try {
-    const resp = await fetch('data/freshness.json');
-    if (resp.ok) {
-      _freshnessIndex = await resp.json();
-    }
-  } catch (_) { /* no pre-computed data */ }
+  // Try Worker R2 endpoint first (most up-to-date), then fall back to local data/
+  const workerBase = WORKER_BASE_URL ? WORKER_BASE_URL.replace(/\/+$/, '') : '';
+  const urls = workerBase ? [`${workerBase}/freshness.json`, 'data/freshness.json'] : ['data/freshness.json'];
+  for (const url of urls) {
+    try {
+      const resp = await fetch(url);
+      if (resp.ok) {
+        _freshnessIndex = await resp.json();
+        break;
+      }
+    } catch (_) { /* try next */ }
+  }
   _freshnessIndexLoading = false;
   return _freshnessIndex;
 }
@@ -463,7 +469,7 @@ if (covRefreshBtn) {
 
 /**
  * Load and render the freshness card for a dataset.
- * Runs live multi-signal detection first; falls back to pre-computed cache if live fails.
+ * Uses pre-computed cache from Worker R2 or local data/freshness.json.
  */
 async function loadFreshnessCard(hostEl, dataset, generation) {
   const contentEl = hostEl.querySelector('[data-freshness-content]');
@@ -471,30 +477,17 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
   if (!contentEl) return;
 
   let result = null;
-  let source = null; // 'live' | 'cache'
+  let source = null; // 'cache'
   let generatedTimestamp = null;
 
-  // ── Try live detection first (simple ~6 requests per dataset) ──
-  if (dataset.public_web_service) {
-    try {
-      const liveResult = await detectFreshness(dataset.public_web_service);
-      if (liveResult && liveResult.lastUpdated) {
-        result = liveResult;
-        source = 'live';
-      }
-    } catch (_) { /* live failed, fall back to cache */ }
-  }
-
-  // ── Fall back to pre-computed cache ──
-  if (!result) {
-    const index = await loadFreshnessIndex();
-    if (index && index.datasets) {
-      const precomputed = index.datasets.find(d => d.datasetId === dataset.id);
-      if (precomputed) {
-        result = precomputed;
-        source = 'cache';
-        generatedTimestamp = index.generated || null;
-      }
+  // ── Load from pre-computed cache (Worker R2 → local data/) ──
+  const index = await loadFreshnessIndex();
+  if (index && index.datasets) {
+    const precomputed = index.datasets.find(d => d.datasetId === dataset.id);
+    if (precomputed) {
+      result = precomputed;
+      source = 'cache';
+      generatedTimestamp = index.generated || null;
     }
   }
 
@@ -566,14 +559,9 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
 
   // Update subtitle with source/date info
   const subtitleEl = hostEl.querySelector('[data-freshness-subtitle]');
-  if (subtitleEl) {
-    if (source === 'cache' && generatedTimestamp) {
-      const genDate = new Date(generatedTimestamp).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-      subtitleEl.textContent = `Multi-signal detection of when this dataset was last updated. Generated ${genDate}.`;
-    } else if (source === 'live') {
-      const now = new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
-      subtitleEl.textContent = `Multi-signal detection of when this dataset was last updated. Detected live ${now}.`;
-    }
+  if (subtitleEl && generatedTimestamp) {
+    const genDate = new Date(generatedTimestamp).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    subtitleEl.textContent = `Multi-signal detection of when this dataset was last updated. Generated ${genDate}.`;
   }
 }
 

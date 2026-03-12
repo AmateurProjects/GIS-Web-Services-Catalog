@@ -625,7 +625,7 @@ function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDat
 
 // ── Async field stats loader (runs after live fields card renders) ──
 
-function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation) {
+function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation, { datasetId = null, supportsStatistics = true } = {}) {
   const _fieldStatsUrl = fetchBaseUrl;
   const _fieldStatsLayerId = layerId;
   const _fieldStatsFields = allFields;
@@ -636,7 +636,122 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
     const table = contentEl.querySelector('#fieldsTable');
     if (!table) return;
 
+    // ── Try pre-computed field stats from service-info ──
+    if (datasetId) {
+      try {
+        const siResp = await fetch(`data/service-info/${encodeURIComponent(datasetId)}.json`);
+        if (siResp.ok) {
+          const serviceInfo = await siResp.json();
+          const preStats = serviceInfo.fieldStats;
+          if (Array.isArray(preStats) && preStats.length) {
+            const totalCount = serviceInfo.metadata?.recordCount || 0;
+            // Build name → stat lookup
+            const statsMap = {};
+            preStats.forEach(s => { statsMap[s.name] = s; });
+            const collector = [];
+
+            for (let i = 0; i < _fieldStatsFields.length; i++) {
+              if (_fieldStatsGen !== _renderGeneration) return;
+              const f = _fieldStatsFields[i];
+              const stat = statsMap[f.name];
+              const nullCell = table.querySelector(`[data-field-null="${i}"]`);
+              const uniqCell = table.querySelector(`[data-field-uniq="${i}"]`);
+              const qualityCell = table.querySelector(`[data-field-quality="${i}"]`);
+
+              if (!stat || stat.skipped) {
+                if (nullCell) nullCell.textContent = '\u2014';
+                if (uniqCell) uniqCell.textContent = '\u2014';
+                if (qualityCell) qualityCell.textContent = '\u2014';
+                continue;
+              }
+
+              // Null %
+              if (nullCell) {
+                const nullPct = stat.nullPct;
+                if (nullPct !== null && nullPct !== undefined) {
+                  collector.push({ name: f.name, type: f.type, alias: f.alias || '', nullPct, hasDomain: !!(f.domain && f.domain.type === 'codedValue') });
+                  nullCell.innerHTML = nullPct > 0
+                    ? `<span class="field-stat-bar" style="--pct:${Math.min(nullPct, 100).toFixed(0)}%">${Number(nullPct).toFixed(1)}%</span>`
+                    : '<span class="field-stat-zero">0%</span>';
+                } else {
+                  nullCell.textContent = '\u2014';
+                }
+              }
+
+              // Distinct count
+              if (uniqCell) {
+                const dc = stat.distinctCount;
+                if (dc != null && totalCount > 0) {
+                  const isUnique = dc === totalCount;
+                  const hasDomain = f.domain && f.domain.type === 'codedValue';
+                  if (isUnique) {
+                    uniqCell.innerHTML = `<span class="field-stat-unique">${dc.toLocaleString()}</span>`;
+                  } else if (hasDomain) {
+                    const domainCount = f.domain.codedValues ? f.domain.codedValues.length : dc;
+                    uniqCell.innerHTML = `<span class="field-stat-domain">${dc.toLocaleString()} of ${domainCount} codes</span>`;
+                  } else if (dc <= 25) {
+                    uniqCell.innerHTML = `<span class="field-stat-low-card">${dc.toLocaleString()}</span>`;
+                  } else {
+                    uniqCell.innerHTML = `<span class="field-stat-count">${dc.toLocaleString()}</span>`;
+                  }
+                } else {
+                  uniqCell.textContent = '\u2014';
+                }
+              }
+
+              // Quality warnings
+              if (qualityCell) {
+                const warnings = [];
+                if (typeof stat.emptyPct === 'number' && stat.emptyPct > 5) {
+                  warnings.push(`<span class="field-stat-placeholder" title="${stat.emptyPct.toFixed(1)}% empty strings">${stat.emptyPct.toFixed(0)}% empty</span>`);
+                }
+                if (typeof stat.dominantPct === 'number' && stat.dominantPct >= 90 && stat.dominantValue !== null) {
+                  const domVal = String(stat.dominantValue);
+                  const truncVal = domVal.length > 20 ? domVal.slice(0, 17) + '\u2026' : domVal;
+                  warnings.push(`<span class="field-stat-placeholder" title="${stat.dominantPct.toFixed(1)}% are '${domVal}'">${stat.dominantPct.toFixed(0)}% \u201c${truncVal}\u201d</span>`);
+                }
+                qualityCell.innerHTML = warnings.length ? warnings.join(' ') : '<span class="field-stat-ok">\u2713</span>';
+              }
+            }
+
+            // Dispatch maturity event with pre-computed stats
+            try {
+              containingEl.dispatchEvent(new CustomEvent('maturity:field-stats', {
+                detail: { fieldStats: collector, totalCount },
+              }));
+            } catch (_) {}
+            return; // Skip live queries entirely
+          }
+        }
+      } catch (_) { /* pre-computed data unavailable, fall through to live */ }
+    }
+
+    // ── Live fallback: query the service directly ──
     const _fieldStatsCollector = [];
+
+    // Gate: if the service does not support statistics, skip all stat queries
+    if (supportsStatistics === false) {
+      table.querySelectorAll('[data-field-null], [data-field-uniq]').forEach(td => {
+        td.textContent = '\u2014';
+      });
+      table.querySelectorAll('[data-field-quality]').forEach(td => {
+        td.textContent = '\u2014';
+      });
+      const fieldsCard = contentEl.querySelector('#fieldsCard');
+      if (fieldsCard) {
+        const noteEl = document.createElement('p');
+        noteEl.className = 'text-muted';
+        noteEl.style.cssText = 'font-size:0.8rem;margin-top:0.5rem;font-style:italic;';
+        noteEl.textContent = 'This service does not support statistics queries. Field stats cannot be computed.';
+        fieldsCard.appendChild(noteEl);
+      }
+      try {
+        containingEl.dispatchEvent(new CustomEvent('maturity:field-stats', {
+          detail: { fieldStats: [], totalCount: 0 },
+        }));
+      } catch (_) {}
+      return;
+    }
 
     let totalCount = 0;
     try {
@@ -1084,7 +1199,10 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
 
     // Start async field stats — skip for ImageServer (no /query for stats)
     if (allFields.length && !_isImageSvc) {
-      startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation);
+      startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation, {
+        datasetId,
+        supportsStatistics: layerJson?.supportsStatistics ?? serviceJson.supportsStatistics ?? true,
+      });
     }
 
     // Wire sample records refresh and load initial sample — skip for ImageServer

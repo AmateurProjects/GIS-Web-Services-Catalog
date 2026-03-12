@@ -105,9 +105,15 @@ async function checkArcGisServiceHealth(url) {
 
   // ArcGIS error response (token required, forbidden, service not found, etc.)
   if (metaJson && metaJson.error) {
-    const code = metaJson.error.code || '';
+    const code = Number(metaJson.error.code) || 0;
     const msg = metaJson.error.message || 'Service error';
-    return { status: 'bad', detail: `Service error (${code}): ${msg}` };
+    let classification = '';
+    if (code === 498 || code === 499) classification = 'Token required/expired';
+    else if (code === 403) classification = 'Access denied';
+    else if (code === 404) classification = 'Service not found';
+    else if (code >= 500 && code < 600) classification = 'Server error';
+    const detailPrefix = classification ? `${classification} — ` : '';
+    return { status: 'bad', detail: `${detailPrefix}Service error (${code}): ${msg}` };
   }
 
   // Validate that the response is genuine ArcGIS REST metadata
@@ -118,11 +124,12 @@ async function checkArcGisServiceHealth(url) {
   }
 
   // ── Service is confirmed alive ──
-  // Query failures below yield 'ok' with descriptive detail, never 'bad' or 'unknown'.
+  // Extract currentVersion for diagnostic enrichment
+  const currentVersion = metaJson.currentVersion || null;
 
   // Step 2: ImageServer — metadata alone confirms health
   if (isImageServerUrl(url)) {
-    return { status: 'ok', detail: 'ImageServer serving metadata' };
+    return { status: 'ok', detail: 'ImageServer serving metadata', currentVersion };
   }
 
   // Step 3: Determine a queryable layer target (skip group layers)
@@ -163,36 +170,36 @@ async function checkArcGisServiceHealth(url) {
 
       if (countJson && !countJson.error && typeof countJson.count === 'number') {
         if (countJson.count > 0) {
-          return { status: 'ok', detail: `Serving data (${countJson.count.toLocaleString()} features)` };
+          return { status: 'ok', detail: `Serving data (${countJson.count.toLocaleString()} features)`, currentVersion };
         }
-        return { status: 'ok', detail: 'Service responding (0 features — layer may be empty or scale-filtered)' };
+        return { status: 'ok', detail: 'Service responding (0 features — layer may be empty or scale-filtered)', currentVersion };
       }
       // Query returned ArcGIS error — service metadata is alive but queries fail
       if (countJson && countJson.error) {
         const qCode = countJson.error.code || '';
         const qMsg = countJson.error.message || 'Query failed';
-        return { status: 'bad', detail: `Metadata alive but query failed (${qCode}): ${qMsg}` };
+        return { status: 'bad', detail: `Metadata alive but query failed (${qCode}): ${qMsg}`, currentVersion };
       }
       // Unexpected response format — queries not working as expected
-      return { status: 'bad', detail: 'Metadata alive but query returned unexpected response' };
+      return { status: 'bad', detail: 'Metadata alive but query returned unexpected response', currentVersion };
     } catch (queryErr) {
       // Query timed out or network error — service may be overloaded or partially down
-      return { status: 'bad', detail: `Metadata alive but query failed: ${queryErr.message}` };
+      return { status: 'bad', detail: `Metadata alive but query failed: ${queryErr.message}`, currentVersion };
     }
   }
 
   // Step 5: Report healthy based on confirmed metadata
   if (isLayerUrl) {
     if (metaJson.type === 'Group Layer') {
-      return { status: 'ok', detail: `Group layer responding (${(metaJson.subLayerIds || []).length} sub-layers)` };
+      return { status: 'ok', detail: `Group layer responding (${(metaJson.subLayerIds || []).length} sub-layers)`, currentVersion };
     }
-    return { status: 'ok', detail: `Layer metadata confirmed${!supportsQuery ? ' (query not supported)' : ''}` };
+    return { status: 'ok', detail: `Layer metadata confirmed${!supportsQuery ? ' (query not supported)' : ''}`, currentVersion };
   }
   const layerCount = (metaJson.layers || []).length;
   if (layerCount > 0) {
-    return { status: 'ok', detail: `Service responding (${layerCount} layer${layerCount !== 1 ? 's' : ''}${!supportsQuery ? ', query not supported' : ''})` };
+    return { status: 'ok', detail: `Service responding (${layerCount} layer${layerCount !== 1 ? 's' : ''}${!supportsQuery ? ', query not supported' : ''})`, currentVersion };
   }
-  return { status: 'ok', detail: 'Service serving metadata' };
+  return { status: 'ok', detail: 'Service serving metadata', currentVersion };
 }
 
 /**

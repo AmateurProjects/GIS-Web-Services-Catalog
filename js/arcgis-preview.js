@@ -590,12 +590,13 @@ function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDat
   let bodyHTML;
   if (rows && rows.length) {
     const cols = Object.keys(rows[0]);
+    const truncate = (v) => { const s = String(v ?? ''); return s.length > 150 ? s.slice(0, 147) + '…' : s; };
     bodyHTML = `
       <div style="overflow:auto;">
         <table>
           <thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
           <tbody>
-            ${rows.map(r => `<tr>${cols.map(c => `<td>${escapeHtml(String(r[c] ?? ''))}</td>`).join('')}</tr>`).join('')}
+            ${rows.map(r => `<tr>${cols.map(c => `<td title="${escapeHtml(String(r[c] ?? ''))}">${escapeHtml(truncate(r[c]))}</td>`).join('')}</tr>`).join('')}
           </tbody>
         </table>
       </div>

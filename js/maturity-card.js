@@ -144,6 +144,11 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
     const full = computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth, freshnessConfidence });
     const tierMeta = TIER_META[full.tier] || TIER_META.bronze;
 
+    // Dispatch KPI update event so the summary row can update
+    hostEl.dispatchEvent(new CustomEvent('kpi:maturity', {
+      detail: { total: full.total, tier: full.tier, tierMeta, hasPending: full.hasPending }
+    }));
+
     // Update card border color — only show tier color when analysis is complete
     const borderColors = { platinum: '#b4dcff', gold: '#fde047', silver: '#d4d4d4', bronze: '#d4a574' };
     card.style.borderLeftColor = full.hasPending ? 'var(--text-muted)' : (borderColors[full.tier] || 'var(--text-muted)');

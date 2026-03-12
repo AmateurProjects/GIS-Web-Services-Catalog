@@ -60,21 +60,27 @@ export async function loadPerformanceCard(hostEl, dataset) {
   const perfData = await loadPerformanceCache();
   if (!perfData || !perfData.datasets) {
     contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">No performance data available yet. Benchmark scans run automatically twice daily.</p>';
+    hostEl.dispatchEvent(new CustomEvent('kpi:performance', { detail: { grade: '—', gradeLabel: 'No data', color: 'var(--text-muted)' } }));
     return;
   }
 
   const result = perfData.datasets.find(d => d.datasetId === dataset.id);
   if (!result) {
     contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">No benchmark data for this dataset yet. It will be included in the next scheduled scan.</p>';
+    hostEl.dispatchEvent(new CustomEvent('kpi:performance', { detail: { grade: '—', gradeLabel: 'Pending', color: 'var(--text-muted)' } }));
     return;
   }
 
   if (result.error) {
     contentEl.innerHTML = `<p style="font-size:0.85rem;color:var(--red);">Benchmark failed: ${escapeHtml(result.error)}</p>`;
+    hostEl.dispatchEvent(new CustomEvent('kpi:performance', { detail: { grade: 'F', gradeLabel: 'Error', color: '#ef4444' } }));
     return;
   }
 
   const gm = gradeMeta(result.overall);
+
+  // Dispatch KPI update
+  hostEl.dispatchEvent(new CustomEvent('kpi:performance', { detail: { grade: result.overall, gradeLabel: gm.label, color: gm.color } }));
 
   // Set left-border color to match overall grade
   if (cardEl) cardEl.style.borderLeftColor = gm.color;

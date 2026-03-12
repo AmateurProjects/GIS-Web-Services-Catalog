@@ -123,6 +123,24 @@ export function renderDatasetDetail(datasetId) {
       </div>
     </div>`;
 
+    // ── KPI summary row (updated async as data arrives) ──
+    html += `
+      <div class="kpi-row" id="kpiRow">
+        <button type="button" class="kpi-card" data-kpi="maturity" data-kpi-target="#maturityScoreCard">
+          <div class="kpi-label">Data Maturity</div>
+          <div class="kpi-value" data-kpi-maturity-value><span class="kpi-loading">Analyzing…</span></div>
+        </button>
+        <button type="button" class="kpi-card" data-kpi="freshness" data-kpi-target="#freshnessCard">
+          <div class="kpi-label">Last Updated</div>
+          <div class="kpi-value" data-kpi-freshness-value><span class="kpi-loading">Detecting…</span></div>
+        </button>
+        <button type="button" class="kpi-card" data-kpi="performance" data-kpi-target="#performanceCard">
+          <div class="kpi-label">Performance</div>
+          <div class="kpi-value" data-kpi-performance-value><span class="kpi-loading">Loading…</span></div>
+        </button>
+      </div>
+    `;
+
     // Auto-computed Data Maturity card (initialized after innerHTML is set — appears first)
     html += maturityCardHTML();
 
@@ -311,6 +329,49 @@ html += `
     els.datasetDetailEl.innerHTML = html;
     els.datasetDetailEl.classList.remove('hidden');
 
+// ── Wire KPI card click-to-scroll ──
+els.datasetDetailEl.querySelectorAll('.kpi-card[data-kpi-target]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const selector = btn.getAttribute('data-kpi-target');
+    const target = els.datasetDetailEl.querySelector(selector);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      target.classList.add('maturity-highlight');
+      setTimeout(() => target.classList.remove('maturity-highlight'), 2000);
+    }
+  });
+});
+
+// ── Wire KPI update listeners ──
+els.datasetDetailEl.addEventListener('kpi:maturity', (e) => {
+  const el = els.datasetDetailEl.querySelector('[data-kpi-maturity-value]');
+  if (!el) return;
+  const { total, tier, tierMeta, hasPending } = e.detail || {};
+  if (hasPending) return; // don't update KPI until analysis is done
+  const kpiCard = el.closest('.kpi-card');
+  const tierColors = { platinum: '#b4dcff', gold: '#fde047', silver: '#d4d4d4', bronze: '#d4a574' };
+  el.innerHTML = `<span class="kpi-big" style="color:${tierColors[tier] || 'var(--text-main)'};">${tierMeta?.icon || ''} ${total}/100</span><span class="kpi-sub">${tierMeta?.label || tier}</span>`;
+  if (kpiCard) kpiCard.style.borderBottomColor = tierColors[tier] || 'var(--border-color)';
+});
+
+els.datasetDetailEl.addEventListener('kpi:freshness', (e) => {
+  const el = els.datasetDetailEl.querySelector('[data-kpi-freshness-value]');
+  if (!el) return;
+  const { age, color } = e.detail || {};
+  const kpiCard = el.closest('.kpi-card');
+  el.innerHTML = `<span class="kpi-big" style="color:${color || 'var(--text-main)'};">${escapeHtml(age || '—')}</span>`;
+  if (kpiCard) kpiCard.style.borderBottomColor = color || 'var(--border-color)';
+});
+
+els.datasetDetailEl.addEventListener('kpi:performance', (e) => {
+  const el = els.datasetDetailEl.querySelector('[data-kpi-performance-value]');
+  if (!el) return;
+  const { grade, gradeLabel, color } = e.detail || {};
+  const kpiCard = el.closest('.kpi-card');
+  el.innerHTML = `<span class="kpi-big" style="color:${color || 'var(--text-main)'};">${escapeHtml(grade || '—')}</span><span class="kpi-sub">${escapeHtml(gradeLabel || '')}</span>`;
+  if (kpiCard) kpiCard.style.borderBottomColor = color || 'var(--border-color)';
+});
+
 // Initialize auto-computed maturity card (listens for service data events)
 initMaturityCard(els.datasetDetailEl, dataset, !!dataset.public_web_service);
 
@@ -453,6 +514,7 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
 
   if (!result) {
     contentEl.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted);">Could not detect freshness for this dataset (no signals found).</p>';
+    hostEl.dispatchEvent(new CustomEvent('kpi:freshness', { detail: { age: 'Unknown', color: 'var(--text-muted)' } }));
     return;
   }
 
@@ -463,6 +525,9 @@ async function loadFreshnessCard(hostEl, dataset, generation) {
   const confMeta = getConfidenceMeta(result.confidence);
   const age = formatFreshnessAge(result.lastUpdated);
   const ageColor = freshnessColor(result.lastUpdated);
+
+  // Dispatch KPI update
+  hostEl.dispatchEvent(new CustomEvent('kpi:freshness', { detail: { age, color: ageColor } }));
 
   if (cardEl) cardEl.style.borderLeftColor = ageColor;
 

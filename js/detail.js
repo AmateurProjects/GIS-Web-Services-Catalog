@@ -132,9 +132,6 @@ export function renderDatasetDetail(datasetId) {
       </div>
     `;
 
-    // Auto-computed Data Maturity card (initialized after innerHTML is set — appears first)
-    html += maturityCardHTML();
-
     // Helper for simple editable field rows
     const ef = (label, key, val) => {
       const isEmpty = val === undefined || val === null || val === '';
@@ -256,6 +253,9 @@ export function renderDatasetDetail(datasetId) {
         <div id="arcgisMapContainer" style="width:100%; height:400px; border-radius:12px; overflow:hidden; background:#e0e0e0;"></div>
       </div>
     `;
+
+    // Auto-computed Data Maturity card (positioned below map, above freshness)
+    html += maturityCardHTML();
 
     // Freshness / last-updated card (async)
     html += `

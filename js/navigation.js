@@ -56,9 +56,11 @@ export function showDatasetsView() {
   if (els.datasetsTabBtn) els.datasetsTabBtn.classList.add('active');
   // Render filter panel when switching to datasets
   if (_renderFilterPanel) _renderFilterPanel();
-  // Lazy-render dataset detail on first switch to Datasets tab
-  if (state.lastSelectedDatasetId && els.datasetDetailEl && els.datasetDetailEl.classList.contains('hidden')) {
-    if (_renderDatasetDetail) _renderDatasetDetail(state.lastSelectedDatasetId);
+  // Re-render dataset detail when returning to Datasets tab.
+  // The map may have been destroyed by cleanupMapView() when the user
+  // navigated to another tab, so always re-render to reinitialize it.
+  if (state.lastSelectedDatasetId && _renderDatasetDetail) {
+    _renderDatasetDetail(state.lastSelectedDatasetId);
   }
 }
 

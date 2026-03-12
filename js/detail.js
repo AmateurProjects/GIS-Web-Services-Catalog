@@ -1,7 +1,7 @@
 import { state, els } from './state.js';
 import { escapeHtml } from './utils.js';
 import { setActiveListButton } from './ui-fx.js';
-import { runUrlChecks, setCachedUrlStatus } from './url-check.js';
+import { runUrlChecks } from './url-check.js';
 import { normalizeServiceUrl, parseServiceAndLayerId, maybeRenderPublicServicePreviewCard, incrementRenderGeneration, getCurrentMapView, setCurrentMapView } from './arcgis-preview.js';
 import { WORKER_BASE_URL } from './config.js';
 import { renderCoverageMapCard, getCoverageCache } from './coverage-map.js';
@@ -51,21 +51,6 @@ export async function loadHealthCache() {
   } catch {
     _healthCache = null;
     return null;
-  }
-}
-
-/** Pre-seed url-check cache with Worker health results. */
-async function seedHealthFromCache() {
-  const health = await loadHealthCache();
-  if (!health || !health.services) return;
-  for (const svc of health.services) {
-    if (!svc.url) continue;
-    // Only pre-seed "ok" results from the Worker cache.
-    // "bad" and "unknown" results may be stale (Worker runs twice daily),
-    // so let the browser re-check those live for fresher accuracy.
-    if (svc.status === 'ok') {
-      setCachedUrlStatus(svc.url, svc.status, svc.detail || '');
-    }
   }
 }
 
@@ -375,8 +360,9 @@ els.datasetDetailEl.addEventListener('kpi:performance', (e) => {
 // Initialize auto-computed maturity card (listens for service data events)
 initMaturityCard(els.datasetDetailEl, dataset, !!dataset.public_web_service);
 
-// Check URL status icons (async — pre-seed from Worker health cache first)
-seedHealthFromCache().then(() => runUrlChecks(els.datasetDetailEl));
+// Check URL status icons (always live on detail page — skip Worker cache pre-seed
+// so we catch services that went down since the last Worker scan)
+runUrlChecks(els.datasetDetailEl);
 
 // Load service preview immediately (don't wait for URL health check)
 maybeRenderPublicServicePreviewCard(els.datasetDetailEl, dataset.public_web_service, currentGeneration, { datasetId: dataset.id });

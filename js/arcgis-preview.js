@@ -916,12 +916,13 @@ function wireSampleRefresh(contentEl, fetchBaseUrl, layerId, objectIdField, reco
     const total = _sCount ? `${_sCount.toLocaleString()} total records in service. ` : '';
     _sDesc.textContent = `${total}Showing ${rows.length} randomly selected rows.`;
 
+    const truncate = (v) => { const s = String(v ?? ''); return s.length > 150 ? s.slice(0, 147) + '…' : s; };
     _sContent.innerHTML = `
       <div style="overflow:auto;">
         <table>
           <thead><tr>${cols.map(c => `<th>${escapeHtml(c)}</th>`).join('')}</tr></thead>
           <tbody>
-            ${rows.map(r => `<tr>${cols.map(c => `<td>${escapeHtml(String(r[c] ?? ''))}</td>`).join('')}</tr>`).join('')}
+            ${rows.map(r => `<tr>${cols.map(c => `<td title="${escapeHtml(String(r[c] ?? ''))}">${escapeHtml(truncate(r[c]))}</td>`).join('')}</tr>`).join('')}
           </tbody>
         </table>
       </div>

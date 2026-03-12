@@ -167,9 +167,17 @@ async function checkArcGisServiceHealth(url) {
         }
         return { status: 'ok', detail: 'Service responding (0 features — layer may be empty or scale-filtered)' };
       }
-      // Query returned error or unexpected format — fall through to metadata-based ok
-    } catch (_) {
-      // Query timed out or CORS blocked — fall through to metadata-based ok
+      // Query returned ArcGIS error — service metadata is alive but queries fail
+      if (countJson && countJson.error) {
+        const qCode = countJson.error.code || '';
+        const qMsg = countJson.error.message || 'Query failed';
+        return { status: 'bad', detail: `Metadata alive but query failed (${qCode}): ${qMsg}` };
+      }
+      // Unexpected response format — queries not working as expected
+      return { status: 'bad', detail: 'Metadata alive but query returned unexpected response' };
+    } catch (queryErr) {
+      // Query timed out or network error — service may be overloaded or partially down
+      return { status: 'bad', detail: `Metadata alive but query failed: ${queryErr.message}` };
     }
   }
 

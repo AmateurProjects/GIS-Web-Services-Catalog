@@ -144,27 +144,37 @@ export async function initMaturityCard(hostEl, dataset, hasService) {
     const full = computeFullScore({ basics, steward, webService, dataStandard, stage, issues, serviceMetadata, serviceCapabilities, nullHealth, freshnessConfidence });
     const tierMeta = TIER_META[full.tier] || TIER_META.bronze;
 
-    // Update card border color
+    // Update card border color — only show tier color when analysis is complete
     const borderColors = { platinum: '#b4dcff', gold: '#fde047', silver: '#d4d4d4', bronze: '#d4a574' };
-    card.style.borderLeftColor = borderColors[full.tier] || 'var(--text-muted)';
+    card.style.borderLeftColor = full.hasPending ? 'var(--text-muted)' : (borderColors[full.tier] || 'var(--text-muted)');
 
     let html = '';
 
     // ── Score summary ──
-    html += `
-      <div class="maturity-score-summary">
-        <div class="tier-badge-large ${tierMeta.css}">${tierMeta.icon}<span>${escapeHtml(tierMeta.label)}</span></div>
-        <div class="maturity-score-value">
-          <span class="maturity-score-number">${full.total}</span><span class="maturity-score-total">/100</span>
-          ${full.hasPending ? '<span class="maturity-pending-badge">analyzing\u2026</span>' : ''}
+    if (full.hasPending) {
+      // Don't show score or tier while async analysis is still running
+      html += `
+        <div class="maturity-score-summary maturity-analyzing">
+          <div class="maturity-score-value">
+            <span class="maturity-pending-badge">Analyzing service data\u2026</span>
+          </div>
         </div>
-      </div>
-      <div class="completeness-bar-container" style="margin-bottom:1rem;">
-        <div class="completeness-bar-track">
-          <div class="completeness-bar-fill" style="width:${full.total}%; background:${barColor(full.total)};"></div>
+      `;
+    } else {
+      html += `
+        <div class="maturity-score-summary">
+          <div class="tier-badge-large ${tierMeta.css}">${tierMeta.icon}<span>${escapeHtml(tierMeta.label)}</span></div>
+          <div class="maturity-score-value">
+            <span class="maturity-score-number">${full.total}</span><span class="maturity-score-total">/100</span>
+          </div>
         </div>
-      </div>
-    `;
+        <div class="completeness-bar-container" style="margin-bottom:1rem;">
+          <div class="completeness-bar-track">
+            <div class="completeness-bar-fill" style="width:${full.total}%; background:${barColor(full.total)};"></div>
+          </div>
+        </div>
+      `;
+    }
 
     // ── Sub-scores (used for details + suggestions, not rendered as bars) ──
     const subs = [

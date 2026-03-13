@@ -5,6 +5,29 @@ import { escapeHtml } from './utils.js';
 let _onFieldLinkClick = null;
 export function registerFieldLinkCallback(fn) { _onFieldLinkClick = fn; }
 
+/**
+ * Detect the server-echo bug: some ArcGIS servers ignore groupByFieldsForStatistics
+ * and return totalCount as the distinct count for every field. This checks whether
+ * the dataset's fieldStats are affected by counting how many non-identity,
+ * non-geometry fields have distinctCount === totalCount.
+ *
+ * Returns true if the distinct counts are suspect and should be shown as "—".
+ */
+export function areDistinctCountsSuspect(fieldStats, totalCount) {
+  if (!fieldStats || !fieldStats.length || !totalCount || totalCount <= 50) return false;
+  let eligible = 0;
+  let matching = 0;
+  for (const s of fieldStats) {
+    if (s.skipped) continue;
+    const ft = (s.type || '').toUpperCase();
+    if (ft.includes('OID') || ft.includes('GLOBALID') || ft.includes('GEOMETRY')) continue;
+    eligible++;
+    if (s.distinctCount === totalCount) matching++;
+  }
+  // If >75% of eligible fields echo totalCount, the data is almost certainly bad
+  return eligible >= 3 && (matching / eligible) > 0.75;
+}
+
 // ====== ARCGIS REST PREVIEW HELPERS (static image + metadata + sample) ======
 
 export function normalizeServiceUrl(url) {
@@ -441,8 +464,10 @@ function buildMapCardHTML(url, layerId) {
 
 // ── Build Fields card HTML ──
 
-function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDate = '', oidFieldName = '', globalIdFieldName = '' } = {}) {
+function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDate = '', oidFieldName = '', globalIdFieldName = '', totalCount = 0 } = {}) {
   if (!fields || !fields.length) return '';
+
+  const suspectDistinct = isCached && areDistinctCountsSuspect(fieldStats, totalCount);
 
   const refreshBtn = isCached
     ? '<button type="button" class="btn" data-refresh-fields title="Refresh from live service" style="padding:0.25rem 0.6rem;font-size:0.78rem;">&#x21bb; Refresh</button>'
@@ -515,7 +540,8 @@ function buildFieldsCardHTML(fields, fieldStats, { isCached = false, generatedDa
                     : '<span class="field-stat-zero">0%</span>')
                   : '\u2014';
                 const dc = stat.distinctCount;
-                if (dc !== null && dc !== undefined) {
+                const isBadEcho = suspectDistinct && dc === totalCount;
+                if (dc !== null && dc !== undefined && !isBadEcho) {
                   if (stat.hasDomain && f.domain && f.domain.codedValues) {
                     const dvCount = f.domain.codedValues.length;
                     uniqCell = `<span class="field-stat-domain">${dc.toLocaleString()} of ${dvCount} codes</span>`;
@@ -625,7 +651,7 @@ function buildSampleCardHTML(rows, recordCount, { isCached = false, generatedDat
 
 // ── Async field stats loader (runs after live fields card renders) ──
 
-function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation, { datasetId = null, supportsStatistics = true } = {}) {
+function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation, { datasetId = null, supportsStatistics = true, maxRecordCount = null } = {}) {
   const _fieldStatsUrl = fetchBaseUrl;
   const _fieldStatsLayerId = layerId;
   const _fieldStatsFields = allFields;
@@ -649,6 +675,7 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
             const statsMap = {};
             preStats.forEach(s => { statsMap[s.name] = s; });
             const collector = [];
+            const suspectDistinct = areDistinctCountsSuspect(preStats, totalCount);
 
             for (let i = 0; i < _fieldStatsFields.length; i++) {
               if (_fieldStatsGen !== _renderGeneration) return;
@@ -681,7 +708,11 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
               // Distinct count
               if (uniqCell) {
                 const dc = stat.distinctCount;
-                if (dc != null && totalCount > 0) {
+                // If dataset-level check flagged all distinct counts as suspect
+                // (server returned totalCount for every field), show "—" for the
+                // affected values while still allowing genuinely unique identity fields.
+                const isBadEcho = suspectDistinct && dc === totalCount;
+                if (dc != null && totalCount > 0 && !isBadEcho) {
                   const isUnique = dc === totalCount;
                   const hasDomain = f.domain && f.domain.type === 'codedValue';
                   if (isUnique) {
@@ -863,7 +894,10 @@ function startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, al
               const hasCntStat = sampleAttrs && ('cnt' in sampleAttrs || 'CNT' in sampleAttrs);
               if (hasCntStat && attrKeys.length <= 3) {
                 distinctCount = distJson1.features.length;
-                if (distJson1.exceededTransferLimit && distinctCount < totalCount) {
+                // Detect truncation: exceededTransferLimit or response matching maxRecordCount
+                const isTruncated = distJson1.exceededTransferLimit
+                  || (maxRecordCount && distinctCount >= maxRecordCount);
+                if (isTruncated && distinctCount < totalCount) {
                   distinctCount = null; // truncated, try other approaches
                 }
               }
@@ -1202,6 +1236,7 @@ export async function maybeRenderPublicServicePreviewCard(hostEl, publicUrl, gen
       startAsyncFieldStats(contentEl, containingEl, fetchBaseUrl, layerId, allFields, generation, {
         datasetId,
         supportsStatistics: layerJson?.supportsStatistics ?? serviceJson.supportsStatistics ?? true,
+        maxRecordCount: layerJson?.maxRecordCount || serviceJson.maxRecordCount || null,
       });
     }
 

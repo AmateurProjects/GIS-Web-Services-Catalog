@@ -2,6 +2,7 @@
 // Provides a cross-dataset field dictionary for the Attributes tab.
 
 import { state } from './state.js';
+import { areDistinctCountsSuspect } from './arcgis-preview.js';
 
 let fieldIndex = null;  // Map<fieldName, FieldInfo>
 let fieldList  = [];    // Sorted array of field entries for rendering
@@ -141,8 +142,12 @@ function buildIndexFromServiceInfoFiles(allData) {
     const dsTitle = ds ? (ds._layer_name || ds.title || ds.id) : datasetId;
 
     const fields = info.fields || [];
+    const fStats = info.fieldStats || [];
     const statsMap = {};
-    (info.fieldStats || []).forEach(s => { statsMap[s.name] = s; });
+    fStats.forEach(s => { statsMap[s.name] = s; });
+
+    const recordCount = info.metadata?.recordCount || 0;
+    const suspectDistinct = areDistinctCountsSuspect(fStats, recordCount);
 
     fields.forEach(f => {
       const name = f.name;
@@ -169,7 +174,8 @@ function buildIndexFromServiceInfoFiles(allData) {
 
       const stats = statsMap[name];
       const nullPct = stats ? stats.nullPct : null;
-      const distinctCount = stats ? stats.distinctCount : null;
+      const rawDc = stats ? stats.distinctCount : null;
+      const distinctCount = (suspectDistinct && rawDc === recordCount) ? null : rawDc;
       const hasDomain = !!(f.domain || (stats && stats.hasDomain));
 
       if (hasDomain) entry._hasDomain = true;

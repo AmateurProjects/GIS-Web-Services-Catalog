@@ -165,7 +165,7 @@ async function fetchSampleRows(target, n = SAMPLE_ROW_COUNT) {
 
 // ── Field Statistics ───────────────────────────────────────────────────────
 
-async function computeFieldStats(target, fields, totalCount) {
+async function computeFieldStats(target, fields, totalCount, maxRecordCount) {
   const results = [];
   let idx = 0;
 
@@ -239,10 +239,12 @@ async function computeFieldStats(target, fields, totalCount) {
           const attrKeys = sampleAttrs ? Object.keys(sampleAttrs) : [];
           const hasCntStat = sampleAttrs && ('cnt' in sampleAttrs || 'CNT' in sampleAttrs);
           if (hasCntStat && attrKeys.length <= 3) {
-            // If exceededTransferLimit is true, the array is truncated — use as a floor.
-            // Otherwise this is the exact distinct count.
             distinctCount = distJson1.features.length;
-            if (distJson1.exceededTransferLimit && distinctCount < totalCount) {
+            // Detect truncation: exceededTransferLimit flag, or response length
+            // matching maxRecordCount (some servers silently truncate without the flag).
+            const isTruncated = distJson1.exceededTransferLimit
+              || (maxRecordCount && distinctCount >= maxRecordCount);
+            if (isTruncated && distinctCount < totalCount) {
               distinctCount = null; // truncated, try other approaches
             }
           }
@@ -251,8 +253,9 @@ async function computeFieldStats(target, fields, totalCount) {
       } catch {}
 
       // Approach 2 fallback: groupByFieldsForStatistics + returnCountOnly.
-      // Reliable on ArcGIS Server 10.6.1+ and ArcGIS Enterprise — returns
-      // the number of groups, not subject to maxRecordCount.
+      // On ArcGIS Server 10.6.1+ this returns the number of groups.
+      // Guard: some servers ignore groupByFieldsForStatistics and return
+      // total record count — reject when count equals totalCount.
       if (distinctCount === null) {
         try {
           const distParams2 = new URLSearchParams({
@@ -263,7 +266,9 @@ async function computeFieldStats(target, fields, totalCount) {
           });
           const distJson2 = await fetchWithRetry(() => fetchJson(`${target}/query?${distParams2}`, TIMEOUT_MS));
           if (distJson2 && typeof distJson2.count === 'number') {
-            distinctCount = distJson2.count;
+            if (distJson2.count !== totalCount || (totalCount != null && totalCount <= 50)) {
+              distinctCount = distJson2.count;
+            }
           }
         } catch {}
       }
@@ -479,7 +484,8 @@ async function processDataset(dataset) {
     // Compute field stats (null %, distinct count)
     if (recordCount && recordCount > 0) {
       console.log(`    Computing field stats for ${fields.length} fields...`);
-      fieldStats = await computeFieldStats(queryTarget, layerJson.fields, recordCount);
+      const mrc = layerJson.maxRecordCount || serviceJson.maxRecordCount || null;
+      fieldStats = await computeFieldStats(queryTarget, layerJson.fields, recordCount, mrc);
       console.log(`    Field stats computed.`);
     }
   }

@@ -51,8 +51,25 @@ infoFiles.forEach(filename => {
     const dsTitle = ds ? (ds._layer_name || ds.title || ds.id) : datasetId;
 
     const fields = info.fields || [];
+    const fStats = info.fieldStats || [];
     const statsMap = {};
-    (info.fieldStats || []).forEach(s => { statsMap[s.name] = s; });
+    fStats.forEach(s => { statsMap[s.name] = s; });
+
+    // Detect the server-echo bug: if >75% of non-identity fields have
+    // distinctCount === recordCount, the server returned junk.
+    const recordCount = info.metadata?.recordCount || 0;
+    let suspectDistinct = false;
+    if (recordCount > 50 && fStats.length >= 3) {
+      let eligible = 0, matching = 0;
+      for (const s of fStats) {
+        if (s.skipped) continue;
+        const ft = (s.type || '').toUpperCase();
+        if (ft.includes('OID') || ft.includes('GLOBALID') || ft.includes('GEOMETRY')) continue;
+        eligible++;
+        if (s.distinctCount === recordCount) matching++;
+      }
+      suspectDistinct = eligible >= 3 && (matching / eligible) > 0.75;
+    }
 
     fields.forEach(f => {
       const name = f.name;
@@ -79,7 +96,9 @@ infoFiles.forEach(filename => {
 
       const stats = statsMap[name];
       const nullPct = stats?.nullPct ?? null;
-      const distinctCount = stats?.distinctCount ?? null;
+      const rawDc = stats?.distinctCount ?? null;
+      // Suppress suspect distinct counts (server-echo bug) for this dataset
+      const distinctCount = (suspectDistinct && rawDc === recordCount) ? null : rawDc;
       const hasDomain = !!(f.domain || stats?.hasDomain);
       // [Placeholder Detection]
       const emptyPct = stats?.emptyPct ?? null;

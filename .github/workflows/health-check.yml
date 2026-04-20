@@ -1,9 +1,9 @@
-name: Service Health Check
+name: "[DISABLED] Service Health Check"
 
 on:
-  schedule:
-    # Run daily at 06:00 UTC
-    - cron: '0 6 * * *'
+  # schedule:
+  #   # Run daily at 06:00 UTC
+  #   - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       create_issues:

@@ -38,13 +38,14 @@ compatibility_date = "2024-09-01"
 binding = "BUCKET"
 bucket_name = "gis-catalog-data"
 
-# ── Cron triggers — runs four times daily (00:00, 06:00, 12:00, 18:00 UTC) ──
+# ── Cron triggers — DISABLED ──
+# Previously ran four times daily (00:00, 06:00, 12:00, 18:00 UTC).
 # Multiple triggers allow processing large catalogs within Cloudflare's
 # 50-subrequest limit per invocation. Each trigger processes one batch.
 # With HEALTH_BATCH_SIZE=10 and FRESHNESS_BATCH_SIZE=5, a catalog of
 # ~150 datasets completes in ~15-20 minutes per window.
-[triggers]
-crons = ["0-30 0 * * *", "0-30 6 * * *", "0-30 12 * * *", "0-30 18 * * *"]
+# [triggers]
+# crons = ["0-30 0 * * *", "0-30 6 * * *", "0-30 12 * * *", "0-30 18 * * *"]
 
 # ── Environment variables ──
 [vars]
